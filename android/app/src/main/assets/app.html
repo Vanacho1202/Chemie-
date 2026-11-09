@@ -1611,11 +1611,12 @@ function drawChat(){ const c=$('#chat'); if(!c) return;
 async function botAsk(q){
   q=q.trim(); if(!q||BOT.busy) return;
   BOT.msgs.push({role:'user',text:q}); BOT.busy=true; drawChat(); botSave();
-  let answer=null;
+  let answer=null, why='';
   if(netCapable()){
     try{
       const ctl=new AbortController(); let to=setTimeout(()=>ctl.abort(),70000);
-      const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:BOT.msgs.slice(-12)}),signal:ctl.signal});
+      // text/plain = einfache Anfrage ohne Vorab-Prüfung (die blockiert Android bei lokalen App-Dateien)
+      const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({messages:BOT.msgs.slice(-12)}),signal:ctl.signal});
       const ct=r.headers.get('content-type')||'';
       if(r.ok && ct.startsWith('text/plain') && r.body && r.body.getReader){
         // Live-Text: Antwort erscheint, während die KI schreibt
@@ -1631,10 +1632,10 @@ async function botAsk(q){
       }
       clearTimeout(to);
       const j=await r.json();
-      if(r.ok&&j.answer) answer=j.answer; else if(r.status===429) answer=j.error;
-    }catch(e){ const l=BOT.msgs[BOT.msgs.length-1]; if(l.role==='bot'&&l.text){ BOT.busy=false; drawChat(); botSave(); return; } }
-  }
-  if(!answer) answer=localAnswer(q);
+      if(r.ok&&j.answer) answer=j.answer; else if(r.status===429) answer=j.error; else why='Server meldet '+r.status+(j.error?' '+j.error:'');
+    }catch(e){ const l=BOT.msgs[BOT.msgs.length-1]; if(l.role==='bot'&&l.text){ BOT.busy=false; drawChat(); botSave(); return; } why=(e&&e.name==='AbortError')?'Zeitüberschreitung':((e&&e.message)||'Netzwerkfehler'); }
+  } else why='keine Online-Verbindung auf dieser Seite';
+  if(!answer) answer=localAnswer(q).replace('(Antwort aus dem Lernstoff der App)',`(Antwort aus dem Lernstoff der App. KI nicht erreichbar: ${why||'unbekannt'})`);
   BOT.busy=false; BOT.msgs.push({role:'bot',text:answer}); botSave(); drawChat();
   if(navigator.vibrate){ try{navigator.vibrate(20);}catch(e){} }
 }
