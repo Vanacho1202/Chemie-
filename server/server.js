@@ -163,6 +163,35 @@ async function geminiStream(messages, onText) {
   return total;
 }
 
+// Karteikarten erstellen lassen: Gemini liefert eine JSON-Liste {front, back}
+async function geminiCards(topic) {
+  const prompt = `Erstelle 10 bis 14 Karteikarten zum Thema: "${topic}".
+Zielgruppe: Schüler der 10. Klasse, Chemieklausur über Alkane (homologe Reihe CnH2n+2 von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).
+Regeln:
+- Vorderseite: kurzer Begriff, Name oder Frage (höchstens 80 Zeichen).
+- Rückseite: knappe, fachlich sichere Antwort (höchstens 220 Zeichen), zum Auswendiglernen geeignet.
+- Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.
+- Deutsch mit ä, ö, ü und ß. Keine Wiederholungen. Nichts erfinden.
+- Bei Reihen oder Listen (z. B. homologe Reihe) je eine Karte pro Glied, z. B. Vorderseite "Hexan", Rückseite "C₆H₁₄ · 6 C-Atome · flüssig".`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+  const schema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { front: { type: 'STRING' }, back: { type: 'STRING' } }, required: ['front', 'back'] } };
+  const call = async (withSchema, withThink) => {
+    const generationConfig = { temperature: 0.3, maxOutputTokens: 3000, responseMimeType: 'application/json' };
+    if (withSchema) generationConfig.responseSchema = schema;
+    if (withThink) generationConfig.thinkingConfig = thinkCfg(GEMINI_MODEL);
+    const r = await httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig }), timeout: 30000 });
+    return { status: r.statusCode, body: await readAll(r) };
+  };
+  let x = await call(true, thinkingSupported);
+  if (x.status === 400) x = await call(false, false);
+  if (x.status !== 200) throw new Error('HTTP ' + x.status + ' ' + x.body.slice(0, 200));
+  const j = JSON.parse(x.body);
+  const text = ((((j.candidates || [])[0] || {}).content || {}).parts || []).filter(p => !p.thought).map(p => p.text || '').join('');
+  const arr = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
+  return (Array.isArray(arr) ? arr : []).filter(c => c && c.front && c.back).slice(0, 20)
+    .map(c => ({ front: String(c.front).replace(/[<>]/g, '').slice(0, 120), back: String(c.back).replace(/[<>]/g, '').slice(0, 300) }));
+}
+
 async function pickModel() {
   const test = async (model, think) => {
     const gc = think ? { thinkingConfig: thinkCfg(model) } : {};
@@ -215,6 +244,22 @@ const server = http.createServer((req, res) => {
       let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
       try { const [code, out] = await cloudRoute(req.url.split('?')[0], m); json(code, out); }
       catch (e) { console.log('Cloud-Fehler:', e.message); json(500, { error: 'Speichern gerade nicht möglich.' }); }
+    });
+    return;
+  }
+  if (req.method === 'POST' && req.url.startsWith('/cards')) {
+    let body = '';
+    req.on('data', c => { body += c; if (body.length > 5000) req.destroy(); });
+    req.on('end', async () => {
+      if (!GEMINI_KEY) return json(503, { error: 'no_key' });
+      const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0];
+      if (limited('cards:' + ip)) return json(429, { error: 'Zu viele Anfragen. Warte kurz.' });
+      let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
+      const topic = String(m.topic || '').replace(/[<>"]/g, '').slice(0, 200).trim();
+      if (!topic) return json(400, { error: 'Kein Thema angegeben.' });
+      const t0 = Date.now();
+      try { const cards = await geminiCards(topic); console.log('Karteikarten:', cards.length, 'in', Date.now() - t0, 'ms'); json(cards.length ? 200 : 502, cards.length ? { cards } : { error: 'Keine Karten erhalten.' }); }
+      catch (e) { console.log('Karteikarten-Fehler:', e.message); json(502, { error: 'ai_failed' }); }
     });
     return;
   }

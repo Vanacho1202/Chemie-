@@ -21,7 +21,8 @@ Lern-App für die 1. Chemieklausur über Alkane (Klausur am 10.11.2026, 11:30). 
 
 ## Was die App kann
 
-- **Lernen:** 7 Themen mit Erklärungen, interaktiven Teilen und Lernvideos; Lernplan mit Countdown; Spickzettel; Karteikarten; Klausuraufgaben mit Musterlösung
+- **Lernen:** 7 Themen mit Erklärungen, interaktiven Teilen und Lernvideos; Lernplan mit Countdown; Spickzettel; Klausuraufgaben mit Musterlösung
+- **Karteikarten:** Klausur-Definitionen plus eigene Stapel, die Alki auf Wunsch erstellt („Erstell mir Karteikarten zur homologen Reihe“); Karten löschen, bearbeiten, eigene hinzufügen
 - **Üben:** endloses Training mit immer neuen Aufgaben, Schwächen zuerst; Probeklausur; Fehlerheft; Zuordnen-Spiel; Satz-Puzzles für Erkläre-Aufgaben
 - **Battle (Kahoot-Stil):** 1 gegen 1, 2 gegen 2, 3 gegen 3; Schnellsuche oder Raum-Code; 20 s pro Frage; Weiter erst, wenn alle die Lösung gelesen haben; Emotes; Revanche
 - **Bots:** 1 gegen Bot oder Teams mit Bots auffüllen (leicht, mittel, schwer); mit Bots halbe Münzen

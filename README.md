@@ -15,7 +15,7 @@ Läuft als Android-App (APK), als installierbare Web-App auf iPhone/iPad und im 
 | 7 Themen | Erklärung, interaktiver Teil (Baukasten, ΔEN-Rechner, Isomer-Jagd, Van-der-Waals-Animation …), Lernvideos, Check mit 5 Fragen |
 | Training | endlos neue Aufgaben (Generatoren), Schwächen zuerst, Satz-Puzzles, Zuordnen-Spiel, Trefferquote pro Thema |
 | Probeklausur | 15 Fragen, halb neu erzeugt, Auswertung pro Thema, Fehlerheft |
-| Karteikarten / Aufgaben | 26 Definitionen, 10 Klausuraufgaben mit Musterlösung |
+| Karteikarten / Aufgaben | 26 Klausur-Definitionen (ausblendbar), eigene Stapel von Alki („Erstell mir Karteikarten zu …“), Karten löschen, bearbeiten, hinzufügen; 10 Klausuraufgaben mit Musterlösung |
 | Battle | 1 gegen 1 (Schnellsuche, Raum-Code, Freund herausfordern), 2 gegen 2 und 3 gegen 3, Kahoot-Punkte, 20 s pro Frage, Weiter erst wenn alle bereit, Emotes, Revanche |
 | Bots | 1 gegen Bot oder Teams mit Bots auffüllen, Stufen leicht/mittel/schwer, mit Bots halbe Münzen |
 | Freunde | Online-Liste, Freundschaftsanfragen, Herausfordern, in Team-Raum einladen, 👀 Zuschauen |
@@ -41,7 +41,7 @@ Umgebungsvariablen:
 - `GEMINI_MODEL` (optional): Komma-Liste von Modellen; beim Start wird das schnellste gewählt
 - `DATABASE_URL`: „Internal Database URL“ der Render-Datenbank `alkane-saves` (Cloud-Spielstand)
 
-HTTP-Endpunkte: `GET /` (Status), `GET /diag` (Verbindung zu Gemini prüfen), `POST /ask` (Alki, Antwort als Text-Stream), `POST /cloud/save|get|load` (Spielstand).
+HTTP-Endpunkte: `GET /` (Status), `GET /diag` (Verbindung zu Gemini prüfen), `POST /ask` (Alki, Antwort als Text-Stream), `POST /cards` (Karteikarten als JSON), `POST /cloud/save|get|load` (Spielstand).
 WebSocket-Nachrichten: `hello`, `who`, `quick`, `create`, `join`, `tcreate`, `tbot`, `tkick`, `botduel`, `tswitch`, `tstart`, `tinvite`, `invite`, `friend_req`, `watch`, `answer`, `ready`, `emote`, `rematch`, `resume`, `leave`.
 
 Wichtig:

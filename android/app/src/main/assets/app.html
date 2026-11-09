@@ -245,6 +245,12 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 /* Update-Hinweis */
 .upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
 @keyframes updin{from{transform:translateY(-120%)}to{transform:none}}
+/* Karten bearbeiten */
+.elist{display:flex; flex-direction:column; gap:8px; margin-top:10px; max-height:60vh; overflow-y:auto}
+.erow{display:flex; gap:8px; align-items:flex-start; padding:8px; border-radius:10px; background:var(--paper-2)}
+.erow .etxt{display:flex; flex-direction:column; gap:4px; min-width:0; flex:1; font-size:.9rem}
+.erow .etxt .inp{margin:0; padding:7px 9px; font-size:.92rem; resize:vertical}
+.erow.hid{opacity:.45}
 /* Spielstand */
 .savecode{font-family:var(--f-mono); font-weight:600; font-size:1.4rem; letter-spacing:.08em; color:var(--accent)}
 /* Bots */
@@ -1239,7 +1245,7 @@ function viewStart(){
   <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.</p>
    <div class="plan">${PLAN.map(b=>`<div class="block"><div class="when"><b>${b.when}</b>${b.sub}</div><div class="what">${b.topics.map(id=>`<a class="pill${S.done[id]?' done':''}" href="#thema-${id}">${id} · ${TOPICS[id-1].title}</a>`).join('')}${b.extra}</div></div>`).join('')}</div></section>
   <section class="card"><h2>Themen der Klausur</h2><div class="topics" style="margin-top:6px">${TOPICS.map(t=>`<a class="topic-row${S.done[t.id]?' done':''}" href="#thema-${t.id}" style="text-decoration:none;color:inherit"><span class="tnum">${S.done[t.id]?'✓':t.id}</span><span class="tt">${t.title}<br><span class="ts">${t.short}</span></span><span class="arrow">→</span></a>`).join('')}</div></section>
-  <section class="card bot" id="bot"><div class="row" style="gap:10px"><span class="bot-av">🧪</span><div><h2 style="font-size:1.15rem">Frag Alki</h2><div class="muted" style="font-size:.85rem">Dein Chemie-Bot erklärt dir alles zu den Klausurthemen</div></div></div>
+  <section class="card bot" id="bot"><div class="row" style="gap:10px"><span class="bot-av">🧪</span><div><h2 style="font-size:1.15rem">Frag Alki</h2><div class="muted" style="font-size:.85rem">Erklärt dir alles zu den Klausurthemen und erstellt dir Karteikarten</div></div></div>
    <div class="chat" id="chat"></div>
    <div class="row" id="chat-sug">${BOT_SUGGEST.map(q=>`<button class="chip" type="button" data-sug>${q}</button>`).join('')}</div>
    <form class="chat-in" id="chat-form"><label for="chat-q" class="sr">Deine Frage</label><input id="chat-q" class="inp" autocomplete="off" maxlength="500" placeholder="Frag einfach, z. B. Was ist ein Dipol?"><button class="btn primary" type="submit" id="chat-send">Senden</button></form>
@@ -1359,7 +1365,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='2.3';
+const APP_VERSION='2.4';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1846,7 +1852,7 @@ function leaveBattleIfAway(){ if(B.spec && !location.hash.startsWith('#battle'))
 
 /* ---------- KI-Bot „Alki“ ---------- */
 const BOT_URL='https://alkane-battle.onrender.com/ask';
-const BOT_SUGGEST=['Wie benenne ich verzweigte Alkane?','Warum löst sich Hexan nicht in Wasser?','Was sind Isomere?','Erklär mir Van-der-Waals-Kräfte'];
+const BOT_SUGGEST=['Erstell mir Karteikarten zur homologen Reihe','Wie benenne ich verzweigte Alkane?','Warum löst sich Hexan nicht in Wasser?','Erklär mir Van-der-Waals-Kräfte'];
 const BOT={msgs:[],busy:false};
 try{ BOT.msgs=JSON.parse(localStorage.getItem('alkane-bot')||'[]').slice(-20); }catch(e){}
 function botSave(){ try{ localStorage.setItem('alkane-bot',JSON.stringify(BOT.msgs.slice(-20))); }catch(e){} }
@@ -1868,11 +1874,17 @@ function localAnswer(q){ if(!KB) buildKB();
   if(!sc.length) return 'Dazu habe ich im Lernstoff nichts gefunden. Versuch es mit einem Fachbegriff, z. B. „Isomere“, „Elektronegativität“ oder „Siedetemperatur“.';
   return sc.map(x=>`**${x.k.title}**${x.k.t?` (Thema ${x.k.t})`:''}\n${x.k.body.length>520?x.k.body.slice(0,520).replace(/\s\S*$/,'')+' …':x.k.body}`).join('\n\n')+'\n\n(Antwort aus dem Lernstoff der App)'; }
 function drawChat(){ const c=$('#chat'); if(!c) return;
-  c.innerHTML=BOT.msgs.length?BOT.msgs.map(m=>`<div class="msg ${m.role}">${m.role==='bot'?md(m.text):esc(m.text)}</div>`).join('')+(BOT.busy?'<div class="msg bot typing"><span></span><span></span><span></span></div>':''):'<div class="msg bot"><p>Hi, ich bin <b>Alki</b>! Frag mich alles zu Alkanen: Benennen, Isomere, Polarität, Wechselwirkungen, Formeln. Ich erkläre es dir Schritt für Schritt.</p></div>';
+  c.innerHTML=BOT.msgs.length?BOT.msgs.map(m=>`<div class="msg ${m.role}">${m.role==='bot'?md(m.text):esc(m.text)}${m.deck&&(S.decks||[]).some(d=>d.id===m.deck)?`<button class="btn small primary" type="button" data-deck="${m.deck}" style="margin-top:6px">📇 Jetzt lernen</button>`:''}</div>`).join('')+(BOT.busy?'<div class="msg bot typing"><span></span><span></span><span></span></div>':''):'<div class="msg bot"><p>Hi, ich bin <b>Alki</b>! Frag mich alles zu Alkanen: Benennen, Isomere, Polarität, Wechselwirkungen, Formeln. Ich erkläre es dir Schritt für Schritt.</p></div>';
   const sug=$('#chat-sug'); if(sug) sug.hidden=BOT.msgs.length>0;
   c.scrollTop=c.scrollHeight; }
 async function botAsk(q){
   q=q.trim(); if(!q||BOT.busy) return;
+  if(/karteikarte|lernkarte|flashcard|\bkarten\s+(zu|zur|zum|über|für)\b/i.test(q)){
+    BOT.msgs.push({role:'user',text:q}); BOT.busy=true; drawChat(); botSave();
+    const d=await makeDeck(q); BOT.busy=false;
+    BOT.msgs.push(d?{role:'bot',text:`Fertig! Ich habe dir **${d.cards.length} Karteikarten** zu „${d.title}“ erstellt${d.ai?'':' (aus dem Lernstoff der App)'}. Du findest sie jederzeit im Tab **Karten**.`,deck:d.id}:{role:'bot',text:'Dazu konnte ich gerade keine Karteikarten erstellen. Versuch ein Klausurthema, z. B. „Karteikarten zur homologen Reihe“.'});
+    botSave(); drawChat(); return;
+  }
   BOT.msgs.push({role:'user',text:q}); BOT.busy=true; drawChat(); botSave();
   let answer=null, why='';
   if(netCapable()){
@@ -1964,24 +1976,107 @@ function viewExam(){
     $('#ex-next').addEventListener('click',()=>{ exam.i++; viewExam(); window.scrollTo(0,0); }); }));
   $('#ex-quit').addEventListener('click',()=>{ exam=null; viewExam(); });
 }
-let deck=null, flipped=false;
-function viewCards(){
-  if(!deck){ const unknown=CARDS.filter(c=>S.cards[c[0]]!=='ok'), known=CARDS.filter(c=>S.cards[c[0]]==='ok'); deck=shuffle(unknown).concat(shuffle(known)); }
-  const sure=CARDS.filter(c=>S.cards[c[0]]==='ok').length;
-  if(!deck.length){
-    app.innerHTML=`<header><span class="eyebrow">Definitionen</span><h1>Karteikarten</h1></header><section class="card"><div class="score">${sure}/${CARDS.length}</div><p>Runde fertig. Alle Karten einmal geschafft.</p><button class="btn primary" type="button" id="cd-again">Neue Runde</button> <button class="btn" type="button" id="cd-reset">Fortschritt zurücksetzen</button></section>`;
-    $('#cd-again').addEventListener('click',()=>{ deck=null; viewCards(); });
-    $('#cd-reset').addEventListener('click',()=>{ S.cards={}; save(); deck=null; viewCards(); });
-    return;
+/* ---------- Karteikarten: Klausur-Stapel + eigene Stapel (von Alki erstellt) ---------- */
+let deck=null, flipped=false, CUR_DECK='std', NEWDECK=false, DECK_BUSY=false, DEL_DECK=false;
+const SUB={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+const usub=f=>f.replace(/([A-Z\)])(\d+)/g,(m,a,d)=>a+d.split('').map(x=>SUB[x]).join(''));
+function deckList(){ const hid=S.stdHidden||{}; return [{id:'std',title:'Klausur-Definitionen',cards:CARDS.filter(c=>!hid[c[0]])}].concat((S.decks||[]).map(d=>({id:d.id,title:d.title,cards:d.cards}))); }
+let EDIT_DECK=false, DEL_CARD=false;
+function knownMap(id){ if(id==='std') return S.cards; S.deckKnown=S.deckKnown||{}; return S.deckKnown[id]=S.deckKnown[id]||{}; }
+function deckTitle(topic){
+  let t=topic.replace(/^(bitte\s+)?(erstell|erstelle|mach|mache|gib)\s+(mir\s+)?(bitte\s+)?(ein\s+paar\s+|ein\s+)?(karteikarten|lernkarten|karten|flashcards)\s*(zu(r|m)?|über|für|zu\s+den|von)?\s*/i,'').replace(/[?.!]+$/,'').trim();
+  t=t.replace(/^(karteikarten|lernkarten|karten|flashcards)\s*(zu(r|m)?|über|für|von)?\s*/i,'').replace(/^(die|der|den|dem|das)\s+/i,'').replace(/^(thema|themen)\s+/i,'').trim();
+  if(!t) t=topic.trim(); t=t.replace(/^([A-Za-zäöüß]+?)en(?=\s+[A-Za-zÄÖÜäöü])/,'$1e'); return t.charAt(0).toUpperCase()+t.slice(1,60);
+}
+/* Notlösung ohne KI: Karten aus dem Lernstoff */
+function localDeck(topic){
+  const q=topic.toLowerCase(), out=[];
+  if(/homolog|reihe|methan|ethan|decan|namen|summenformel|alkane? (von|bis)/.test(q))
+    for(let n=1;n<=10;n++) out.push([ALKANES[n].name, `${usub('C'+(n>1?n:'')+'H'+(2*n+2))} · ${n} C-Atom${n>1?'e':''} · Sdp. ${dec(ALKANES[n].bp)} °C · bei 20 °C ${ALKANES[n].bp<20?'gasförmig':'flüssig'}`]);
+  const words=q.replace(/[^a-zäöüß0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>3&&!STOP.has(w)&&!/karte|erstell|mach/.test(w));
+  const strip=h=>h.replace(/<sub>(\d+)<\/sub>/g,(m,d)=>d.split('').map(x=>SUB[x]).join('')).replace(/<[^>]+>/g,'');
+  CARDS.forEach(c=>{ const t=(c[0]+' '+c[1]).toLowerCase(); if(words.some(w=>t.includes(w.slice(0,Math.max(4,w.length-2))))) out.push([strip(c[0]),strip(c[1])]); });
+  TF.forEach(x=>{ if(out.length>=16) return; const t=x[1].toLowerCase(); if(words.some(w=>t.includes(w.slice(0,Math.max(4,w.length-2))))) out.push([strip('Richtig oder falsch? '+x[1]), (x[2]?'Richtig. ':'Falsch. ')+strip(x[3])]); });
+  const seen=new Set(); return out.filter(c=>!seen.has(c[0])&&seen.add(c[0])).slice(0,16);
+}
+async function makeDeck(topic){
+  let cards=null, ai=false;
+  if(netCapable()){
+    try{ const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),45000);
+      const r=await fetch(BOT_URL.replace('/ask','/cards'),{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({topic}),signal:ctl.signal});
+      clearTimeout(to); const j=await r.json(); if(r.ok&&j.cards&&j.cards.length){ cards=j.cards.map(c=>[c.front,c.back]); ai=true; } }catch(e){}
   }
-  const c=deck[0];
-  app.innerHTML=`<header><span class="eyebrow">Definitionen · ${sure} von ${CARDS.length} sicher · noch ${deck.length} in dieser Runde</span><h1>Karteikarten</h1></header>
-   <button class="flash" type="button" id="cd-card" aria-live="polite">${flipped?`<span class="eyebrow">${c[0]}</span><span class="def">${c[1]}</span>`:`<span class="term">${c[0]}</span><span class="tap">Antippen zum Umdrehen</span>`}</button>
-   <div class="row" style="justify-content:center"><button class="btn" type="button" id="cd-no" style="flex:1">Nochmal</button><button class="btn primary" type="button" id="cd-ok" style="flex:1">Wusste ich</button></div>
-   <p class="muted" style="font-size:.88rem;text-align:center">Erst selbst laut definieren, dann umdrehen. Ehrlich bewerten.</p>`;
-  $('#cd-card').addEventListener('click',()=>{ flipped=!flipped; viewCards(); });
-  $('#cd-ok').addEventListener('click',()=>{ S.cards[c[0]]='ok'; save(); deck.shift(); flipped=false; viewCards(); });
-  $('#cd-no').addEventListener('click',()=>{ S.cards[c[0]]='no'; save(); deck.shift(); deck.splice(Math.min(3,deck.length),0,c); flipped=false; viewCards(); });
+  if(!cards){ cards=localDeck(topic); if(cards.length<3) return null; }
+  const d={id:'d'+Date.now().toString(36),title:deckTitle(topic),cards,at:Date.now(),ai};
+  S.decks=S.decks||[]; S.decks.unshift(d); save(); return d;
+}
+function openDeck(id){ CUR_DECK=id; deck=null; flipped=false; DEL_DECK=false; EDIT_DECK=false; if(location.hash==='#karten') viewCards(); else location.hash='#karten'; }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-deck]'); if(b){ e.preventDefault(); openDeck(b.dataset.deck); } });
+function removeCard(id,front){
+  if(id==='std'){ S.stdHidden=S.stdHidden||{}; S.stdHidden[front]=1; }
+  else { const d=(S.decks||[]).find(x=>x.id===id); if(d) d.cards=d.cards.filter(c=>c[0]!==front); }
+  const K=knownMap(id); delete K[front]; save();
+}
+function editHTML(D,isStd){
+  const rows=isStd
+    ? CARDS.map(c=>{ const hid=(S.stdHidden||{})[c[0]]; return `<div class="erow${hid?' hid':''}"><div class="etxt"><b>${c[0]}</b><span>${c[1]}</span></div><button class="btn small" type="button" data-hide="${esc(c[0])}">${hid?'Einblenden':'Ausblenden'}</button></div>`; }).join('')
+    : D.cards.map((c,i)=>`<div class="erow"><div class="etxt" style="flex:1"><input class="inp" data-ef="${i}" value="${esc(c[0])}" maxlength="120" aria-label="Vorderseite"><textarea class="inp" data-eb="${i}" rows="2" maxlength="300" aria-label="Rückseite">${esc(c[1])}</textarea></div><button class="xbtn" type="button" data-edel="${i}" aria-label="Karte löschen">🗑️</button></div>`).join('');
+  return `<section class="card" id="dk-editbox"><div class="row" style="justify-content:space-between"><div class="sec-label" style="margin:0">${isStd?'Klausur-Karten ein- und ausblenden':'Karten bearbeiten · Änderungen werden sofort gespeichert'}</div><button class="btn small" type="button" id="dk-editclose">Fertig</button></div>
+    <div class="elist">${rows}</div>
+    ${isStd?'':`<div class="sec-label" style="margin-top:14px">Eigene Karte hinzufügen</div><form id="dk-add" style="display:flex;flex-direction:column;gap:8px"><input id="dk-af" class="inp" maxlength="120" placeholder="Vorderseite, z. B. Nonan" autocomplete="off"><textarea id="dk-ab" class="inp" rows="2" maxlength="300" placeholder="Rückseite, z. B. C₉H₂₀ · 9 C-Atome"></textarea><button class="btn primary" type="submit">Karte hinzufügen</button></form>`}</section>`;
+}
+document.addEventListener('click',e=>{
+  if(!location.hash.startsWith('#karten')) return;
+  const h=e.target.closest('[data-hide]'), d=e.target.closest('[data-edel]');
+  if(e.target.id==='dk-editclose'){ EDIT_DECK=false; deck=null; viewCards(); return; }
+  if(h){ S.stdHidden=S.stdHidden||{}; const k=h.dataset.hide; const real=CARDS.find(c=>esc(c[0])===k||c[0]===k); const key=real?real[0]:k; if(S.stdHidden[key]) delete S.stdHidden[key]; else S.stdHidden[key]=1; save(); deck=null; viewCards(); return; }
+  if(d){ const D=(S.decks||[]).find(x=>x.id===CUR_DECK); if(!D) return; const i=+d.dataset.edel; const front=D.cards[i]&&D.cards[i][0]; D.cards.splice(i,1); if(front) delete knownMap(D.id)[front]; save(); deck=null; toast('Karte gelöscht'); viewCards(); }
+});
+document.addEventListener('input',e=>{
+  if(!location.hash.startsWith('#karten')) return;
+  const D=(S.decks||[]).find(x=>x.id===CUR_DECK); if(!D) return;
+  if(e.target.dataset.ef!=null){ const c=D.cards[+e.target.dataset.ef]; if(c){ c[0]=e.target.value; save(); deck=null; } }
+  if(e.target.dataset.eb!=null){ const c=D.cards[+e.target.dataset.eb]; if(c){ c[1]=e.target.value; save(); deck=null; } }
+});
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='dk-add') return; e.preventDefault();
+  const D=(S.decks||[]).find(x=>x.id===CUR_DECK); const f=$('#dk-af').value.trim(), b=$('#dk-ab').value.trim(); if(!D||!f||!b){ toast('Fülle Vorder- und Rückseite aus'); return; }
+  D.cards.push([f,b]); save(); deck=null; toast('Karte hinzugefügt'); viewCards(); const x=$('#dk-af'); if(x) x.focus();
+});
+function viewCards(){
+  const decks=deckList(); let D=decks.find(d=>d.id===CUR_DECK); if(!D){ CUR_DECK='std'; D=decks[0]; }
+  const K=knownMap(D.id), C=D.cards;
+  if(!deck){ const unknown=C.filter(c=>K[c[0]]!=='ok'), known=C.filter(c=>K[c[0]]==='ok'); deck=shuffle(unknown).concat(shuffle(known)); }
+  const sure=C.filter(c=>K[c[0]]==='ok').length;
+  const isStd=D.id==='std', show=t=>isStd?t:esc(t);
+  const head=`<header><span class="eyebrow">Karteikarten · ${esc(D.title)}</span><h1>Karteikarten</h1></header>
+   <section class="card"><div class="row" id="dk">${decks.map(d=>{ const k=knownMap(d.id), n=d.cards.filter(c=>k[c[0]]==='ok').length; return `<button class="chip" type="button" data-deck="${d.id}" aria-pressed="${d.id===D.id}">${d.id==='std'?'📚 ':'📇 '}${esc(d.title)} <span class="muted" style="font-size:.8em">${n}/${d.cards.length}</span></button>`; }).join('')}<button class="chip" type="button" id="dk-new">➕ Neu mit Alki</button></div>
+   ${NEWDECK?`<form class="chat-in" id="dk-form" style="margin-top:12px"><label for="dk-topic" class="sr">Thema</label><input id="dk-topic" class="inp" maxlength="120" placeholder="Thema, z. B. homologe Reihe der Alkane" autocomplete="off"><button class="btn primary" type="submit" ${DECK_BUSY?'disabled':''}>${DECK_BUSY?'Erstelle …':'Erstellen'}</button></form>${DECK_BUSY?'<p class="muted" style="margin:8px 0 0;font-size:.88rem">Alki erstellt deine Karteikarten, das dauert ein paar Sekunden …</p>':''}`:''}</section>`;
+  if(!deck.length){
+    app.innerHTML=head+`<section class="card"><div class="score">${sure}/${C.length}</div><p>Runde fertig. Alle Karten einmal geschafft.</p><div class="row"><button class="btn primary" type="button" id="cd-again">Neue Runde</button><button class="btn" type="button" id="cd-reset">Fortschritt zurücksetzen</button><button class="btn" type="button" id="dk-edit">✏️ Karten bearbeiten</button></div></section>`;
+    $('#cd-again').addEventListener('click',()=>{ deck=null; viewCards(); });
+    $('#cd-reset').addEventListener('click',()=>{ Object.keys(K).forEach(k=>delete K[k]); save(); deck=null; viewCards(); });
+  } else {
+    const c=deck[0];
+    app.innerHTML=head+`<p class="muted" style="margin:0;font-size:.88rem">${sure} von ${C.length} sicher · noch ${deck.length} in dieser Runde</p>
+     <button class="flash" type="button" id="cd-card" aria-live="polite">${flipped?`<span class="eyebrow">${show(c[0])}</span><span class="def">${show(c[1])}</span>`:`<span class="term">${show(c[0])}</span><span class="tap">Antippen zum Umdrehen</span>`}</button>
+     <div class="row" style="justify-content:center"><button class="btn" type="button" id="cd-no" style="flex:1">Nochmal</button><button class="btn primary" type="button" id="cd-ok" style="flex:1">Wusste ich</button></div>
+     <p class="muted" style="font-size:.88rem;text-align:center;margin:0">Erst selbst laut sagen, dann umdrehen. Ehrlich bewerten.</p>
+     <div class="row" style="justify-content:center"><button class="btn small" type="button" id="cd-del">${DEL_CARD?(isStd?'Wirklich ausblenden?':'Wirklich löschen?'):(isStd?'🙈 Karte ausblenden':'🗑️ Karte löschen')}</button><button class="btn small" type="button" id="dk-edit">✏️ Karten bearbeiten</button></div>`;
+    $('#cd-card').addEventListener('click',()=>{ flipped=!flipped; viewCards(); });
+    $('#cd-ok').addEventListener('click',()=>{ K[c[0]]='ok'; save(); deck.shift(); flipped=false; viewCards(); });
+    $('#cd-no').addEventListener('click',()=>{ K[c[0]]='no'; save(); deck.shift(); deck.splice(Math.min(3,deck.length),0,c); flipped=false; viewCards(); });
+    $('#cd-del').addEventListener('click',()=>{ if(!DEL_CARD){ DEL_CARD=true; viewCards(); setTimeout(()=>{ if(DEL_CARD){ DEL_CARD=false; if(location.hash==='#karten') viewCards(); } },4000); return; }
+      DEL_CARD=false; removeCard(D.id,c[0]); deck.shift(); flipped=false; toast(isStd?'Karte ausgeblendet':'Karte gelöscht'); viewCards(); });
+  }
+  if(EDIT_DECK) app.insertAdjacentHTML('beforeend',editHTML(D,isStd));
+  if(!isStd&&!EDIT_DECK) app.insertAdjacentHTML('beforeend',`<div class="row" style="justify-content:space-between"><span class="muted" style="font-size:.82rem">${(S.decks.find(d=>d.id===D.id)||{}).ai===false?'Aus dem Lernstoff der App erstellt':'Von Alki erstellt'} · ${C.length} Karten</span><button class="btn small" type="button" id="dk-del">${DEL_DECK?'Wirklich löschen?':'Stapel löschen'}</button></div>`);
+  const ed=$('#dk-edit'); if(ed) ed.addEventListener('click',()=>{ EDIT_DECK=!EDIT_DECK; viewCards(); if(EDIT_DECK){ const x=$('#dk-editbox'); if(x) x.scrollIntoView({behavior:'smooth'}); } });
+  $('#dk-new').addEventListener('click',()=>{ NEWDECK=!NEWDECK; viewCards(); const i=$('#dk-topic'); if(i) i.focus(); });
+  const f=$('#dk-form'); if(f) f.addEventListener('submit',async e=>{ e.preventDefault(); const t=$('#dk-topic').value.trim(); if(!t||DECK_BUSY) return; DECK_BUSY=true; viewCards();
+    const d=await makeDeck(t); DECK_BUSY=false; if(!d){ toast('Dazu konnte ich keine Karten erstellen'); viewCards(); return; } NEWDECK=false; toast(`${d.cards.length} Karteikarten erstellt`); openDeck(d.id); });
+  const del=$('#dk-del'); if(del) del.addEventListener('click',()=>{ if(!DEL_DECK){ DEL_DECK=true; viewCards(); setTimeout(()=>{ if(DEL_DECK){ DEL_DECK=false; if(location.hash==='#karten') viewCards(); } },4000); return; }
+    S.decks=S.decks.filter(d=>d.id!==D.id); if(S.deckKnown) delete S.deckKnown[D.id]; save(); DEL_DECK=false; openDeck('std'); });
 }
 function viewTasks(){
   app.innerHTML=`<header><span class="eyebrow">Wie in der Klausur</span><h1>Aufgaben</h1></header>
@@ -2008,7 +2103,7 @@ function route(){
   let nav='start';
   if(h.startsWith('thema-')){ viewTopic(+h.split('-')[1]); nav='start'; }
   else if(h==='klausur'){ viewExam(); nav='klausur'; }
-  else if(h==='karten'){ deck=null; flipped=false; viewCards(); nav='karten'; }
+  else if(h==='karten'){ deck=null; flipped=false; NEWDECK=false; viewCards(); nav='karten'; }
   else if(h==='aufgaben'){ viewTasks(); nav='aufgaben'; }
   else if(h==='spick'){ viewSpick(); nav='start'; }
   else if(h==='training'){ viewTrain(); nav='training'; }
