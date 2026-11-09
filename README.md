@@ -48,7 +48,7 @@ WebSocket-Nachrichten: `hello`, `who`, `quick`, `create`, `join`, `tcreate`, `tb
 Wichtig:
 - Die System-Adressauflösung hängt bei Render teils minutenlang. Der Server löst Adressen deshalb selbst über 8.8.8.8/1.1.1.1 auf.
 - Gemini 2.5 ist für neue Schlüssel nicht mehr verfügbar; Gemini 3 läuft mit `thinkingLevel: minimal`.
-- Die kostenlose Render-Datenbank läuft am 09.12.2026 ab, wenn sie nicht auf einen Bezahlplan umgestellt wird. Der Spielstand bleibt lokal trotzdem erhalten.
+- Der Cloud-Spielstand liegt seit 09.11.2026 bei Neon (Projekt „lern app“, Frankfurt, Free-Plan, läuft nicht ab). Die alte Render-Datenbank `alkane-saves` wird nicht mehr gebraucht.
 
 ## Updates ohne Battle-Abbruch
 
