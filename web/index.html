@@ -1376,7 +1376,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.7';
+const APP_VERSION='3.8';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1479,10 +1479,16 @@ function drawAdmin(){
    ${ADM.players?`<input id="adm-q" class="inp" placeholder="Name, ID oder Code suchen" value="${esc(ADM.q)}" autocomplete="off">
    <div class="flist">${list.map(p=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn">${esc(p.name)||'<i class="muted">ohne Name</i>'}</b><div class="ft"><span class="dot ${p.online?'online':'offline'}"></span>ID ${p.id.slice(0,8)}${p.code?' · '+p.code:''}${p.coins!=null?' · 🪙 '+p.coins:''}${p.banned&&Date.parse(p.banned)>Date.now()?' · 🚫 gebannt':''}</div></div><button class="btn small" type="button" data-admopen="${p.id}">Verwalten</button></div>`).join('')||'<p class="muted" style="margin:0">Niemand gefunden.</p>'}</div>`:'<p class="muted" style="margin:6px 0 0;font-size:.9rem">Alle Spieler mit ID, Code und Münzen. Tippe auf „Verwalten“, um Münzen, Namen oder Items zu ändern.</p>'}</section>`;
 }
+const ADM_KINDS={emote:'Emote',avatar:'Avatar',title:'Titel',color:'Namensfarbe'};
+function admOwnedHTML(p){
+  const list=(p.owned||[]).map(id=>SHOP.find(i=>i.id===id)).filter(i=>i&&i.price>0);
+  if(!list.length) return `<p class="muted" style="margin:0;font-size:.85rem">${p.owned?'Hat keine gekauften Items.':'Unbekannt. Tippe in der Admin-Liste auf „Aktualisieren“.'}</p>`;
+  return `<div class="muted" style="font-size:.8rem;margin-bottom:4px">${list.length} Items</div><div class="adm-items">${list.map(i=>`<span class="adm-chip">${ADM_KINDS[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}<button type="button" data-adm="rm" data-item="${esc(i.id)}" aria-label="Entfernen">✕</button></span>`).join('')}</div>
+    <div class="row" style="margin-top:6px"><button class="btn" type="button" data-adm="rmall">🗑️ Alle Items wegnehmen</button></div>`; }
+function admBanHTML(p){ return p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">🚫 Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>`:''; }
 function admSheet(id){
   const p=admFind(id); $('#adm-sheet')&&$('#adm-sheet').remove();
   const kinds={emote:'Emote',avatar:'Avatar',title:'Titel',color:'Namensfarbe'};
-  const ownedList=(p.owned||[]).map(id=>SHOP.find(i=>i.id===id)).filter(i=>i&&i.price>0);
   const opts=SHOP.filter(i=>i.price>0).map(i=>`<option value="${esc(i.id)}">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}</option>`).join('');
   const sh=el(`<div id="adm-sheet" class="adm-sheet" role="dialog" aria-modal="true" aria-label="Spieler verwalten"><div class="adm-box card">
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div class="row" style="gap:10px;flex-wrap:nowrap;min-width:0"><span class="av-big">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b style="font-size:1.15rem">${esc(p.name)||'ohne Name'}</b><div class="muted" style="font-size:.8rem;word-break:break-all">ID ${esc(p.id)}${p.code?'<br>Code '+esc(p.code):''}${p.coins!=null?' · 🪙 '+p.coins:''}${p.online?' · <span style="color:var(--ok,#3c9)">online</span>':''}</div></div></div><button class="xbtn" type="button" data-admx aria-label="Schließen">×</button></div>
@@ -1491,10 +1497,9 @@ function admSheet(id){
     <label class="eyebrow" for="adm-item">Item schenken</label><div class="row" style="flex-wrap:nowrap"><select id="adm-item" class="inp" style="flex:1;min-width:0;margin:0">${opts}</select><button class="btn" type="button" data-adm="item">Schenken</button></div>
     <div class="row"><button class="btn" type="button" data-adm="all">🎁 Alle Items schenken</button></div>
     <div class="eyebrow">Items des Spielers · tippe ✕ zum Entfernen</div>
-    ${ownedList.length?`<div class="adm-items">${ownedList.map(i=>`<span class="adm-chip">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}<button type="button" data-adm="rm" data-item="${esc(i.id)}" aria-label="Entfernen">✕</button></span>`).join('')}</div>
-    <div class="row"><button class="btn" type="button" data-adm="rmall">🗑️ Alle Items wegnehmen</button></div>`:`<p class="muted" style="margin:0;font-size:.85rem">${p.owned?'Hat keine gekauften Items.':'Unbekannt. Tippe in der Admin-Liste auf „Aktualisieren“.'}</p>`}
+    <div id="adm-own">${admOwnedHTML(p)}</div>
     <label class="eyebrow" for="adm-bn">Bannen</label>
-    ${p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">🚫 Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>`:''}
+    <div id="adm-banst">${admBanHTML(p)}</div>
     <div class="row" style="flex-wrap:nowrap"><input id="adm-bn" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" value="1" style="width:70px;flex:none;margin:0"><select id="adm-bu" class="inp" style="flex:1;min-width:0;margin:0"><option value="1">Sekunden</option><option value="60" selected>Minuten</option><option value="3600">Stunden</option><option value="86400">Tage</option></select><button class="btn primary" type="button" data-adm="ban">🚫 Bannen</button></div>
     <div class="row"><button class="btn" type="button" data-adm="unban">✅ Bann aufheben</button></div>
     <input id="adm-br" class="inp" maxlength="100" placeholder="Grund (optional)" style="margin:0">
@@ -1521,7 +1526,10 @@ function admSheet(id){
       if(a==='name') p.name=body.name;
       if(a==='ban') p.banned=j.until; if(a==='unban') p.banned=null;
       if(a==='rm'&&p.owned) p.owned=p.owned.filter(x=>x!==body.removeItems[0]); if(a==='rmall'&&p.owned) p.owned=p.owned.filter(id=>{ const it=SHOP.find(i=>i.id===id); return !it||it.price===0; });
-      if(['ban','unban','rm','rmall'].includes(a)){ admSheet(p.id); }
+      if(a==='all') p.owned=SHOP.map(i=>i.id);
+      if(a==='item') p.owned=[...new Set([...(p.owned||[]),...body.items])];
+      if(['all','item','rm','rmall'].includes(a)){ const o=$('#adm-own'); if(o) o.innerHTML=admOwnedHTML(p); }
+      if(a==='ban'||a==='unban'){ const bs=$('#adm-banst'); if(bs) bs.innerHTML=admBanHTML(p); }
       drawAdmin(); }).catch(()=>{ b.disabled=false; toast('Server nicht erreichbar'); });
   });
 }
