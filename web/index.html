@@ -192,6 +192,36 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .stitle{font-family:var(--f-display); font-weight:800; font-size:1rem; line-height:1.2; overflow-wrap:break-word; hyphens:auto}
 .inp{font:inherit; width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:var(--paper); color:var(--ink); margin-top:4px}
 .btn.big{padding:14px; font-size:1.05rem}
+/* Chat-Bot */
+.bot{display:flex; flex-direction:column; gap:12px}
+.bot-av{font-size:2rem; line-height:1; width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:var(--accent-soft)}
+.chat{display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow-y:auto; padding:2px}
+.msg{max-width:88%; padding:10px 13px; border-radius:14px; line-height:1.45; font-size:.97rem; overflow-wrap:break-word}
+.msg p{margin:.25em 0} .msg ul{margin:.3em 0; padding-left:1.2em} .msg li{margin:.15em 0}
+.msg.user{align-self:flex-end; background:var(--accent); color:var(--on-accent); border-bottom-right-radius:4px; white-space:pre-wrap}
+.msg.bot{align-self:flex-start; background:var(--paper-2); border:1px solid var(--line); border-bottom-left-radius:4px}
+.typing{display:flex; gap:4px; padding:14px}
+.typing span{width:7px; height:7px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.chat-in{display:flex; gap:8px; align-items:center}
+.chat-in .inp{margin:0; flex:1; min-width:0}
+.xlink{align-self:flex-start; border:0; background:none; color:var(--muted); font-size:.85rem; padding:0; text-decoration:underline}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+/* Freunde */
+.flist{display:flex; flex-direction:column; margin-top:6px}
+.frow{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line)}
+.frow:last-child{border-bottom:0}
+.frow .av{font-size:1.7rem; line-height:1}
+.frow .fn{display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.frow .ft{font-size:.78rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; vertical-align:middle; background:var(--line)}
+.dot.online{background:#2fbf5b} .dot.battle{background:#e0a21f}
+.xbtn{border:0; background:none; color:var(--muted); font-size:1.3rem; padding:4px 6px; line-height:1}
+.popup{position:fixed; left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); bottom:calc(78px + env(safe-area-inset-bottom,0px)); z-index:50; background:var(--paper); border:2px solid var(--accent); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); transform:translateY(160%); transition:transform .3s; max-width:520px; margin:0 auto}
+.popup.show{transform:none}
+.pop-in{display:flex; align-items:center; gap:12px}
+.pop-in .av{font-size:2.2rem; line-height:1}
 /* Battle */
 :root{--k0:#e21b3c; --k1:#1368ce; --k2:#c88a00; --k3:#26890c; --kfg:#ffffff}
 .bwait{display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
@@ -1158,6 +1188,11 @@ function viewStart(){
   <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.</p>
    <div class="plan">${PLAN.map(b=>`<div class="block"><div class="when"><b>${b.when}</b>${b.sub}</div><div class="what">${b.topics.map(id=>`<a class="pill${S.done[id]?' done':''}" href="#thema-${id}">${id} · ${TOPICS[id-1].title}</a>`).join('')}${b.extra}</div></div>`).join('')}</div></section>
   <section class="card"><h2>Themen der Klausur</h2><div class="topics" style="margin-top:6px">${TOPICS.map(t=>`<a class="topic-row${S.done[t.id]?' done':''}" href="#thema-${t.id}" style="text-decoration:none;color:inherit"><span class="tnum">${S.done[t.id]?'✓':t.id}</span><span class="tt">${t.title}<br><span class="ts">${t.short}</span></span><span class="arrow">→</span></a>`).join('')}</div></section>
+  <section class="card bot" id="bot"><div class="row" style="gap:10px"><span class="bot-av">🧪</span><div><h2 style="font-size:1.15rem">Frag Alki</h2><div class="muted" style="font-size:.85rem">Dein Chemie-Bot erklärt dir alles zu den Klausurthemen</div></div></div>
+   <div class="chat" id="chat"></div>
+   <div class="row" id="chat-sug">${BOT_SUGGEST.map(q=>`<button class="chip" type="button" data-sug>${q}</button>`).join('')}</div>
+   <form class="chat-in" id="chat-form"><label for="chat-q" class="sr">Deine Frage</label><input id="chat-q" class="inp" autocomplete="off" maxlength="500" placeholder="Frag einfach, z. B. Was ist ein Dipol?"><button class="btn primary" type="submit" id="chat-send">Senden</button></form>
+   ${BOT.msgs.length?'<button class="xlink" type="button" id="chat-clear">Chat leeren</button>':''}</section>
   ${S.exams.length?`<section class="card"><h2>Deine Probeklausuren</h2><div class="tbl"><table><tr><th>Wann</th><th>Ergebnis</th></tr>${S.exams.slice(-5).reverse().map(x=>`<tr><td>${x.d}</td><td>${x.r} von ${x.n} (${Math.round(x.r/x.n*100)} %)</td></tr>`).join('')}</table></div></section>`:''}`;
   const tick=()=>{ const ms=EXAM-new Date(); const e=$('#cd'); if(!e) return;
     if(ms<=0){ e.innerHTML='<div class="cd-unit"><span class="num">Heute!</span><span class="lbl">Viel Erfolg</span></div>'; return; }
@@ -1165,6 +1200,7 @@ function viewStart(){
     const u=(v,l)=>`<div class="cd-unit"><span class="num">${String(v).padStart(2,'0')}</span><span class="lbl">${l}</span></div>`;
     e.innerHTML=u(d,d===1?'Tag':'Tage')+u(h,h===1?'Stunde':'Stunden')+u(mi,mi===1?'Minute':'Minuten'); };
   tick(); clearInterval(timer); timer=setInterval(tick,10000);
+  initBot();
   $('#theme-btn').addEventListener('click',()=>{ const k=Object.keys(THEMES); S.theme=k[(k.indexOf(S.theme)+1)%k.length]; themeTouched=true; save(); applyTheme(); $('#theme-btn').textContent='Design: '+THEMES[S.theme]; });
 }
 function viewTopic(id){
@@ -1283,7 +1319,8 @@ const SHOP=[
  ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t})),
  ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
-function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; }
+function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
+  if(!S.pid){ try{ const a=new Uint8Array(10); crypto.getRandomValues(a); S.pid=[...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ S.pid=(Date.now().toString(16)+Math.random().toString(16).slice(2)).slice(0,20).padEnd(20,'0'); } save(); } }
 initProfile();
 function toast(html){ let t=$('#toast'); if(!t){ t=el('<div id="toast" class="toast" role="status"></div>'); document.body.appendChild(t); } t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('show'),1600); }
 function award(n,why){ S.coins=(S.coins||0)+n; save(); toast(`<b>+${n}</b> 🪙${why?' · '+why:''}`); document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins); }
@@ -1334,29 +1371,72 @@ function battleQuestions(){
   }
   return out;
 }
+const helloMsg=()=>({type:'hello',id:S.pid,name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true});
 function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
 function bConnect(then){
   if(B.ws&&B.ws.readyState===1){ then(); return; }
+  if(B.ws&&B.ws.readyState===0){ B.ws.addEventListener('open',()=>setTimeout(then,50),{once:true}); return; }
   B.phase='connecting'; B.msg='Verbinde mit dem Battle-Server …'; drawBattle();
   const slow=setTimeout(()=>{ if(B.phase==='connecting'){ B.msg='Der Server wird gerade aufgeweckt. Beim ersten Mal kann das bis zu einer Minute dauern.'; drawBattle(); } },3000);
   const ctl=('AbortController' in window)?new AbortController():null; const to=setTimeout(()=>ctl&&ctl.abort(),75000);
   fetch(BATTLE_HTTP,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(r=>r.json()).then(()=>{
     clearTimeout(to); let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return fail(); }
     B.ws=ws;
-    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true}); then(); };
+    ws.onopen=()=>{ clearTimeout(slow); bSend(helloMsg()); then(); };
     ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
-    ws.onclose=()=>{ B.ws=null; if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } };
+    ws.onclose=()=>{ if(B.ws===ws) B.ws=null; if(B.token && B.phase!=='lobby') bReconnect(); else { if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } setTimeout(bSilentConnect,5000); } };
     ws.onerror=()=>{};
   }).catch(fail);
   function fail(){ clearTimeout(slow); clearTimeout(to); B.phase='lobby'; B.msg= location.protocol==='https:'&&!/onrender\.com$/.test(location.hostname) ? 'Hier ist keine Online-Verbindung möglich. Battle geht in der App oder auf alkane-trainer.onrender.com.' : 'Server nicht erreichbar. Prüfe dein Internet und versuch es nochmal.'; drawBattle(); }
 }
+/* Wiederverbinden nach App-Wechsel: Platz bleibt 90 s frei */
+function bSaveSession(){ try{ localStorage.setItem('alkane-battle-session',JSON.stringify({code:B.code,token:B.token,ts:Date.now()})); }catch(e){} }
+function bClearSession(){ B.token=null; try{ localStorage.removeItem('alkane-battle-session'); }catch(e){} }
+function bReconnect(){
+  if(B.reconnecting||!B.token) return;
+  B.reconnecting=true; B.reTries=0; drawBattle();
+  const tryOnce=()=>{
+    if(!B.token){ B.reconnecting=false; return; }
+    if(B.reTries++>45){ B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Verbindung verloren. Das Battle ist leider vorbei.'; drawBattle(); return; }
+    let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return setTimeout(tryOnce,2000); }
+    B.ws=ws; let opened=false;
+    ws.onopen=()=>{ opened=true; bSend(helloMsg()); bSend({type:'resume',code:B.code,token:B.token}); };
+    ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
+    ws.onclose=()=>{ if(B.ws===ws) B.ws=null; if(B.reconnecting) setTimeout(tryOnce,2000); else if(B.token&&B.phase!=='lobby') bReconnect(); };
+    ws.onerror=()=>{};
+  };
+  tryOnce();
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && B.token && B.phase!=='lobby' && !(B.ws&&B.ws.readyState===1)){ B.reconnecting=false; bReconnect(); } });
 function bMsg(m){
   switch(m.type){
+    case 'resume_ok': {
+      B.reconnecting=false; Object.assign(B,{code:m.code,token:m.token,you:m.you,host:m.host,scores:m.scores,total:m.total,msg:''}); if(m.opp) B.opp=m.opp;
+      const st=m.state;
+      if(st==='lobby') B.phase='room';
+      else if(st==='prep'){ B.phase='matched'; if(m.host) bSend({type:'questions',list:battleQuestions()}); }
+      else if(st==='countdown'){ B.phase='countdown'; B.cdEnd=Date.now()+m.startIn; }
+      else if(st==='question') Object.assign(B,{phase:'question',q:m.q,qi:m.qi,limit:m.limit,qStart:Date.now()-m.elapsed,pick:m.myPick,oppDone:m.oppDone,reveal:null});
+      else if(st==='reveal') Object.assign(B,{phase:'reveal',qi:m.qi,reveal:m.reveal,myReady:m.myReady,oppReady:m.oppReady});
+      else if(st==='end'){ B.phase='end'; B.end=m.end; if(!B.awarded) bMsg(m.end); }
+      bSaveSession(); toast('Wieder verbunden'); break; }
+    case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Du warst zu lange weg. Das Battle ist leider vorbei.'; break;
+    case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); return;
+    case 'hi': B.onlineCount=m.online; return;
+    case 'friend_req': if(S.friends[m.from.id]){ bSend({type:'friend_ok',to:m.from.id}); return; } popup({kind:'friend',from:m.from}); return;
+    case 'friend_ok': S.friends[m.from.id]={name:m.from.name,avatar:m.from.avatar,title:m.from.title,color:m.from.color,since:Date.now()}; save(); toast(`${m.from.name} ist jetzt dein Freund`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
+    case 'friend_no': toast(`${m.from.name} hat abgelehnt`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
+    case 'invite': popup({kind:'invite',from:m.from}); return;
+    case 'invite_no': B.inviting=null; toast(`${m.from.name} hat abgelehnt`); drawSocial(); return;
+    case 'error_soft': B.inviting=null; toast(m.msg); drawSocial(); return;
+    case 'opp_away': B.oppAway=true; break;
+    case 'opp_back': B.oppAway=false; break;
     case 'searching': B.phase='searching'; break;
-    case 'room': B.phase='room'; B.code=m.code; break;
+    case 'room': B.phase='room'; B.code=m.code; B.token=m.token; bSaveSession(); break;
     case 'error': B.phase='lobby'; B.msg=m.msg; break;
     case 'cancelled': B.phase='lobby'; B.msg=''; break;
-    case 'matched': Object.assign(B,{phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,msg:''});
+    case 'matched': Object.assign(B,{phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,token:m.token,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,oppAway:false,awarded:false,msg:''}); bSaveSession();
+      B.inviting=null; if(!location.hash.startsWith('#battle')) location.hash='#battle';
       if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} }
       if(m.host) bSend({type:'questions',list:battleQuestions()}); break;
     case 'start': B.phase='countdown'; B.total=m.total; B.cdEnd=Date.now()+m.in; break;
@@ -1364,13 +1444,70 @@ function bMsg(m){
     case 'opp_answered': B.oppDone=true; break;
     case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; B.myReady=false; B.oppReady=false; if(m.picks[B.you]===m.a) B.correct++; break;
     case 'opp_ready': B.oppReady=true; break;
-    case 'end': { B.phase='end'; B.end=m; B.scores=m.scores; const res=m.winner===-1?'d':(m.winner===B.you?'w':'l'); S.bstats[res]++; save();
+    case 'end': { B.phase='end'; B.end=m; B.scores=m.scores; if(B.awarded) break; B.awarded=true; const res=m.winner===-1?'d':(m.winner===B.you?'w':'l'); S.bstats[res]++; save();
       const bonus={w:60,d:30,l:15}[res]+B.correct*5; award(bonus,{w:'Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
     case 'opp_rematch': B.oppRematch=true; break;
-    case 'opp_left': if(B.phase!=='end'){ B.phase='lobby'; B.msg='Dein Gegner hat das Battle verlassen.'; } else B.oppLeft=true; break;
+    case 'opp_left': bClearSession(); if(B.phase!=='end'){ B.phase='lobby'; B.msg='Dein Gegner hat das Battle verlassen.'; } else B.oppLeft=true; break;
     case 'emote': floatEmote(m.e, m.from===B.you); return;
   }
   drawBattle();
+}
+/* Anfragen und Herausforderungen als Popup über allem */
+const POP=[];
+function popup(item){ POP.push(item); if(navigator.vibrate){ try{navigator.vibrate([80,50,80]);}catch(e){} } showPopup(); }
+function showPopup(){
+  let box=$('#popup'); if(!box){ box=el('<div id="popup" class="popup" role="dialog" aria-live="assertive"></div>'); document.body.appendChild(box);
+    box.addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(!b) return; const it=POP.shift(); const yes=b.dataset.p==='yes';
+      if(it.kind==='friend'){ if(yes){ S.friends[it.from.id]={name:it.from.name,avatar:it.from.avatar,title:it.from.title,color:it.from.color,since:Date.now()}; save(); toast(`${it.from.name} ist jetzt dein Freund`); } bSend({type:yes?'friend_ok':'friend_no',to:it.from.id}); }
+      if(it.kind==='invite'){ if(yes){ if(!location.hash.startsWith('#battle')) location.hash='#battle'; bSend({type:'invite_ok',to:it.from.id}); } else bSend({type:'invite_no',to:it.from.id}); }
+      drawSocial(); showPopup(); }); }
+  const it=POP[0]; if(!it){ box.classList.remove('show'); return; }
+  const f=it.from;
+  box.innerHTML=`<div class="pop-in"><span class="av">${AVATAR[f.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b><span ${nameStyle(f.color)}>${f.name}</span></b><div class="muted" style="font-size:.85rem">${it.kind==='invite'?'fordert dich zum Battle heraus! ⚔️':'möchte mit dir befreundet sein'}</div></div></div>
+    <div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-p="no" style="flex:1">Ablehnen</button><button class="btn primary" type="button" data-p="yes" style="flex:1">${it.kind==='invite'?'Los geht\'s':'Annehmen'}</button></div>`;
+  box.classList.add('show');
+}
+/* Beim App-Start still verbinden, damit Freunde einen online sehen */
+function netCapable(){ return location.protocol==='file:' || /onrender\.com$/.test(location.hostname) || location.hostname==='localhost'; }
+function bSilentConnect(){
+  if(!netCapable() || (B.ws&&B.ws.readyState<=1)) return;
+  fetch(BATTLE_HTTP,{cache:'no-store'}).then(r=>r.json()).then(()=>{
+    if(B.ws&&B.ws.readyState<=1) return;
+    const ws=new WebSocket(BATTLE_WS); B.ws=ws;
+    ws.onopen=()=>{ bSend(helloMsg()); bWho(); };
+    ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
+    ws.onclose=()=>{ if(B.ws===ws) B.ws=null; if(B.token&&B.phase!=='lobby') bReconnect(); else setTimeout(bSilentConnect,15000); };
+    ws.onerror=()=>{};
+  }).catch(()=>setTimeout(bSilentConnect,30000));
+}
+setTimeout(bSilentConnect,1500);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && !(B.ws&&B.ws.readyState<=1) && !B.token) bSilentConnect(); });
+function bWho(){ bSend({type:'who',friends:Object.keys(S.friends)}); }
+setInterval(()=>{ if(location.hash.startsWith('#battle') && B.ws && B.ws.readyState===1 && ['lobby','connecting','searching','room'].includes(B.phase)) bWho(); },8000);
+function drawSocial(){
+  const box=$('#b-social'); if(!box) return;
+  B.sent=B.sent||new Set();
+  const conn=B.ws&&B.ws.readyState===1, wm=B.whoMap||{};
+  const fr=Object.entries(S.friends).map(([id,f])=>({id,...f,st:wm[id]?wm[id].status:'offline'})).sort((a,b)=>(a.st==='offline')-(b.st==='offline')||a.name.localeCompare(b.name));
+  const others=(B.who||[]).filter(p=>!S.friends[p.id]);
+  const dot=st=>`<span class="dot ${st}"></span>`;
+  const stTxt={online:'online',battle:'im Battle',offline:'offline'};
+  const row=(p,act)=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn"><span ${nameStyle(p.color)}>${p.name}</span></b><div class="ft">${dot(p.st||p.status)}${stTxt[p.st||p.status]} · ${p.title||''}</div></div>${act}</div>`;
+  box.innerHTML=`<section class="card"><div class="row" style="justify-content:space-between"><div class="sec-label" style="margin:0">Freunde · ${fr.filter(f=>f.st!=='offline').length} online</div>${conn?'':'<span class="muted" style="font-size:.8rem">nicht verbunden</span>'}</div>
+     <div class="flist">${fr.length?fr.map(f=>row(f, B.unf===f.id?`<button class="btn small" type="button" data-unf2="${f.id}">Wirklich entfernen?</button>`:
+        (f.st==='online'?(B.inviting===f.id?'<span class="muted" style="font-size:.85rem">Warte …</span>':`<button class="btn small primary" type="button" data-inv="${f.id}">⚔️ Battle</button>`):'')+`<button class="xbtn" type="button" data-unf="${f.id}" aria-label="Freund entfernen">×</button>`)).join(''):'<p class="muted" style="margin:6px 0 0;font-size:.9rem">Noch keine Freunde. Füg unten jemanden hinzu, der gerade online ist.</p>'}</div></section>
+   <section class="card"><div class="sec-label">Gerade online · ${others.length}</div>
+     <div class="flist">${!conn?'<p class="muted" style="margin:0;font-size:.9rem">Verbinde …</p>':others.length?others.map(p=>row(p, B.sent.has(p.id)?'<span class="muted" style="font-size:.85rem">Angefragt</span>':`<button class="btn small" type="button" data-add="${p.id}">+ Freund</button>`+(p.status==='online'?(B.inviting===p.id?'':`<button class="btn small primary" type="button" data-inv="${p.id}">⚔️</button>`):''))).join(''):'<p class="muted" style="margin:0;font-size:.9rem">Gerade ist niemand sonst online.</p>'}</div></section>`;
+}
+function socialClick(e){
+  const add=e.target.closest('[data-add]'), inv=e.target.closest('[data-inv]'), unf=e.target.closest('[data-unf]'), unf2=e.target.closest('[data-unf2]');
+  if(!add&&!inv&&!unf&&!unf2) return false;
+  B.sent=B.sent||new Set();
+  if(add){ if(!S.name){ toast('Gib zuerst deinen Namen ein'); return true; } bSend({type:'friend_req',to:add.dataset.add}); B.sent.add(add.dataset.add); toast('Anfrage gesendet'); }
+  if(inv){ if(!S.name){ toast('Gib zuerst deinen Namen ein'); return true; } B.inviting=inv.dataset.inv; bSend({type:'invite',to:inv.dataset.inv}); toast('Herausforderung gesendet'); setTimeout(()=>{ if(B.inviting===inv.dataset.inv){ B.inviting=null; drawSocial(); } },30000); }
+  if(unf){ B.unf=unf.dataset.unf; setTimeout(()=>{ B.unf=null; drawSocial(); },4000); }
+  if(unf2){ delete S.friends[unf2.dataset.unf2]; save(); B.unf=null; }
+  drawSocial(); return true;
 }
 function floatEmote(e,mine){ let box=$('#emo-layer'); if(!box){ box=el('<div id="emo-layer" class="emo-layer" aria-hidden="true"></div>'); document.body.appendChild(box); } const f=el(`<span class="emo-fly ${mine?'me':'opp'}">${EMOTE[e]||''}</span>`); f.style.left=(mine?10:55)+Math.random()*30+'%'; box.appendChild(f); setTimeout(()=>f.remove(),2200); }
 function playerChip(p,score,side,extra){ return `<div class="pchip ${side}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b class="pn"><span ${nameStyle(p.color)}>${p.name||'Spieler'}</span></b><div class="pt">${p.title||''}</div></div><div class="ps">${score}${extra||''}</div></div>`; }
@@ -1390,11 +1527,12 @@ function drawBattle(){
       <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
       <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
+      <div id="b-social"></div>
       <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
   } else {
     const opp=B.opp||{name:'Gegner'};
     const s0=B.scores[B.you], s1=B.scores[1-B.you];
-    h=`<div class="pbar">${playerChip(me,s0,'me')}<span class="vs">VS</span>${playerChip(opp,s1,'opp',B.phase==='question'&&B.oppDone?'<span class="odone">✓</span>':'')}</div>`;
+    h=`${B.reconnecting?'<div class="expl" style="text-align:center">Verbindung weg, verbinde neu …</div>':''}${B.oppAway?`<div class="warn" style="text-align:center">${opp.name} ist kurz weg und hat 90 Sekunden, um zurückzukommen.</div>`:''}<div class="pbar">${playerChip(me,s0,'me')}<span class="vs">VS</span>${playerChip(opp,s1,'opp',B.phase==='question'&&B.oppDone?'<span class="odone">✓</span>':'')}</div>`;
     if(B.phase==='matched') h+=`<section class="card bwait"><div class="spin"></div><b>Gegner gefunden: ${opp.name}</b><p class="muted" style="margin:0">Fragen werden vorbereitet …</p></section>`;
     if(B.phase==='countdown') h+=`<section class="card bwait"><span class="eyebrow">Gleich geht's los</span><div class="bcode" id="b-cd">3</div></section>`;
     if(B.phase==='question'||B.phase==='reveal'){
@@ -1417,12 +1555,14 @@ function drawBattle(){
     if(B.phase!=='end') h+=`<div class="emobar">${owned.map(k=>`<button type="button" class="emo" data-e="${k}" aria-label="Emote senden">${EMOTE[k]}</button>`).join('')}<a class="emo more" href="#shop" aria-label="Mehr Emotes im Shop">+</a></div>`;
   }
   app.innerHTML=h;
+  drawSocial(); if(B.phase==='lobby') bWho();
   if(B.phase==='question'){ const sec=$('#b-sec'); const tick=()=>{ const left=Math.max(0,Math.ceil((B.limit-(Date.now()-B.qStart))/1000)); if(sec) sec.textContent=left+' s'; }; tick(); B.timer=setInterval(tick,250);
     const tb=$('#b-tb'); if(tb){ tb.style.animationDelay=-(Date.now()-B.qStart)+'ms'; } }
   if(B.phase==='countdown'){ const cd=$('#b-cd'); const tick=()=>{ if(cd) cd.textContent=Math.max(1,Math.ceil((B.cdEnd-Date.now())/1000)); }; tick(); B.timer=setInterval(tick,200); }
 }
 function battleClick(e){
   if(!location.hash.startsWith('#battle')) return;
+  if(socialClick(e)) return;
   const nm=$('#b-name'); if(nm){ S.name=nm.value.trim().slice(0,16); save(); }
   const b=e.target.closest('[data-b]'), k=e.target.closest('.kopt'), em=e.target.closest('[data-e]');
   if(k && B.phase==='question' && B.pick<0){ B.pick=+k.dataset.k; bSend({type:'answer',qi:B.qi,i:B.pick}); drawBattle(); return; }
@@ -1433,13 +1573,63 @@ function battleClick(e){
   if(a==='quick'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'quick'})); }
   if(a==='create'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'create'})); }
   if(a==='join'){ if(needName()) return; const c=($('#b-code').value||'').trim(); if(!/^\d{4}$/.test(c)){ B.msg='Der Code hat 4 Ziffern.'; drawBattle(); return; } B.msg=''; bConnect(()=>bSend({type:'join',code:c})); }
-  if(a==='cancel'){ bSend({type:'cancel'}); B.phase='lobby'; drawBattle(); }
+  if(a==='cancel'){ bSend({type:'cancel'}); bClearSession(); B.phase='lobby'; drawBattle(); }
   if(a==='ready'){ if(B.phase==='reveal'&&!B.myReady){ B.myReady=true; bSend({type:'ready',qi:B.qi}); drawBattle(); } return; }
   if(a==='rematch'){ B.myRematch=true; bSend({type:'rematch'}); drawBattle(); }
-  if(a==='leave'){ bSend({type:'leave'}); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); drawBattle(); }
+  if(a==='leave'){ bSend({type:'leave'}); bClearSession(); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); drawBattle(); }
 }
 function viewBattle(){ if(B.phase==='end'&&B.oppLeft) B.phase='lobby'; drawBattle(); }
-function leaveBattleIfAway(){ if(!location.hash.startsWith('#battle') && !location.hash.startsWith('#shop') && B.ws && !['lobby'].includes(B.phase)){ bSend({type:'leave'}); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); } }
+function leaveBattleIfAway(){ if(!location.hash.startsWith('#battle') && !location.hash.startsWith('#shop') && B.ws && !['lobby'].includes(B.phase)){ bSend({type:'leave'}); bClearSession(); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); } }
+
+/* ---------- KI-Bot „Alki“ ---------- */
+const BOT_URL='https://alkane-battle.onrender.com/ask';
+const BOT_SUGGEST=['Wie benenne ich verzweigte Alkane?','Warum löst sich Hexan nicht in Wasser?','Was sind Isomere?','Erklär mir Van-der-Waals-Kräfte'];
+const BOT={msgs:[],busy:false};
+try{ BOT.msgs=JSON.parse(localStorage.getItem('alkane-bot')||'[]').slice(-20); }catch(e){}
+function botSave(){ try{ localStorage.setItem('alkane-bot',JSON.stringify(BOT.msgs.slice(-20))); }catch(e){} }
+function esc(t){ return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function md(t){ // **fett** und "- " Listen, sonst reiner Text
+  const lines=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split('\n'); let out='', inList=false;
+  lines.forEach(l=>{ const m=l.match(/^\s*[-•*]\s+(.*)/); if(m){ if(!inList){ out+='<ul>'; inList=true; } out+='<li>'+m[1]+'</li>'; } else { if(inList){ out+='</ul>'; inList=false; } if(l.trim()) out+='<p>'+l+'</p>'; } });
+  if(inList) out+='</ul>'; return out; }
+/* Ersatz ohne KI: passende Stellen aus dem Lernstoff suchen */
+let KB=null;
+function buildKB(){ KB=[]; const strip=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  TOPICS.forEach(t=>{ const parts=t.html.split(/<h3>/); parts.forEach((p,i)=>{ const title=i?strip(p.split('</h3>')[0]):t.title; const body=strip(i?p.split('</h3>').slice(1).join(' '):p); if(body.length>40) KB.push({t:t.id,title,body}); }); });
+  CARDS.forEach(c=>KB.push({t:0,title:c[0],body:strip(c[0]+': '+c[1])})); }
+const STOP=new Set('der die das und oder ist sind ein eine einen was wie warum wieso weshalb wer wo mir mich ich du bei mit von zu im in am an auf für den dem des es sich nicht nur auch man kann erklär erkläre erklären bitte mal noch so hat haben wird werden'.split(' '));
+function localAnswer(q){ if(!KB) buildKB();
+  const words=q.toLowerCase().replace(/[^a-zäöüß0-9\- ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w));
+  if(!words.length) return 'Stell mir eine Frage zu einem Klausurthema, z. B. „Was ist eine homologe Reihe?“';
+  const sc=KB.map(k=>{ const tl=k.title.toLowerCase(), bl=k.body.toLowerCase(); let s=0; words.forEach(w=>{ const st=w.slice(0,Math.max(4,w.length-2)); if(tl.includes(st)) s+=4; const c=bl.split(st).length-1; s+=Math.min(c,3); }); return {k,s}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
+  if(!sc.length) return 'Dazu habe ich im Lernstoff nichts gefunden. Versuch es mit einem Fachbegriff, z. B. „Isomere“, „Elektronegativität“ oder „Siedetemperatur“.';
+  return sc.map(x=>`**${x.k.title}**${x.k.t?` (Thema ${x.k.t})`:''}\n${x.k.body.length>520?x.k.body.slice(0,520).replace(/\s\S*$/,'')+' …':x.k.body}`).join('\n\n')+'\n\n(Antwort aus dem Lernstoff der App)'; }
+function drawChat(){ const c=$('#chat'); if(!c) return;
+  c.innerHTML=BOT.msgs.length?BOT.msgs.map(m=>`<div class="msg ${m.role}">${m.role==='bot'?md(m.text):esc(m.text)}</div>`).join('')+(BOT.busy?'<div class="msg bot typing"><span></span><span></span><span></span></div>':''):'<div class="msg bot"><p>Hi, ich bin <b>Alki</b>! Frag mich alles zu Alkanen: Benennen, Isomere, Polarität, Wechselwirkungen, Formeln. Ich erkläre es dir Schritt für Schritt.</p></div>';
+  const sug=$('#chat-sug'); if(sug) sug.hidden=BOT.msgs.length>0;
+  c.scrollTop=c.scrollHeight; }
+async function botAsk(q){
+  q=q.trim(); if(!q||BOT.busy) return;
+  BOT.msgs.push({role:'user',text:q}); BOT.busy=true; drawChat(); botSave();
+  let answer=null;
+  if(netCapable()){
+    try{
+      const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),70000);
+      const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:BOT.msgs.slice(-12)}),signal:ctl.signal});
+      clearTimeout(to); const j=await r.json();
+      if(r.ok&&j.answer) answer=j.answer;
+      else if(r.status===429) answer=j.error;
+    }catch(e){}
+  }
+  if(!answer) answer=localAnswer(q);
+  BOT.busy=false; BOT.msgs.push({role:'bot',text:answer}); botSave(); drawChat();
+  if(navigator.vibrate){ try{navigator.vibrate(20);}catch(e){} }
+}
+function initBot(){ drawChat();
+  const f=$('#chat-form'); if(!f) return;
+  f.addEventListener('submit',e=>{ e.preventDefault(); const i=$('#chat-q'); const q=i.value; i.value=''; botAsk(q); });
+  $('#chat-sug').addEventListener('click',e=>{ const b=e.target.closest('[data-sug]'); if(b) botAsk(b.textContent); });
+  const cl=$('#chat-clear'); if(cl) cl.addEventListener('click',()=>{ BOT.msgs=[]; botSave(); cl.remove(); drawChat(); }); }
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
@@ -1555,7 +1745,7 @@ function route(){
 }
 window.addEventListener('hashchange',route);
 app.addEventListener('click',battleClick);
-app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ S.name=e.target.value.trim().slice(0,16); save(); } });
+app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ S.name=e.target.value.trim().slice(0,16); save(); clearTimeout(B.nameT); B.nameT=setTimeout(()=>bSend(helloMsg()),800); } });
 route();
 </script>
 

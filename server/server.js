@@ -1,20 +1,78 @@
 // Alkane Battle: 1-gegen-1 im Kahoot-Stil.
 // Der Host-Client erzeugt die Fragen, der Server verteilt sie, misst die Zeit und zählt die Punkte.
+// Wer kurz die App wechselt, behält 90 Sekunden lang seinen Platz und kann wieder einsteigen.
 const http = require('http');
+const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 10000;
-const LIMIT_MS = 20000;      // Zeit pro Frage
-const READY_MS = 5 * 60 * 1000; // spätestens nach 5 Minuten geht es weiter
-const START_MS = 3500;       // Countdown vor der ersten Frage
+const LIMIT_MS = 20000;            // Zeit pro Frage
+const READY_MS = 5 * 60 * 1000;    // spätestens nach 5 Minuten geht es weiter
+const START_MS = 3500;             // Countdown vor der ersten Frage
+const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungsabbruch frei
 const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail']);
 
 const rooms = new Map();     // code -> room
 let waiting = null;          // Spieler in der Schnellsuche
+const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade die App offen hat)
 
+// ---------- KI-Bot (Google Gemini) ----------
+const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+const SYSTEM = `Du bist "Alki", ein freundlicher Chemie-Nachhilfelehrer in einer Lern-App.
+Der Schüler (ca. 10. Klasse, Waldorfschule) schreibt bald eine Chemieklausur über Alkane mit diesen Themen:
+1. Homologe Reihe der Alkane (CnH2n+2, Methan bis Decan)
+2. Verzweigte Alkane: Benennung nach IUPAC und Zeichnen
+3. Isomerie
+4. Elektronegativität und Polarität (polar, unpolar, Partialladungen); in der App gilt: ΔEN unter 0,5 unpolar, 0,5 bis 1,7 polar, über 1,7 ionisch
+5. Zwischenmolekulare Wechselwirkungen (Van-der-Waals-Kräfte, Wasserstoffbrücken: Entstehung, Anwendung)
+6. Eigenschaften der Alkane (Löslichkeit, Siedetemperatur, Viskosität) und ihre Veränderung in der Reihe
+7. Formelschreibweisen (Summen-, Struktur-, Halbstruktur-, Skelettformel) und Definitionen
+Regeln:
+- Antworte immer auf Deutsch, mit ä, ö, ü und ß, locker und ermutigend, aber fachlich korrekt.
+- Erkläre einfach, Schritt für Schritt, mit einem konkreten Beispiel. Bei Begründungen nutze Je-desto-Ketten.
+- Halte dich kurz: höchstens etwa 150 Wörter, außer der Schüler möchte ausdrücklich mehr.
+- Formeln mit Unicode-Tiefstellung schreiben, z. B. C₆H₁₄, CH₃–CH₂–CH₃.
+- Formatierung nur so: **fett** für Fachbegriffe und Aufzählungen mit "- " am Zeilenanfang. Keine Tabellen, keine Überschriften.
+- Wenn du dir unsicher bist, sag es ehrlich. Erfinde keine Fakten.
+- Bei Fragen ohne Chemie-Bezug antworte kurz und lenke freundlich zurück zum Lernen.`;
+const rate = new Map(); // IP -> [Zeitstempel]
+function limited(ip) {
+  const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
+  list.push(now); rate.set(ip, list);
+  return list.length > 20;
+}
+async function askGemini(messages) {
+  const contents = messages.slice(-12).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 2000) }] }));
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY },
+    body: JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig: { temperature: 0.4, maxOutputTokens: 900 } })
+  });
+  const j = await r.json();
+  if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+  const text = (((j.candidates || [])[0] || {}).content || {}).parts;
+  return (text || []).map(p => p.text || '').join('').trim();
+}
+
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Cache-Control': 'no-store' };
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' });
-  res.end(JSON.stringify({ ok: true, online: wss.clients.size, rooms: rooms.size }));
+  const json = (code, obj) => { res.writeHead(code, { ...CORS, 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); };
+  if (req.method === 'OPTIONS') { res.writeHead(204, CORS); return res.end(); }
+  if (req.method === 'POST' && req.url.startsWith('/ask')) {
+    let body = '';
+    req.on('data', c => { body += c; if (body.length > 40000) req.destroy(); });
+    req.on('end', async () => {
+      if (!GEMINI_KEY) return json(503, { error: 'no_key' });
+      const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0];
+      if (limited(ip)) return json(429, { error: 'Zu viele Fragen auf einmal. Warte kurz.' });
+      let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
+      if (!Array.isArray(m.messages) || !m.messages.length) return json(400, { error: 'no_messages' });
+      try { const answer = await askGemini(m.messages); json(200, { answer: answer || 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' }); }
+      catch (e) { console.log('Gemini-Fehler:', e.message); json(502, { error: 'ai_failed' }); }
+    });
+    return;
+  }
+  json(200, { ok: true, online: online.size, rooms: rooms.size, ai: !!GEMINI_KEY });
 });
 const wss = new WebSocketServer({ server, maxPayload: 600 * 1024 });
 
@@ -22,16 +80,23 @@ const send = (ws, msg) => { if (ws && ws.readyState === 1) ws.send(JSON.stringif
 const both = (room, fn) => room.players.forEach((p, i) => p && send(p, fn(i)));
 const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p.color });
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
+const allReady = room => room.players.every(p => p && p.canReady);
+const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
 
 function newCode() {
   let c; do { c = String(1000 + Math.floor(Math.random() * 9000)); } while (rooms.has(c));
   return c;
 }
+function seat(room, ws, slot) {
+  ws.slot = slot; ws.room = room; ws.token = ws.token || crypto.randomBytes(12).toString('hex');
+  room.players[slot] = ws;
+}
 
 function startMatch(room) {
-  room.state = 'prep'; room.scores = [0, 0]; room.qi = -1; room.questions = null; room.rematch = [false, false];
-  room.players.forEach((p, i) => { p.slot = i; p.room = room; });
-  both(room, i => ({ type: 'matched', code: room.code, you: i, host: i === 0, opp: profile(room.players[1 - i]) }));
+  room.state = 'prep'; room.scores = [0, 0]; room.qi = -1; room.questions = null; room.rematch = [false, false]; room.lastReveal = null; room.end = null;
+  room.grace = room.grace || [null, null];
+  room.players.forEach((p, i) => seat(room, p, i));
+  both(room, i => ({ type: 'matched', code: room.code, token: room.players[i].token, you: i, host: i === 0, opp: profile(room.players[1 - i]) }));
 }
 
 function nextQuestion(room) {
@@ -52,40 +117,111 @@ function reveal(room) {
   const gained = room.answers.map(a => (a && a.i === q.a) ? Math.round(500 + 500 * Math.max(0, 1 - a.ms / LIMIT_MS)) : 0);
   room.scores = room.scores.map((s, i) => s + gained[i]);
   room.ready = [false, false];
-  both(room, () => ({ type: 'reveal', auto: !room.players.every(p => p && p.canReady), qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores }));
-  // Weiter erst, wenn beide die Lösung gelesen haben (oder nach 5 Minuten)
-  // Alte App-Versionen kennen den Weiter-Knopf nicht: dann wie früher nach 5 s weiter
-  const allReady = room.players.every(p => p && p.canReady);
-  room.timer = setTimeout(() => nextQuestion(room), allReady ? READY_MS : 5000);
+  room.lastReveal = { type: 'reveal', auto: !allReady(room), qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores };
+  both(room, () => room.lastReveal);
+  // Weiter erst, wenn beide die Lösung gelesen haben (oder nach 5 Minuten). Alte App-Versionen: nach 5 s.
+  room.timer = setTimeout(() => nextQuestion(room), allReady(room) ? READY_MS : 5000);
 }
 
 function endMatch(room) {
   room.state = 'end';
   const [a, b] = room.scores;
-  both(room, () => ({ type: 'end', scores: room.scores, winner: a === b ? -1 : (a > b ? 0 : 1) }));
+  room.end = { type: 'end', scores: room.scores, winner: a === b ? -1 : (a > b ? 0 : 1) };
+  both(room, () => room.end);
 }
 
+function closeRoom(room, except) {
+  clearTimeout(room.timer); (room.grace || []).forEach(t => clearTimeout(t));
+  room.players.forEach(p => { if (p && p !== except) { p.room = null; send(p, { type: 'opp_left' }); } });
+  rooms.delete(room.code);
+}
+
+// Bewusst verlassen (Knopf, anderer Tab): sofort raus
 function leave(ws) {
   if (waiting === ws) waiting = null;
   const room = ws.room; if (!room) return;
   ws.room = null;
-  clearTimeout(room.timer);
-  const other = room.players.find(p => p && p !== ws);
-  if (other) { other.room = null; send(other, { type: 'opp_left' }); }
-  rooms.delete(room.code);
+  closeRoom(room, ws);
+}
+
+// Verbindung abgerissen (App im Hintergrund): Platz freihalten
+function dropped(ws) {
+  if (waiting === ws) waiting = null;
+  const room = ws.room; if (!room || !rooms.has(room.code)) return;
+  const slot = ws.slot;
+  if (room.players[slot] !== ws) return;          // schon durch neue Verbindung ersetzt
+  room.grace = room.grace || [null, null];
+  clearTimeout(room.grace[slot]);
+  send(room.players[1 - slot], { type: 'opp_away' });
+  room.grace[slot] = setTimeout(() => { if (room.players[slot] === ws) closeRoom(room, ws); }, GRACE_MS);
+}
+
+function resume(ws, m) {
+  const room = rooms.get(clean(m.code, 4));
+  const slot = room ? room.players.findIndex(p => p && p.token && p.token === m.token) : -1;
+  if (!room || slot < 0) return send(ws, { type: 'resume_fail' });
+  const old = room.players[slot];
+  ws.token = old.token; ws.name = old.name; ws.avatar = old.avatar; ws.title = old.title; ws.color = old.color; ws.canReady = old.canReady;
+  old.room = null; try { old.terminate(); } catch {}
+  seat(room, ws, slot);
+  clearTimeout((room.grace || [])[slot]);
+  const other = room.players[1 - slot];
+  send(other, { type: 'opp_back' });
+  const st = { type: 'resume_ok', code: room.code, token: ws.token, you: slot, host: slot === 0, state: room.state || 'lobby', scores: room.scores || [0, 0], total: room.questions ? room.questions.length : 10 };
+  if (other) st.opp = profile(other);
+  if (room.state === 'countdown') st.startIn = Math.max(0, START_MS - (Date.now() - room.cdStart));
+  if (room.state === 'question') {
+    const q = room.questions[room.qi];
+    Object.assign(st, { qi: room.qi, limit: LIMIT_MS, elapsed: Date.now() - room.t0, q: { q: q.q, o: q.o, svg: q.svg || '', t: q.t },
+      myPick: room.answers[slot] ? room.answers[slot].i : -1, oppDone: !!room.answers[1 - slot] });
+  }
+  if (room.state === 'reveal') Object.assign(st, { qi: room.qi, reveal: room.lastReveal, myReady: room.ready[slot], oppReady: room.ready[1 - slot] });
+  if (room.state === 'end') st.end = room.end;
+  send(ws, st);
 }
 
 wss.on('connection', ws => {
-  ws.name = 'Spieler'; ws.avatar = 'scientist'; ws.title = 'Neuling'; ws.alive = true;
+  ws.name = 'Spieler'; ws.avatar = 'scientist'; ws.title = 'Neuling'; ws.color = 'std'; ws.alive = true;
   ws.on('pong', () => { ws.alive = true; });
   ws.on('message', raw => {
     let m; try { m = JSON.parse(raw); } catch { return; }
     const room = ws.room;
     switch (m.type) {
       case 'hello':
-        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling'; ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
-        send(ws, { type: 'hi', online: wss.clients.size });
+        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
+        ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
+        if (/^[a-f0-9]{16,32}$/.test(m.id || '')) {
+          ws.pid = m.id;
+          const prev = online.get(ws.pid);
+          if (prev && prev !== ws && !prev.room && prev.readyState === 1) { try { prev.close(); } catch {} }
+          online.set(ws.pid, ws);
+        }
+        send(ws, { type: 'hi', online: online.size });
         break;
+      case 'resume': resume(ws, m); break;
+      case 'who': {
+        // alle, die gerade die App offen haben (ohne einen selbst)
+        const list = [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.name).slice(0, 200).map(pub);
+        const ids = Array.isArray(m.friends) ? m.friends.slice(0, 300) : [];
+        send(ws, { type: 'who', list, friendsOnline: ids.filter(id => online.has(id)) });
+        break;
+      }
+      case 'friend_req': case 'friend_ok': case 'friend_no': case 'invite': case 'invite_no': {
+        const to = online.get(String(m.to || ''));
+        if (!to || !ws.pid) return send(ws, { type: 'error_soft', msg: 'Der Spieler ist gerade nicht online.' });
+        if (m.type === 'invite' && to.room && to.room.state && to.room.state !== 'lobby') return send(ws, { type: 'error_soft', msg: to.name + ' ist gerade in einem Battle.' });
+        send(to, { type: m.type, from: pub(ws) });
+        break;
+      }
+      case 'invite_ok': {
+        // Herausforderung angenommen: beide in einen neuen Raum
+        const from = online.get(String(m.to || ''));
+        if (!from || from.readyState !== 1 || (from.room && from.room.state && from.room.state !== 'lobby'))
+          return send(ws, { type: 'error_soft', msg: 'Die Herausforderung ist nicht mehr gültig.' });
+        leave(from); leave(ws);
+        const code = newCode(); const r = { code, players: [from, ws] }; rooms.set(code, r); startMatch(r);
+        break;
+      }
       case 'quick':
         leave(ws);
         if (waiting && waiting !== ws && waiting.readyState === 1) {
@@ -94,8 +230,8 @@ wss.on('connection', ws => {
         break;
       case 'create': {
         leave(ws);
-        const code = newCode(); const r = { code, players: [ws, null], state: 'lobby' };
-        rooms.set(code, r); ws.room = r; send(ws, { type: 'room', code });
+        const code = newCode(); const r = { code, players: [null, null], state: 'lobby', grace: [null, null] };
+        rooms.set(code, r); seat(r, ws, 0); send(ws, { type: 'room', code, token: ws.token });
         break;
       }
       case 'join': {
@@ -110,7 +246,7 @@ wss.on('connection', ws => {
         if (!room || ws.slot !== 0 || room.state !== 'prep' || !Array.isArray(m.list)) return;
         room.questions = m.list.slice(0, 15).map(q => ({ q: String(q.q).slice(0, 2000), o: (q.o || []).slice(0, 4).map(x => String(x).slice(0, 4000)), a: q.a | 0, e: String(q.e || '').slice(0, 2000), svg: String(q.svg || '').slice(0, 60000), t: q.t | 0 }));
         if (!room.questions.length) return;
-        room.state = 'countdown';
+        room.state = 'countdown'; room.cdStart = Date.now();
         both(room, () => ({ type: 'start', in: START_MS, total: room.questions.length }));
         room.timer = setTimeout(() => nextQuestion(room), START_MS);
         break;
@@ -138,7 +274,7 @@ wss.on('connection', ws => {
       case 'leave': leave(ws); break;
     }
   });
-  ws.on('close', () => leave(ws));
+  ws.on('close', () => { if (ws.pid && online.get(ws.pid) === ws) online.delete(ws.pid); dropped(ws); });
 });
 
 // Verbindungen am Leben halten, tote Verbindungen aufräumen
