@@ -4,10 +4,10 @@ const http = require('http');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 10000;
-const LIMIT_MS = 15000;      // Zeit pro Frage
-const REVEAL_MS = 4000;      // Auflösung anzeigen
+const LIMIT_MS = 20000;      // Zeit pro Frage
+const REVEAL_MS = 5000;      // Auflösung anzeigen
 const START_MS = 3500;       // Countdown vor der ersten Frage
-const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap']);
+const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail']);
 
 const rooms = new Map();     // code -> room
 let waiting = null;          // Spieler in der Schnellsuche
@@ -20,7 +20,7 @@ const wss = new WebSocketServer({ server, maxPayload: 600 * 1024 });
 
 const send = (ws, msg) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg)); };
 const both = (room, fn) => room.players.forEach((p, i) => p && send(p, fn(i)));
-const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title });
+const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p.color });
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
 
 function newCode() {
@@ -79,7 +79,7 @@ wss.on('connection', ws => {
     const room = ws.room;
     switch (m.type) {
       case 'hello':
-        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
+        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling'; ws.color = clean(m.color, 12) || 'std';
         send(ws, { type: 'hi', online: wss.clients.size });
         break;
       case 'quick':

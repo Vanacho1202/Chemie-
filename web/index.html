@@ -221,6 +221,8 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .kopt .who{position:absolute; top:-10px; right:8px; background:var(--paper); color:var(--ink); border-radius:99px; padding:1px 8px; font-size:.8rem; border:1px solid var(--line)}
 .kopt .who + .who{right:52px}
 .emobar{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding-top:4px}
+.rainbow{background:linear-gradient(90deg,#e21b3c,#e0701f,#c99a06,#2e9b57,#2f7de1,#8b5cf6); -webkit-background-clip:text; background-clip:text; color:transparent}
+.goldtxt{background:linear-gradient(180deg,#f5d36b,#b8860b); -webkit-background-clip:text; background-clip:text; color:transparent}
 .emo{font-size:1.5rem; width:46px; height:46px; border-radius:12px; border:1px solid var(--line); background:var(--paper); display:grid; place-items:center; text-decoration:none; color:var(--muted)}
 .emo-layer{position:fixed; inset:0; pointer-events:none; z-index:30}
 .emo-fly{position:absolute; bottom:120px; font-size:3.2rem; animation:fly 2.2s ease-out forwards}
@@ -1247,35 +1249,41 @@ function viewMatch(){
   round();
 }
 /* ---------- Münzen, Shop, Profil ---------- */
-const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏'};
-const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄'};
+const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
+ heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌'};
+const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
+ owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅'};
+const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
+const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
- ...[['fire',0],['wave',0],['gg',0],['laugh',40],['eyes',40],['clap',50],['cool',60],['cry',60],['muscle',70],['salute',80],['nerd',90],['flask',100],['mind',120],['cold',120],['skull',150],['alembic',200],['crown',250],['goat',400]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id]})),
- ...[['scientist',0],['frog',80],['cat',80],['fox',120],['panda',120],['octopus',150],['robot',200],['alien',250],['trex',300],['unicorn',500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
- ...[['Neuling',0],['Kettenzähler',80],['Elektronegativ',120],['Isomer-Jäger',150],['Van-der-Waals-Fan',150],['IUPAC-Profi',200],['H-Brücken-Baumeister',250],['Alkan-König',500],['Chemie-Legende',1000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t}))
+ ...[['fire',0],['wave',0],['gg',0],['laugh',120],['eyes',120],['clap',150],['think',150],['sweat',150],['heart',180],['cool',200],['cry',200],['sleep',200],['popcorn',220],['muscle',250],['salute',250],['angry',250],['snail',280],['nerd',300],['party',300],['flask',350],['star',350],['ghost',400],['brain',400],['mind',450],['cold',450],['bolt',450],['hundred',500],['clown',500],['skull',600],['devil',600],['rocket',650],['atom',700],['alembic',750],['trophy',900],['crown',1000],['goat',1500]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id]})),
+ ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
+ ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t})),
+ ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
-function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; }
+function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; }
 initProfile();
 function toast(html){ let t=$('#toast'); if(!t){ t=el('<div id="toast" class="toast" role="status"></div>'); document.body.appendChild(t); } t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('show'),1600); }
 function award(n,why){ S.coins=(S.coins||0)+n; save(); toast(`<b>+${n}</b> 🪙${why?' · '+why:''}`); document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins); }
 const coinPill=()=>`<a class="coins" href="#shop" title="Zum Shop"><span>🪙</span><b class="coin-n">${S.coins}</b></a>`;
 let shopTab='emote';
 function viewShop(){
-  const tabs={emote:'Emotes',avatar:'Avatare',title:'Titel'};
+  const tabs={emote:'Emotes',avatar:'Avatare',title:'Titel',color:'Namensfarben'};
   app.innerHTML=`<div class="topbar"><a class="back" href="#battle" style="text-decoration:none">← Battle</a>${coinPill()}</div>
-  <header><h1>Shop</h1><p class="muted" style="margin:.3em 0 0">Münzen gibt es für jede richtige Antwort: 5 im Training, Check und Probeklausur, 10 für Puzzles und Zuordnen. Im Battle 5 pro richtiger Antwort, dazu 60 für einen Sieg.</p></header>
-  <section class="card"><div class="row" style="justify-content:space-between"><div class="row"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div><b>${S.name||'Noch kein Name'}</b><div class="muted" style="font-size:.88rem">${S.eq.title}</div></div></div></div></section>
+  <header><h1>Shop</h1><p class="muted" style="margin:.3em 0 0">Münzen gibt es für jede richtige Antwort: 5 im Training, Check und Probeklausur, 10 für Puzzles und Zuordnen. Im Battle 5 pro richtiger Antwort, dazu 60 für einen Sieg. Die guten Sachen muss man sich verdienen.</p></header>
+  <section class="card"><div class="row" style="justify-content:space-between"><div class="row"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div><b ${nameStyle(S.eq.color)}>${S.name||'Noch kein Name'}</b><div class="muted" style="font-size:.88rem">${S.eq.title}</div></div></div></div></section>
   <section class="card"><div class="row" id="sh-tabs">${Object.keys(tabs).map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===shopTab}">${tabs[k]}</button>`).join('')}</div><div class="shop" id="sh-grid"></div></section>`;
-  const draw=()=>{ $('#sh-grid').innerHTML=SHOP.filter(i=>i.kind===shopTab).map(i=>{ const own=S.owned[i.id], eq=(i.kind==='avatar'&&S.eq.avatar===i.key)||(i.kind==='title'&&S.eq.title===i.key);
+  const draw=()=>{ $('#sh-grid').innerHTML=SHOP.filter(i=>i.kind===shopTab).map(i=>{ const own=S.owned[i.id], eq=S.eq[i.kind]===i.key;
     const act= i.kind==='emote' ? (own?'<span class="muted">Im Battle dabei</span>':`<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`)
       : own ? (eq?'<span class="okmsg" style="padding:4px 10px">Ausgerüstet</span>':`<button class="btn small" type="button" data-eq="${i.id}">Ausrüsten</button>`) : `<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`;
-    return `<div class="sitem${own?' own':''}"><span class="${i.kind==='title'?'stitle':'semoji'}">${i.label}</span>${act}</div>`; }).join('');
+    const lab= i.kind==='color' ? `<span class="stitle"><span ${nameStyle(i.key)}>${S.name||'Dein Name'}</span></span><span class="muted" style="font-size:.8rem">${i.label}</span>` : `<span class="${i.kind==='title'?'stitle':'semoji'}">${i.label}</span>`;
+    return `<div class="sitem${own?' own':''}">${lab}${act}</div>`; }).join('');
     app.querySelectorAll('#sh-tabs .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===shopTab)); };
   $('#sh-tabs').addEventListener('click',e=>{ const c=e.target.closest('[data-k]'); if(c){ shopTab=c.dataset.k; draw(); } });
   $('#sh-grid').addEventListener('click',e=>{
     const b=e.target.closest('[data-buy]'), q=e.target.closest('[data-eq]');
-    if(b){ const it=SHOP.find(x=>x.id===b.dataset.buy); if(S.coins<it.price){ toast(`Dir fehlen noch ${it.price-S.coins} 🪙`); return; } S.coins-=it.price; S.owned[it.id]=1; if(it.kind==='avatar') S.eq.avatar=it.key; if(it.kind==='title') S.eq.title=it.key; save(); toast(`Gekauft: ${it.label}`); viewShop(); }
-    if(q){ const it=SHOP.find(x=>x.id===q.dataset.eq); if(it.kind==='avatar') S.eq.avatar=it.key; else S.eq.title=it.key; save(); viewShop(); } });
+    if(b){ const it=SHOP.find(x=>x.id===b.dataset.buy); if(S.coins<it.price){ toast(`Dir fehlen noch ${it.price-S.coins} 🪙`); return; } S.coins-=it.price; S.owned[it.id]=1; if(it.kind!=='emote') S.eq[it.kind]=it.key; save(); toast(`Gekauft: ${it.label}`); viewShop(); }
+    if(q){ const it=SHOP.find(x=>x.id===q.dataset.eq); S.eq[it.kind]=it.key; save(); viewShop(); } });
   draw();
 }
 
@@ -1299,7 +1307,7 @@ function bConnect(then){
   fetch(BATTLE_HTTP,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(r=>r.json()).then(()=>{
     clearTimeout(to); let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return fail(); }
     B.ws=ws;
-    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title}); then(); };
+    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color}); then(); };
     ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
     ws.onclose=()=>{ B.ws=null; if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } };
     ws.onerror=()=>{};
@@ -1328,11 +1336,11 @@ function bMsg(m){
   drawBattle();
 }
 function floatEmote(e,mine){ let box=$('#emo-layer'); if(!box){ box=el('<div id="emo-layer" class="emo-layer" aria-hidden="true"></div>'); document.body.appendChild(box); } const f=el(`<span class="emo-fly ${mine?'me':'opp'}">${EMOTE[e]||''}</span>`); f.style.left=(mine?10:55)+Math.random()*30+'%'; box.appendChild(f); setTimeout(()=>f.remove(),2200); }
-function playerChip(p,score,side,extra){ return `<div class="pchip ${side}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b class="pn">${p.name||'Spieler'}</b><div class="pt">${p.title||''}</div></div><div class="ps">${score}${extra||''}</div></div>`; }
+function playerChip(p,score,side,extra){ return `<div class="pchip ${side}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b class="pn"><span ${nameStyle(p.color)}>${p.name||'Spieler'}</span></b><div class="pt">${p.title||''}</div></div><div class="ps">${score}${extra||''}</div></div>`; }
 function drawBattle(){
   if(!location.hash.startsWith('#battle')) return;
   clearInterval(B.timer);
-  const me={name:S.name||'Du',avatar:S.eq.avatar,title:S.eq.title};
+  const me={name:S.name||'Du',avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color};
   let h='';
   if(['lobby','connecting','searching','room'].includes(B.phase)){
     h=`<header class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="eyebrow">1 gegen 1 · online</span><h1>Battle</h1></div>${coinPill()}</header>
@@ -1345,7 +1353,7 @@ function drawBattle(){
       <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
       <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
-      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>15 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
+      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
   } else {
     const opp=B.opp||{name:'Gegner'};
     const s0=B.scores[B.you], s1=B.scores[1-B.you];
