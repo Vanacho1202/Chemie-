@@ -1362,7 +1362,8 @@ function bMsg(m){
     case 'start': B.phase='countdown'; B.total=m.total; B.cdEnd=Date.now()+m.in; break;
     case 'q': Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
     case 'opp_answered': B.oppDone=true; break;
-    case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; if(m.picks[B.you]===m.a) B.correct++; break;
+    case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; B.myReady=false; B.oppReady=false; if(m.picks[B.you]===m.a) B.correct++; break;
+    case 'opp_ready': B.oppReady=true; break;
     case 'end': { B.phase='end'; B.end=m; B.scores=m.scores; const res=m.winner===-1?'d':(m.winner===B.you?'w':'l'); S.bstats[res]++; save();
       const bonus={w:60,d:30,l:15}[res]+B.correct*5; award(bonus,{w:'Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
     case 'opp_rematch': B.oppRematch=true; break;
@@ -1389,7 +1390,7 @@ function drawBattle(){
       <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
       <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
-      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
+      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
   } else {
     const opp=B.opp||{name:'Gegner'};
     const s0=B.scores[B.you], s1=B.scores[1-B.you];
@@ -1405,7 +1406,9 @@ function drawBattle(){
         const marks= rv? `${rv.picks[B.you]===i?'<span class="who">Du</span>':''}${rv.picks[1-B.you]===i?`<span class="who">${AVATAR[opp.avatar]||''}</span>`:''}`:'';
         return `<button class="${cls}" type="button" data-k="${i}" ${B.pick>=0||rv?'disabled':''}><span class="ks">${KSHAPE[i]}</span><span class="kt">${o}</span>${marks}</button>`; }).join('')}</div>`;
       if(B.phase==='question'&&B.pick>=0) h+=`<p class="muted" style="text-align:center;margin:0">${B.oppDone?'Beide haben geantwortet …':'Warte auf '+opp.name+' …'}</p>`;
-      if(rv){ const g=rv.gained[B.you], ok=rv.picks[B.you]===rv.a; h+=`<div class="${ok?'okmsg':'warn'}" style="text-align:center">${ok?`Richtig! +${g} Punkte`:(rv.picks[B.you]<0?'Zeit abgelaufen':'Leider falsch')}</div>${rv.e?`<div class="expl">${rv.e}</div>`:''}`; }
+      if(rv){ const g=rv.gained[B.you], ok=rv.picks[B.you]===rv.a; h+=`<div class="${ok?'okmsg':'warn'}" style="text-align:center">${ok?`Richtig! +${g} Punkte`:(rv.picks[B.you]<0?'Zeit abgelaufen':'Leider falsch')}</div>${rv.e?`<div class="expl">${rv.e}</div>`:''}
+        <button class="btn primary big" type="button" data-b="ready" ${B.myReady?'disabled':''}>${B.myReady?(B.oppReady?'Los geht\'s …':`Warte auf ${opp.name} …`):(rv.last?'Zum Ergebnis':'Weiter')}</button>
+        <p class="muted" style="text-align:center;margin:0;font-size:.85rem">${B.oppReady?`✓ ${opp.name} ist bereit`:`${opp.name} liest noch die Lösung`}</p>`; }
     }
     if(B.phase==='end'){ const w=B.end.winner, res=w===-1?'Unentschieden!':(w===B.you?'Du hast gewonnen!':opp.name+' hat gewonnen');
       h+=`<section class="card bwait"><span class="eyebrow">Battle vorbei</span><div class="bres">${w===B.you?'🏆 ':''}${res}</div><div class="bcode" style="font-size:2.2rem">${s0} : ${s1}</div><p class="muted" style="margin:0">${B.correct} von ${B.total} richtig</p>
@@ -1431,6 +1434,7 @@ function battleClick(e){
   if(a==='create'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'create'})); }
   if(a==='join'){ if(needName()) return; const c=($('#b-code').value||'').trim(); if(!/^\d{4}$/.test(c)){ B.msg='Der Code hat 4 Ziffern.'; drawBattle(); return; } B.msg=''; bConnect(()=>bSend({type:'join',code:c})); }
   if(a==='cancel'){ bSend({type:'cancel'}); B.phase='lobby'; drawBattle(); }
+  if(a==='ready'){ if(B.phase==='reveal'&&!B.myReady){ B.myReady=true; bSend({type:'ready',qi:B.qi}); drawBattle(); } return; }
   if(a==='rematch'){ B.myRematch=true; bSend({type:'rematch'}); drawBattle(); }
   if(a==='leave'){ bSend({type:'leave'}); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); drawBattle(); }
 }

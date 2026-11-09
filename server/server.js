@@ -5,7 +5,7 @@ const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 10000;
 const LIMIT_MS = 20000;      // Zeit pro Frage
-const REVEAL_MS = 5000;      // Auflösung anzeigen
+const READY_MS = 5 * 60 * 1000; // spätestens nach 5 Minuten geht es weiter
 const START_MS = 3500;       // Countdown vor der ersten Frage
 const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail']);
 
@@ -51,8 +51,10 @@ function reveal(room) {
   const q = room.questions[room.qi];
   const gained = room.answers.map(a => (a && a.i === q.a) ? Math.round(500 + 500 * Math.max(0, 1 - a.ms / LIMIT_MS)) : 0);
   room.scores = room.scores.map((s, i) => s + gained[i]);
-  both(room, () => ({ type: 'reveal', qi: room.qi, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores }));
-  room.timer = setTimeout(() => nextQuestion(room), REVEAL_MS);
+  room.ready = [false, false];
+  both(room, () => ({ type: 'reveal', qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores }));
+  // Weiter erst, wenn beide die Lösung gelesen haben (oder nach 5 Minuten)
+  room.timer = setTimeout(() => nextQuestion(room), READY_MS);
 }
 
 function endMatch(room) {
@@ -115,6 +117,12 @@ wss.on('connection', ws => {
         room.answers[ws.slot] = { i: m.i | 0, ms: Date.now() - room.t0 };
         send(room.players[1 - ws.slot], { type: 'opp_answered' });
         if (room.answers[0] && room.answers[1]) reveal(room);
+        break;
+      case 'ready':
+        if (!room || room.state !== 'reveal' || m.qi !== room.qi || room.ready[ws.slot]) return;
+        room.ready[ws.slot] = true;
+        send(room.players[1 - ws.slot], { type: 'opp_ready' });
+        if (room.ready[0] && room.ready[1]) nextQuestion(room);
         break;
       case 'emote':
         if (room && EMOTES.has(m.e)) both(room, () => ({ type: 'emote', from: ws.slot, e: m.e }));
