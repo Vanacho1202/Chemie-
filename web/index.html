@@ -1372,7 +1372,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.4';
+const APP_VERSION='3.5';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1403,7 +1403,7 @@ function cloudPost(path,obj){ return fetch(CLOUD+path,{method:'POST',headers:{'C
 function cloudSecret(){ S.cloud=S.cloud||{}; if(!S.cloud.secret){ try{ const a=new Uint8Array(16); crypto.getRandomValues(a); S.cloud.secret=[...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ S.cloud.secret=(Math.random().toString(16).slice(2)+Date.now().toString(16)).padEnd(32,'0').slice(0,32); } } return S.cloud.secret; }
 let cloudT=null;
 function cloudSoon(){ if(!cloudOk()) return; clearTimeout(cloudT); cloudT=setTimeout(cloudPush,4000); }
-function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; return d; }
+function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; delete d.admHint; return d; }
 function cloudPush(){ if(!cloudOk()) return; cloudSecret();
   cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:3}).then(({status,j})=>{
     if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; if(j.nameTaken){ const back=(S.nameOk&&S.nameOk!==S.name)?S.nameOk:''; toast('Name „'+String(S.name).replace(/[<&]/g,'')+'“ ist schon vergeben'); S.name=back; S.nameOk=back; bSend(helloMsg()); const inp=$('#b-name'); if(inp) inp.value=back; } } else S.cloud.err=j.error||('Fehler '+status);
@@ -1455,10 +1455,15 @@ function banBar(){
 }
 /* ---------- Admin (nur für freigeschaltete Accounts, Server prüft ID + Schlüssel) ---------- */
 const ADMIN_URL='https://alkane-battle.onrender.com/admin/';
-const ADM={on:false,players:null,q:'',busy:false};
+const ADM={on:!!S.admHint,players:null,q:'',busy:false};   // admHint: zuletzt bekannter Stand, damit das Menü sofort da ist; der Server prüft trotzdem jede Aktion
 function admPost(path,obj){ return fetch(ADMIN_URL+path,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({pid:S.pid,secret:(S.cloud&&S.cloud.secret)||''},obj||{}))}).then(r=>r.json().then(j=>({status:r.status,j}))); }
-function admCheck(){ if(!cloudOk()||!S.cloud||!S.cloud.secret) return; admPost('me').then(({j})=>{ const was=ADM.on; ADM.on=!!(j&&j.admin); if(ADM.on!==was&&location.hash.startsWith('#battle')) route(); }).catch(()=>{}); }
+function admCheck(){ if(!cloudOk()||!S.cloud||!S.cloud.secret){ setTimeout(admCheck,5000); return; }
+  admPost('me').then(({status,j})=>{ if(status!==200){ setTimeout(admCheck,10000); return; }
+    const was=ADM.on; ADM.on=!!(j&&j.admin); if(!!S.admHint!==ADM.on){ S.admHint=ADM.on; save(true); }
+    if(ADM.on!==was&&location.hash.startsWith('#battle')) route(); })
+  .catch(()=>setTimeout(admCheck,10000)); }   // Server gerade nicht erreichbar (z. B. Neustart): später nochmal
 setTimeout(admCheck,3500);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') admCheck(); });
 function admLoad(){ ADM.busy=true; drawAdmin(); admPost('players').then(({status,j})=>{ ADM.busy=false; if(status===200) ADM.players=j.players; else toast(j.error||'Fehler'); drawAdmin(); }).catch(()=>{ ADM.busy=false; toast('Server nicht erreichbar'); drawAdmin(); }); }
 function admFind(id){ const p=(ADM.players||[]).find(x=>x.id===id); if(p) return p; const w=(B.whoMap||{})[id]; if(w) return {id,name:w.name,avatar:w.avatar,online:true}; const f=S.friends[id]; if(f) return {id,name:f.name,avatar:f.avatar}; return {id,name:'?'}; }
 function drawAdmin(){
