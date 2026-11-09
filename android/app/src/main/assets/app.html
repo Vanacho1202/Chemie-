@@ -1365,7 +1365,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='2.7';
+const APP_VERSION='2.8';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1399,9 +1399,15 @@ function cloudPush(){ if(!cloudOk()) return; cloudSecret();
     save(true); drawCloud(); applyGifts(j&&j.gifts); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
 /* Geschenke vom Server (Münzen, neuer Name), werden genau einmal ausgeliefert */
 function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null;
-  g.forEach(x=>{ c+=Math.max(0,Math.min(100000,+x.coins||0)); if(x.name) nm=String(x.name).slice(0,16); });
+  let nf=0;
+  g.forEach(x=>{ c+=Math.max(0,Math.min(100000,+x.coins||0)); if(x.name) nm=String(x.name).slice(0,16);
+    const fr=x.extra&&Array.isArray(x.extra.friends)?x.extra.friends:[];
+    fr.forEach(f=>{ if(!f||!f.id||f.id===S.pid) return; S.friends=S.friends||{}; if(!S.friends[f.id]){ S.friends[f.id]={name:String(f.name||'').slice(0,16),avatar:f.avatar||'scientist',title:f.title||'Neuling',color:f.color||'std',since:Date.now()}; nf++; } }); });
+  if(!c&&!nm&&!nf) return;
   if(c) S.coins=(S.coins||0)+c; if(nm) S.name=nm; save();
-  toast(`🎁 ${c?'<b>+'+c+'</b> 🪙':''}${c&&nm?' · ':''}${nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':''}`);
+  toast('🎁 '+[c?'<b>+'+c+'</b> 🪙':'', nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':'', nf?'<b>'+nf+'</b> neue Freunde':''].filter(Boolean).join(' · '));
+  if(nf&&typeof bWho==='function') try{ bWho(); }catch(e){}
+  if(nf&&/battle/.test(location.hash)) try{ route(); }catch(e){}
   document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins);
   const ni=document.getElementById('b-name'); if(ni&&nm) ni.value=nm;
   if(nm&&typeof bSend==='function'&&typeof helloMsg==='function') try{ bSend(helloMsg()); }catch(e){} }

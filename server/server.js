@@ -68,6 +68,7 @@ async function initDb() {
     pool.on('error', e => console.log('Cloud-Spielstand: Verbindung', e.message));
     await pool.query(SAVES_TABLE);
     await pool.query(`create table if not exists gifts (id serial primary key, pid text not null, coins int not null default 0, name text, note text, created_at timestamptz not null default now(), delivered_at timestamptz)`);
+    await pool.query('alter table gifts add column if not exists extra jsonb');
     console.log('Cloud-Spielstand: Datenbank bereit');
   } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; return; }
   // Umzug: Spielstände aus der alten Datenbank übernehmen (neuere gewinnen)
@@ -92,7 +93,7 @@ const HEX = /^[a-f0-9]{16,64}$/;
 async function takeGifts(pid, m) {
   if (!m.gifts) return undefined;
   try {
-    const r = await pool.query('update gifts set delivered_at = now() where pid = $1 and delivered_at is null returning coins, name, note', [pid]);
+    const r = await pool.query('update gifts set delivered_at = now() where pid = $1 and delivered_at is null returning coins, name, note, extra', [pid]);
     return r.rows.length ? r.rows : undefined;
   } catch (e) { console.log('Geschenke-Fehler', e.message); return undefined; }
 }
