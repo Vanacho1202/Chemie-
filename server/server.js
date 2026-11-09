@@ -48,7 +48,9 @@ const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade di
 
 // ---------- KI-Bot (Google Gemini) ----------
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+// Schnelle Modelle zuerst; beim Start wird das schnellste, das antwortet, ausgewählt
+const MODEL_CANDIDATES = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite,gemini-2.5-flash-lite,gemini-2.5-flash').split(',').map(x => x.trim()).filter(Boolean);
+let GEMINI_MODEL = MODEL_CANDIDATES[0];
 const SYSTEM = `Du bist "Alki", ein freundlicher Chemie-Nachhilfelehrer in einer Lern-App.
 Der Schüler (ca. 10. Klasse, Waldorfschule) schreibt bald eine Chemieklausur über Alkane mit diesen Themen:
 1. Homologe Reihe der Alkane (CnH2n+2, Methan bis Decan)
@@ -110,6 +112,20 @@ async function geminiStream(messages, onText) {
     }
   }
   return total;
+}
+
+async function pickModel() {
+  const results = await Promise.all(MODEL_CANDIDATES.map(async model => {
+    const t0 = Date.now();
+    try {
+      const r = await httpsReq(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), timeout: 15000 });
+      const body = await readAll(r);
+      return { model, ok: r.statusCode === 200, ms: Date.now() - t0, info: r.statusCode === 200 ? '' : body.slice(0, 120) };
+    } catch (e) { return { model, ok: false, ms: Date.now() - t0, info: e.message }; }
+  }));
+  const good = results.filter(x => x.ok).sort((a, b) => a.ms - b.ms);
+  if (good.length) GEMINI_MODEL = good[0].model;
+  console.log('Modelltest:', results.map(x => `${x.model} ${x.ok ? 'ok' : 'FEHLER'} ${x.ms} ms ${x.info}`).join(' | '), '=> nehme', GEMINI_MODEL);
 }
 
 // Diagnose: Wo hängt die Verbindung zu Google? (zeigt den Schlüssel nicht an)
@@ -370,8 +386,8 @@ setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate
 
 server.listen(PORT, () => {
   console.log('Alkane Battle läuft auf Port ' + PORT);
-  // Selbsttest der KI beim Start, Ergebnis steht im Log
-  if (GEMINI_KEY) runDiag();
+  // Beim Start: schnellstes Modell auswählen, Ergebnis steht im Log
+  if (GEMINI_KEY) pickModel();
   if (false) {
     const t0 = Date.now();
     geminiStream([{ role: 'user', text: 'Antworte nur mit: OK' }], () => {})
