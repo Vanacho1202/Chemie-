@@ -229,10 +229,10 @@ Regeln:
 - Wenn du dir unsicher bist, sag es ehrlich. Erfinde keine Fakten.
 - Bei Fragen ohne Chemie-Bezug antworte kurz und lenke freundlich zurück zum Lernen.`;
 const rate = new Map(); // IP -> [Zeitstempel]
-function limited(ip) {
+function limited(ip, max = 20) {
   const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
   list.push(now); rate.set(ip, list);
-  return list.length > 20;
+  return list.length > max;
 }
 const thinkCfg = model => /gemini-3/.test(model) ? { thinkingLevel: 'minimal' } : { thinkingBudget: 0 };
 function geminiBody(messages, thinkingOff) {
@@ -354,7 +354,7 @@ const server = http.createServer((req, res) => {
       const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0];
       if (req.url.startsWith('/cloud/load') && limited('load:' + ip)) return json(429, { error: 'Zu viele Versuche. Warte eine Minute.' });
       let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
-      if (req.url.startsWith('/admin/') && limited('admin:' + ip)) return json(429, { error: 'Zu viele Anfragen.' });
+      if (req.url.startsWith('/admin/') && limited('admin:' + ip, 150)) return json(429, { error: 'Zu viele Anfragen.' });
       try { const path = req.url.split('?')[0]; const [code, out] = path.startsWith('/admin/') ? await adminRoute(path, m) : await cloudRoute(path, m); json(code, out); }
       catch (e) { console.log('Cloud-Fehler:', e.message); json(500, { error: 'Speichern gerade nicht möglich.' }); }
     });

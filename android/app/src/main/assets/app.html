@@ -251,7 +251,8 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .adm-items{display:flex; flex-wrap:wrap; gap:6px}
 .adm-chip{display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--line); border-radius:999px; padding:4px 4px 4px 10px; font-size:.88rem}
 .adm-chip button{border:0; background:transparent; color:inherit; font:inherit; width:26px; height:26px; border-radius:50%; cursor:pointer}
-.adm-chip button:hover{background:rgba(229,83,75,.2)}
+.adm-chip button:active{background:rgba(229,83,75,.25)}
+.adm-chip button:focus{outline:none}
 .adm-sheet{position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; padding:12px; padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
 .adm-box{width:100%; max-width:520px; max-height:88vh; overflow:auto; display:flex; flex-direction:column; gap:8px; margin:0}
 .upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
@@ -1376,7 +1377,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.9';
+const APP_VERSION='4.0';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1523,9 +1524,9 @@ function admSheet(id){
     if(a==='rm') body.removeItems=[b.dataset.item];
     if(a==='rmall') body.removeAll=true;
     if(a==='ban'){ const n=parseInt(String($('#adm-bn').value).replace(/[^0-9]/g,''),10)||0; if(!n) return toast('Dauer eingeben'); body.seconds=n*(+$('#adm-bu').value); body.reason=$('#adm-br').value.trim(); }
-    b.disabled=true;
+    b.disabled=true; if(a==='rm'){ const chip=b.closest('.adm-chip'); if(chip) chip.style.opacity='.4'; }
     admPost(a==='kick'?'kick':a==='ban'?'ban':a==='unban'?'unban':'gift',body).then(({status,j})=>{ b.disabled=false;
-      if(status!==200) return toast(j.error||'Fehler');
+      if(status!==200){ if(a==='rm'){ const chip=b.closest('.adm-chip'); if(chip) chip.style.opacity=''; } return toast(status===429?'Zu schnell getippt, warte kurz':(j.error||'Fehler')); }
       toast(a==='ban'?'🚫 Gebannt':a==='unban'?'✅ Bann aufgehoben':a==='rm'||a==='rmall'?(j.live?'✅ Entfernt':'✅ Wird beim nächsten Öffnen entfernt'):a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
       if((a==='coins'||a==='take')&&p.coins!=null){ p.coins=Math.max(0,p.coins+body.coins); }
       if(a==='name') p.name=body.name;
