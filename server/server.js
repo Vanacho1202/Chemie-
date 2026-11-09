@@ -87,21 +87,28 @@ async function geminiStream(messages, onText) {
   return total;
 }
 
+// Diagnose: Wo hängt die Verbindung zu Google? (zeigt den Schlüssel nicht an)
+async function runDiag() {
+  const out = { model: GEMINI_MODEL, keyPrefix: GEMINI_KEY ? GEMINI_KEY.slice(0, 4) + '…' : null, keyLength: GEMINI_KEY.length };
+  const time = async (name, fn) => { const t0 = Date.now(); try { out[name] = { ok: true, ...(await fn()), ms: Date.now() - t0 }; } catch (e) { out[name] = { ok: false, ms: Date.now() - t0, error: e.name + ': ' + e.message + (e.cause ? ' / ' + (e.cause.code || e.cause.message) : '') }; } };
+  const T = 12000;
+  await Promise.all([
+    time('dns', async () => ({ addresses: (await require('dns').promises.lookup('generativelanguage.googleapis.com', { all: true })).map(a => a.address) })),
+    time('google204', async () => ({ status: (await fetch('https://www.google.com/generate_204', { signal: AbortSignal.timeout(T) })).status })),
+    time('anthropic', async () => ({ status: (await fetch('https://api.anthropic.com/', { signal: AbortSignal.timeout(T) })).status })),
+    time('models', async () => { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=50', { headers: { 'x-goog-api-key': GEMINI_KEY }, signal: AbortSignal.timeout(T) }); const j = await r.json(); return { status: r.status, error: j.error && j.error.message, flash: (j.models || []).map(m => m.name).filter(n => /flash/.test(n)).slice(0, 12) }; }),
+    time('generate', async () => { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), signal: AbortSignal.timeout(T) }); const t = await r.text(); return { status: r.status, body: t.slice(0, 300) }; })
+  ]);
+  console.log('DIAG', JSON.stringify(out));
+  return out;
+}
+
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Cache-Control': 'no-store' };
 const server = http.createServer((req, res) => {
   const json = (code, obj) => { res.writeHead(code, { ...CORS, 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); };
   if (req.method === 'OPTIONS') { res.writeHead(204, CORS); return res.end(); }
   if (req.method === 'GET' && req.url.startsWith('/diag')) {
-    // Diagnose: Wo hängt die Verbindung zu Google? (zeigt den Schlüssel nicht an)
-    (async () => {
-      const out = { model: GEMINI_MODEL, keyPrefix: GEMINI_KEY ? GEMINI_KEY.slice(0, 4) + '…' : null, keyLength: GEMINI_KEY.length };
-      const time = async (name, fn) => { const t0 = Date.now(); try { out[name] = { ok: true, ...(await fn()), ms: Date.now() - t0 }; } catch (e) { out[name] = { ok: false, ms: Date.now() - t0, error: e.name + ': ' + e.message + (e.cause ? ' / ' + (e.cause.code || e.cause.message) : '') }; } };
-      await time('dns', async () => ({ addresses: (await require('dns').promises.lookup('generativelanguage.googleapis.com', { all: true })).map(a => a.address) }));
-      await time('google204', async () => ({ status: (await fetch('https://www.google.com/generate_204', { signal: AbortSignal.timeout(15000) })).status }));
-      await time('models', async () => { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=50', { headers: { 'x-goog-api-key': GEMINI_KEY }, signal: AbortSignal.timeout(30000) }); const j = await r.json(); return { status: r.status, error: j.error && j.error.message, flash: (j.models || []).map(m => m.name).filter(n => /flash/.test(n)).slice(0, 12) }; });
-      await time('generate', async () => { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), signal: AbortSignal.timeout(60000) }); const t = await r.text(); return { status: r.status, body: t.slice(0, 300) }; });
-      json(200, out);
-    })();
+    runDiag().then(out => json(200, out));
     return;
   }
   if (req.method === 'POST' && req.url.startsWith('/ask')) {
@@ -340,7 +347,8 @@ setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate
 server.listen(PORT, () => {
   console.log('Alkane Battle läuft auf Port ' + PORT);
   // Selbsttest der KI beim Start, Ergebnis steht im Log
-  if (GEMINI_KEY) {
+  if (GEMINI_KEY) runDiag();
+  if (false) {
     const t0 = Date.now();
     geminiStream([{ role: 'user', text: 'Antworte nur mit: OK' }], () => {})
       .then(t => console.log('KI-Selbsttest ok nach', Date.now() - t0, 'ms, Modell', GEMINI_MODEL, ':', JSON.stringify(t.slice(0, 40))))
