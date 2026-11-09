@@ -1614,12 +1614,25 @@ async function botAsk(q){
   let answer=null;
   if(netCapable()){
     try{
-      const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),70000);
+      const ctl=new AbortController(); let to=setTimeout(()=>ctl.abort(),70000);
       const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:BOT.msgs.slice(-12)}),signal:ctl.signal});
-      clearTimeout(to); const j=await r.json();
-      if(r.ok&&j.answer) answer=j.answer;
-      else if(r.status===429) answer=j.error;
-    }catch(e){}
+      const ct=r.headers.get('content-type')||'';
+      if(r.ok && ct.startsWith('text/plain') && r.body && r.body.getReader){
+        // Live-Text: Antwort erscheint, während die KI schreibt
+        const msg={role:'bot',text:''}; BOT.msgs.push(msg); BOT.busy=false;
+        const reader=r.body.getReader(), dec=new TextDecoder(); let last=0;
+        for(;;){ const {done,value}=await reader.read(); if(done) break;
+          clearTimeout(to); to=setTimeout(()=>ctl.abort(),30000);
+          msg.text+=dec.decode(value,{stream:true});
+          const now=Date.now(); if(now-last>60){ last=now; drawChat(); } }
+        clearTimeout(to); drawChat(); botSave();
+        if(navigator.vibrate){ try{navigator.vibrate(20);}catch(e){} }
+        return;
+      }
+      clearTimeout(to);
+      const j=await r.json();
+      if(r.ok&&j.answer) answer=j.answer; else if(r.status===429) answer=j.error;
+    }catch(e){ const l=BOT.msgs[BOT.msgs.length-1]; if(l.role==='bot'&&l.text){ BOT.busy=false; drawChat(); botSave(); return; } }
   }
   if(!answer) answer=localAnswer(q);
   BOT.busy=false; BOT.msgs.push({role:'bot',text:answer}); botSave(); drawChat();

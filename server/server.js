@@ -42,16 +42,42 @@ function limited(ip) {
   list.push(now); rate.set(ip, list);
   return list.length > 20;
 }
-async function askGemini(messages) {
+function geminiBody(messages, thinkingOff) {
   const contents = messages.slice(-12).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 2000) }] }));
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY },
-    body: JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig: { temperature: 0.4, maxOutputTokens: 900 } })
-  });
-  const j = await r.json();
-  if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
-  const text = (((j.candidates || [])[0] || {}).content || {}).parts;
-  return (text || []).map(p => p.text || '').join('').trim();
+  const generationConfig = { temperature: 0.4, maxOutputTokens: 900 };
+  if (thinkingOff) generationConfig.thinkingConfig = { thinkingBudget: 0 };   // schneller: kein langes Nachdenken
+  return JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig });
+}
+let thinkingSupported = true;   // falls das Modell thinkingBudget ablehnt, ab dann ohne
+async function geminiStream(messages, onText) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse`;
+  const go = off => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off) });
+  let r = await go(thinkingSupported);
+  if (!r.ok && thinkingSupported) {
+    const t = await r.text();
+    if (/think/i.test(t)) { thinkingSupported = false; r = await go(false); }
+    else throw new Error(t.slice(0, 300));
+  }
+  if (!r.ok) throw new Error((await r.text()).slice(0, 300));
+  const reader = r.body.getReader(), dec = new TextDecoder();
+  let buf = '', total = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let k;
+    while ((k = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, k).trim(); buf = buf.slice(k + 1);
+      if (!line.startsWith('data:')) continue;
+      try {
+        const j = JSON.parse(line.slice(5));
+        const parts = (((j.candidates || [])[0] || {}).content || {}).parts || [];
+        const t = parts.filter(p => !p.thought).map(p => p.text || '').join('');
+        if (t) { total += t; onText(t); }
+      } catch {}
+    }
+  }
+  return total;
 }
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Cache-Control': 'no-store' };
@@ -67,8 +93,19 @@ const server = http.createServer((req, res) => {
       if (limited(ip)) return json(429, { error: 'Zu viele Fragen auf einmal. Warte kurz.' });
       let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
       if (!Array.isArray(m.messages) || !m.messages.length) return json(400, { error: 'no_messages' });
-      try { const answer = await askGemini(m.messages); json(200, { answer: answer || 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' }); }
-      catch (e) { console.log('Gemini-Fehler:', e.message); json(502, { error: 'ai_failed' }); }
+      const t0 = Date.now(); let started = false;
+      try {
+        await geminiStream(m.messages, t => {
+          if (!started) { started = true; res.writeHead(200, { ...CORS, 'Content-Type': 'text/plain; charset=utf-8', 'X-Accel-Buffering': 'no' }); console.log('Alki: erste Wörter nach', Date.now() - t0, 'ms'); }
+          res.write(t);
+        });
+        console.log('Alki: fertig nach', Date.now() - t0, 'ms');
+        if (!started) return json(200, { answer: 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' });
+        res.end();
+      } catch (e) {
+        console.log('Gemini-Fehler:', e.message);
+        if (started) { res.write('\n\n(Die Antwort wurde unterbrochen.)'); res.end(); } else json(502, { error: 'ai_failed' });
+      }
     });
     return;
   }
