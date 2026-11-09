@@ -67,6 +67,7 @@ async function initDb() {
     pool = await makePool(process.env.DATABASE_URL);
     pool.on('error', e => console.log('Cloud-Spielstand: Verbindung', e.message));
     await pool.query(SAVES_TABLE);
+    await pool.query(`create table if not exists gifts (id serial primary key, pid text not null, coins int not null default 0, name text, note text, created_at timestamptz not null default now(), delivered_at timestamptz)`);
     console.log('Cloud-Spielstand: Datenbank bereit');
   } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; return; }
   // Umzug: Spielstände aus der alten Datenbank übernehmen (neuere gewinnen)
@@ -87,6 +88,14 @@ async function initDb() {
   }
 }
 const HEX = /^[a-f0-9]{16,64}$/;
+// Geschenke (Münzen, Namensänderung) genau einmal an ein Gerät ausliefern, das sie versteht
+async function takeGifts(pid, m) {
+  if (!m.gifts) return undefined;
+  try {
+    const r = await pool.query('update gifts set delivered_at = now() where pid = $1 and delivered_at is null returning coins, name, note', [pid]);
+    return r.rows.length ? r.rows : undefined;
+  } catch (e) { console.log('Geschenke-Fehler', e.message); return undefined; }
+}
 async function cloudRoute(path, m) {
   if (!pool) return [503, { error: 'Cloud-Speicher ist noch nicht eingerichtet.' }];
   if (path === '/cloud/save') {
@@ -98,7 +107,7 @@ async function cloudRoute(path, m) {
           on conflict (pid) do update set data = excluded.data, name = excluded.name, updated_at = now() where saves.secret = excluded.secret
           returning code, updated_at`, [m.pid, m.secret, newSaveCode(), String(m.data.name || '').slice(0, 16), data]);
         if (!r.rows.length) return [403, { error: 'Falscher Schlüssel für diesen Spielstand.' }];
-        return [200, { ok: true, code: r.rows[0].code, updated: r.rows[0].updated_at }];
+        return [200, { ok: true, code: r.rows[0].code, updated: r.rows[0].updated_at, gifts: await takeGifts(m.pid, m) }];
       } catch (e) { if (!/saves_code_key/.test(e.message)) throw e; }   // Code schon vergeben: neu würfeln
     }
     return [500, { error: 'code' }];
@@ -106,7 +115,7 @@ async function cloudRoute(path, m) {
   if (path === '/cloud/get') {
     if (!HEX.test(m.pid || '') || !HEX.test(m.secret || '')) return [400, { error: 'bad' }];
     const r = await pool.query('select code, data, updated_at from saves where pid = $1 and secret = $2', [m.pid, m.secret]);
-    return [200, r.rows.length ? { found: true, code: r.rows[0].code, data: r.rows[0].data, updated: r.rows[0].updated_at } : { found: false }];
+    return [200, r.rows.length ? { found: true, code: r.rows[0].code, data: r.rows[0].data, updated: r.rows[0].updated_at, gifts: await takeGifts(m.pid, m) } : { found: false }];
   }
   if (path === '/cloud/load') {
     const code = String(m.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{4})/, '$1-');
