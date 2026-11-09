@@ -49,7 +49,7 @@ const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade di
 // ---------- KI-Bot (Google Gemini) ----------
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
 // Schnelle Modelle zuerst; beim Start wird das schnellste, das antwortet, ausgewählt
-const MODEL_CANDIDATES = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite,gemini-2.5-flash-lite,gemini-2.5-flash').split(',').map(x => x.trim()).filter(Boolean);
+const MODEL_CANDIDATES = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite,gemini-flash-lite-latest,gemini-3-flash-preview,gemini-3.1-flash-lite-preview').split(',').map(x => x.trim()).filter(Boolean);
 let GEMINI_MODEL = MODEL_CANDIDATES[0];
 const SYSTEM = `Du bist "Alki", ein freundlicher Chemie-Nachhilfelehrer in einer Lern-App.
 Der Schüler (ca. 10. Klasse, Waldorfschule) schreibt bald eine Chemieklausur über Alkane mit diesen Themen:
@@ -74,10 +74,11 @@ function limited(ip) {
   list.push(now); rate.set(ip, list);
   return list.length > 20;
 }
+const thinkCfg = model => /gemini-3/.test(model) ? { thinkingLevel: 'minimal' } : { thinkingBudget: 0 };
 function geminiBody(messages, thinkingOff) {
   const contents = messages.slice(-12).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 2000) }] }));
   const generationConfig = { temperature: 0.4, maxOutputTokens: 900 };
-  if (thinkingOff) generationConfig.thinkingConfig = { thinkingBudget: 0 };   // schneller: kein langes Nachdenken
+  if (thinkingOff) generationConfig.thinkingConfig = thinkCfg(GEMINI_MODEL);   // schneller: kein langes Nachdenken
   return JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig });
 }
 let thinkingSupported = true;   // falls das Modell thinkingBudget ablehnt, ab dann ohne
@@ -115,17 +116,23 @@ async function geminiStream(messages, onText) {
 }
 
 async function pickModel() {
-  const results = await Promise.all(MODEL_CANDIDATES.map(async model => {
+  const test = async (model, think) => {
+    const gc = think ? { thinkingConfig: thinkCfg(model) } : {};
     const t0 = Date.now();
+    const r = await httpsReq(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Was ist Methan? Ein Satz.' }] }], generationConfig: gc }), timeout: 25000 });
+    const body = await readAll(r);
+    return { status: r.statusCode, ms: Date.now() - t0, body };
+  };
+  const results = await Promise.all(MODEL_CANDIDATES.map(async model => {
     try {
-      const r = await httpsReq(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), timeout: 15000 });
-      const body = await readAll(r);
-      return { model, ok: r.statusCode === 200, ms: Date.now() - t0, info: r.statusCode === 200 ? '' : body.slice(0, 120) };
-    } catch (e) { return { model, ok: false, ms: Date.now() - t0, info: e.message }; }
+      let x = await test(model, true), think = true;
+      if (x.status === 400 && /think/i.test(x.body)) { x = await test(model, false); think = false; }
+      return { model, think, ok: x.status === 200, ms: x.ms, info: x.status === 200 ? '' : (x.status + ' ' + x.body.replace(/\s+/g, ' ').slice(0, 100)) };
+    } catch (e) { return { model, ok: false, ms: 0, info: e.message }; }
   }));
   const good = results.filter(x => x.ok).sort((a, b) => a.ms - b.ms);
-  if (good.length) GEMINI_MODEL = good[0].model;
-  console.log('Modelltest:', results.map(x => `${x.model} ${x.ok ? 'ok' : 'FEHLER'} ${x.ms} ms ${x.info}`).join(' | '), '=> nehme', GEMINI_MODEL);
+  if (good.length) { GEMINI_MODEL = good[0].model; thinkingSupported = good[0].think; }
+  console.log('Modelltest: ' + results.map(x => `${x.model}${x.think === false ? ' (ohne Denk-Einstellung)' : ''}: ${x.ok ? x.ms + ' ms' : 'FEHLER ' + x.info}`).join(' | ') + ' => nehme ' + GEMINI_MODEL);
 }
 
 // Diagnose: Wo hängt die Verbindung zu Google? (zeigt den Schlüssel nicht an)
