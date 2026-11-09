@@ -1376,7 +1376,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.6';
+const APP_VERSION='3.7';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1494,8 +1494,9 @@ function admSheet(id){
     ${ownedList.length?`<div class="adm-items">${ownedList.map(i=>`<span class="adm-chip">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}<button type="button" data-adm="rm" data-item="${esc(i.id)}" aria-label="Entfernen">✕</button></span>`).join('')}</div>
     <div class="row"><button class="btn" type="button" data-adm="rmall">🗑️ Alle Items wegnehmen</button></div>`:`<p class="muted" style="margin:0;font-size:.85rem">${p.owned?'Hat keine gekauften Items.':'Unbekannt. Tippe in der Admin-Liste auf „Aktualisieren“.'}</p>`}
     <label class="eyebrow" for="adm-bn">Bannen</label>
-    ${p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})} <button class="btn small" type="button" data-adm="unban">Entbannen</button></div>`:''}
+    ${p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">🚫 Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>`:''}
     <div class="row" style="flex-wrap:nowrap"><input id="adm-bn" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" value="1" style="width:70px;flex:none;margin:0"><select id="adm-bu" class="inp" style="flex:1;min-width:0;margin:0"><option value="1">Sekunden</option><option value="60" selected>Minuten</option><option value="3600">Stunden</option><option value="86400">Tage</option></select><button class="btn primary" type="button" data-adm="ban">🚫 Bannen</button></div>
+    <div class="row"><button class="btn" type="button" data-adm="unban">✅ Bann aufheben</button></div>
     <input id="adm-br" class="inp" maxlength="100" placeholder="Grund (optional)" style="margin:0">
     ${p.online?'<div class="row"><button class="btn" type="button" data-adm="kick">Verbindung trennen</button></div>':''}
     <p class="muted" style="margin:0;font-size:.8rem">Kommt sofort an, wenn der Spieler online ist, sonst beim nächsten Öffnen der App.</p>
@@ -1515,7 +1516,7 @@ function admSheet(id){
     b.disabled=true;
     admPost(a==='kick'?'kick':a==='ban'?'ban':a==='unban'?'unban':'gift',body).then(({status,j})=>{ b.disabled=false;
       if(status!==200) return toast(j.error||'Fehler');
-      toast(a==='ban'?'🚫 Gebannt':a==='unban'?'Entbannt':a==='rm'||a==='rmall'?(j.live?'✅ Entfernt':'✅ Wird beim nächsten Öffnen entfernt'):a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
+      toast(a==='ban'?'🚫 Gebannt':a==='unban'?'✅ Bann aufgehoben':a==='rm'||a==='rmall'?(j.live?'✅ Entfernt':'✅ Wird beim nächsten Öffnen entfernt'):a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
       if((a==='coins'||a==='take')&&p.coins!=null){ p.coins=Math.max(0,p.coins+body.coins); }
       if(a==='name') p.name=body.name;
       if(a==='ban') p.banned=j.until; if(a==='unban') p.banned=null;
@@ -1526,7 +1527,7 @@ function admSheet(id){
 }
 function admClick(e){
   if(!ADM.on) return false;
-  const o=e.target.closest('[data-admopen]'); if(o){ admSheet(o.dataset.admopen); return true; }
+  const o=e.target.closest('[data-admopen]'); if(o){ const id=o.dataset.admopen; if(!ADM.players||!ADM.players.some(x=>x.id===id)){ admPost('players').then(({status,j})=>{ if(status===200){ ADM.players=j.players; drawAdmin(); } admSheet(id); }).catch(()=>admSheet(id)); } else admSheet(id); return true; }
   if(e.target.closest('[data-admload]')){ admLoad(); return true; }
   return false;
 }
