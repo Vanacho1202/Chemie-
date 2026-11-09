@@ -93,7 +93,8 @@ const HEX = /^[a-f0-9]{16,64}$/;
 async function takeGifts(pid, m) {
   if (!m.gifts) return undefined;
   try {
-    const r = await pool.query('update gifts set delivered_at = now() where pid = $1 and delivered_at is null returning coins, name, note, extra', [pid]);
+    // Geschenke mit extra.minv nur an Apps, die das schon verstehen (m.gifts = Fähigkeitsstufe)
+    const r = await pool.query("update gifts set delivered_at = now() where pid = $1 and delivered_at is null and coalesce((extra->>'minv')::int, 1) <= $2 returning coins, name, note, extra", [pid, parseInt(m.gifts, 10) || 1]);
     return r.rows.length ? r.rows : undefined;
   } catch (e) { console.log('Geschenke-Fehler', e.message); return undefined; }
 }

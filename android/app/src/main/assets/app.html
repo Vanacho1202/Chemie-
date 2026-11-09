@@ -1400,7 +1400,7 @@ let cloudT=null;
 function cloudSoon(){ if(!cloudOk()) return; clearTimeout(cloudT); cloudT=setTimeout(cloudPush,4000); }
 function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; return d; }
 function cloudPush(){ if(!cloudOk()) return; cloudSecret();
-  cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:1}).then(({status,j})=>{
+  cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:2}).then(({status,j})=>{
     if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; } else S.cloud.err=j.error||('Fehler '+status);
     save(true); drawCloud(); applyGifts(j&&j.gifts); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
 /* Geschenke vom Server (Münzen, neuer Name), werden genau einmal ausgeliefert */
@@ -1422,7 +1422,7 @@ function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=nul
   if(nf&&typeof bWho==='function') try{ bWho(); }catch(e){}
   if((nf||ni||nm)&&/^#(battle|shop)/.test(location.hash)) try{ route(); }catch(e){} }
 function cloudPull(){ if(!cloudOk()) return; cloudSecret();
-  cloudPost('get',{pid:S.pid,secret:S.cloud.secret,gifts:1}).then(({status,j})=>{ setTimeout(()=>applyGifts(j&&j.gifts),50);
+  cloudPost('get',{pid:S.pid,secret:S.cloud.secret,gifts:2}).then(({status,j})=>{ setTimeout(()=>applyGifts(j&&j.gifts),50);
     if(status!==200) { if(status===503){ S.cloud.err=j.error; drawCloud(); } return; }
     if(!j.found){ cloudPush(); return; }
     S.cloud.code=j.code;
