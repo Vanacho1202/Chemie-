@@ -1365,7 +1365,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='2.8';
+const APP_VERSION='2.9';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1375,6 +1375,10 @@ function checkUpdate(){
   const u=versionUrl(); if(!u||$('#upd')) return;
   fetch(u,{cache:'no-store'}).then(r=>r.json()).then(j=>{
     if(!j||!j.version||j.version===APP_VERSION||$('#upd')) return;
+    // nur bei wirklich neuerer Version; GitHub liefert neue Dateien bis zu 5 Min. verzögert, daher in der APK erst danach melden
+    const num=v=>String(v).split('.').map(n=>+n||0), a=num(j.version), b=num(APP_VERSION);
+    if(!(a[0]>b[0]||(a[0]===b[0]&&(a[1]||0)>(b[1]||0)))) return;
+    if(location.protocol==='file:'&&j.updated&&Date.now()-Date.parse(j.updated)<6*60*1000) return;
     const inGame=B.phase&&!['lobby','tlobby','connecting','end'].includes(B.phase);
     const bar=el(`<div id="upd" class="upd" role="status"><div style="min-width:0;flex:1"><b>Update verfügbar 🎉</b><div class="muted" style="font-size:.85rem">${j.note?j.note+' · ':''}${inGame?'Lade nach dem Battle neu.':'Tippe auf „Neu laden“ oder schließe die App und öffne sie neu.'}</div></div><button class="btn small primary" type="button" id="upd-go">Neu laden</button><button class="xbtn" type="button" id="upd-x" aria-label="Später">×</button></div>`);
     document.body.appendChild(bar);
