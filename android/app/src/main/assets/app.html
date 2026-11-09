@@ -1599,9 +1599,9 @@ function buildKB(){ KB=[]; const strip=h=>h.replace(/<[^>]+>/g,' ').replace(/\s+
   CARDS.forEach(c=>KB.push({t:0,title:c[0],body:strip(c[0]+': '+c[1])})); }
 const STOP=new Set('der die das und oder ist sind ein eine einen was wie warum wieso weshalb wer wo mir mich ich du bei mit von zu im in am an auf für den dem des es sich nicht nur auch man kann erklär erkläre erklären bitte mal noch so hat haben wird werden'.split(' '));
 function localAnswer(q){ if(!KB) buildKB();
-  const words=q.toLowerCase().replace(/[^a-zäöüß0-9\- ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w));
+  const words=q.toLowerCase().replace(/[^a-zäöüß0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!STOP.has(w));
   if(!words.length) return 'Stell mir eine Frage zu einem Klausurthema, z. B. „Was ist eine homologe Reihe?“';
-  const sc=KB.map(k=>{ const tl=k.title.toLowerCase(), bl=k.body.toLowerCase(); let s=0; words.forEach(w=>{ const st=w.slice(0,Math.max(4,w.length-2)); if(tl.includes(st)) s+=4; const c=bl.split(st).length-1; s+=Math.min(c,3); }); return {k,s}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
+  const sc=KB.map(k=>{ const tl=' '+k.title.toLowerCase().replace(/[^a-zäöüß0-9]+/g,' '), bl=' '+k.body.toLowerCase().replace(/[^a-zäöüß0-9]+/g,' '); let s=0, hit=0; words.forEach(w=>{ const st=' '+w.slice(0,Math.max(4,w.length-2)); let h=0; if(tl.includes(st)){ s+=4; h=1; } const c=bl.split(st).length-1; if(c) h=1; s+=Math.min(c,3); hit+=h; }); s+=hit*hit*3; return {k,s}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
   if(!sc.length) return 'Dazu habe ich im Lernstoff nichts gefunden. Versuch es mit einem Fachbegriff, z. B. „Isomere“, „Elektronegativität“ oder „Siedetemperatur“.';
   return sc.map(x=>`**${x.k.title}**${x.k.t?` (Thema ${x.k.t})`:''}\n${x.k.body.length>520?x.k.body.slice(0,520).replace(/\s\S*$/,'')+' …':x.k.body}`).join('\n\n')+'\n\n(Antwort aus dem Lernstoff der App)'; }
 function drawChat(){ const c=$('#chat'); if(!c) return;
