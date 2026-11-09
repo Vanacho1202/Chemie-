@@ -1314,12 +1314,26 @@ const BATTLE_HTTP='https://alkane-battle.onrender.com/', BATTLE_WS='wss://alkane
 const KSHAPE=['▲','◆','●','■'];
 let B={ws:null,phase:'lobby',msg:'',code:'',you:0,host:false,opp:null,scores:[0,0],q:null,qi:0,total:10,pick:-1,oppDone:false,reveal:null,end:null,correct:0,oppRematch:false,timer:null};
 function battleQuestions(){
-  const topics=shuffle([1,2,3,4,5,6,7,1,2,6]); return topics.map(t=>{
-    const r=Math.random(); let q;
-    if(r<0.15){ const x=pick(TF.filter(y=>y[0]===t)); return {t, q:'Richtig oder falsch? '+x[1], o:['Richtig','Falsch'], a:x[2]?0:1, e:x[3]}; }
-    q = r<0.3 ? pick(QUESTIONS.filter(y=>y.t===t)) : genQ(t);
+  // 10 Fragen, keine doppelt: jede Fragenart (Generator), feste Frage und Aussage höchstens einmal
+  const used=new Set(), out=[];
+  for(const t of shuffle([1,2,3,4,5,6,7,1,2,6])){
+    let q=null;
+    for(let tries=0; tries<60 && !q; tries++){
+      const r=Math.random(); let c, key;
+      if(r<0.15){ const x=pick(TF.filter(y=>y[0]===t)); key='tf:'+x[1]; c={t, q:'Richtig oder falsch? '+x[1], o:['Richtig','Falsch'], a:x[2]?0:1, e:x[3]}; }
+      else if(r<0.3){ const b=pick(QUESTIONS.filter(y=>y.t===t)); key='bank:'+b.q; c=b; }
+      else { const gi=Math.floor(Math.random()*GEN[t].length), g=GEN[t][gi]; key='gen:'+(g.name||t+':'+gi); c=g(); }
+      const txt='txt:'+c.q.replace(/<[^>]+>/g,'')+'|'+(c.svg||'');
+      if(used.has(key)||used.has(txt)) continue;
+      used.add(key); used.add(txt); q=c;
+    }
+    if(!q) continue;
+    if(q.o[0]==='Richtig'&&q.o.length===2){ out.push(q); continue; }
     const order=shuffle(q.o.map((_,i)=>i));
-    return {t, q:q.q, o:order.map(i=>q.o[i]), a:order.indexOf(q.a), e:q.e||'', svg:q.svg||''}; }); }
+    out.push({t:q.t||t, q:q.q, o:order.map(i=>q.o[i]), a:order.indexOf(q.a), e:q.e||'', svg:q.svg||''});
+  }
+  return out;
+}
 function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
 function bConnect(then){
   if(B.ws&&B.ws.readyState===1){ then(); return; }
