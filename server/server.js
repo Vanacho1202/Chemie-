@@ -4,6 +4,9 @@
 const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
+// Google zuerst über IPv4 ansprechen: IPv6 hängt bei Render oft minutenlang
+require('dns').setDefaultResultOrder('ipv4first');
+try { require('net').setDefaultAutoSelectFamily(true); } catch {}
 
 const PORT = process.env.PORT || 10000;
 const LIMIT_MS = 20000;            // Zeit pro Frage
@@ -51,7 +54,11 @@ function geminiBody(messages, thinkingOff) {
 let thinkingSupported = true;   // falls das Modell thinkingBudget ablehnt, ab dann ohne
 async function geminiStream(messages, onText) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse`;
-  const go = off => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off) });
+  const once = off => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off), signal: AbortSignal.timeout(20000) });
+  const go = async off => {   // bei Netzwerkfehler oder Zeitüberschreitung einmal neu versuchen
+    try { return await once(off); }
+    catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.cause && (e.cause.code || e.cause.message)); return await once(off); }
+  };
   let r = await go(thinkingSupported);
   if (!r.ok && thinkingSupported) {
     const t = await r.text();
@@ -103,7 +110,7 @@ const server = http.createServer((req, res) => {
         if (!started) return json(200, { answer: 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' });
         res.end();
       } catch (e) {
-        console.log('Gemini-Fehler:', e.message);
+        console.log('Gemini-Fehler:', e.name, e.message, e.cause && (e.cause.code || e.cause.message || ''));
         if (started) { res.write('\n\n(Die Antwort wurde unterbrochen.)'); res.end(); } else json(502, { error: 'ai_failed' });
       }
     });
@@ -317,4 +324,13 @@ wss.on('connection', ws => {
 // Verbindungen am Leben halten, tote Verbindungen aufräumen
 setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; ws.ping(); }), 25000);
 
-server.listen(PORT, () => console.log('Alkane Battle läuft auf Port ' + PORT));
+server.listen(PORT, () => {
+  console.log('Alkane Battle läuft auf Port ' + PORT);
+  // Selbsttest der KI beim Start, Ergebnis steht im Log
+  if (GEMINI_KEY) {
+    const t0 = Date.now();
+    geminiStream([{ role: 'user', text: 'Antworte nur mit: OK' }], () => {})
+      .then(t => console.log('KI-Selbsttest ok nach', Date.now() - t0, 'ms, Modell', GEMINI_MODEL, ':', JSON.stringify(t.slice(0, 40))))
+      .catch(e => console.log('KI-Selbsttest fehlgeschlagen nach', Date.now() - t0, 'ms:', e.name, e.message, e.cause && (e.cause.code || e.cause.message || '')));
+  }
+});
