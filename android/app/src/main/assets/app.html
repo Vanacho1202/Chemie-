@@ -1376,7 +1376,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.8';
+const APP_VERSION='3.9';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1482,12 +1482,12 @@ function drawAdmin(){
 const ADM_KINDS={emote:'Emote',avatar:'Avatar',title:'Titel',color:'Namensfarbe'};
 function admOwnedHTML(p){
   const list=(p.owned||[]).map(id=>SHOP.find(i=>i.id===id)).filter(i=>i&&i.price>0);
-  if(!list.length) return `<p class="muted" style="margin:0;font-size:.85rem">${p.owned?'Hat keine gekauften Items.':'Unbekannt. Tippe in der Admin-Liste auf „Aktualisieren“.'}</p>`;
+  if(!list.length) return `<p class="muted" style="margin:0;font-size:.85rem">${p.owned?'Hat keine gekauften Items.':p.loading?'Lade Items …':p.code===null?'Noch kein Cloud-Spielstand, Items unbekannt.':'Items konnten nicht geladen werden.'}</p>`;
   return `<div class="muted" style="font-size:.8rem;margin-bottom:4px">${list.length} Items</div><div class="adm-items">${list.map(i=>`<span class="adm-chip">${ADM_KINDS[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}<button type="button" data-adm="rm" data-item="${esc(i.id)}" aria-label="Entfernen">✕</button></span>`).join('')}</div>
     <div class="row" style="margin-top:6px"><button class="btn" type="button" data-adm="rmall">🗑️ Alle Items wegnehmen</button></div>`; }
 function admBanHTML(p){ return p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">🚫 Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>`:''; }
 function admSheet(id){
-  const p=admFind(id); $('#adm-sheet')&&$('#adm-sheet').remove();
+  const p=admFind(id); $('#adm-sheet')&&$('#adm-sheet').remove(); p.loading=true;
   const kinds={emote:'Emote',avatar:'Avatar',title:'Titel',color:'Namensfarbe'};
   const opts=SHOP.filter(i=>i.price>0).map(i=>`<option value="${esc(i.id)}">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}</option>`).join('');
   const sh=el(`<div id="adm-sheet" class="adm-sheet" role="dialog" aria-modal="true" aria-label="Spieler verwalten"><div class="adm-box card">
@@ -1507,6 +1507,11 @@ function admSheet(id){
     <p class="muted" style="margin:0;font-size:.8rem">Kommt sofort an, wenn der Spieler online ist, sonst beim nächsten Öffnen der App.</p>
   </div></div>`);
   document.body.appendChild(sh);
+  // frische Daten im Hintergrund holen (Items, Münzen, Bann)
+  p.loading=true; admPost('players').then(({status,j})=>{ p.loading=false; if(status!==200) return;
+    ADM.players=j.players; const f=j.players.find(x=>x.id===p.id); if(f) Object.assign(p,f);
+    const o=$('#adm-own'); if(o) o.innerHTML=admOwnedHTML(p); const bs=$('#adm-banst'); if(bs) bs.innerHTML=admBanHTML(p); drawAdmin(); })
+  .catch(()=>{ p.loading=false; const o=$('#adm-own'); if(o) o.innerHTML=admOwnedHTML(p); });
   sh.addEventListener('click',e=>{
     if(e.target===sh||e.target.closest('[data-admx]')) return sh.remove();
     const b=e.target.closest('[data-adm]'); if(!b) return;
