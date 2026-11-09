@@ -1420,7 +1420,7 @@ function bMsg(m){
       else if(st==='reveal') Object.assign(B,{phase:'reveal',qi:m.qi,reveal:m.reveal,myReady:m.myReady,oppReady:m.oppReady});
       else if(st==='end'){ B.phase='end'; B.end=m.end; if(!B.awarded) bMsg(m.end); }
       bSaveSession(); toast('Wieder verbunden'); break; }
-    case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Du warst zu lange weg. Das Battle ist leider vorbei.'; break;
+    case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Das Battle wurde unterbrochen, weil der Server neu gestartet ist oder du länger als 90 Sekunden weg warst. Starte einfach ein neues.'; break;
     case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); return;
     case 'hi': B.onlineCount=m.online; return;
     case 'friend_req': if(S.friends[m.from.id]){ bSend({type:'friend_ok',to:m.from.id}); return; } popup({kind:'friend',from:m.from}); return;

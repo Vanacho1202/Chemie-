@@ -26,3 +26,9 @@ Der Lernfortschritt bleibt dabei erhalten, weil die App immer unter derselben lo
 Bauen (Windows): `cd android` → `gradlew.bat assembleDebug`
 
 `tools/rebuild.py` und `tools/sign_v2.py` bauen eine vorhandene APK ohne Android SDK um (Assets tauschen, ausrichten mit `repro-apk zipalign`, v2-signieren). Wichtig: Eine Version, die mit einem anderen Schlüssel signiert ist, lässt sich nicht über die installierte App installieren. Dann vorher deinstallieren.
+
+## Updates ohne Battle-Abbruch
+
+Render baut bei jedem Commit auch den Battle-Server neu, und dabei gehen laufende Battles verloren.
+Commits, die nur `web/` oder `android/` ändern, deshalb mit `[skip render]` in der Commit-Nachricht pushen
+und danach nur die statische Seite `alkane-trainer` neu deployen. Die App holt sich die Änderung direkt von GitHub.
