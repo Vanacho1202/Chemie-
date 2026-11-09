@@ -10,6 +10,12 @@ Interaktive Lern-App für die 1. Chemieklausur (Alkane): 7 Themen mit Erklärung
 | `server/` | Battle-Server (Node + WebSocket), läuft auf Render als `alkane-battle`. |
 | `android/` | Android-Hülle (WebView). Lädt die Live-Version von Render, offline die eingebaute Kopie. |
 
+## iPhone und iPad
+
+Die Website ist eine installierbare Web-App: In Safari https://alkane-trainer.onrender.com öffnen → Teilen → „Zum Home-Bildschirm“.
+Sie startet dann im Vollbild mit eigenem Symbol. `web/manifest.webmanifest`, `web/sw.js` (offline) und die Icons gehören dazu.
+`tools/build_web.sh <app.html>` baut `web/index.html` mit den nötigen Kopfzeilen.
+
 ## Live-Updates
 
 1. `web/index.html` ändern und auf `main` pushen.
