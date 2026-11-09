@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important} body{margin:0} img{max-width:100%}</style>
+</head>
+<body>
+<title>Alkane Klausurtrainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: Schulheft auf Karopapier – eine Lesespalte, Themen als Kapitel, feste Navigationsleiste unten */
+:root{
+  --bg:#e8edeb; --grid:rgba(30,70,60,.075); --paper:#fbfcfc; --paper-2:#f1f4f3;
+  --ink:#16201e; --muted:#566461; --line:#cbd5d2;
+  --accent:#bb4f17; --accent-soft:rgba(187,79,23,.11); --on-accent:#ffffff;
+  --plus:#1d5ea5; --minus:#bd3131;
+  --good:#2a7849; --good-soft:rgba(42,120,73,.12); --bad:#b5322d; --bad-soft:rgba(181,50,45,.10);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121817; --grid:rgba(200,230,220,.055); --paper:#1a2221; --paper-2:#212b29;
+    --ink:#e6ecea; --muted:#97a6a2; --line:#2d3936;
+    --accent:#f08a4b; --accent-soft:rgba(240,138,75,.14); --on-accent:#1a0e06;
+    --plus:#73aaea; --minus:#f07c7c;
+    --good:#62c98f; --good-soft:rgba(98,201,143,.13); --bad:#f07c7c; --bad-soft:rgba(240,124,124,.12);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121817; --grid:rgba(200,230,220,.055); --paper:#1a2221; --paper-2:#212b29;
+  --ink:#e6ecea; --muted:#97a6a2; --line:#2d3936;
+  --accent:#f08a4b; --accent-soft:rgba(240,138,75,.14); --on-accent:#1a0e06;
+  --plus:#73aaea; --minus:#f07c7c;
+  --good:#62c98f; --good-soft:rgba(98,201,143,.13); --bad:#f07c7c; --bad-soft:rgba(240,124,124,.12);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg); color:var(--ink);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+  font-family:var(--f-body); font-size:17px; line-height:1.55;
+  -webkit-tap-highlight-color:transparent;
+}
+.wrap{max-width:720px; margin:0 auto; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:20px 120px; display:flex; flex-direction:column; gap:18px}
+h1,h2,h3{font-family:var(--f-display); line-height:1.15; text-wrap:balance; margin:0}
+h1{font-size:2.1rem; font-weight:800; letter-spacing:-.01em}
+h2{font-size:1.35rem; font-weight:800}
+h3{font-size:1.1rem; font-weight:600; margin-top:1.1em}
+p{margin:.55em 0} ul,ol{margin:.5em 0; padding-left:1.3em} li{margin:.25em 0}
+sub{font-size:.72em; line-height:0}
+b{font-weight:700}
+.eyebrow{font-family:var(--f-mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.plus{color:var(--plus)} .minus{color:var(--minus)}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:18px; min-width:0}
+.card > :first-child{margin-top:0}
+.prose{max-width:65ch}
+.hint{font-size:.92rem; color:var(--muted); border-top:1px dashed var(--line); padding-top:.6em}
+.merk{border:1.5px dashed var(--accent); border-radius:10px; padding:12px 14px; margin:.9em 0; position:relative; background:var(--accent-soft)}
+.merk-label{display:block; font-family:var(--f-mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:2px}
+.formula-big{font-family:var(--f-mono); font-size:2rem; font-weight:600; text-align:center; padding:8px 0; color:var(--accent)}
+.tbl{overflow-x:auto; margin:.7em 0}
+table{border-collapse:collapse; width:100%; font-size:.95rem; font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line); padding:7px 8px; text-align:left; vertical-align:top}
+th{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible, input:focus-visible, select:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px}
+.btn{color:var(--ink); border:1px solid var(--line); background:var(--paper-2); border-radius:10px; padding:10px 14px; font-weight:700}
+.btn.primary{background:var(--accent); color:var(--on-accent); border-color:var(--accent)}
+.btn.small{padding:6px 10px; font-size:.88rem}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:6px 12px; font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.fig{display:block; margin:0 auto; max-width:100%; height:auto}
+.figbox{overflow-x:auto; padding:6px 0}
+svg text{fill:var(--ink)}
+.sk-main{stroke:var(--ink); stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.sk-sub{stroke:var(--accent); stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round}
+.sk-dot{fill:var(--ink)} .sk-dot.s{fill:var(--accent)}
+.sk-num{font-family:var(--f-mono); font-size:10px; fill:var(--muted)!important}
+.st-bond{stroke:var(--ink); stroke-width:1.6}
+.st-atom{font-family:var(--f-mono); font-size:15px; font-weight:600}
+.st-h{fill:var(--muted)!important; font-weight:400}
+
+/* Kopf */
+.hero{display:flex; flex-direction:column; gap:10px; padding-top:6px}
+.hero h1{font-size:2.7rem}
+.hero .date{font-family:var(--f-mono); font-size:.9rem}
+.count{display:flex; gap:18px; flex-wrap:wrap; align-items:flex-end}
+.count .num{font-family:var(--f-display); font-weight:800; font-size:2.4rem; line-height:1; color:var(--accent); font-variant-numeric:tabular-nums}
+.count .lbl{font-size:.85rem; color:var(--muted)}
+.cd-box{background:var(--paper); border:1.5px solid var(--ink); border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:8px}
+.cd{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+.cd-unit{display:flex; flex-direction:column; align-items:flex-start; min-width:0}
+.cd-unit .num{font-family:var(--f-display); font-weight:800; font-size:clamp(2.2rem,11vw,3.4rem); line-height:1; color:var(--accent); font-variant-numeric:tabular-nums}
+.cd-unit .lbl{font-size:.85rem; color:var(--muted)}
+.progress{height:8px; background:var(--paper-2); border:1px solid var(--line); border-radius:99px; overflow:hidden}
+.progress > span{display:block; height:100%; background:var(--good); transition:width .4s}
+
+/* Themenliste */
+.topics{display:flex; flex-direction:column; gap:0}
+.topic-row{display:grid; grid-template-columns:42px 1fr auto; gap:12px; align-items:center; padding:12px 4px; border-bottom:1px solid var(--line); background:none; border-left:0; border-right:0; border-top:0; text-align:left; width:100%}
+.topic-row:last-child{border-bottom:0}
+.tnum{width:38px; height:38px; border-radius:9px; border:1.5px solid var(--ink); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:1.1rem}
+.topic-row.done .tnum{background:var(--good); border-color:var(--good); color:var(--paper)}
+.topic-row .tt{font-weight:700; line-height:1.25; min-width:0}
+.topic-row .ts{font-size:.85rem; color:var(--muted); line-height:1.3}
+.topic-row .arrow{color:var(--muted); font-family:var(--f-mono)}
+.plan{display:flex; flex-direction:column; gap:12px}
+.block{display:grid; grid-template-columns:86px 1fr; gap:12px; align-items:start}
+.block .when{font-family:var(--f-mono); font-size:.78rem; color:var(--muted); line-height:1.35; padding-top:3px}
+.block .when b{display:block; color:var(--ink); font-size:.85rem}
+.block .what{min-width:0; display:flex; flex-wrap:wrap; gap:6px}
+.pill{border:1px solid var(--line); border-radius:8px; padding:4px 9px; font-size:.88rem; background:var(--paper-2)}
+.pill.done{border-color:var(--good); color:var(--good); background:var(--good-soft)}
+.pill.done::before{content:"✓ "}
+a.pill{color:inherit; text-decoration:none}
+
+/* Thema */
+.topbar{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.back{background:none; border:0; padding:6px 0; font-weight:700; color:var(--accent)}
+.goals{font-size:.95rem; margin:0}
+.sec-label{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:8px}
+.pager{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap}
+
+/* Widgets */
+.w-out{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:12px}
+.stat{background:var(--paper-2); border-radius:10px; padding:10px 12px; min-width:0}
+.stat .k{font-size:.72rem; font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+.stat .v{font-weight:700; font-size:1.15rem; font-variant-numeric:tabular-nums; overflow-wrap:anywhere}
+.stat .v.mono{font-family:var(--f-mono); font-weight:600}
+input[type=range]{width:100%; accent-color:var(--accent)}
+select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
+.name-out{font-family:var(--f-display); font-weight:800; font-size:1.5rem; overflow-wrap:anywhere; line-height:1.2}
+.warn{color:var(--bad); background:var(--bad-soft); border-radius:9px; padding:8px 12px; font-size:.92rem}
+.okmsg{color:var(--good); background:var(--good-soft); border-radius:9px; padding:8px 12px; font-size:.92rem; font-weight:700}
+.subs-list{display:flex; flex-wrap:wrap; gap:6px}
+.subchip{display:inline-flex; gap:6px; align-items:center; border:1px solid var(--accent); color:var(--accent); border-radius:99px; padding:3px 4px 3px 10px; font-size:.88rem}
+.subchip button{border:0; background:var(--accent-soft); color:var(--accent); width:24px; height:24px; border-radius:99px; line-height:1}
+.iso-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; margin-top:12px}
+.iso{background:var(--paper-2); border-radius:10px; padding:10px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.iso .nm{font-weight:700; overflow-wrap:anywhere}
+.bar{height:6px; border-radius:6px; background:var(--accent)}
+.en-scale{position:relative; height:34px; margin:20px 0 6px}
+.en-zone{position:absolute; top:0; height:14px; display:flex; align-items:center; justify-content:center}
+.en-marker{position:absolute; top:-8px; width:3px; height:30px; background:var(--ink); border-radius:2px; transition:left .35s}
+.en-ticks{position:absolute; top:18px; left:0; right:0; font-family:var(--f-mono); font-size:.72rem; color:var(--muted)}
+.en-ticks span{position:absolute; transform:translateX(-50%)}
+.bond-view{display:flex; justify-content:center; align-items:center; gap:4px; padding:18px 0 6px; font-family:var(--f-mono)}
+.bond-view .at{display:flex; flex-direction:column; align-items:center; min-width:54px}
+.bond-view .at .d{font-size:1rem; height:1.4em; font-weight:600}
+.bond-view .at .s{font-size:2.2rem; font-weight:600; line-height:1}
+.bond-view .line{width:60px; height:4px; background:var(--ink); border-radius:2px; margin-top:22px}
+.force{display:grid; grid-template-columns:24px 1fr auto; gap:8px; align-items:center; padding:7px 0; border-bottom:1px solid var(--line)}
+.force:last-child{border-bottom:0}
+.force .ic{font-weight:800; text-align:center}
+.force.on .ic{color:var(--good)} .force.off{color:var(--muted)}
+.vdw-svg .cloud{transition:transform .6s ease; transform-box:fill-box}
+.vdw-svg .lbl{transition:opacity .4s}
+.order-pool{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+.order-pool button{text-align:left; border:1px solid var(--line); background:var(--paper-2); border-radius:10px; padding:10px 12px}
+.order-done{display:flex; flex-direction:column; gap:4px; margin-top:10px}
+.order-done div{padding:6px 12px; border-left:3px solid var(--good); background:var(--good-soft); border-radius:0 8px 8px 0}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.notation{display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px}
+@media (min-width:620px){ .notation{grid-template-columns:1fr 1fr} }
+.chart-info{min-height:2.8em; font-size:.95rem}
+
+/* Zuordnen */
+.match{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:10px}
+.mcol{display:flex; flex-direction:column; gap:8px; min-width:0}
+.mitem{min-height:64px; border:1.5px solid var(--line); background:var(--paper); border-radius:11px; padding:8px 10px; text-align:left; line-height:1.25; font-weight:700; overflow-wrap:break-word; hyphens:auto; -webkit-hyphens:auto; transition:background .2s,border-color .2s}
+.mitem.mfig{font-weight:400; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden}
+.mitem.mfig svg{max-height:84px; width:auto}
+.mitem.sel{border-color:var(--accent); background:var(--accent-soft)}
+.mitem.done{border-color:var(--good); background:var(--good-soft); opacity:.75; cursor:default; color:var(--ink)}
+.mitem.bad{border-color:var(--bad); background:var(--bad-soft)}
+/* Lernvideos */
+.vids{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px}
+.vid{display:flex; flex-direction:column; gap:2px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper-2); color:var(--ink); text-decoration:none; min-width:0; font-size:.92rem; line-height:1.3}
+.vid .vid-src{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.vid .muted{font-size:.85rem}
+/* Quiz */
+.q{display:flex; flex-direction:column; gap:10px}
+.q .qt{font-weight:700; font-size:1.05rem}
+.opts{display:flex; flex-direction:column; gap:8px}
+.opt{text-align:left; border:1.5px solid var(--line); background:var(--paper); border-radius:11px; padding:11px 14px; line-height:1.35}
+.opt.right{border-color:var(--good); background:var(--good-soft)}
+.opt.wrong{border-color:var(--bad); background:var(--bad-soft)}
+.opt:disabled{cursor:default; opacity:1; color:var(--ink)}
+.expl{font-size:.93rem; background:var(--paper-2); border-radius:10px; padding:10px 12px}
+.expl b.r{color:var(--good)} .expl b.f{color:var(--bad)}
+.qlist{display:flex; flex-direction:column; gap:22px}
+.qlist .q + .q{border-top:1px solid var(--line); padding-top:18px}
+.score{font-family:var(--f-display); font-weight:800; font-size:3rem; line-height:1; color:var(--accent); font-variant-numeric:tabular-nums}
+
+/* Karteikarten */
+.flash{min-height:230px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:10px; border:1.5px solid var(--ink); border-radius:16px; background:var(--paper); padding:22px; width:100%}
+.flash .term{font-family:var(--f-display); font-weight:800; font-size:1.7rem; line-height:1.2}
+.flash .def{font-size:1.05rem; max-width:44ch}
+.flash .tap{font-size:.8rem; color:var(--muted); font-family:var(--f-mono)}
+
+/* Aufgaben */
+.task .sol{margin-top:10px; border-top:1px dashed var(--line); padding-top:10px}
+.rate{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+.rate .chip[aria-pressed="true"].g{background:var(--good); border-color:var(--good); color:var(--paper)}
+.rate .chip[aria-pressed="true"].m{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.rate .chip[aria-pressed="true"].b{background:var(--bad); border-color:var(--bad); color:var(--paper)}
+
+/* Navigation */
+nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--paper); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px); padding-left:max(8px,env(safe-area-inset-left,0px)); padding-right:max(8px,env(safe-area-inset-right,0px))}
+nav.tabs .in{max-width:720px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr)}
+nav.tabs a{display:flex; flex-direction:column; align-items:center; gap:2px; padding:9px 4px 10px; text-decoration:none; color:var(--muted); font-size:.78rem; font-weight:700}
+nav.tabs a svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+nav.tabs a[aria-current="page"]{color:var(--accent)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+</style>
+
+<div class="wrap" id="app" lang="de"></div>
+<nav class="tabs" aria-label="Bereiche"><div class="in">
+  <a href="#start" data-nav="start"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Plan</a>
+  <a href="#training" data-nav="training"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Training</a>
+  <a href="#klausur" data-nav="klausur"><svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H4V3h3"/><path d="M8 11l2.5 2.5L16 8"/><path d="M8 17h8"/></svg>Klausur</a>
+  <a href="#karten" data-nav="karten"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="13" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v11"/></svg>Karten</a>
+  <a href="#aufgaben" data-nav="aufgaben"><svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>Aufgaben</a>
+</div></nav>
+
+<script>
+"use strict";
+/* ---------- Speicher ---------- */
+const KEY='alkane-klausur-v1';
+let S={done:{},cards:{},tasks:{},exams:[],wrong:{},theme:'system',hunt:{}};
+try{ const raw=localStorage.getItem(KEY); if(raw){ S=Object.assign(S,JSON.parse(raw)); } }catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+const THEMES={system:'Automatisch',light:'Hell',dark:'Dunkel'};
+let themeTouched=false;
+function applyTheme(){ const r=document.documentElement; if(S.theme==='system'){ if(themeTouched) r.removeAttribute('data-theme'); } else { r.setAttribute('data-theme',S.theme); themeTouched=true; } }
+applyTheme();
+
+/* ---------- Helfer ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const fm=s=>String(s).replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>');
+const dec=x=>String(x).replace('.',',');
+const shuffle=a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
+const randInt=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+
+/* ---------- Chemie-Engine: Moleküle, Namen, Formeln ---------- */
+const STEMS=['','meth','eth','prop','but','pent','hex','hept','oct','non','dec'];
+const ALKYL={1:'methyl',2:'ethyl',3:'propyl'};
+const MULT=['','','di','tri','tetra'];
+const ALKANES=[null,
+ {n:1,name:'Methan',bp:-162},{n:2,name:'Ethan',bp:-89},{n:3,name:'Propan',bp:-42},{n:4,name:'Butan',bp:-0.5},
+ {n:5,name:'Pentan',bp:36},{n:6,name:'Hexan',bp:69},{n:7,name:'Heptan',bp:98},{n:8,name:'Octan',bp:126},
+ {n:9,name:'Nonan',bp:151},{n:10,name:'Decan',bp:174}];
+function cap(s){ return s.replace(/[a-zäöü]/,c=>c.toUpperCase()); }
+function locs(m,flip){ return m.subs.map(s=>({l:s.l,p:flip?m.n+1-s.p:s.p})); }
+function cmpArr(a,b){ for(let i=0;i<Math.min(a.length,b.length);i++){ if(a[i]!==b[i]) return a[i]-b[i]; } return 0; }
+function chooseFlip(m){
+  const A=locs(m,false), B=locs(m,true);
+  const sa=A.map(x=>x.p).sort((x,y)=>x-y), sb=B.map(x=>x.p).sort((x,y)=>x-y);
+  let c=cmpArr(sa,sb); if(c<0) return false; if(c>0) return true;
+  const ord=L=>L.slice().sort((x,y)=>ALKYL[x.l].localeCompare(ALKYL[y.l])||x.p-y.p).map(x=>x.p);
+  return cmpArr(ord(A),ord(B))>0;
+}
+function buildName(n,L,reverseOrder,noMult){
+  if(!L.length) return cap(STEMS[n]+'an');
+  let parts;
+  if(noMult){
+    parts=L.slice().sort((x,y)=>ALKYL[x.l].localeCompare(ALKYL[y.l])||x.p-y.p).map(x=>x.p+'-'+ALKYL[x.l]);
+  }else{
+    const g={}; L.forEach(x=>{(g[x.l]=g[x.l]||[]).push(x.p);});
+    let keys=Object.keys(g).sort((a,b)=>ALKYL[a].localeCompare(ALKYL[b]));
+    if(reverseOrder) keys.reverse();
+    parts=keys.map(k=>{const ps=g[k].sort((a,b)=>a-b); return ps.join(',')+'-'+MULT[ps.length]+ALKYL[k];});
+  }
+  return cap(parts.join('-')+STEMS[n]+'an');
+}
+function nameOf(m){ return buildName(m.n,locs(m,chooseFlip(m))); }
+function carbons(m){ return m.n+m.subs.reduce((a,s)=>a+s.l,0); }
+function sumFormula(m){ const c=carbons(m); return 'C'+(c>1?c:'')+'H'+(2*c+2); }
+function longestChain(m){
+  const adj=[]; let id=m.n;
+  const add=(a,b)=>{(adj[a]=adj[a]||[]).push(b);(adj[b]=adj[b]||[]).push(a);};
+  for(let i=0;i<m.n;i++){ adj[i]=adj[i]||[]; if(i>0) add(i-1,i); }
+  m.subs.forEach(s=>{ let prev=s.p-1; for(let k=0;k<s.l;k++){ add(prev,id); prev=id; id++; } });
+  const far=st=>{ const d=new Array(id).fill(-1); d[st]=0; const q=[st]; let best=st;
+    while(q.length){ const u=q.shift(); for(const v of adj[u]) if(d[v]<0){ d[v]=d[u]+1; q.push(v); if(d[v]>d[best]) best=v; } }
+    return [best,d[best]]; };
+  const [a]=far(0); return far(a)[1]+1;
+}
+function validate(m){
+  const cnt={};
+  for(const s of m.subs){
+    if(s.p<=1||s.p>=m.n) return 'Am Kettenende darf keine Seitenkette sitzen: Sie würde die Hauptkette einfach verlängern.';
+    cnt[s.p]=(cnt[s.p]||0)+1;
+    if(cnt[s.p]>2) return 'Ein C-Atom in der Kette hat nur noch 2 freie Bindungen. Mehr als 2 Seitenketten passen nicht dran.';
+  }
+  if(longestChain(m)>m.n) return 'Über diese Seitenkette entsteht eine längere Kette als die Hauptkette. Die längste Kette muss immer die Hauptkette sein. Setze die Seitenkette weiter in die Mitte.';
+  return null;
+}
+function condensed(m){
+  const by={}; m.subs.forEach(s=>(by[s.p]=by[s.p]||[]).push(s));
+  const parts=[];
+  for(let i=1;i<=m.n;i++){
+    const subs=by[i]||[]; const nb=m.n===1?0:(i===1||i===m.n?1:2);
+    const h=4-nb-subs.length;
+    let t='C'+(h>0?'H'+(h>1?h:''):'');
+    const g={}; subs.forEach(s=>g[s.l]=(g[s.l]||0)+1);
+    Object.keys(g).forEach(l=>{ const grp=l==1?'CH3':l==2?'CH2CH3':'CH2CH2CH3'; t+= g[l]>1?'('+grp+')'+g[l]:'('+grp+')'; });
+    parts.push(t);
+  }
+  return parts.join('–');
+}
+/* Skelettformel als SVG */
+function skeletonSVG(m,opt={}){
+  if(m.n===1) return '<p class="muted" style="text-align:center">Methan hat nur ein C-Atom. Eine Skelettformel ist hier nicht üblich.</p>';
+  if(opt.flip) m={n:m.n,subs:m.subs.map(s=>({p:m.n+1-s.p,l:s.l}))};
+  const L=30, dx=26, dy=15;
+  const P=[]; for(let i=1;i<=m.n;i++) P[i]={x:(i-1)*dx, y:(i%2? dy:0)};
+  const outDir=i=> P[i].y===0? -1 : 1;
+  const all=P.slice(1).map(p=>({x:p.x,y:p.y}));
+  const by={}; m.subs.forEach(s=>(by[s.p]=by[s.p]||[]).push(s));
+  let subPaths=[], subDots=[];
+  Object.keys(by).forEach(pk=>{
+    const p=+pk; const list=by[p].slice().sort((a,b)=>b.l-a.l);
+    list.forEach((s,j)=>{
+      const dir= j===0? outDir(p) : -outDir(p);
+      let side = p<=m.n/2? 1:-1;
+      let x=P[p].x, y=P[p].y; const pts=[[x,y]];
+      for(let k=1;k<=s.l;k++){
+        if(k%2===1){ y+=dir*L; } else { x+=side*dx; y+=dir*dy; }
+        pts.push([x,y]); all.push({x,y}); subDots.push([x,y]);
+      }
+      subPaths.push('M'+pts.map(q=>q.join(',')).join(' L'));
+    });
+  });
+  const pad=18;
+  const xs=all.map(a=>a.x), ys=all.map(a=>a.y);
+  const minx=Math.min(...xs)-pad, maxx=Math.max(...xs)+pad, miny=Math.min(...ys)-pad, maxy=Math.max(...ys)+pad;
+  const w=maxx-minx, h=maxy-miny, sc=opt.scale||1.7;
+  let s=`<svg class="fig" viewBox="${minx} ${miny} ${w} ${h}" width="${Math.round(w*sc)}" role="img" aria-label="Skelettformel">`;
+  s+=`<path class="sk-main" d="M${P.slice(1).map(p=>p.x+','+p.y).join(' L')}"/>`;
+  subPaths.forEach(d=>s+=`<path class="sk-sub" d="${d}"/>`);
+  if(opt.dots){
+    P.slice(1).forEach(p=>s+=`<circle class="sk-dot" cx="${p.x}" cy="${p.y}" r="2.6"/>`);
+    subDots.forEach(q=>s+=`<circle class="sk-dot s" cx="${q[0]}" cy="${q[1]}" r="2.6"/>`);
+  }
+  if(opt.nums){
+    for(let i=1;i<=m.n;i++){
+      const inward=-outDir(i); const hasTwo=(by[i]||[]).length>1;
+      const tx=P[i].x+(hasTwo?9:0), ty=P[i].y+inward*12+(inward>0?3:0);
+      s+=`<text class="sk-num" x="${tx}" y="${ty}" text-anchor="middle">${i}</text>`;
+    }
+  }
+  return s+'</svg>';
+}
+/* Strukturformel (Lewis/Valenzstrich) als SVG – für unverzweigte und einfache verzweigte Alkane */
+function structSVG(m){
+  const C=26; const main=[], carb=[], bonds=[];
+  for(let i=0;i<m.n;i++){ const a={x:2*i,y:0,used:new Set(),c:true}; main.push(a); carb.push(a); if(i>0){ bonds.push([main[i-1],a]); main[i-1].used.add('R'); a.used.add('L'); } }
+  const by={}; m.subs.forEach(s=>(by[s.p]=by[s.p]||[]).push(s));
+  Object.keys(by).forEach(pk=>{ by[pk].forEach((s,j)=>{ const dir=j===0?-1:1; let prev=main[pk-1]; prev.used.add(dir<0?'U':'D');
+    for(let k=1;k<=s.l;k++){ const a={x:prev.x,y:prev.y+dir*2,used:new Set([dir<0?'D':'U']),c:true}; if(k<s.l) a.used.add(dir<0?'U':'D'); bonds.push([prev,a]); carb.push(a); prev=a; } }); });
+  const D={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1]}; const hs=[];
+  carb.forEach(c=>['L','R','U','D'].forEach(d=>{ if(!c.used.has(d)){ const h={x:c.x+D[d][0],y:c.y+D[d][1],c:false}; hs.push(h); bonds.push([c,h]); } }));
+  const atoms=carb.concat(hs);
+  const xs=atoms.map(a=>a.x*C), ys=atoms.map(a=>a.y*C);
+  const pad=14, minx=Math.min(...xs)-pad, miny=Math.min(...ys)-pad, w=Math.max(...xs)-minx+pad, h=Math.max(...ys)-miny+pad;
+  let s=`<svg class="fig" viewBox="${minx} ${miny} ${w} ${h}" width="${Math.round(w*1.15)}" role="img" aria-label="Strukturformel">`;
+  bonds.forEach(([a,b])=>{ const x1=a.x*C,y1=a.y*C,x2=b.x*C,y2=b.y*C; const len=Math.hypot(x2-x1,y2-y1); const ra=9, rb=b.c?9:7;
+    const ux=(x2-x1)/len, uy=(y2-y1)/len;
+    s+=`<line class="st-bond" x1="${x1+ux*ra}" y1="${y1+uy*ra}" x2="${x2-ux*rb}" y2="${y2-uy*rb}"/>`; });
+  atoms.forEach(a=>s+=`<text class="st-atom${a.c?'':' st-h'}" x="${a.x*C}" y="${a.y*C}" text-anchor="middle" dominant-baseline="central">${a.c?'C':'H'}</text>`);
+  return s+'</svg>';
+}
+/* Zufallsmolekül für Namensübungen */
+function randomMolecule(){
+  for(let t=0;t<300;t++){
+    const n=randInt(4,7); const k=randInt(1,n>=6?3:2); const subs=[];
+    for(let j=0;j<k;j++){ const l=(n>=5&&Math.random()<0.28)?2:1; subs.push({p:randInt(2,n-1),l}); }
+    const m={n,subs};
+    const by={}; let bad=false; subs.forEach(s=>{(by[s.p]=by[s.p]||[]).push(s);});
+    Object.values(by).forEach(a=>{ if(a.length>1&&a.some(s=>s.l>1)) bad=true; });
+    if(!bad && !validate(m)) return m;
+  }
+  return {n:5,subs:[{p:2,l:1}]};
+}
+function nameOptions(m){
+  const correct=nameOf(m), f=chooseFlip(m);
+  const L=locs(m,f), Lw=locs(m,!f);
+  const shifted=L.map(x=>({l:x.l,p:x.p+1}));
+  const cands=[buildName(m.n,Lw), buildName(m.n,L,true), buildName(m.n+1,L), buildName(m.n,L,false,true), buildName(m.n-1,L), buildName(m.n,shifted), buildName(m.n+1,Lw)];
+  const out=[]; shuffle(cands).forEach(c=>{ if(c!==correct && !out.includes(c) && out.length<3) out.push(c); });
+  return {correct, wrong:out};
+}
+function namingQuestion(){
+  const m=randomMolecule(); const o=nameOptions(m); const flip=Math.random()<0.5;
+  const nm=o.correct;
+  return {t:2, gen:true, q:'Wie heißt dieses Alkan? (Skelettformel)', svg:skeletonSVG(m,{flip,scale:1.6}), o:[nm].concat(o.wrong), a:0,
+    e:`Längste Kette: <b>${m.n} C-Atome</b> → Stammname „${cap(STEMS[m.n])}an“. Nummeriere von der Seite, die die kleineren Nummern ergibt. Seitenketten alphabetisch, gleiche zusammenfassen. Summenformel: ${fm(sumFormula(m))}.`};
+}
+
+/* ---------- Inhalte ---------- */
+const H_BOND_SVG=`<div class="figbox"><svg class="fig" viewBox="0 0 270 135" width="340" role="img" aria-label="Wasserstoffbrücke zwischen zwei Wassermolekülen">
+ <line class="st-bond" x1="63" y1="67" x2="45" y2="85"/><line class="st-bond" x1="80" y1="63" x2="108" y2="71"/>
+ <line class="st-bond" x1="64" y1="47" x2="76" y2="47"/><line class="st-bond" x1="56" y1="54" x2="56" y2="66"/>
+ <text class="st-atom" x="70" y="60" text-anchor="middle" dominant-baseline="central">O</text>
+ <text class="st-atom st-h" x="38" y="92" text-anchor="middle" dominant-baseline="central">H</text>
+ <text class="st-atom st-h" x="118" y="74" text-anchor="middle" dominant-baseline="central">H</text>
+ <text x="70" y="32" text-anchor="middle" style="fill:var(--minus);font-size:13px;font-weight:700">δ−</text>
+ <text x="114" y="56" text-anchor="middle" style="fill:var(--plus);font-size:13px;font-weight:700">δ+</text>
+ <line x1="128" y1="76" x2="181" y2="80" style="stroke:var(--accent);stroke-width:2.2;stroke-dasharray:3 4"/>
+ <text x="156" y="64" text-anchor="middle" style="fill:var(--accent);font-size:11px;font-weight:700">H-Brücke</text>
+ <line class="st-bond" x1="184" y1="73" x2="184" y2="87"/><line class="st-bond" x1="190" y1="97" x2="202" y2="97"/>
+ <line class="st-bond" x1="204" y1="73" x2="219" y2="59"/><line class="st-bond" x1="205" y1="87" x2="222" y2="99"/>
+ <text class="st-atom" x="196" y="80" text-anchor="middle" dominant-baseline="central">O</text>
+ <text class="st-atom st-h" x="226" y="52" text-anchor="middle" dominant-baseline="central">H</text>
+ <text class="st-atom st-h" x="230" y="106" text-anchor="middle" dominant-baseline="central">H</text>
+ <text x="170" y="116" text-anchor="middle" style="fill:var(--minus);font-size:13px;font-weight:700">δ−</text>
+ <text x="135" y="128" text-anchor="middle" class="sk-num">freies Elektronenpaar am O zieht das H an</text>
+</svg></div>`;
+
+const TOPICS=[
+{id:1, title:'Homologe Reihe der Alkane', short:'CₙH₂ₙ₊₂, Methan bis Decan',
+ goals:['Allgemeine Summenformel kennen und anwenden','Namen und Formeln von Methan bis Decan','Begriff „homologe Reihe“ erklären'],
+ html:`<p><b>Alkane</b> sind <b>Kohlenwasserstoffe</b>: Sie bestehen nur aus Kohlenstoff (C) und Wasserstoff (H). Zwischen den Atomen gibt es nur <b>Einfachbindungen</b>. Darum heißen sie <b>gesättigt</b>: Mehr H-Atome passen nicht an das Gerüst.</p>
+ <div class="formula-big">C<sub>n</sub>H<sub>2n+2</sub></div>
+ <p>Das ist die allgemeine Summenformel. So rechnest du: <b>Anzahl H = 2 · Anzahl C + 2</b>. Beispiel Heptan: 2 · 7 + 2 = 16, also C<sub>7</sub>H<sub>16</sub>.</p>
+ <h3>Homologe Reihe</h3>
+ <p>Ordnet man die Alkane nach der Zahl ihrer C-Atome, unterscheidet sich jedes Glied vom nächsten um genau <b>eine CH<sub>2</sub>-Gruppe</b>. So eine Reihe heißt <b>homologe Reihe</b>. Alle Namen enden auf <b>-an</b>.</p>
+ <p>Die ersten vier Namen musst du auswendig können: Meth-, Eth-, Prop-, But-. Ab fünf C-Atomen kommen griechische Zahlwörter: Pent (5), Hex (6), Hept (7), Oct (8), Non (9), Dec (10).</p>
+ <div class="merk"><span class="merk-label">Eselsbrücke</span>„<b>M</b>eine <b>E</b>nte <b>P</b>addelt <b>B</b>ei <b>P</b>apa, <b>H</b>einz <b>H</b>olt <b>O</b>ma <b>N</b>ach <b>D</b>raußen.“</div>
+ <h3>Bau der Moleküle</h3>
+ <p>Jedes C-Atom hat <b>vier Bindungen</b>, jedes H-Atom eine. Die vier Bindungen am C zeigen in die Ecken eines <b>Tetraeders</b> (Winkel 109,5°). Darum ist eine Kohlenstoffkette in Wirklichkeit nicht gerade, sondern <b>zickzackförmig</b>.</p>
+ <p class="hint">Auf deinem Arbeitsblatt steht „Metan“. Richtig heißt es <b>Methan</b>, mit h. Deine Summenformeln von Propan bis Decan stimmen alle.</p>`,
+ widget:'homolog'},
+{id:2, title:'Verzweigte Alkane', short:'Benennen nach IUPAC und Zeichnen',
+ goals:['Ein verzweigtes Alkan aus der Formel richtig benennen','Aus einem Namen die Formel zeichnen','Typische Namensfehler erkennen'],
+ html:`<p>Bei verzweigten Alkanen hängen an der Hauptkette <b>Seitenketten</b> (Alkylgruppen). Für den Namen gehst du immer in dieser Reihenfolge vor:</p>
+ <ol>
+ <li><b>Längste Kette suchen.</b> Sie gibt den Stammnamen (z. B. 6 C → Hexan). Achtung: Die längste Kette muss nicht gerade gezeichnet sein, sie kann um die Ecke gehen!</li>
+ <li><b>Kette nummerieren</b>, und zwar von der Seite, bei der die Seitenketten die <b>kleinsten Nummern</b> bekommen.</li>
+ <li><b>Seitenketten benennen:</b> aus -an wird -yl. –CH<sub>3</sub> = <b>Methyl</b>, –C<sub>2</sub>H<sub>5</sub> = <b>Ethyl</b>, –C<sub>3</sub>H<sub>7</sub> = <b>Propyl</b>, –C<sub>4</sub>H<sub>9</sub> = <b>Butyl</b>.</li>
+ <li><b>Gleiche Seitenketten zusammenfassen</b> mit di (2), tri (3), tetra (4). Jede Position wird einzeln genannt: 2,2-Dimethyl, 2,3,4-Trimethyl.</li>
+ <li><b>Alphabetisch ordnen.</b> Die Vorsilben di, tri, tetra zählen dabei nicht: <b>B</b>utyl vor <b>E</b>thyl vor <b>M</b>ethyl vor <b>P</b>ropyl.</li>
+ <li><b>Schreibweise:</b> Zahlen untereinander mit Komma, zwischen Zahl und Wort ein Bindestrich. Die letzte Seitenkette hängt ohne Bindestrich am Stammnamen.</li>
+ </ol>
+ <div class="merk"><span class="merk-label">Beispiel</span><b>3-Ethyl-2,4-dimethylhexan</b>: Hauptkette 6 C (Hexan), an C3 eine Ethylgruppe, an C2 und C4 je eine Methylgruppe.</div>
+ <div class="merk"><span class="merk-label">Sonderfall: gleicher Abstand</span>Ergeben beide Nummerierungen die gleichen Zahlen, bekommt die Seitenkette, die im Alphabet <b>zuerst</b> kommt, die kleinere Nummer. Beispiel: <b>3-Ethyl-5-methylheptan</b>, nicht 5-Ethyl-3-methylheptan.</div>
+ <h3>Aus dem Namen zeichnen</h3>
+ <ol><li>Hauptkette zeichnen (Stammname) und durchnummerieren.</li><li>Seitenketten an die genannten Nummern hängen.</li><li>Bei der Strukturformel jedes C mit H auf 4 Bindungen auffüllen.</li><li>Kontrolle mit C<sub>n</sub>H<sub>2n+2</sub> (alle C zählen, auch die in den Seitenketten).</li></ol>
+ <h3>Typische Fehler</h3>
+ <ul><li><b>„1-Methylbutan“</b> gibt es nicht. Eine Methylgruppe am Ende verlängert die Kette: Das ist Pentan.</li>
+ <li><b>„2-Ethylbutan“</b> ist falsch. Über die Ethylgruppe ist die Kette 5 C lang: richtig ist <b>3-Methylpentan</b>.</li>
+ <li><b>„2-Methyl-3-ethylpentan“</b>: falsche Reihenfolge. Richtig: 3-Ethyl-2-methylpentan.</li></ul>`,
+ widget:'branch'},
+{id:3, title:'Isomerie', short:'Gleiche Summenformel, andere Struktur',
+ goals:['Isomere definieren','Alle Isomere von C₄ bis C₆ finden, zeichnen und benennen','Siedetemperaturen von Isomeren vergleichen und begründen'],
+ html:`<p><b>Isomere</b> sind Verbindungen mit der <b>gleichen Summenformel</b>, aber einer <b>unterschiedlichen Struktur</b>: Die Atome sind anders miteinander verknüpft. Weil die Struktur anders ist, haben Isomere <b>unterschiedliche Eigenschaften</b>, zum Beispiel verschiedene Siedetemperaturen. Genauer heißt das Konstitutionsisomerie.</p>
+ <p>Ab Butan gibt es Isomere, und ihre Zahl wächst schnell:</p>
+ <div class="tbl"><table><tr><th>C-Atome</th><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr><tr><th>Isomere</th><td>2</td><td>3</td><td>5</td><td>9</td><td>18</td><td>35</td><td>75</td></tr></table></div>
+ <h3>Verzweigung und Siedetemperatur</h3>
+ <p>Je stärker ein Molekül verzweigt ist, desto kompakter, fast kugelförmig, ist es. Seine <b>Oberfläche ist kleiner</b>, die Moleküle berühren sich weniger, und die <b>Van-der-Waals-Kräfte sind schwächer</b>. Folge: Die <b>Siedetemperatur sinkt</b>.</p>
+ <div class="merk"><span class="merk-label">Achtung</span>Dasselbe Molekül, nur anders gezeichnet (Kette geknickt, gedreht, gespiegelt), ist <b>kein</b> neues Isomer. Prüfe es über den Namen: gleicher Name, gleiches Molekül.</div>
+ <h3>So findest du alle Isomere</h3>
+ <ol><li>Zeichne die unverzweigte Kette (z. B. Hexan).</li><li>Kürze die Hauptkette um 1 C und setze eine Methylgruppe an jede mögliche Stelle.</li><li>Kürze um 2 C und verteile zwei Methylgruppen (oder eine Ethylgruppe).</li><li>Benenne jedes Molekül und streiche doppelte Namen.</li></ol>`,
+ widget:'isomer'},
+{id:4, title:'Elektronegativität und Polarität', short:'ΔEN, polar/unpolar, Partialladungen',
+ goals:['Elektronegativität definieren','Mit ΔEN entscheiden: unpolar, polar oder ionisch','Partialladungen δ+ und δ− richtig setzen','Erklären, wann ein Molekül ein Dipol ist'],
+ html:`<p>Die <b>Elektronegativität (EN)</b> gibt an, wie stark ein Atom in einer Bindung die <b>Bindungselektronen zu sich zieht</b>. Fluor hat mit 4,0 den höchsten Wert. Im Periodensystem steigt die EN von links nach rechts und von unten nach oben.</p>
+ <p>Entscheidend ist die <b>Differenz ΔEN</b> der beiden Bindungspartner:</p>
+ <div class="tbl"><table><tr><th>ΔEN</th><th>Bindungsart</th><th>Beispiel</th></tr><tr><td>unter 0,5</td><td>unpolare Atombindung</td><td>C–H, H–H</td></tr><tr><td>0,5 bis 1,7</td><td>polare Atombindung</td><td>O–H, H–Cl</td></tr><tr><td>über 1,7</td><td>Ionenbindung</td><td>Na–Cl</td></tr></table></div>
+ <h3>Partialladungen</h3>
+ <p>In einer polaren Bindung sind die Elektronen zum elektronegativeren Atom verschoben. Es bekommt eine negative Teilladung <b class="minus">δ−</b> („delta minus“), der Partner eine positive Teilladung <b class="plus">δ+</b>. Das sind keine ganzen Ladungen wie bei Ionen.</p>
+ <h3>Dipolmolekül</h3>
+ <p>Ein Molekül ist ein <b>Dipol</b>, wenn es polare Bindungen hat <b>und</b> die Schwerpunkte der positiven und negativen Teilladungen nicht zusammenfallen. Das hängt von der Form ab:</p>
+ <ul><li><b>H<sub>2</sub>O</b> ist gewinkelt: Dipol.</li><li><b>CO<sub>2</sub></b> ist linear und symmetrisch. Die Teilladungen heben sich auf: kein Dipol.</li><li><b>Alkane</b>: C–H-Bindungen sind fast unpolar (ΔEN = 0,3), die Moleküle sind symmetrisch gebaut. Alkane sind <b>unpolar</b>.</li></ul>
+ <p class="hint">EN-Werte und Grenzen können in eurem Buch leicht anders sein (z. B. H = 2,1). Nimm in der Klausur die Werte aus eurem Unterricht.</p>`,
+ widget:'en'},
+{id:5, title:'Zwischenmolekulare Wechselwirkungen', short:'Van der Waals, H-Brücken',
+ goals:['Entstehung von Van-der-Waals-Kräften erklären','Voraussetzungen für Wasserstoffbrücken nennen','Wechselwirkungen nach Stärke ordnen','Damit Siedetemperaturen begründen'],
+ html:`<p><b>Zwischenmolekulare Wechselwirkungen</b> sind Anziehungskräfte <b>zwischen</b> Molekülen, nicht innerhalb. Sie sind viel schwächer als Atombindungen. Sie bestimmen, wie hoch die Siedetemperatur ist, ob sich Stoffe mischen und wie zähflüssig ein Stoff ist.</p>
+ <h3>Van-der-Waals-Kräfte</h3>
+ <p>Die Elektronen in einem Molekül bewegen sich ständig. Dadurch sind sie für einen kurzen Moment ungleich verteilt: Es entsteht ein <b>temporärer Dipol</b>. Dieser verschiebt die Elektronen im Nachbarmolekül, dort entsteht ein <b>induzierter Dipol</b>. Die entgegengesetzten Teilladungen ziehen sich an.</p>
+ <ul><li>wirken zwischen <b>allen</b> Molekülen; bei Alkanen sind sie die <b>einzigen</b></li><li>sind die <b>schwächsten</b> Wechselwirkungen</li><li>werden stärker, je <b>größer die Oberfläche</b> (Kontaktfläche) der Moleküle ist</li></ul>
+ <h3>Dipol-Dipol-Kräfte</h3>
+ <p>Zwischen <b>Dipolmolekülen</b> wie HCl ziehen sich die dauerhaften Teilladungen an: δ+ des einen Moleküls und δ− des anderen. Sie sind stärker als Van-der-Waals-Kräfte.</p>
+ <h3>Wasserstoffbrückenbindungen</h3>
+ <p>Ein H-Atom, das an ein sehr elektronegatives Atom (<b>F, O oder N</b>) gebunden ist, ist stark positiv polarisiert (δ+). Es wird vom <b>freien Elektronenpaar</b> eines F-, O- oder N-Atoms im Nachbarmolekül angezogen.</p>
+ ${H_BOND_SVG}
+ <div class="merk"><span class="merk-label">Reihenfolge der Stärke</span>Van-der-Waals &lt; Dipol-Dipol &lt; Wasserstoffbrücken &lt;&lt; Atombindung</div>
+ <h3>Anwendung</h3>
+ <ul><li>Wasser (H<sub>2</sub>O, 18 u) siedet bei 100 °C, das fast gleich schwere Methan (CH<sub>4</sub>, 16 u) schon bei −162 °C. Der Grund sind die H-Brücken zwischen den Wassermolekülen.</li><li>Siedetemperatur, Löslichkeit und Viskosität der Alkane (Thema 6)</li><li>Eis schwimmt, Wasser hat eine hohe Oberflächenspannung, die DNA-Doppelhelix hält zusammen: alles H-Brücken.</li></ul>`,
+ widget:'zmww'},
+{id:6, title:'Eigenschaften der Alkane', short:'Löslichkeit, Siedetemperatur, Viskosität',
+ goals:['Veränderung von Siedetemperatur und Viskosität in der Reihe erklären','Löslichkeit mit „Ähnliches löst Ähnliches“ begründen','Begriffe hydrophob, lipophil, hydrophil'],
+ html:`<p>Alle Eigenschaften lassen sich über die <b>Van-der-Waals-Kräfte</b> erklären: Je länger die Kette, desto größer die Oberfläche, desto stärker die Kräfte zwischen den Molekülen.</p>
+ <h3>Siedetemperatur</h3>
+ <p>Beim Sieden müssen sich die Moleküle voneinander lösen. Je stärker sie sich anziehen, desto mehr Energie ist nötig: Die <b>Siedetemperatur steigt mit der Kettenlänge</b>. Verzweigte Isomere sieden niedriger, weil ihre Oberfläche kleiner ist.</p>
+ <p>Aggregatzustand bei 20 °C: <b>C1–C4 gasförmig</b> (Erdgas, Feuerzeuggas), <b>C5–C16 flüssig</b> (Benzin, Diesel), <b>ab C17 fest</b> (Paraffin, Kerzenwachs).</p>
+ <h3>Viskosität (Zähflüssigkeit)</h3>
+ <p>Die <b>Viskosität steigt mit der Kettenlänge</b>. Lange Moleküle ziehen sich stärker an und können sich ineinander <b>verhaken</b>. Sie gleiten schlechter aneinander vorbei. Benzin ist dünnflüssig, Heizöl und Schmieröl sind dickflüssig.</p>
+ <h3>Löslichkeit</h3>
+ <div class="merk"><span class="merk-label">Merke</span>Ähnliches löst sich in Ähnlichem: polar in polar, unpolar in unpolar.</div>
+ <p>Alkane sind unpolar. Sie sind <b>hydrophob</b> (wasserabweisend) und <b>lipophil</b> (fettliebend). Sie lösen sich in unpolaren Stoffen wie Benzin, Öl oder anderen Alkanen, aber <b>nicht in Wasser</b>.</p>
+ <p><b>Warum nicht in Wasser?</b> Die Wassermoleküle halten über starke Wasserstoffbrücken zusammen. Alkanmoleküle können keine H-Brücken bilden. Sie würden die H-Brücken nur stören und dafür bloß schwache Van-der-Waals-Kräfte bieten. Deshalb bleiben Wasser und Alkan getrennt. Das Alkan schwimmt oben, weil es eine geringere Dichte hat.</p>
+ <p>Mit wachsender Kettenlänge werden Alkane noch lipophiler. Stoffe, die sich gut in Wasser lösen (polare Stoffe), heißen <b>hydrophil</b>.</p>
+ <h3>Brennbarkeit (Zusatz)</h3>
+ <p>Kurze Alkane sind leicht entzündlich. Mit zunehmender Kettenlänge nimmt die Entzündbarkeit ab: Kerzenwachs brennt erst, wenn es am Docht geschmolzen und verdampft ist.</p>`,
+ widget:'props'},
+{id:7, title:'Formelschreibweisen und Definitionen', short:'Summen-, Struktur-, Skelettformel',
+ goals:['Summen-, Struktur-, Halbstruktur- und Skelettformel unterscheiden','Zwischen den Schreibweisen umwandeln','Lewis-Formeln der ersten 5 Alkane zeichnen','Die Definitionen sicher können (Karteikarten)'],
+ html:`<p>Ein Molekül kann man auf vier Arten aufschreiben:</p>
+ <div class="tbl"><table>
+ <tr><th>Schreibweise</th><th>Was sie zeigt</th><th>Butan</th></tr>
+ <tr><td><b>Summenformel</b></td><td>nur Art und Anzahl der Atome. Sagt nichts über die Struktur: Isomere haben dieselbe!</td><td class="mono">C<sub>4</sub>H<sub>10</sub></td></tr>
+ <tr><td><b>Strukturformel</b> (Valenzstrich-, Lewis-Formel)</td><td>alle Atome und alle Bindungen als Striche</td><td>siehe unten</td></tr>
+ <tr><td><b>Halbstrukturformel</b></td><td>C–C-Bindungen als Strich, H am C zusammengefasst</td><td class="mono">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub></td></tr>
+ <tr><td><b>Skelettformel</b></td><td>Zickzack-Linie: jede Ecke und jedes Ende ist ein C-Atom, H am C wird weggelassen</td><td>siehe unten</td></tr>
+ </table></div>
+ <h3>Räumliche Darstellungen</h3>
+ <div class="tbl"><table>
+ <tr><th>Darstellung</th><th>Was sie zeigt</th></tr>
+ <tr><td><b>Keil-Strich-Formel</b></td><td>die räumliche Anordnung: normaler Strich = in der Zeichenebene, Keil = Bindung zeigt nach vorn, gestrichelter Keil = nach hinten</td></tr>
+ <tr><td><b>Kugel-Stab-Modell</b></td><td>Atome als Kugeln, Bindungen als Stäbe. Gut für Bindungswinkel (109,5°) und Bindungslängen</td></tr>
+ <tr><td><b>Kalottenmodell</b></td><td>Atome als ineinander geschobene Kugelkappen. Zeigt, wie viel Raum das Molekül einnimmt, aber keine einzelnen Bindungen</td></tr>
+ </table></div>
+ <p>Bei Alkanen gibt es keine freien Elektronenpaare. Darum sind <b>Lewis-Formel und Strukturformel hier gleich</b>.</p>
+ <h3>Lewis-Formel zeichnen (Aufgabe 1 vom Arbeitsblatt)</h3>
+ <ol><li>C-Atome nebeneinander schreiben und mit Strichen verbinden.</li><li>Jedes C braucht 4 Striche. Fehlende Striche mit H-Atomen auffüllen.</li><li>Kontrolle: Zahl der H = 2 · C + 2.</li></ol>
+ <h3>Skelettformel lesen</h3>
+ <p>Zähle Ecken und Enden: Eine Zickzack-Linie mit 2 Enden und 4 Knicken hat 6 C-Atome, das ist Hexan. Jedes C ergänzt du in Gedanken mit H auf 4 Bindungen.</p>
+ <p>Alle Definitionen für die Klausur findest du unter <a href="#karten" style="color:var(--accent);font-weight:700">Karteikarten</a>.</p>`,
+ widget:'notation'}
+];
+
+const QUESTIONS=[
+// Thema 1
+{t:1,q:'Wie lautet die allgemeine Summenformel der Alkane?',o:['C<sub>n</sub>H<sub>2n+2</sub>','C<sub>n</sub>H<sub>2n</sub>','C<sub>n</sub>H<sub>2n−2</sub>','C<sub>n</sub>H<sub>n+2</sub>'],a:0,e:'H = 2 · C + 2. C<sub>n</sub>H<sub>2n</sub> wären die Alkene (mit Doppelbindung).'},
+{t:1,q:'Welche Summenformel hat Heptan?',o:['C<sub>7</sub>H<sub>16</sub>','C<sub>7</sub>H<sub>14</sub>','C<sub>7</sub>H<sub>18</sub>','C<sub>6</sub>H<sub>14</sub>'],a:0,e:'Hept = 7. 2 · 7 + 2 = 16.'},
+{t:1,q:'Wie unterscheiden sich zwei benachbarte Glieder der homologen Reihe?',o:['um eine CH<sub>2</sub>-Gruppe','um eine CH<sub>3</sub>-Gruppe','um ein C-Atom','um zwei H-Atome'],a:0,e:'Mit jedem C-Atom kommen auch 2 H-Atome dazu: also CH<sub>2</sub>.'},
+{t:1,q:'Welches Alkan hat 8 C-Atome?',o:['Octan','Nonan','Heptan','Decan'],a:0,e:'Oct = 8 (wie Oktober im römischen Kalender oder Oktopus mit 8 Armen).'},
+{t:1,q:'Warum nennt man Alkane „gesättigt“?',o:['Sie haben nur Einfachbindungen und damit die größtmögliche Zahl an H-Atomen.','Sie enthalten gelöstes Wasser.','Sie können keine weiteren Stoffe lösen.','Ihre Siedetemperatur ist erreicht.'],a:0,e:'Gesättigt heißt: keine Doppel- oder Dreifachbindungen, mehr H passt nicht dran.'},
+{t:1,q:'Welche Summenformel hat Decan?',o:['C<sub>10</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>20</sub>','C<sub>12</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>24</sub>'],a:0,e:'2 · 10 + 2 = 22.'},
+// Thema 2
+{t:2,q:'Wie heißt CH<sub>3</sub>–CH(CH<sub>3</sub>)–CH<sub>2</sub>–CH<sub>3</sub>?',o:['2-Methylbutan','3-Methylbutan','2-Ethylpropan','1-Methylbutan'],a:0,e:'Hauptkette 4 C (Butan). Nummerierung von links gibt der Methylgruppe die kleinere Nummer: 2.'},
+{t:2,q:'Welcher Name ist richtig geschrieben?',o:['3-Ethyl-2-methylpentan','2-Methyl-3-ethylpentan','3-Ethyl-4-methylpentan','2-Methyl-3-Ethylpentan'],a:0,e:'Alphabetisch: Ethyl vor Methyl. Nummern so klein wie möglich (2,3 statt 3,4). Nur der erste Buchstabe groß.'},
+{t:2,q:'Warum ist der Name „1-Methylbutan“ falsch?',o:['Die Methylgruppe verlängert die Kette, die längste Kette hat dann 5 C: Pentan.','Methylgruppen dürfen nur an C2 sitzen.','Butan hat keine Seitenketten.','Es müsste „1-Methylbutyl“ heißen.'],a:0,e:'Eine Seitenkette am Kettenende gehört zur Hauptkette.'},
+{t:2,q:'Was bedeutet „di“ in 2,2-Dimethylbutan?',o:['Es gibt zwei Methylgruppen.','Die Methylgruppe sitzt an C2.','Das Molekül hat eine Doppelbindung.','Es gibt zwei Hauptketten.'],a:0,e:'di = 2, tri = 3, tetra = 4. Beide Methylgruppen sitzen hier an C2.'},
+{t:2,q:'Wie heißt „2-Ethylbutan“ richtig?',o:['3-Methylpentan','2-Methylpentan','2-Ethylbutan','Hexan'],a:0,e:'Über die Ethylgruppe ist die längste Kette 5 C lang. Am mittleren C hängt dann eine Methylgruppe.'},
+{t:2,q:'Welche Summenformel hat 2,3-Dimethylpentan?',o:['C<sub>7</sub>H<sub>16</sub>','C<sub>5</sub>H<sub>12</sub>','C<sub>7</sub>H<sub>14</sub>','C<sub>6</sub>H<sub>14</sub>'],a:0,e:'Pentan (5 C) + 2 Methylgruppen (2 C) = 7 C. 2 · 7 + 2 = 16.'},
+{t:2,q:'Nach welcher Regel ordnet man verschiedene Seitenketten im Namen?',o:['alphabetisch (di, tri zählen nicht)','nach der Positionsnummer','nach der Größe der Seitenkette','nach der Anzahl'],a:0,e:'Ethyl vor Methyl vor Propyl. „Dimethyl“ wird unter M einsortiert.'},
+// Thema 3
+{t:3,q:'Was sind Isomere?',o:['Verbindungen mit gleicher Summenformel, aber unterschiedlicher Struktur','Verbindungen mit gleicher Struktur, aber unterschiedlicher Summenformel','aufeinanderfolgende Glieder der homologen Reihe','Moleküle mit Partialladungen'],a:0,e:'Gleiche Summenformel, andere Verknüpfung, andere Eigenschaften.'},
+{t:3,q:'Wie viele Isomere gibt es zu C<sub>5</sub>H<sub>12</sub>?',o:['3','2','4','5'],a:0,e:'Pentan, 2-Methylbutan und 2,2-Dimethylpropan.'},
+{t:3,q:'Welches Isomer von C<sub>5</sub>H<sub>12</sub> hat die niedrigste Siedetemperatur?',o:['2,2-Dimethylpropan','Pentan','2-Methylbutan','Alle sieden gleich.'],a:0,e:'Am stärksten verzweigt, fast kugelförmig, kleinste Oberfläche, schwächste Van-der-Waals-Kräfte: 9,5 °C (Pentan: 36 °C).'},
+{t:3,q:'Warum haben Isomere unterschiedliche Siedetemperaturen?',o:['Verzweigte Moleküle haben eine kleinere Oberfläche, die Van-der-Waals-Kräfte sind schwächer.','Sie haben unterschiedlich viele Atome.','Verzweigte Moleküle bilden H-Brücken.','Verzweigte Moleküle sind polar.'],a:0,e:'Gleiche Atome, aber andere Form: Die Kontaktfläche entscheidet.'},
+{t:3,q:'Sind Butan und 2-Methylpropan Isomere?',o:['Ja, beide haben die Summenformel C<sub>4</sub>H<sub>10</sub>.','Nein, 2-Methylpropan hat nur 3 C-Atome.','Nein, sie gehören zu verschiedenen Stoffklassen.','Ja, aber nur bei hoher Temperatur.'],a:0,e:'Propan (3 C) + Methyl (1 C) = 4 C. Gleiche Formel, andere Struktur.'},
+{t:3,q:'Wie viele Isomere hat Hexan (C<sub>6</sub>H<sub>14</sub>)?',o:['5','4','6','3'],a:0,e:'Hexan, 2-Methylpentan, 3-Methylpentan, 2,2-Dimethylbutan, 2,3-Dimethylbutan.'},
+// Thema 4
+{t:4,q:'Was beschreibt die Elektronegativität?',o:['die Fähigkeit eines Atoms, in einer Bindung die Bindungselektronen anzuziehen','die Anzahl der Elektronen in der Außenschale','die Ladung eines Ions','die Masse eines Atoms'],a:0,e:'Je höher die EN, desto stärker zieht das Atom das Bindungselektronenpaar zu sich.'},
+{t:4,q:'Welches Element hat die höchste Elektronegativität?',o:['Fluor','Sauerstoff','Chlor','Stickstoff'],a:0,e:'Fluor: EN = 4,0. Es steht oben rechts im Periodensystem (ohne Edelgase).'},
+{t:4,q:'EN(O) = 3,5 und EN(H) = 2,2. Was gilt für die O–H-Bindung?',o:['ΔEN = 1,3: polare Atombindung','ΔEN = 1,3: unpolare Atombindung','ΔEN = 5,7: Ionenbindung','ΔEN = 0,3: unpolare Atombindung'],a:0,e:'3,5 − 2,2 = 1,3. Das liegt zwischen 0,5 und 1,7: polar.'},
+{t:4,q:'Welches Atom trägt in H–Cl die Partialladung δ−?',o:['Cl','H','beide','keines'],a:0,e:'Cl ist elektronegativer (3,0 gegenüber 2,2). Die Elektronen sind zum Cl verschoben.'},
+{t:4,q:'Warum ist CO<sub>2</sub> kein Dipolmolekül, obwohl die C=O-Bindungen polar sind?',o:['Das Molekül ist linear, die Ladungsschwerpunkte fallen zusammen.','C=O-Bindungen sind in Wirklichkeit unpolar.','CO<sub>2</sub> ist ein Gas.','Kohlenstoff hat die höhere EN.'],a:0,e:'Die beiden Teilbindungen zeigen in genau entgegengesetzte Richtungen und heben sich auf.'},
+{t:4,q:'Wie ist die C–H-Bindung einzuordnen?',o:['nahezu unpolar (ΔEN ≈ 0,3)','stark polar','Ionenbindung','Wasserstoffbrücke'],a:0,e:'2,5 − 2,2 = 0,3. Darum sind Alkane insgesamt unpolar.'},
+// Thema 5
+{t:5,q:'Wie entstehen Van-der-Waals-Kräfte?',o:['Durch kurzzeitig ungleich verteilte Elektronen entstehen temporäre und induzierte Dipole, die sich anziehen.','Durch dauerhafte Ionenladungen.','Ein H-Atom wird von einem freien Elektronenpaar angezogen.','Durch Elektronenübertragung zwischen Molekülen.'],a:0,e:'Temporärer Dipol → induzierter Dipol im Nachbarn → schwache Anziehung.'},
+{t:5,q:'Welche Wechselwirkungen wirken zwischen Alkanmolekülen?',o:['nur Van-der-Waals-Kräfte','Van-der-Waals-Kräfte und H-Brücken','nur Dipol-Dipol-Kräfte','gar keine'],a:0,e:'Alkane sind unpolar und haben kein H an F, O oder N.'},
+{t:5,q:'Was ist die Voraussetzung für eine Wasserstoffbrücke?',o:['Ein H-Atom an F, O oder N und ein freies Elektronenpaar an F, O oder N im Nachbarmolekül','Ein H-Atom an einem C-Atom','Ein Molekül mit vielen C-Atomen','Eine Ionenbindung im Molekül'],a:0,e:'Nur an F, O, N ist das H stark genug positiv polarisiert.'},
+{t:5,q:'Welche zwischenmolekulare Wechselwirkung ist am stärksten?',o:['Wasserstoffbrückenbindung','Van-der-Waals-Kraft','Dipol-Dipol-Kraft','Alle sind gleich stark.'],a:0,e:'Van der Waals &lt; Dipol-Dipol &lt; H-Brücken.'},
+{t:5,q:'Wasser (18 u) siedet bei 100 °C, Methan (16 u) bei −162 °C. Warum?',o:['Zwischen Wassermolekülen gibt es H-Brücken, zwischen Methanmolekülen nur Van-der-Waals-Kräfte.','Wasser ist schwerer.','Methan ist polarer als Wasser.','Wasser hat mehr Atome.'],a:0,e:'Die Masse ist fast gleich. Den Unterschied machen die H-Brücken.'},
+{t:5,q:'Wovon hängt die Stärke der Van-der-Waals-Kräfte vor allem ab?',o:['von der Größe der Moleküloberfläche','von der Farbe des Stoffes','von der Zahl der Doppelbindungen','von der Elektronegativität des Wasserstoffs'],a:0,e:'Mehr Oberfläche bedeutet mehr Kontaktfläche und mehr Elektronen, die sich verschieben können.'},
+// Thema 6
+{t:6,q:'Wie ändert sich die Siedetemperatur mit zunehmender Kettenlänge?',o:['Sie steigt.','Sie sinkt.','Sie bleibt gleich.','Sie steigt erst und sinkt dann.'],a:0,e:'Längere Kette, größere Oberfläche, stärkere Van-der-Waals-Kräfte.'},
+{t:6,q:'Welches Alkan ist bei Raumtemperatur flüssig?',o:['Hexan','Propan','Butan','Methan'],a:0,e:'C1 bis C4 sind gasförmig, C5 bis C16 flüssig.'},
+{t:6,q:'Warum löst sich Octan nicht in Wasser?',o:['Octan ist unpolar und kann keine H-Brücken bilden, Wasser ist polar: „Ähnliches löst sich in Ähnlichem“.','Octan ist zu schwer.','Octan reagiert mit Wasser.','Wasser ist unpolar.'],a:0,e:'Die Alkanmoleküle würden die H-Brücken zwischen den Wassermolekülen stören.'},
+{t:6,q:'Was bedeutet „hydrophob“?',o:['wasserabweisend','fettabweisend','wasserliebend','brennbar'],a:0,e:'hydro = Wasser, phob = Angst. Lipophil = fettliebend.'},
+{t:6,q:'Warum ist Decan zähflüssiger als Pentan?',o:['Längere Moleküle ziehen sich stärker an (Van der Waals) und verhaken sich.','Decan bildet H-Brücken.','Decan ist polar.','Decan hat Doppelbindungen.'],a:0,e:'Viskosität steigt mit der Kettenlänge.'},
+{t:6,q:'Worin löst sich Kerzenwachs (Paraffin) am besten?',o:['in Benzin','in Wasser','in Salzwasser','in Essig'],a:0,e:'Paraffin besteht aus langen Alkanen: unpolar, also löslich in unpolarem Benzin.'},
+// Thema 7
+{t:7,q:'Was gilt für die Skelettformel?',o:['Ecken und Enden sind C-Atome, H am C wird weggelassen.','Alle Atome und Bindungen werden gezeichnet.','Nur die H-Atome werden gezeichnet.','Sie zeigt nur die Anzahl der Atome.'],a:0,e:'Kurz, übersichtlich und in der Organik am häufigsten.'},
+{t:7,q:'CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>3</sub> ist eine …',o:['Halbstrukturformel','Summenformel','Skelettformel','Lewis-Formel'],a:0,e:'C–C-Bindungen als Strich, H am C zusammengefasst.'},
+{t:7,q:'Mit welcher Formel kann man Isomere NICHT unterscheiden?',o:['Summenformel','Strukturformel','Halbstrukturformel','Skelettformel'],a:0,e:'Isomere haben per Definition dieselbe Summenformel.'},
+{t:7,q:'Eine unverzweigte Zickzack-Linie hat 2 Enden und 4 Knicke. Welches Alkan ist das?',o:['Hexan','Pentan','Butan','Heptan'],a:0,e:'2 Enden + 4 Ecken = 6 C-Atome.'},
+{t:7,q:'Warum sind Lewis-Formel und Strukturformel bei Alkanen gleich?',o:['Alkane haben keine freien Elektronenpaare.','Alkane haben keine Bindungen.','Weil Alkane unpolar sind.','Das stimmt nicht, sie sind immer verschieden.'],a:0,e:'C und H teilen alle Außenelektronen in Bindungen. Bei O oder N kämen freie Paare dazu.'},
+{t:1,q:'Wie viele H-Atome hat ein Pentan-Molekül?',o:['12','10','14','5'],a:0,e:'2 · 5 + 2 = 12, also C<sub>5</sub>H<sub>12</sub>.'},
+{t:1,q:'Welcher Winkel liegt zwischen den Bindungen an einem C-Atom im Alkan?',o:['109,5° (Tetraeder)','90°','120°','180°'],a:0,e:'Die vier Bindungen zeigen in die Ecken eines Tetraeders. Darum ist die Kette zickzackförmig.'},
+{t:2,q:'Wie heißt die Seitenkette –C<sub>2</sub>H<sub>5</sub>?',o:['Ethyl','Methyl','Ethan','Propyl'],a:0,e:'Vom Ethan abgeleitet, ein H weniger, Endung -yl.'},
+{t:2,q:'Wie viele C-Atome hat 2,2,4-Trimethylpentan (Isooctan aus dem Benzin)?',o:['8','5','7','9'],a:0,e:'Pentan (5 C) + 3 Methylgruppen (3 C) = 8 C. Darum „Iso-octan“.'},
+{t:3,q:'Pentan wird einmal gerade und einmal mit geknickter Kette gezeichnet. Was gilt?',o:['Es ist dasselbe Molekül, kein Isomer.','Es sind zwei Isomere.','Die geknickte Form ist 2-Methylbutan.','Die geknickte Form hat eine andere Summenformel.'],a:0,e:'Isomere unterscheiden sich in der Verknüpfung der Atome, nicht in der Zeichenweise. Die längste Kette hat in beiden Fällen 5 C.'},
+{t:3,q:'Ab wie vielen C-Atomen gibt es bei Alkanen Isomere?',o:['ab 4','ab 3','ab 5','ab 2'],a:0,e:'Mit 4 C gibt es Butan und 2-Methylpropan. Bei 3 C gibt es nur eine Möglichkeit.'},
+{t:4,q:'Wann ist ein Molekül ein Dipolmolekül?',o:['Wenn es polare Bindungen hat und die Ladungsschwerpunkte nicht zusammenfallen.','Wenn es zwei Atome hat.','Wenn es nur unpolare Bindungen hat.','Wenn es Ionen enthält.'],a:0,e:'Beides muss erfüllt sein. CO<sub>2</sub> hat polare Bindungen, ist aber symmetrisch und darum kein Dipol.'},
+{t:4,q:'EN(Na) = 0,9, EN(Cl) = 3,0. Welche Bindung liegt vor?',o:['ΔEN = 2,1: Ionenbindung','ΔEN = 2,1: polare Atombindung','ΔEN = 3,9: Ionenbindung','ΔEN = 2,1: unpolare Atombindung'],a:0,e:'Über 1,7 gilt die Bindung als Ionenbindung: Na<sup>+</sup> und Cl<sup>−</sup>.'},
+{t:5,q:'Zwischen welchen Molekülen können sich Wasserstoffbrücken bilden?',o:['NH<sub>3</sub> und NH<sub>3</sub>','CH<sub>4</sub> und CH<sub>4</sub>','HCl und HCl','C<sub>8</sub>H<sub>18</sub> und C<sub>8</sub>H<sub>18</sub>'],a:0,e:'Nur bei Ammoniak sitzt H an N, und das N hat ein freies Elektronenpaar.'},
+{t:5,q:'Was ist ein induzierter Dipol?',o:['Ein Dipol, der in einem Molekül durch einen Dipol im Nachbarmolekül hervorgerufen wird.','Ein Molekül mit dauerhaften Ionenladungen.','Eine Bindung zwischen zwei H-Atomen.','Ein Molekül, das sich in Wasser löst.'],a:0,e:'Der temporäre Dipol verschiebt die Elektronen im Nachbarn: Dort entsteht der induzierte Dipol.'},
+{t:6,q:'In welchem Zustand liegt Butan bei 20 °C vor?',o:['gasförmig','flüssig','fest','als Plasma'],a:0,e:'Butan siedet schon bei −0,5 °C. Im Feuerzeug ist es nur unter Druck flüssig.'},
+{t:6,q:'Warum bildet Benzin auf Wasser eine Schicht oben?',o:['Es ist unpolar, mischt sich nicht mit Wasser und hat eine geringere Dichte.','Es ist polarer als Wasser.','Es bildet H-Brücken mit der Luft.','Es ist schwerer als Wasser.'],a:0,e:'Nicht mischbar (unpolar gegen polar) und leichter: Darum schwimmt es oben.'},
+{t:7,q:'Wie viele Bindungsstriche hat jedes C-Atom in einer Strukturformel?',o:['4','2','3','1'],a:0,e:'Kohlenstoff ist vierbindig. H ist einbindig.'},
+{t:7,q:'Welche Summenformel gehört zu CH<sub>3</sub>–CH(CH<sub>3</sub>)–CH<sub>3</sub>?',o:['C<sub>4</sub>H<sub>10</sub>','C<sub>3</sub>H<sub>8</sub>','C<sub>4</sub>H<sub>8</sub>','C<sub>3</sub>H<sub>10</sub>'],a:0,e:'3 C in der Kette + 1 C in der Seitenkette = 4 C. Das ist 2-Methylpropan.'},
+{t:2,q:'Wie heißt die Seitenkette –C<sub>4</sub>H<sub>9</sub>?',o:['Butyl','Butan','Propyl','Pentyl'],a:0,e:'Vom Butan abgeleitet, ein H weniger, Endung -yl.'},
+{t:2,q:'Welcher Name ist richtig?',o:['3-Ethyl-5-methylheptan','5-Ethyl-3-methylheptan','3-Methyl-5-ethylheptan','5-Methyl-3-ethylheptan'],a:0,e:'Von beiden Seiten ergeben sich die Nummern 3 und 5. Dann bekommt die alphabetisch erste Seitenkette (Ethyl) die kleinere Nummer.'},
+{t:2,q:'Welche Reihenfolge der Seitenketten ist alphabetisch richtig?',o:['Butyl, Ethyl, Methyl, Propyl','Methyl, Ethyl, Propyl, Butyl','Ethyl, Butyl, Methyl, Propyl','Propyl, Methyl, Ethyl, Butyl'],a:0,e:'B vor E vor M vor P. Die Länge der Seitenkette spielt keine Rolle.'},
+{t:7,q:'Was bedeutet ein Keil in der Keil-Strich-Formel?',o:['Die Bindung zeigt aus der Zeichenebene nach vorn.','Die Bindung zeigt nach hinten.','Es ist eine Doppelbindung.','Es ist eine Wasserstoffbrücke.'],a:0,e:'Keil = nach vorn, gestrichelter Keil = nach hinten, normaler Strich = in der Ebene.'},
+{t:7,q:'Welches Modell zeigt den Raumbedarf eines Moleküls, aber keine einzelnen Bindungen?',o:['Kalottenmodell','Kugel-Stab-Modell','Skelettformel','Summenformel'],a:0,e:'Im Kalottenmodell sind die Atome ineinander geschobene Kugelkappen.'},
+{t:7,q:'Womit erkennt man Bindungswinkel am besten?',o:['Kugel-Stab-Modell','Kalottenmodell','Summenformel','Halbstrukturformel'],a:0,e:'Die Stäbe zeigen die Bindungen und damit den Tetraederwinkel von 109,5°.'}
+];
+
+const CARDS=[
+['Alkane','Kohlenwasserstoffe, die nur Einfachbindungen enthalten. Allgemeine Formel C<sub>n</sub>H<sub>2n+2</sub>.'],
+['Kohlenwasserstoffe','Verbindungen, die nur aus Kohlenstoff- und Wasserstoffatomen bestehen.'],
+['gesättigt','Nur C–C-Einfachbindungen; das Molekül trägt die größtmögliche Zahl an H-Atomen.'],
+['Homologe Reihe','Reihe von Verbindungen, deren aufeinanderfolgende Glieder sich jeweils um eine CH<sub>2</sub>-Gruppe unterscheiden.'],
+['Isomere','Verbindungen mit gleicher Summenformel, aber unterschiedlicher Struktur und daher unterschiedlichen Eigenschaften.'],
+['Alkylgruppe','Seitenkette, die von einem Alkan abgeleitet ist (ein H weniger), Endung -yl: Methyl –CH<sub>3</sub>, Ethyl –C<sub>2</sub>H<sub>5</sub>.'],
+['Elektronegativität','Maß für die Fähigkeit eines Atoms, in einer Bindung die Bindungselektronen anzuziehen.'],
+['unpolare Atombindung','Elektronenpaarbindung mit ΔEN unter ca. 0,5. Die Bindungselektronen sind (fast) gleichmäßig verteilt.'],
+['polare Atombindung','Elektronenpaarbindung mit ΔEN zwischen ca. 0,5 und 1,7. Die Bindungselektronen sind zum elektronegativeren Atom verschoben.'],
+['Partialladung (δ+ / δ−)','Teilladung in einer polaren Bindung: δ− am elektronegativeren, δ+ am anderen Atom.'],
+['Dipolmolekül','Molekül mit polaren Bindungen, bei dem die Ladungsschwerpunkte von δ+ und δ− nicht zusammenfallen (z. B. H<sub>2</sub>O).'],
+['Zwischenmolekulare Wechselwirkungen','Anziehungskräfte zwischen Molekülen: Van-der-Waals-Kräfte, Dipol-Dipol-Kräfte, Wasserstoffbrücken.'],
+['Van-der-Waals-Kräfte','Schwache Anziehung zwischen temporären und induzierten Dipolen. Wirken zwischen allen Molekülen, stärker bei größerer Oberfläche.'],
+['Wasserstoffbrückenbindung','Anziehung zwischen einem H-Atom, das an F, O oder N gebunden ist, und einem freien Elektronenpaar eines F-, O- oder N-Atoms im Nachbarmolekül.'],
+['hydrophob / lipophil','wasserabweisend / fettliebend. Typisch für unpolare Stoffe wie Alkane.'],
+['hydrophil','wasserliebend. Polare Stoffe, die sich gut in Wasser lösen.'],
+['Viskosität','Zähflüssigkeit eines Stoffes. Bei Alkanen steigt sie mit der Kettenlänge.'],
+['Siedetemperatur','Temperatur, bei der ein Stoff vom flüssigen in den gasförmigen Zustand übergeht.'],
+['„Ähnliches löst sich in Ähnlichem“','Polare Stoffe lösen sich in polaren, unpolare in unpolaren Lösungsmitteln.'],
+['Summenformel','Gibt Art und Anzahl der Atome an, z. B. C<sub>4</sub>H<sub>10</sub>.'],
+['Strukturformel','Zeigt alle Atome und alle Bindungen als Striche (Valenzstrich- bzw. Lewis-Formel).'],
+['Halbstrukturformel','C–C-Bindungen als Strich, H am C zusammengefasst: CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>3</sub>.'],
+['Skelettformel','Zickzack-Linie: Ecken und Enden sind C-Atome, H-Atome am C werden weggelassen.'],
+['Keil-Strich-Formel','Zeigt die räumliche Anordnung: Strich = in der Ebene, Keil = nach vorn, gestrichelter Keil = nach hinten.'],
+['Kugel-Stab-Modell','Atome als Kugeln, Bindungen als Stäbe. Zeigt Bindungswinkel und Bindungslängen.'],
+['Kalottenmodell','Atome als ineinander geschobene Kugelkappen. Zeigt den Raumbedarf des Moleküls, aber keine einzelnen Bindungen.']
+];
+
+const TASKS=[
+{t:6,q:'<b>Erkläre</b>, warum die Siedetemperaturen der Alkane mit zunehmender Kettenlänge steigen.',
+ sol:()=>`<p>Zwischen Alkanmolekülen wirken nur Van-der-Waals-Kräfte. <b>Je länger</b> die Kohlenstoffkette ist, <b>desto größer</b> ist die Oberfläche der Moleküle. <b>Desto stärker</b> sind die Van-der-Waals-Kräfte zwischen den Molekülen. <b>Desto mehr Energie</b> muss beim Sieden zugeführt werden, um die Moleküle voneinander zu trennen. Deshalb steigt die Siedetemperatur.</p><p class="hint">Punkte gibt es für: nur VdW-Kräfte, Oberfläche, Stärke der Kräfte, Energie zum Trennen. Die Je-desto-Kette ist das Gerüst.</p>`},
+{t:6,q:'<b>Erkläre</b>, warum sich Hexan nicht in Wasser löst, aber gut in Benzin.',
+ sol:()=>`<p>Hexan ist unpolar (C–H-Bindungen fast unpolar, symmetrischer Bau). Zwischen Hexanmolekülen wirken nur Van-der-Waals-Kräfte. Wasser ist polar, seine Moleküle halten über Wasserstoffbrücken zusammen.</p><p>Hexanmoleküle können keine H-Brücken bilden. Würden sie sich zwischen die Wassermoleküle schieben, müssten H-Brücken aufgebrochen werden, ohne dass gleich starke Anziehung entsteht. Deshalb mischen sich Hexan und Wasser nicht.</p><p>Benzin besteht aus unpolaren Alkanen. Zwischen Hexan und Benzin wirken die gleichen Van-der-Waals-Kräfte, sie mischen sich: „Ähnliches löst sich in Ähnlichem“. Hexan ist hydrophob und lipophil.</p>`},
+{t:3,q:'<b>Zeichne</b> alle Isomere von C<sub>5</sub>H<sub>12</sub> als Skelettformel und <b>benenne</b> sie.',
+ sol:()=>`<div class="iso-grid">${[{n:5,subs:[]},{n:4,subs:[{p:2,l:1}]},{n:3,subs:[{p:2,l:1},{p:2,l:1}]}].map(m=>`<div class="iso">${skeletonSVG(m,{scale:1.3})}<div class="nm">${nameOf(m)}</div></div>`).join('')}</div>`},
+{t:2,q:'<b>Zeichne</b> 3-Ethyl-2,4-dimethylhexan als Skelettformel und gib die Summenformel an.',
+ sol:()=>{const m={n:6,subs:[{p:2,l:1},{p:3,l:2},{p:4,l:1}]}; return `<div class="figbox">${skeletonSVG(m,{nums:true,dots:true})}</div><p class="mono">${fm(condensed(m))}</p><p>Hauptkette 6 C (schwarz), Seitenketten orange. Summenformel: 6 + 2 + 1 + 1 = 10 C, also <b>${fm(sumFormula(m))}</b>.</p>`;}},
+{t:4,q:'<b>Ordne</b> die Bindungen nach steigender Polarität und <b>begründe</b>: O–H, C–H, C–O, N–H. (EN: H 2,2; C 2,5; N 3,0; O 3,5)',
+ sol:()=>`<p>ΔEN berechnen: C–H = 0,3; N–H = 0,8; C–O = 1,0; O–H = 1,3.</p><p><b>C–H &lt; N–H &lt; C–O &lt; O–H</b></p><p>Je größer die Elektronegativitätsdifferenz, desto stärker sind die Bindungselektronen zum elektronegativeren Atom verschoben, desto polarer ist die Bindung. C–H ist praktisch unpolar.</p>`},
+{t:5,q:'<b>Erkläre</b> am Beispiel von Wasser, wie eine Wasserstoffbrückenbindung entsteht. Zeichne eine Skizze.',
+ sol:()=>`${H_BOND_SVG}<p>Im Wassermolekül ist O viel elektronegativer als H (ΔEN = 1,3). Die O–H-Bindungen sind stark polar: Das O trägt δ−, die H-Atome tragen δ+. Das stark positiv polarisierte H-Atom eines Wassermoleküls wird vom freien Elektronenpaar am O-Atom eines Nachbarmoleküls angezogen. Diese Anziehung ist die Wasserstoffbrücke (gestrichelt gezeichnet).</p>`},
+{t:5,q:'<b>Erkläre</b> die Entstehung von Van-der-Waals-Kräften.',
+ sol:()=>`<p>Die Elektronen in einem Molekül sind ständig in Bewegung. Dadurch sind sie für einen kurzen Moment ungleich verteilt: Auf einer Seite entsteht δ−, auf der anderen δ+. Das Molekül ist ein <b>temporärer Dipol</b>.</p><p>Dieser Dipol verschiebt die Elektronen im Nachbarmolekül (die δ−-Seite stößt dessen Elektronen ab). Dort entsteht ein <b>induzierter Dipol</b>. Die entgegengesetzten Teilladungen ziehen sich an. Diese schwache Anziehung heißt Van-der-Waals-Kraft. Sie ist umso stärker, je größer die Oberfläche der Moleküle ist.</p>`},
+{t:3,q:'2,2-Dimethylpropan siedet bei 9,5 °C, Pentan bei 36 °C. Beide haben die Formel C<sub>5</sub>H<sub>12</sub>. <b>Erkläre</b> den Unterschied.',
+ sol:()=>`<p>Beide Stoffe sind Isomere: gleiche Summenformel, unterschiedliche Struktur. Zwischen den Molekülen wirken nur Van-der-Waals-Kräfte.</p><p>Pentan ist unverzweigt und lang gestreckt. Die Moleküle können sich auf großer Fläche berühren. 2,2-Dimethylpropan ist stark verzweigt und fast kugelförmig. Seine Oberfläche ist kleiner, die Kontaktfläche zwischen den Molekülen ist geringer. Darum sind die Van-der-Waals-Kräfte schwächer, und es wird weniger Energie zum Trennen der Moleküle benötigt. Die Siedetemperatur ist niedriger.</p>`},
+{t:7,q:'<b>Zeichne</b> die Lewis-Formeln (Strukturformeln) von Methan, Ethan, Propan, Butan und Pentan.',
+ sol:()=>[1,2,3,4,5].map(n=>`<p style="margin-bottom:0"><b>${ALKANES[n].name}</b> · ${fm(sumFormula({n,subs:[]}))}</p><div class="figbox">${structSVG({n,subs:[]})}</div>`).join('')},
+{t:1,q:'<b>Nenne</b> die Summenformeln von Nonan und Pentadecan (15 C) und <b>erkläre</b>, wie du sie bestimmst.',
+ sol:()=>`<p>Nonan: <b>C<sub>9</sub>H<sub>20</sub></b>. Pentadecan: <b>C<sub>15</sub>H<sub>32</sub></b>.</p><p>Alkane folgen der allgemeinen Formel C<sub>n</sub>H<sub>2n+2</sub>: Die Zahl der H-Atome ist das Doppelte der C-Atome plus zwei (2 · 9 + 2 = 20; 2 · 15 + 2 = 32).</p>`}
+];
+
+/* ---------- Aufgaben-Generatoren: jedes Mal neue Varianten ---------- */
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const F=(c,h)=>`C${c>1?'<sub>'+c+'</sub>':''}H<sub>${h}</sub>`;
+const FA=n=>F(n,2*n+2);
+function mk(t,q,correct,wrong,e,svg){
+  const o=[correct]; wrong.forEach(w=>{ if(w!==correct && !o.includes(w) && o.length<4) o.push(w); });
+  return {t,gen:true,q,o,a:0,e,svg};
+}
+const alkName=n=> n<=10? `${ALKANES[n].name} (${FA(n)})` : `das Alkan ${FA(n)}`;
+const EN_AT=[['H',2.2],['C',2.5],['N',3.0],['O',3.5],['F',4.0],['Cl',3.0],['S',2.5],['Br',2.8],['Na',0.9],['K',0.8],['Li',1.0],['Mg',1.2]];
+const ZM=[['CH4','Methan','vdw'],['C8H18','Octan','vdw'],['C3H8','Propan','vdw'],['CO2','Kohlenstoffdioxid','vdw'],['Cl2','Chlor','vdw'],['HCl','Chlorwasserstoff','dd'],['HBr','Bromwasserstoff','dd'],['H2O','Wasser','h'],['NH3','Ammoniak','h'],['HF','Fluorwasserstoff','h'],['CH3OH','Methanol','h'],['C2H5OH','Ethanol','h']];
+const ZMN={vdw:'Van-der-Waals-Kräfte',dd:'Dipol-Dipol-Kräfte',h:'Wasserstoffbrücken'};
+const ZMW={vdw:'unpolar. Zwischen den Molekülen wirken nur Van-der-Waals-Kräfte.',dd:'ein Dipolmolekül, hat aber kein H an F, O oder N. Stärkste Kraft: Dipol-Dipol (dazu Van der Waals).',h:'ein Molekül mit H an F, O oder N und freien Elektronenpaaren. Stärkste Kraft: Wasserstoffbrücken.'};
+const ISO_BP={5:[[{n:5,subs:[]},36],[{n:4,subs:[{p:2,l:1}]},28],[{n:3,subs:[{p:2,l:1},{p:2,l:1}]},9.5]],
+ 6:[[{n:6,subs:[]},69],[{n:5,subs:[{p:2,l:1}]},60],[{n:5,subs:[{p:3,l:1}]},63],[{n:4,subs:[{p:2,l:1},{p:3,l:1}]},58],[{n:4,subs:[{p:2,l:1},{p:2,l:1}]},50]]};
+function sameCarbonPartner(m){ for(let i=0;i<300;i++){ const x=randomMolecule(); if(carbons(x)===carbons(m)&&nameOf(x)!==nameOf(m)) return x; } return null; }
+const GEN={
+1:[
+ ()=>{const n=randInt(1,10); return mk(1,`Welche Summenformel hat ${ALKANES[n].name}?`,FA(n),shuffle([F(n,2*n),F(n,2*n+4),F(n+1,2*n+4),F(n,n+2)]),`${ALKANES[n].name} hat ${n} C-Atome. H = 2 · ${n} + 2 = ${2*n+2}.`);},
+ ()=>{const n=randInt(1,10); return mk(1,`Wie heißt das Alkan ${FA(n)}?`,ALKANES[n].name,shuffle([n-2,n-1,n+1,n+2].filter(x=>x>=1&&x<=10)).map(x=>ALKANES[x].name),`${n} C-Atome: ${ALKANES[n].name}.`);},
+ ()=>{const n=randInt(11,30); return mk(1,`Ein unverzweigtes Alkan hat ${n} C-Atome. Wie viele H-Atome hat es?`,String(2*n+2),shuffle([String(2*n),String(2*n+1),String(2*n+4),String(n+2)]),`H = 2 · ${n} + 2 = ${2*n+2}.`);},
+ ()=>{const n=randInt(6,30),h=2*n+2; return mk(1,`Ein Alkan hat ${h} H-Atome. Wie viele C-Atome hat es?`,String(n),shuffle([String(n+1),String(n-1),String(n+2),String(n-2)]),`Rückwärts rechnen: C = (H − 2) : 2 = (${h} − 2) : 2 = ${n}.`);},
+ ()=>{const n=randInt(2,9); return mk(1,`Welches Alkan folgt in der homologen Reihe direkt auf ${ALKANES[n].name}?`,`${ALKANES[n+1].name} (${FA(n+1)})`,[`${ALKANES[n-1].name} (${FA(n-1)})`,`${ALKANES[Math.min(10,n+2)].name} (${FA(Math.min(10,n+2))})`,`ein Alken (${F(n+1,2*n+2)})`],`Das nächste Glied hat eine CH<sub>2</sub>-Gruppe mehr: ${FA(n)} + CH<sub>2</sub> = ${FA(n+1)}.`);}
+],
+2:[
+ namingQuestion, namingQuestion,
+ ()=>{const m=randomMolecule(),c=carbons(m); return mk(2,`Welche Summenformel hat ${nameOf(m)}?`,FA(c),shuffle([FA(m.n),F(c,2*c),F(c+1,2*c+4),F(c-1,2*c)]),`Hauptkette ${m.n} C + Seitenketten ${c-m.n} C = ${c} C. H = 2 · ${c} + 2 = ${2*c+2}.`);},
+ ()=>{const m=randomMolecule(); return mk(2,'Wie viele C-Atome hat die Hauptkette (längste Kette) dieses Moleküls?',String(m.n),shuffle([String(m.n-1),String(m.n+1),String(carbons(m)),String(m.n+2)]),`Die längste Kette hat ${m.n} C-Atome, Stammname ${cap(STEMS[m.n])}an. Ganzer Name: <b>${nameOf(m)}</b>.`,skeletonSVG(m,{flip:Math.random()<.5,scale:1.6,dots:true}));},
+ ()=>{const m=randomMolecule(),nm=nameOf(m); return mk(2,`Welche Halbstrukturformel gehört zu ${nm}?`,`<span class="mono">${fm(condensed(m))}</span>`,(()=>{const w=[]; for(let i=0;i<40&&w.length<3;i++){const x=randomMolecule(); if(nameOf(x)!==nm){const s=`<span class="mono">${fm(condensed(x))}</span>`; if(!w.includes(s)) w.push(s);}} return w;})(),`Hauptkette ${m.n} C, dann die Seitenketten an die genannten Positionen hängen.`);}
+],
+3:[
+ ()=>{const m1=randomMolecule(); const m2=(Math.random()<.55&&sameCarbonPartner(m1))||randomMolecule(); const iso=carbons(m1)===carbons(m2)&&nameOf(m1)!==nameOf(m2);
+  const Y='Ja: gleiche Summenformel, andere Struktur', N='Nein: verschiedene Summenformeln';
+  return mk(3,`Sind ${nameOf(m1)} und ${nameOf(m2)} Isomere?`,iso?Y:N,[iso?N:Y,'Nein: Isomere müssen den gleichen Namen haben','Ja: beide sind Alkane'],`${nameOf(m1)}: ${FA(carbons(m1))}. ${nameOf(m2)}: ${FA(carbons(m2))}.`);},
+ ()=>{const m=randomMolecule(); const other=Math.random()<.5?sameCarbonPartner(m):null; const m2=other||m;
+  const same=nameOf(m2)===nameOf(m);
+  const svg=`<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center">${skeletonSVG(m,{scale:1.25})}<span class="muted mono">und</span>${skeletonSVG(m2,{scale:1.25,flip:true})}</div>`;
+  const A='Dasselbe Molekül, nur anders gezeichnet', B='Zwei verschiedene Isomere';
+  return mk(3,'Was zeigen diese beiden Skelettformeln?',same?A:B,[same?B:A,'Zwei Stoffe mit verschiedener Summenformel'],same?`Beide heißen <b>${nameOf(m)}</b>. Gespiegelt gezeichnet ist kein neues Molekül.`:`Links: <b>${nameOf(m)}</b>, rechts: <b>${nameOf(m2)}</b>. Beide ${FA(carbons(m))}, also Isomere.`,svg);},
+ ()=>{const c=pick([5,6]),set=ISO_BP[c],lo=Math.random()<.5; const sorted=set.slice().sort((a,b)=>a[1]-b[1]); const ans=lo?sorted[0]:sorted[sorted.length-1];
+  return mk(3,`Welches Isomer von ${FA(c)} hat die ${lo?'niedrigste':'höchste'} Siedetemperatur?`,nameOf(ans[0]),shuffle(set.filter(x=>x!==ans).map(x=>nameOf(x[0]))),`${lo?'Am stärksten verzweigt':'Unverzweigt'}: ${lo?'kleinste':'größte'} Oberfläche, ${lo?'schwächste':'stärkste'} Van-der-Waals-Kräfte. ${nameOf(ans[0])} siedet bei ${dec(ans[1])} °C.`);},
+ ()=>{const c=pick([4,5,6,7]),k={4:2,5:3,6:5,7:9}[c]; return mk(3,`Wie viele Isomere gibt es zu ${FA(c)}?`,String(k),shuffle(['2','3','4','5','6','9','7'].filter(x=>x!==String(k))).slice(0,3),`C4: 2, C5: 3, C6: 5, C7: 9 Isomere.`);}
+],
+4:[
+ ()=>{let a,b,d; do{a=pick(EN_AT);b=pick(EN_AT);}while(a[0]===b[0]); d=Math.round(Math.abs(a[1]-b[1])*10)/10;
+  const ty=d<0.5?'unpolare Atombindung':d<=1.7?'polare Atombindung':'Ionenbindung', D=dec(d.toFixed(1));
+  return mk(4,`EN(${a[0]}) = ${dec(a[1].toFixed(1))}, EN(${b[0]}) = ${dec(b[1].toFixed(1))}. Welche Bindung liegt zwischen ${a[0]} und ${b[0]} vor?`,`ΔEN = ${D}: ${ty}`,['unpolare Atombindung','polare Atombindung','Ionenbindung'].filter(x=>x!==ty).map(x=>`ΔEN = ${D}: ${x}`).concat([`ΔEN = ${dec((a[1]+b[1]).toFixed(1))}: ${ty}`]),`ΔEN = ${dec(Math.max(a[1],b[1]).toFixed(1))} − ${dec(Math.min(a[1],b[1]).toFixed(1))} = ${D}. Grenzen: unter 0,5 unpolar, 0,5 bis 1,7 polar, über 1,7 ionisch.`);},
+ ()=>{let a,b,d; do{a=pick(EN_AT);b=pick(EN_AT);d=Math.abs(a[1]-b[1]);}while(a[0]===b[0]||d<0.5||d>1.7);
+  const more=a[1]>b[1]?a[0]:b[0], less=a[1]>b[1]?b[0]:a[0];
+  return mk(4,`Welches Atom trägt in der Bindung ${a[0]}–${b[0]} die Partialladung δ−? (EN: ${a[0]} ${dec(a[1].toFixed(1))}, ${b[0]} ${dec(b[1].toFixed(1))})`,more,[less,'beide','keines'],`${more} ist elektronegativer und zieht die Bindungselektronen zu sich: δ−. ${less} bekommt δ+.`);},
+ ()=>{const L=[['H<sub>2</sub>O','gewinkelt, polare O–H-Bindungen',true],['CO<sub>2</sub>','linear, die Teilladungen heben sich auf',false],['CH<sub>4</sub>','C–H fast unpolar und symmetrisch',false],['HCl','polare Bindung, nur zwei Atome',true],['NH<sub>3</sub>','pyramidenförmig, polare N–H-Bindungen',true],['Cl<sub>2</sub>','zwei gleiche Atome, ΔEN = 0',false],['C<sub>6</sub>H<sub>14</sub>','Alkan: fast unpolare Bindungen',false],['HF','sehr polare H–F-Bindung',true]]; const x=pick(L);
+  return mk(4,`Ist ${x[0]} ein Dipolmolekül?`,x[2]?'Ja':'Nein',[x[2]?'Nein':'Ja'],`${x[0]}: ${x[1]}.`);}
+],
+5:[
+ ()=>{const m=pick(ZM); return mk(5,`Welche Wechselwirkung ist zwischen ${m[1]}-Molekülen (${fm(m[0])}) die stärkste?`,ZMN[m[2]],Object.keys(ZMN).filter(k=>k!==m[2]).map(k=>ZMN[k]).concat(['Ionenbindungen']),`${m[1]} ist ${ZMW[m[2]]}`);},
+ ()=>{const h=pick(ZM.filter(x=>x[2]==='h')), n=pick(ZM.filter(x=>x[2]!=='h')); const ask=Math.random()<.5;
+  const q=ask?`Zwischen welchen Molekülen bilden sich Wasserstoffbrücken?`:`Zwischen welchen Molekülen bilden sich KEINE Wasserstoffbrücken?`;
+  return mk(5,q,ask?`${h[1]} (${fm(h[0])})`:`${n[1]} (${fm(n[0])})`,[ask?`${n[1]} (${fm(n[0])})`:`${h[1]} (${fm(h[0])})`],`H-Brücken brauchen H an F, O oder N. ${h[1]}: ja. ${n[1]}: nein.`);},
+ ()=>{const a=randInt(1,8); let b; do{b=randInt(1,8);}while(b===a); return mk(5,`Zwischen welchen Molekülen sind die Van-der-Waals-Kräfte stärker?`,`zwischen ${ALKANES[Math.max(a,b)].name}-Molekülen`,[`zwischen ${ALKANES[Math.min(a,b)].name}-Molekülen`,'Sie sind gleich stark.'],`Längere Kette, größere Oberfläche, stärkere Van-der-Waals-Kräfte.`);}
+],
+6:[
+ ()=>{let a=randInt(1,20),b; do{b=randInt(1,20);}while(b===a); const prop=pick(['Siedetemperatur','Viskosität']); return mk(6,`Welches Alkan hat die höhere ${prop}?`,cap(alkName(Math.max(a,b))),[cap(alkName(Math.min(a,b))),'Beide gleich'],`Je länger die Kette, desto größer die Oberfläche, desto stärker die Van-der-Waals-Kräfte, desto höher die ${prop}.`);},
+ ()=>{const n=randInt(1,25),st=n<=4?'gasförmig':n<=16?'flüssig':'fest'; return mk(6,`In welchem Aggregatzustand liegt ${alkName(n)} bei 20 °C vor?`,st,['gasförmig','flüssig','fest'].filter(x=>x!==st),`Faustregel: C1–C4 gasförmig, C5–C16 flüssig, ab C17 fest.`);},
+ ()=>{const n=randInt(5,16),lm=pick([['Wasser',false],['Benzin',true],['Speiseöl',true],['Salzwasser',false],['Heptan',true],['Essig',false]]);
+  const Y='Ja: unpolar löst sich in unpolar', N='Nein: unpolar löst sich nicht in polar';
+  return mk(6,`Löst sich ${alkName(n)} in ${lm[0]}?`,lm[1]?Y:N,[lm[1]?N:Y,'Nur beim Erhitzen'],`Alkane sind unpolar (lipophil, hydrophob). ${lm[0]} ist ${lm[1]?'unpolar':'polar'}.`);},
+ ()=>{const p=pick([['hydrophob','wasserabweisend'],['lipophil','fettliebend'],['hydrophil','wasserliebend'],['Viskosität','Zähflüssigkeit']]); return mk(6,`Was bedeutet „${p[0]}“?`,p[1],['wasserabweisend','fettliebend','wasserliebend','Zähflüssigkeit','fettabweisend'].filter(x=>x!==p[1]).slice(0,3),`${p[0]} = ${p[1]}.`);}
+],
+7:[
+ ()=>{const n=randInt(3,10); return mk(7,'Welches Alkan zeigt diese Skelettformel?',ALKANES[n].name,shuffle([n-2,n-1,n+1,n+2].filter(x=>x>=2&&x<=10)).map(x=>ALKANES[x].name),`Ecken und Enden zählen: ${n} C-Atome.`,skeletonSVG({n,subs:[]},{scale:1.5}));},
+ ()=>{const n=randInt(1,5); return mk(7,'Welche Summenformel gehört zu dieser Strukturformel?',FA(n),shuffle([FA(n+1),F(n,2*n),F(n,2*n+4),FA(Math.max(1,n-1))]),`${n} C-Atome, ${2*n+2} H-Atome: ${ALKANES[n].name}.`,structSVG({n,subs:[]}));},
+ ()=>{const m=randomMolecule(),o=nameOptions(m); return mk(7,`Wie heißt das Alkan mit der Halbstrukturformel <span class="mono">${fm(condensed(m))}</span>?`,o.correct,o.wrong,`Längste Kette ${m.n} C, kleinste Nummern, alphabetisch: ${o.correct}.`);},
+ ()=>{const m=pick([randomMolecule(),{n:randInt(3,7),subs:[]}]); const kinds=[['Summenformel',`<span class="mono" style="font-size:1.4rem">${FA(carbons(m))}</span>`],['Halbstrukturformel',`<span class="mono">${fm(condensed(m))}</span>`],['Skelettformel',skeletonSVG(m,{scale:1.4})]]; if(!m.subs.length) kinds.push(['Strukturformel',structSVG(m)]);
+  const k=pick(kinds); return mk(7,'Welche Schreibweise ist das?',k[0],shuffle(['Summenformel','Strukturformel','Halbstrukturformel','Skelettformel'].filter(x=>x!==k[0])),`Das ist die ${k[0]} von ${nameOf(m)}.`,`<div style="text-align:center;overflow-wrap:anywhere">${k[1]}</div>`);}
+]};
+function genQ(t){ return pick(GEN[t])(); }
+
+/* Richtig oder falsch: schnelle Aussagen */
+const TF=[
+[1,'Alkane enthalten nur Einfachbindungen.',1,'Darum heißen sie gesättigt.'],
+[1,'Hexan hat die Summenformel C<sub>6</sub>H<sub>12</sub>.',0,'2 · 6 + 2 = 14, also C<sub>6</sub>H<sub>14</sub>.'],
+[1,'Benachbarte Glieder der homologen Reihe unterscheiden sich um CH<sub>2</sub>.',1,'Mit jedem C kommen 2 H dazu.'],
+[1,'Die Kohlenstoffkette der Alkane ist in Wirklichkeit gerade.',0,'Sie ist zickzackförmig, weil die Bindungen am C in Tetraeder-Richtung zeigen (109,5°).'],
+[2,'Seitenketten werden im Namen alphabetisch geordnet.',1,'Ethyl vor Methyl vor Propyl. di, tri zählen nicht.'],
+[2,'Bei der Namensgebung zählt die Vorsilbe „di“ bei der alphabetischen Ordnung mit.',0,'„Dimethyl“ wird unter M einsortiert.'],
+[2,'„1-Methylpropan“ ist ein korrekter Name.',0,'Eine Methylgruppe am Ende verlängert die Kette: Das ist Butan.'],
+[2,'Die Hauptkette ist immer die längste Kette, auch wenn sie um die Ecke gezeichnet ist.',1,'Deshalb ist „2-Ethylbutan“ falsch, richtig: 3-Methylpentan.'],
+[3,'Isomere haben die gleiche Summenformel.',1,'Aber eine andere Struktur.'],
+[3,'Isomere haben immer die gleiche Siedetemperatur.',0,'Verzweigte Isomere sieden niedriger.'],
+[3,'Methan hat ein Isomer.',0,'Isomere gibt es erst ab 4 C-Atomen.'],
+[3,'Je stärker ein Alkan verzweigt ist, desto niedriger ist seine Siedetemperatur.',1,'Kleinere Oberfläche, schwächere Van-der-Waals-Kräfte.'],
+[4,'Fluor ist das elektronegativste Element.',1,'EN = 4,0.'],
+[4,'In einer polaren Bindung trägt das elektronegativere Atom δ+.',0,'Es trägt δ−, weil es die Elektronen zu sich zieht.'],
+[4,'CO<sub>2</sub> ist ein Dipolmolekül.',0,'Linear gebaut: Die Teilladungen heben sich auf.'],
+[4,'Bei ΔEN über 1,7 spricht man von einer Ionenbindung.',1,'Z. B. NaCl mit ΔEN = 2,1.'],
+[4,'Alkane sind unpolare Moleküle.',1,'C–H hat nur ΔEN = 0,3, und die Moleküle sind symmetrisch.'],
+[5,'Van-der-Waals-Kräfte wirken zwischen allen Molekülen.',1,'Bei Alkanen sind sie die einzigen.'],
+[5,'Zwischen Methanmolekülen bilden sich Wasserstoffbrücken.',0,'Das H sitzt am C, nicht an F, O oder N.'],
+[5,'Wasserstoffbrücken sind stärker als Van-der-Waals-Kräfte.',1,'VdW < Dipol-Dipol < H-Brücken.'],
+[5,'Zwischenmolekulare Kräfte sind stärker als Atombindungen.',0,'Sie sind viel schwächer. Beim Sieden bleiben die Moleküle selbst ganz.'],
+[5,'Van-der-Waals-Kräfte entstehen durch temporäre und induzierte Dipole.',1,'Kurzzeitig ungleich verteilte Elektronen.'],
+[6,'Alkane lösen sich gut in Wasser.',0,'Unpolar in polar: nicht löslich.'],
+[6,'Die Viskosität steigt mit der Kettenlänge.',1,'Stärkere VdW-Kräfte und Verhaken.'],
+[6,'Butan ist bei Raumtemperatur flüssig.',0,'Butan siedet bei −0,5 °C, ist also gasförmig.'],
+[6,'Alkane sind lipophil.',1,'Fettliebend, weil unpolar.'],
+[6,'Kurze Alkane sieden höher als lange.',0,'Umgekehrt: Lange Alkane sieden höher.'],
+[7,'Die Summenformel verrät, wie die Atome verbunden sind.',0,'Sie zeigt nur Art und Anzahl. Darum haben Isomere die gleiche Summenformel.'],
+[7,'In der Skelettformel steht jede Ecke für ein C-Atom.',1,'Und jedes Ende auch.'],
+[7,'In der Skelettformel werden die H-Atome am C mitgezeichnet.',0,'Sie werden weggelassen.'],
+[7,'Bei Alkanen sind Lewis-Formel und Strukturformel gleich.',1,'Es gibt keine freien Elektronenpaare.']
+];
+function tfQ(){ const x=pick(TF); return {t:x[0],q:'Richtig oder falsch? '+x[1],o:x[2]?['Richtig','Falsch']:['Falsch','Richtig'],a:0,e:x[3],tf:true}; }
+
+/* Satz-Puzzles für Erkläre-Aufgaben */
+const ORDERS=[
+ {t:6,title:'Erkläre, warum die Siedetemperatur mit der Kettenlänge steigt.',parts:['Je länger die Kohlenstoffkette,','desto größer ist die Oberfläche der Moleküle,','desto stärker sind die Van-der-Waals-Kräfte,','desto mehr Energie braucht man, um die Moleküle zu trennen,','desto höher ist die Siedetemperatur.']},
+ {t:3,title:'Erkläre, warum verzweigte Isomere niedriger sieden.',parts:['Verzweigte Moleküle sind kompakter, fast kugelförmig.','Ihre Oberfläche ist kleiner.','Die Kontaktfläche zwischen den Molekülen ist geringer.','Die Van-der-Waals-Kräfte sind schwächer.','Zum Trennen braucht man weniger Energie: Die Siedetemperatur ist niedriger.']},
+ {t:5,title:'Erkläre die Entstehung von Van-der-Waals-Kräften.',parts:['Die Elektronen im Molekül bewegen sich ständig.','Für einen Moment sind sie ungleich verteilt: ein temporärer Dipol entsteht.','Er verschiebt die Elektronen im Nachbarmolekül: ein induzierter Dipol entsteht.','Die entgegengesetzten Teilladungen ziehen sich an.']},
+ {t:5,title:'Erkläre, wie eine Wasserstoffbrücke im Wasser entsteht.',parts:['O ist viel elektronegativer als H (ΔEN = 1,3).','Die O–H-Bindung ist stark polar: O trägt δ−, H trägt δ+.','Das H-Atom wird vom freien Elektronenpaar am O eines Nachbarmoleküls angezogen.','Diese Anziehung nennt man Wasserstoffbrücke.']},
+ {t:6,title:'Erkläre, warum sich Hexan nicht in Wasser löst.',parts:['Hexan ist unpolar, Wasser ist polar.','Wassermoleküle halten über Wasserstoffbrücken zusammen.','Hexanmoleküle können keine Wasserstoffbrücken bilden.','Sie würden die H-Brücken nur stören: Hexan und Wasser mischen sich nicht.']},
+ {t:6,title:'Erkläre, warum die Viskosität mit der Kettenlänge steigt.',parts:['Längere Moleküle haben eine größere Oberfläche.','Die Van-der-Waals-Kräfte zwischen ihnen sind stärker.','Zusätzlich verhaken sich die langen Ketten ineinander.','Die Moleküle gleiten schlechter aneinander vorbei: Der Stoff ist zähflüssiger.']},
+ {t:4,title:'Erkläre, warum das O-Atom in Wasser δ− trägt.',parts:['Sauerstoff hat eine höhere Elektronegativität als Wasserstoff.','Er zieht das bindende Elektronenpaar stärker zu sich.','Die Elektronen halten sich häufiger beim O auf.','Dadurch entsteht am O eine negative Teilladung δ−, am H δ+.']}
+];
+function renderOrder(set,onDone){
+  const box=el(`<div class="q"><div class="eyebrow">Thema ${set.t} · Antwort bauen</div><div class="qt">${set.title}</div><p class="muted" style="margin:0;font-size:.9rem">Tippe die Sätze in der richtigen Reihenfolge an.</p><div class="order-done"></div><div class="order-pool"></div><div class="res"></div></div>`);
+  let step=0,miss=0; const pool=$('.order-pool',box), done=$('.order-done',box);
+  pool.innerHTML=shuffle(set.parts.map((p,i)=>i)).map(i=>`<button type="button" data-i="${i}">${set.parts[i]}</button>`).join('');
+  pool.addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(!b) return;
+    if(+b.dataset.i===step){ done.appendChild(el(`<div>${set.parts[step]}</div>`)); b.remove(); step++;
+      if(step===set.parts.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg" style="margin-top:8px">Fehlerfrei! So schreibst du es in der Klausur.</div>':`<div class="expl" style="margin-top:8px">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}. Lies die fertige Antwort noch einmal laut.</div>`; onDone&&onDone(miss===0); } }
+    else { miss++; b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); if(navigator.vibrate){ try{navigator.vibrate(40);}catch(e){} } } });
+  return box;
+}
+
+/* ---------- Rendering: Fragen ---------- */
+function renderQuestion(q,onDone){
+  const order=shuffle(q.o.map((t,i)=>i));
+  const box=el(`<div class="q"><div class="eyebrow">Thema ${q.t}</div><div class="qt">${q.q}</div>${q.svg?`<div class="figbox">${q.svg}</div>`:''}<div class="opts"></div></div>`);
+  const opts=$('.opts',box);
+  order.forEach(i=>{ const b=el(`<button class="opt" type="button">${q.o[i]}</button>`); b.dataset.i=i; opts.appendChild(b); });
+  opts.addEventListener('click',ev=>{
+    const b=ev.target.closest('.opt'); if(!b||b.disabled) return;
+    const ok=+b.dataset.i===q.a;
+    opts.querySelectorAll('.opt').forEach(x=>{ x.disabled=true; if(+x.dataset.i===q.a) x.classList.add('right'); });
+    if(!ok) b.classList.add('wrong');
+    box.appendChild(el(`<div class="expl">${ok?'<b class="r">Richtig.</b> ':'<b class="f">Leider falsch.</b> '}${q.e}</div>`));
+    if(!q.gen){ S.wrong=S.wrong||{}; if(ok) delete S.wrong[q.q]; else S.wrong[q.q]=1; save(); }
+    if(!ok && navigator.vibrate){ try{ navigator.vibrate(60); }catch(e){} }
+    onDone&&onDone(ok);
+  });
+  return box;
+}
+
+/* ---------- Widgets ---------- */
+const W={};
+W.homolog=root=>{
+  root.innerHTML=`<label for="hom-n" class="muted" style="font-size:.9rem">Anzahl C-Atome: <b id="hom-nv" style="color:var(--ink)"></b></label>
+  <input type="range" id="hom-n" min="1" max="10" value="4">
+  <div class="name-out" id="hom-name" style="margin-top:6px"></div>
+  <div class="w-out"><div class="stat"><div class="k">Summenformel</div><div class="v mono" id="hom-f"></div></div><div class="stat"><div class="k">Rechnung H</div><div class="v mono" id="hom-r"></div></div><div class="stat"><div class="k">Siedetemperatur</div><div class="v" id="hom-bp"></div></div><div class="stat"><div class="k">bei 20 °C</div><div class="v" id="hom-st"></div></div></div>
+  <div class="sec-label" style="margin-top:16px">Strukturformel</div><div class="figbox" id="hom-struct"></div>
+  <div class="sec-label" style="margin-top:6px">Halbstrukturformel</div><div class="mono" id="hom-cond" style="overflow-wrap:anywhere"></div>
+  <div class="sec-label" style="margin-top:14px">Skelettformel</div><div class="figbox" id="hom-sk"></div>`;
+  const r=$('#hom-n',root);
+  const up=()=>{ const n=+r.value, a=ALKANES[n], m={n,subs:[]};
+    $('#hom-nv',root).textContent=n; $('#hom-name',root).textContent=a.name;
+    $('#hom-f',root).innerHTML=fm(sumFormula(m)); $('#hom-r',root).textContent=`2 · ${n} + 2 = ${2*n+2}`;
+    $('#hom-bp',root).textContent=dec(a.bp)+' °C'; $('#hom-st',root).textContent=a.bp<20?'gasförmig':'flüssig';
+    $('#hom-struct',root).innerHTML=structSVG(m); $('#hom-cond',root).innerHTML=fm(condensed(m));
+    $('#hom-sk',root).innerHTML=skeletonSVG(m,{dots:true,nums:true}); };
+  r.addEventListener('input',up); up();
+};
+W.branch=root=>{
+  const TARGETS=['2-Methylbutan','2,2-Dimethylpropan','2,3-Dimethylpentan','3-Ethylpentan','2,2,4-Trimethylpentan','3-Ethyl-2-methylhexan','4-Ethyl-2,3-dimethylheptan'];
+  let m={n:5,subs:[{p:2,l:1}]}, target=null, ti=0;
+  root.innerHTML=`<div class="sec-label">Baukasten</div>
+  <p style="margin-top:0">Baue ein Molekül: Wähle die Hauptkette und hänge Seitenketten an. Der Name wird live nach den IUPAC-Regeln gebildet.</p>
+  <div class="row"><label for="br-n">Hauptkette</label><select id="br-n">${[3,4,5,6,7,8,9,10].map(n=>`<option value="${n}">${n} C · ${ALKANES[n].name}</option>`).join('')}</select></div>
+  <div class="row" style="margin-top:8px"><label for="br-t">Seitenkette</label><select id="br-t"><option value="1">Methyl –CH₃</option><option value="2">Ethyl –C₂H₅</option></select><label for="br-p">an C</label><select id="br-p"></select><button class="btn small primary" type="button" id="br-add">Anhängen</button></div>
+  <div class="subs-list" id="br-subs" style="margin-top:10px"></div>
+  <div id="br-msg" style="margin-top:10px"></div>
+  <div class="figbox" id="br-svg" style="margin-top:6px"></div>
+  <div class="name-out" id="br-name"></div>
+  <div class="w-out"><div class="stat"><div class="k">Summenformel</div><div class="v mono" id="br-f"></div></div><div class="stat" style="grid-column:span 2"><div class="k">Halbstrukturformel</div><div class="v mono" id="br-c" style="font-size:.95rem"></div></div></div>
+  <div class="row" style="margin-top:14px"><button class="btn small" type="button" id="br-clear">Alles löschen</button><button class="btn small" type="button" id="br-task">Aufgabe: Baue ein Molekül</button></div>
+  <div id="br-target" style="margin-top:10px"></div>
+  <div class="sec-label" style="margin-top:22px">Namen-Training</div>
+  <p style="margin-top:0">Unendlich viele zufällige Moleküle. Achtung: Sie sind mal von links, mal von rechts gezeichnet.</p>
+  <div id="br-train"></div><div class="row" style="margin-top:10px"><button class="btn small primary" type="button" id="br-next">Neues Molekül</button><span class="muted mono" id="br-score" style="font-size:.85rem"></span></div>`;
+  const nSel=$('#br-n',root), pSel=$('#br-p',root), tSel=$('#br-t',root);
+  nSel.value=m.n;
+  const fillPos=()=>{ pSel.innerHTML=''; for(let i=2;i<m.n;i++) pSel.appendChild(el(`<option value="${i}">${i}</option>`)); };
+  const draw=()=>{
+    $('#br-subs',root).innerHTML=m.subs.map((s,i)=>`<span class="subchip">${s.p}-${cap(ALKYL[s.l])}<button type="button" data-rm="${i}" aria-label="Entfernen">×</button></span>`).join('')||'<span class="muted" style="font-size:.9rem">Noch keine Seitenkette: unverzweigtes Alkan.</span>';
+    $('#br-svg',root).innerHTML=skeletonSVG(m,{nums:true,dots:true});
+    $('#br-name',root).textContent=nameOf(m);
+    $('#br-f',root).innerHTML=fm(sumFormula(m)); $('#br-c',root).innerHTML=fm(condensed(m));
+  };
+  const msg=(h,cls)=>{ $('#br-msg',root).innerHTML=h?`<div class="${cls||'warn'}">${h}</div>`:''; };
+  nSel.addEventListener('change',()=>{ const n=+nSel.value; const keep=[];
+    for(const s of m.subs){ const t={n,subs:keep.concat([s])}; if(!validate(t)) keep.push(s); }
+    const lost=m.subs.length-keep.length;
+    m={n,subs:keep}; fillPos(); msg(lost?`${lost} Seitenkette(n) passten nicht mehr an die kürzere Kette und wurden entfernt.`:''); draw(); });
+  $('#br-add',root).addEventListener('click',()=>{ const t={n:m.n,subs:m.subs.concat([{p:+pSel.value,l:+tSel.value}])}; const v=validate(t);
+    if(v){ msg(v); return; } m=t; msg(''); draw(); });
+  $('#br-subs',root).addEventListener('click',e=>{ const b=e.target.closest('[data-rm]'); if(!b) return; m.subs.splice(+b.dataset.rm,1); msg(''); draw(); });
+  $('#br-clear',root).addEventListener('click',()=>{ m={n:m.n,subs:[]}; msg(''); draw(); });
+  const showTarget=()=>{ $('#br-target',root).innerHTML=target?`<div class="card" style="background:var(--paper-2)"><div class="eyebrow">Aufgabe ${ti+1} von ${TARGETS.length}</div><div class="name-out" style="font-size:1.25rem;margin:4px 0 10px">${target}</div><div class="row"><button class="btn small primary" type="button" id="br-check">Prüfen</button><button class="btn small" type="button" id="br-skip">Nächste Aufgabe</button></div><div id="br-res" style="margin-top:10px"></div></div>`:''; };
+  $('#br-task',root).addEventListener('click',()=>{ target=TARGETS[ti%TARGETS.length]; showTarget(); });
+  $('#br-target',root).addEventListener('click',e=>{
+    if(e.target.id==='br-check'){ const ok=nameOf(m)===target; $('#br-res',root).innerHTML= ok?'<div class="okmsg">Richtig gebaut! Dein Molekül heißt genau so.</div>':`<div class="warn">Dein Molekül heißt „${nameOf(m)}“. Gesucht ist „${target}“. Prüfe Hauptkette und Positionen.</div>`; }
+    if(e.target.id==='br-skip'){ ti=(ti+1)%TARGETS.length; target=TARGETS[ti]; m={n:m.n,subs:[]}; draw(); showTarget(); }
+  });
+  let right=0,total=0;
+  const next=()=>{ const tr=$('#br-train',root); tr.innerHTML=''; tr.appendChild(renderQuestion(namingQuestion(),ok=>{ total++; if(ok) right++; $('#br-score',root).textContent=`${right} von ${total} richtig`; })); };
+  $('#br-next',root).addEventListener('click',next);
+  fillPos(); draw(); next();
+};
+W.isomer=root=>{
+  const SETS={4:[[{n:4,subs:[]},-0.5],[{n:3,subs:[{p:2,l:1}]},-12]],
+   5:[[{n:5,subs:[]},36],[{n:4,subs:[{p:2,l:1}]},28],[{n:3,subs:[{p:2,l:1},{p:2,l:1}]},9.5]],
+   6:[[{n:6,subs:[]},69],[{n:5,subs:[{p:2,l:1}]},60],[{n:5,subs:[{p:3,l:1}]},63],[{n:4,subs:[{p:2,l:1},{p:3,l:1}]},58],[{n:4,subs:[{p:2,l:1},{p:2,l:1}]},50]]};
+  root.innerHTML=`<p style="margin-top:0">Wähle eine Summenformel. Die Balken zeigen die Siedetemperatur: je verzweigter, desto niedriger.</p>
+  <div class="row" id="iso-btns">${[4,5,6].map(c=>`<button class="chip" type="button" data-c="${c}" aria-pressed="${c===5}">${fm('C'+c+'H'+(2*c+2))}</button>`).join('')}</div>
+  <div class="iso-grid" id="iso-out"></div>`;
+  const show=c=>{ const list=SETS[c]; const lo=Math.min(...list.map(x=>x[1])), hi=Math.max(...list.map(x=>x[1]));
+    $('#iso-out',root).innerHTML=list.map(([m,bp])=>{ const pct=hi===lo?100:25+75*(bp-lo)/(hi-lo);
+      return `<div class="iso">${skeletonSVG(m,{scale:1.25})}<div class="nm">${nameOf(m)}</div><div class="bar" style="width:${pct}%"></div><div class="muted" style="font-size:.88rem">Sdp. ${dec(bp)} °C</div></div>`; }).join('');
+    root.querySelectorAll('#iso-btns .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.c===c)); };
+  $('#iso-btns',root).addEventListener('click',e=>{ const b=e.target.closest('[data-c]'); if(b) show(+b.dataset.c); });
+  show(5);
+  /* Isomer-Jagd */
+  const GOAL={6:5,7:9};
+  let hc=6, hm={n:6,subs:[]};
+  S.hunt=S.hunt||{};
+  const hunt=el(`<div><div class="sec-label" style="margin-top:22px">Isomer-Jagd</div>
+   <p style="margin-top:0">Finde alle Isomere selbst. Baue ein Molekül mit der richtigen Summenformel und tippe auf „Einreichen“.</p>
+   <div class="row" id="hu-c">${[6,7].map(c=>`<button class="chip" type="button" data-c="${c}">${fm('C'+c+'H'+(2*c+2))}</button>`).join('')}</div>
+   <div class="row" style="margin-top:10px"><label for="hu-n">Hauptkette</label><select id="hu-n"></select></div>
+   <div class="row" style="margin-top:8px"><label for="hu-t">Seitenkette</label><select id="hu-t"><option value="1">Methyl</option><option value="2">Ethyl</option></select><label for="hu-p">an C</label><select id="hu-p"></select><button class="btn small" type="button" id="hu-add">Anhängen</button></div>
+   <div class="subs-list" id="hu-subs" style="margin-top:10px"></div>
+   <div class="figbox" id="hu-svg"></div>
+   <div class="row"><span class="mono" id="hu-f"></span><button class="btn small primary" type="button" id="hu-go">Einreichen</button></div>
+   <div id="hu-msg" style="margin-top:10px"></div>
+   <div class="eyebrow" id="hu-count" style="margin-top:12px"></div><div class="subs-list" id="hu-found" style="margin-top:6px"></div></div>`);
+  root.appendChild(hunt);
+  const q=s=>hunt.querySelector(s);
+  const found=()=>S.hunt[hc]||[];
+  const drawH=()=>{
+    hunt.querySelectorAll('#hu-c .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.c===hc));
+    q('#hu-subs').innerHTML=hm.subs.map((s,i)=>`<span class="subchip">${s.p}-${cap(ALKYL[s.l])}<button type="button" data-rm="${i}" aria-label="Entfernen">×</button></span>`).join('')||'<span class="muted" style="font-size:.9rem">Unverzweigt</span>';
+    q('#hu-svg').innerHTML=skeletonSVG(hm,{nums:true,dots:true,scale:1.4});
+    const c=carbons(hm); q('#hu-f').innerHTML=`${fm(sumFormula(hm))} ${c===hc?'✓':`(du brauchst ${hc} C)`}`;
+    const f=found(); q('#hu-count').textContent=`${f.length} von ${GOAL[hc]} Isomeren gefunden`;
+    q('#hu-found').innerHTML=f.map(n=>`<span class="pill done">${n}</span>`).join('');
+  };
+  const fillN=()=>{ const sel=q('#hu-n'); sel.innerHTML=''; for(let n=Math.ceil(hc/2)+ (hc===6?0:0);n<=hc;n++) if(n>=3) sel.appendChild(el(`<option value="${n}">${n} C · ${ALKANES[n].name}</option>`)); sel.value=hm.n; fillP(); };
+  const fillP=()=>{ const p=q('#hu-p'); p.innerHTML=''; for(let i=2;i<hm.n;i++) p.appendChild(el(`<option value="${i}">${i}</option>`)); };
+  const msgH=(h,c)=>q('#hu-msg').innerHTML=h?`<div class="${c||'warn'}">${h}</div>`:'';
+  q('#hu-c').addEventListener('click',e=>{ const b=e.target.closest('[data-c]'); if(!b) return; hc=+b.dataset.c; hm={n:hc,subs:[]}; fillN(); msgH(''); drawH(); });
+  q('#hu-n').addEventListener('change',()=>{ hm={n:+q('#hu-n').value,subs:[]}; fillP(); msgH(''); drawH(); });
+  q('#hu-add').addEventListener('click',()=>{ const t={n:hm.n,subs:hm.subs.concat([{p:+q('#hu-p').value,l:+q('#hu-t').value}])}; const v=validate(t); if(v){ msgH(v); return; } hm=t; msgH(''); drawH(); });
+  q('#hu-subs').addEventListener('click',e=>{ const b=e.target.closest('[data-rm]'); if(!b) return; hm.subs.splice(+b.dataset.rm,1); msgH(''); drawH(); });
+  q('#hu-go').addEventListener('click',()=>{
+    const c=carbons(hm); if(c!==hc){ msgH(`Dein Molekül hat ${c} C-Atome, gesucht sind ${hc}. Dann ist es kein Isomer von ${fm('C'+hc+'H'+(2*hc+2))}.`); return; }
+    const nm=nameOf(hm), f=found();
+    if(f.includes(nm)){ msgH(`„${nm}“ hast du schon. Anders gezeichnet ist es trotzdem dasselbe Molekül.`); return; }
+    S.hunt[hc]=f.concat([nm]); save();
+    msgH(S.hunt[hc].length===GOAL[hc]?`Alle ${GOAL[hc]} Isomere gefunden! Stark.`:`Neu gefunden: ${nm}`,'okmsg');
+    hm={n:hm.n,subs:[]}; drawH(); });
+  fillN(); drawH();
+};
+W.en=root=>{
+  const AT=[['H',2.2],['C',2.5],['N',3.0],['O',3.5],['F',4.0],['Cl',3.0],['S',2.5],['Na',0.9]];
+  let A='O',B='H';
+  const btns=(id,cur)=>AT.map(([s,v])=>`<button class="chip" type="button" data-s="${s}" aria-pressed="${s===cur}">${s} <span class="muted" style="font-size:.8em">${dec(v.toFixed(1))}</span></button>`).join('');
+  root.innerHTML=`<p style="margin-top:0">Wähle zwei Bindungspartner. Die App rechnet ΔEN aus und setzt die Partialladungen.</p>
+  <div class="eyebrow">Atom 1</div><div class="row" id="en-a" style="margin:4px 0 10px"></div>
+  <div class="eyebrow">Atom 2</div><div class="row" id="en-b" style="margin-top:4px"></div>
+  <div class="bond-view" id="en-bond"></div>
+  <div class="name-out" id="en-type" style="text-align:center;font-size:1.25rem"></div>
+  <div class="en-scale" aria-hidden="true">
+    <div class="en-zone" style="left:0;width:${0.5/3.2*100}%;background:var(--good-soft)"></div>
+    <div class="en-zone" style="left:${0.5/3.2*100}%;width:${1.2/3.2*100}%;background:var(--accent-soft)"></div>
+    <div class="en-zone" style="left:${1.7/3.2*100}%;width:${1.5/3.2*100}%;background:var(--bad-soft)"></div>
+    <div class="en-marker" id="en-mark"></div>
+    <div class="en-ticks"><span style="left:0;transform:none">0</span><span style="left:${0.5/3.2*100}%">0,5</span><span style="left:${1.7/3.2*100}%">1,7</span><span style="right:0;left:auto;transform:none">3,2</span></div>
+  </div>
+  <div class="row muted" style="font-size:.8rem;justify-content:space-between;margin-top:14px"><span>unpolar</span><span>polar</span><span>ionisch</span></div>
+  <p id="en-txt" style="font-size:.95rem"></p>`;
+  const up=()=>{ $('#en-a',root).innerHTML=btns('a',A); $('#en-b',root).innerHTML=btns('b',B);
+    const ea=AT.find(x=>x[0]===A)[1], eb=AT.find(x=>x[0]===B)[1]; const d=Math.round(Math.abs(ea-eb)*10)/10;
+    const type=d<0.5?'unpolare Atombindung':d<=1.7?'polare Atombindung':'Ionenbindung';
+    let da='',db='';
+    if(d>=0.5&&d<=1.7){ if(ea>eb){da='<span class="minus">δ−</span>';db='<span class="plus">δ+</span>';} else {da='<span class="plus">δ+</span>';db='<span class="minus">δ−</span>';} }
+    if(d>1.7){ if(ea>eb){da='<span class="minus">−</span>';db='<span class="plus">+</span>';} else {da='<span class="plus">+</span>';db='<span class="minus">−</span>';} }
+    $('#en-bond',root).innerHTML=`<div class="at"><span class="d">${da}</span><span class="s">${A}</span></div>${d>1.7?'<div style="width:40px"></div>':'<div class="line"></div>'}<div class="at"><span class="d">${db}</span><span class="s">${B}</span></div>`;
+    $('#en-type',root).textContent=`ΔEN = ${dec(d.toFixed(1))} · ${type}`;
+    $('#en-mark',root).style.left=`calc(${Math.min(d,3.2)/3.2*100}% - 1.5px)`;
+    const more=ea>eb?A:B, less=ea>eb?B:A;
+    $('#en-txt',root).innerHTML= d<0.5? (d===0?'Gleiche Atome ziehen gleich stark: Die Elektronen sind genau in der Mitte. Keine Partialladungen.':`Der Unterschied ist sehr klein. Die Elektronen sind fast gleichmäßig verteilt. In der Schule gilt das als unpolar.`)
+      : d<=1.7? `<b>${more}</b> ist elektronegativer (${dec(Math.max(ea,eb).toFixed(1))} gegenüber ${dec(Math.min(ea,eb).toFixed(1))}). Es zieht das Bindungselektronenpaar zu sich und bekommt δ−, <b>${less}</b> bekommt δ+.`
+      : `Der Unterschied ist so groß, dass <b>${more}</b> das Elektron ganz übernimmt. Es entstehen Ionen: ${less}<sup>+</sup> und ${more}<sup>−</sup>.`; };
+  $('#en-a',root).addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(b){A=b.dataset.s; up();} });
+  $('#en-b',root).addEventListener('click',e=>{ const b=e.target.closest('[data-s]'); if(b){B=b.dataset.s; up();} });
+  up();
+};
+W.zmww=root=>{
+  const MOL=[
+   {f:'CH4',n:'Methan',bp:'−162',v:1,d:0,h:0,t:'Klein und unpolar: nur schwache Van-der-Waals-Kräfte. Darum ein Gas.'},
+   {f:'C8H18',n:'Octan',bp:'126',v:1,d:0,h:0,t:'Auch unpolar, aber groß: viel Oberfläche, also starke Van-der-Waals-Kräfte. Darum flüssig.'},
+   {f:'CO2',n:'Kohlenstoffdioxid',bp:'−78 (sublimiert)',v:1,d:0,h:0,t:'C=O ist polar, aber das Molekül ist linear: kein Dipol. Nur Van-der-Waals-Kräfte.'},
+   {f:'HCl',n:'Chlorwasserstoff',bp:'−85',v:1,d:1,h:0,t:'Dipolmolekül: zusätzlich Dipol-Dipol-Kräfte. Keine H-Brücken, weil Cl nicht zu F, O, N gehört.'},
+   {f:'NH3',n:'Ammoniak',bp:'−33',v:1,d:1,h:1,t:'H ist an N gebunden, am N sitzt ein freies Elektronenpaar: H-Brücken.'},
+   {f:'H2O',n:'Wasser',bp:'100',v:1,d:1,h:1,t:'Jedes Molekül hat 2 H und 2 freie Elektronenpaare: besonders viele H-Brücken.'},
+   {f:'C2H5OH',n:'Ethanol',bp:'78',v:1,d:1,h:1,t:'Die OH-Gruppe bildet H-Brücken. Der Ethylrest ist unpolar. Darum mischt sich Ethanol mit Wasser und mit Benzin.'}];
+  root.innerHTML=`<div class="sec-label">Van-der-Waals-Kräfte Schritt für Schritt</div>
+  <div class="figbox"><svg class="fig vdw-svg" viewBox="0 0 300 120" width="380" role="img" aria-label="Entstehung von Van-der-Waals-Kräften">
+   <ellipse cx="80" cy="60" rx="58" ry="32" style="fill:none;stroke:var(--ink);stroke-width:1.5"/>
+   <ellipse cx="220" cy="60" rx="58" ry="32" style="fill:none;stroke:var(--ink);stroke-width:1.5"/>
+   <g class="cloud" id="c1"><ellipse cx="80" cy="60" rx="36" ry="20" style="fill:var(--accent-soft);stroke:var(--accent);stroke-dasharray:3 3"/></g>
+   <g class="cloud" id="c2"><ellipse cx="220" cy="60" rx="36" ry="20" style="fill:var(--accent-soft);stroke:var(--accent);stroke-dasharray:3 3"/></g>
+   <g class="lbl" id="l1" style="opacity:0"><text x="34" y="65" text-anchor="middle" style="fill:var(--plus);font-weight:700">δ+</text><text x="126" y="65" text-anchor="middle" style="fill:var(--minus);font-weight:700">δ−</text></g>
+   <g class="lbl" id="l2" style="opacity:0"><text x="174" y="65" text-anchor="middle" style="fill:var(--plus);font-weight:700">δ+</text><text x="266" y="65" text-anchor="middle" style="fill:var(--minus);font-weight:700">δ−</text>
+    <path d="M136 60 L164 60" style="stroke:var(--accent);stroke-width:2.2;stroke-dasharray:2 3"/></g>
+   <text x="80" y="110" text-anchor="middle" class="sk-num">Molekül 1</text><text x="220" y="110" text-anchor="middle" class="sk-num">Molekül 2</text>
+  </svg></div>
+  <p id="vdw-cap" style="min-height:4.5em"></p>
+  <button class="btn small primary" type="button" id="vdw-next">Nächster Schritt</button>
+  <div class="sec-label" style="margin-top:24px">Welche Kräfte wirken?</div>
+  <div class="row" id="zm-btns">${MOL.map((m,i)=>`<button class="chip" type="button" data-i="${i}" aria-pressed="${i===5}">${fm(m.f)}</button>`).join('')}</div>
+  <div id="zm-out" style="margin-top:12px"></div>`;
+  const CAP=['<b>1.</b> Im Mittel sind die Elektronen gleichmäßig verteilt. Beide Moleküle sind unpolar.',
+   '<b>2.</b> Die Elektronen bewegen sich ständig. Für einen Moment sind sie in Molekül 1 nach rechts verschoben: ein <b>temporärer Dipol</b> entsteht.',
+   '<b>3.</b> Die δ−-Seite stößt die Elektronen von Molekül 2 ab. Dort entsteht ein <b>induzierter Dipol</b>. δ− und δ+ ziehen sich an: das ist die <b>Van-der-Waals-Kraft</b>.',
+   '<b>4.</b> Einen Augenblick später ist alles wieder anders verteilt. Die Kräfte sind schwach, wirken aber zwischen allen Molekülen. Je größer die Oberfläche, desto mehr solcher Dipole und desto stärker die Anziehung.'];
+  let st=0;
+  const setSt=()=>{ const c1=$('#c1',root), c2=$('#c2',root);
+    c1.style.transform= st===1||st===2? 'translateX(16px)':'none';
+    c2.style.transform= st===2? 'translateX(16px)':'none';
+    $('#l1',root).style.opacity= st===1||st===2?1:0; $('#l2',root).style.opacity= st===2?1:0;
+    $('#vdw-cap',root).innerHTML=CAP[st]; $('#vdw-next',root).textContent= st===3?'Von vorn':'Nächster Schritt'; };
+  $('#vdw-next',root).addEventListener('click',()=>{ st=(st+1)%4; setSt(); });
+  const showM=i=>{ const m=MOL[i];
+    const row=(on,name,str)=>`<div class="force ${on?'on':'off'}"><span class="ic">${on?'✓':'–'}</span><span>${name}</span><span class="muted" style="font-size:.82rem">${str}</span></div>`;
+    $('#zm-out',root).innerHTML=`<div class="card" style="background:var(--paper-2)"><div class="row" style="justify-content:space-between"><b style="font-size:1.1rem">${m.n} · <span class="mono">${fm(m.f)}</span></b><span class="mono">Sdp. ${m.bp} °C</span></div>
+     <div style="margin-top:8px">${row(m.v,'Van-der-Waals-Kräfte','schwach')}${row(m.d,'Dipol-Dipol-Kräfte','mittel')}${row(m.h,'Wasserstoffbrücken','stark')}</div><p style="margin-bottom:0;font-size:.95rem">${m.t}</p></div>`;
+    root.querySelectorAll('#zm-btns .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i)); };
+  $('#zm-btns',root).addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(b) showM(+b.dataset.i); });
+  setSt(); showM(5);
+};
+W.props=root=>{
+  const X=n=>40+(n-1)*30, Y=t=>18+(200-t)/400*172;
+  let s=`<svg class="fig" viewBox="0 0 330 215" width="420" role="img" aria-label="Siedetemperaturen der Alkane C1 bis C10">`;
+  [-200,-100,0,100,200].forEach(t=>{ s+=`<line x1="34" x2="318" y1="${Y(t)}" y2="${Y(t)}" style="stroke:var(--line);stroke-width:${t===0?1.4:.8}"/><text x="28" y="${Y(t)+4}" text-anchor="end" class="sk-num">${t<0?'−'+(-t):t}</text>`; });
+  s+=`<line x1="34" x2="318" y1="${Y(20)}" y2="${Y(20)}" style="stroke:var(--accent);stroke-dasharray:4 4;stroke-width:1.4"/><text x="316" y="${Y(20)-5}" text-anchor="end" style="fill:var(--accent);font-size:10px;font-weight:700">20 °C Raumtemperatur</text>`;
+  s+=`<path d="M${ALKANES.slice(1).map(a=>X(a.n)+','+Y(a.bp)).join(' L')}" style="fill:none;stroke:var(--muted);stroke-width:1.6"/>`;
+  ALKANES.slice(1).forEach(a=>{ s+=`<circle data-n="${a.n}" cx="${X(a.n)}" cy="${Y(a.bp)}" r="8" style="fill:${a.bp<20?'var(--plus)':'var(--accent)'};stroke:var(--paper);stroke-width:2;cursor:pointer"/><text x="${X(a.n)}" y="206" text-anchor="middle" class="sk-num">C${a.n}</text>`; });
+  s+='<text x="8" y="12" class="sk-num">°C</text></svg>';
+  root.innerHTML=`<div class="sec-label">Siedetemperaturen C1 bis C10</div><div class="figbox">${s}</div>
+   <div class="row muted" style="font-size:.85rem;gap:16px"><span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:var(--plus)"></span> bei 20 °C gasförmig</span><span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:var(--accent)"></span> bei 20 °C flüssig</span></div>
+   <p class="chart-info" id="pr-info">Tippe auf einen Punkt.</p>
+   <div class="sec-label" style="margin-top:20px">Klausur-Antwort bauen</div>
+   <p style="margin-top:0">Tippe die Satzteile in der richtigen Reihenfolge an. So begründest du den Anstieg der Siedetemperatur.</p>
+   <div class="order-done" id="or-done"></div><div class="order-pool" id="or-pool"></div><div id="or-msg"></div>`;
+  root.querySelector('svg').addEventListener('click',e=>{ const c=e.target.closest('[data-n]'); if(!c) return; const a=ALKANES[+c.dataset.n];
+    $('#pr-info',root).innerHTML=`<b>${a.name}</b> (${fm(sumFormula({n:a.n,subs:[]}))}): siedet bei ${dec(a.bp)} °C, bei Raumtemperatur ${a.bp<20?'gasförmig':'flüssig'}.`; });
+  const PARTS=['Je länger die Kohlenstoffkette,','desto größer ist die Oberfläche der Moleküle,','desto stärker sind die Van-der-Waals-Kräfte zwischen den Molekülen,','desto mehr Energie muss zugeführt werden, um die Moleküle voneinander zu trennen,','desto höher ist die Siedetemperatur.'];
+  let step=0;
+  const reset=()=>{ step=0; $('#or-done',root).innerHTML=''; $('#or-msg',root).innerHTML='';
+    $('#or-pool',root).innerHTML=shuffle(PARTS.map((p,i)=>i)).map(i=>`<button type="button" data-i="${i}">${PARTS[i]}</button>`).join(''); };
+  $('#or-pool',root).addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(!b) return;
+    if(+b.dataset.i===step){ $('#or-done',root).appendChild(el(`<div>${PARTS[step]}</div>`)); b.remove(); step++;
+      if(step===PARTS.length){ $('#or-msg',root).innerHTML='<div class="okmsg" style="margin-top:10px">Perfekt. Genau so schreibst du es in der Klausur.</div><button class="btn small" type="button" id="or-again" style="margin-top:8px">Nochmal</button>'; $('#or-again',root).addEventListener('click',reset); } }
+    else { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); } });
+  reset();
+};
+W.notation=root=>{
+  const PRE=[{n:1,subs:[]},{n:2,subs:[]},{n:3,subs:[]},{n:4,subs:[]},{n:5,subs:[]},{n:3,subs:[{p:2,l:1}]},{n:4,subs:[{p:2,l:1}]},{n:3,subs:[{p:2,l:1},{p:2,l:1}]}];
+  root.innerHTML=`<p style="margin-top:0">Ein Molekül, vier Schreibweisen. Die ersten fünf sind genau die Lewis-Formeln aus deiner Aufgabe 1.</p>
+  <div class="row" id="no-btns">${PRE.map((m,i)=>`<button class="chip" type="button" data-i="${i}" aria-pressed="${i===3}">${nameOf(m)}</button>`).join('')}</div>
+  <div class="notation" id="no-out"></div>`;
+  const show=i=>{ const m=PRE[i];
+    $('#no-out',root).innerHTML=`<div class="stat"><div class="k">Summenformel</div><div class="v mono">${fm(sumFormula(m))}</div></div>
+     <div class="stat"><div class="k">Halbstrukturformel</div><div class="v mono" style="font-size:.95rem">${fm(condensed(m))}</div></div>
+     <div class="stat"><div class="k">Strukturformel / Lewis-Formel</div><div class="figbox">${structSVG(m)}</div></div>
+     <div class="stat"><div class="k">Skelettformel</div><div class="figbox">${skeletonSVG(m,{scale:1.5})}</div></div>`;
+    root.querySelectorAll('#no-btns .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i)); };
+  $('#no-btns',root).addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(b) show(+b.dataset.i); });
+  show(3);
+};
+
+/* ---------- Ansichten ---------- */
+const app=$('#app');
+const EXAM=new Date('2026-11-10T11:30:00+01:00');
+const PLAN=[
+ {when:'So 8.11.',sub:'heute Abend · 60 Min',topics:[1,7,2],extra:''},
+ {when:'Mo 9.11.',sub:'Block 1 · 60 Min',topics:[3,4],extra:''},
+ {when:'Mo 9.11.',sub:'Block 2 · 60 Min',topics:[5,6],extra:''},
+ {when:'Mo 9.11.',sub:'abends · 45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#aufgaben">Aufgaben schriftlich</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Di 10.11.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a><a class="pill" href="#karten">Karteikarten durchgehen</a>'}];
+let timer=null;
+function viewStart(){
+  const done=TOPICS.filter(t=>S.done[t.id]).length;
+  app.innerHTML=`<header class="hero"><span class="eyebrow">1. Chemieklausur · Freie Waldorfschule</span><h1>Alkane</h1>
+   <div class="cd-box"><div class="eyebrow">Noch bis zur Klausur · Di 10.11.26, 11:30</div><div class="cd" id="cd" aria-live="off"></div></div>
+   <div class="count"><div><div class="num">${done}/7</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
+   <div class="progress" aria-hidden="true"><span style="width:${done/7*100}%"></span></div>
+   <a class="btn primary" href="#training" style="text-decoration:none;text-align:center">Training starten: jedes Mal neue Aufgaben</a>
+   <div class="row"><a class="btn small" href="#spick" style="text-decoration:none">Spickzettel</a><button class="btn small" type="button" id="theme-btn">Design: ${THEMES[S.theme]}</button></div></header>
+  <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.</p>
+   <div class="plan">${PLAN.map(b=>`<div class="block"><div class="when"><b>${b.when}</b>${b.sub}</div><div class="what">${b.topics.map(id=>`<a class="pill${S.done[id]?' done':''}" href="#thema-${id}">${id} · ${TOPICS[id-1].title}</a>`).join('')}${b.extra}</div></div>`).join('')}</div></section>
+  <section class="card"><h2>Themen der Klausur</h2><div class="topics" style="margin-top:6px">${TOPICS.map(t=>`<a class="topic-row${S.done[t.id]?' done':''}" href="#thema-${t.id}" style="text-decoration:none;color:inherit"><span class="tnum">${S.done[t.id]?'✓':t.id}</span><span class="tt">${t.title}<br><span class="ts">${t.short}</span></span><span class="arrow">→</span></a>`).join('')}</div></section>
+  ${S.exams.length?`<section class="card"><h2>Deine Probeklausuren</h2><div class="tbl"><table><tr><th>Wann</th><th>Ergebnis</th></tr>${S.exams.slice(-5).reverse().map(x=>`<tr><td>${x.d}</td><td>${x.r} von ${x.n} (${Math.round(x.r/x.n*100)} %)</td></tr>`).join('')}</table></div></section>`:''}`;
+  const tick=()=>{ const ms=EXAM-new Date(); const e=$('#cd'); if(!e) return;
+    if(ms<=0){ e.innerHTML='<div class="cd-unit"><span class="num">Heute!</span><span class="lbl">Viel Erfolg</span></div>'; return; }
+    const m=Math.floor(ms/6e4), d=Math.floor(m/1440), h=Math.floor(m%1440/60), mi=m%60;
+    const u=(v,l)=>`<div class="cd-unit"><span class="num">${String(v).padStart(2,'0')}</span><span class="lbl">${l}</span></div>`;
+    e.innerHTML=u(d,d===1?'Tag':'Tage')+u(h,h===1?'Stunde':'Stunden')+u(mi,mi===1?'Minute':'Minuten'); };
+  tick(); clearInterval(timer); timer=setInterval(tick,10000);
+  $('#theme-btn').addEventListener('click',()=>{ const k=Object.keys(THEMES); S.theme=k[(k.indexOf(S.theme)+1)%k.length]; themeTouched=true; save(); applyTheme(); $('#theme-btn').textContent='Design: '+THEMES[S.theme]; });
+}
+function viewTopic(id){
+  const t=TOPICS.find(x=>x.id===id); if(!t) return viewStart();
+  const qs=shuffle(shuffle(QUESTIONS.filter(q=>q.t===id)).slice(0,3).concat([genQ(id),genQ(id)]));
+  app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Thema ${id} von 7</span></div>
+  <header><h1>${t.title}</h1></header>
+  <section class="card"><div class="sec-label">Das musst du können</div><ul class="goals">${t.goals.map(g=>`<li>${g}</li>`).join('')}</ul></section>
+  <section class="card prose" style="max-width:none"><div class="sec-label">Erklärung</div><div class="prose">${t.html}</div></section>
+  <section class="card"><div class="sec-label">Ausprobieren</div><div id="widget"></div></section>
+  <section class="card"><div class="sec-label">Lernvideos</div><div class="vids">${videoHTML(id)}</div><p class="muted" style="font-size:.82rem;margin-bottom:0">Öffnet sich im Browser. Die Studyflix-Seiten haben Video und Text.</p></section>
+  <section class="card"><div class="sec-label">Check · ${qs.length} Fragen</div><div class="qlist" id="check"></div><div id="check-res" style="margin-top:14px"></div></section>
+  <div class="pager">${id>1?`<a class="btn" href="#thema-${id-1}" style="text-decoration:none">← Thema ${id-1}</a>`:'<span></span>'}${id<7?`<a class="btn primary" href="#thema-${id+1}" style="text-decoration:none">Thema ${id+1} →</a>`:`<a class="btn primary" href="#klausur" style="text-decoration:none">Zur Probeklausur →</a>`}</div>`;
+  W[t.widget]($('#widget'));
+  let n=0,r=0; const box=$('#check');
+  qs.forEach(q=>box.appendChild(renderQuestion(q,ok=>{ n++; if(ok) r++;
+    if(n===qs.length){ const pass=r>=Math.ceil(qs.length*0.8);
+      if(pass){ S.done[id]=true; save(); }
+      $('#check-res').innerHTML= pass? `<div class="okmsg">${r} von ${qs.length} richtig. Thema ${id} ist abgehakt.</div>`
+       : `<div class="warn">${r} von ${qs.length} richtig. Lies die Erklärung nochmal und versuch es erneut.</div><button class="btn small" type="button" id="retry" style="margin-top:8px">Check wiederholen</button>`;
+      const rt=$('#retry'); if(rt) rt.addEventListener('click',()=>viewTopic(id)); } })));
+  if(S.done[id]) $('#check-res').innerHTML='<div class="okmsg">Dieses Thema hast du schon abgehakt. Wiederholen schadet nicht.</div>';
+}
+/* Endlos-Training: jede Runde neu, Schwächen kommen öfter dran */
+let tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
+function trWeights(){ const w={}; const wrong=S.wrong||{}; const st=S.trs||{};
+  for(let t=1;t<=7;t++){ const s=st[t]||{r:0,n:0}; const rate=s.n? s.r/s.n : 0.5;
+    w[t]=1 + (S.done[t]?0:1) + 3*(1-rate) + QUESTIONS.filter(q=>q.t===t&&wrong[q.q]).length*0.7; }
+  return w; }
+function trPickTopic(){ if(tr.topic) return tr.topic; const w=trWeights(); let sum=0; for(const t in w) sum+=w[t]; let x=Math.random()*sum; for(const t in w){ x-=w[t]; if(x<=0) return +t; } return 7; }
+function trNext(){ const t=trPickTopic(); const r=Math.random();
+  if(r<0.12){ const os=ORDERS.filter(o=>o.t===t); if(os.length) return {order:pick(os)}; }
+  if(r<0.20 && (t===1||t===2||t===7)) return {match:t===2?'iupac':pick(['homolog','formel','begriffe'])};
+  if(r<0.62) return genQ(t);
+  if(r<0.80){ const tfs=TF.filter(x=>x[0]===t); if(tfs.length){ const x=pick(tfs); return {t:x[0],q:'Richtig oder falsch? '+x[1],o:x[2]?['Richtig','Falsch']:['Falsch','Richtig'],a:0,e:x[3],tf:true}; } }
+  return pick(QUESTIONS.filter(q=>q.t===t)); }
+function viewTrain(){
+  S.trs=S.trs||{};
+  app.innerHTML=`<header><span class="eyebrow">Endlos · jedes Mal neue Aufgaben</span><h1>Training</h1><a class="btn small" href="#zuordnen" style="text-decoration:none;align-self:flex-start;margin-top:6px">Zuordnen-Spiel: Namen und Formeln verbinden</a></header>
+  <section class="card"><div class="row" id="tr-topics"><button class="chip" type="button" data-t="0">Alle (Schwächen zuerst)</button>${TOPICS.map(t=>`<button class="chip" type="button" data-t="${t.id}">${t.id}</button>`).join('')}</div>
+   <div class="w-out" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><div class="k">Richtig</div><div class="v" id="tr-r">0/0</div></div><div class="stat"><div class="k">Serie</div><div class="v" id="tr-s">0</div></div><div class="stat"><div class="k">Beste Serie</div><div class="v" id="tr-b">0</div></div></div>
+   <div id="tr-bars" style="margin-top:12px"></div></section>
+  <section class="card" id="tr-q"></section><div id="tr-nav"></div>`;
+  const setTopics=()=>app.querySelectorAll('#tr-topics .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.t===tr.topic));
+  const bars=()=>{ const st=S.trs; $('#tr-bars').innerHTML=`<div class="eyebrow" style="margin-bottom:6px">Trefferquote pro Thema (alle Trainings)</div>`+TOPICS.map(t=>{ const s=st[t.id]||{r:0,n:0}; const p=s.n?Math.round(s.r/s.n*100):0;
+     return `<div style="display:grid;grid-template-columns:22px 1fr 54px;gap:8px;align-items:center;font-size:.85rem;margin:3px 0"><b>${t.id}</b><div class="progress" style="height:7px"><span style="width:${p}%;background:${!s.n?'var(--line)':p>=80?'var(--good)':p>=60?'var(--accent)':'var(--bad)'}"></span></div><span class="muted mono" style="text-align:right">${s.n?p+' %':'–'}</span></div>`; }).join(''); };
+  const upd=()=>{ $('#tr-r').textContent=`${tr.r}/${tr.n}`; $('#tr-s').textContent=tr.streak; $('#tr-b').textContent=tr.best; bars(); };
+  const next=()=>{ const it=trNext(); const box=$('#tr-q'); box.innerHTML=''; $('#tr-nav').innerHTML='';
+    const done=(ok,t)=>{ tr.n++; if(ok){tr.r++;tr.streak++;tr.best=Math.max(tr.best,tr.streak);} else tr.streak=0;
+      S.trs[t]=S.trs[t]||{r:0,n:0}; S.trs[t].n++; if(ok) S.trs[t].r++; save(); upd();
+      $('#tr-nav').innerHTML=`<button class="btn primary" type="button" id="tr-next" style="width:100%">Nächste Aufgabe</button>`;
+      $('#tr-next').addEventListener('click',()=>{ next(); window.scrollTo(0,0); }); };
+    if(it.order) box.appendChild(renderOrder(it.order,ok=>done(ok,it.order.t)));
+    else if(it.match) box.appendChild(renderMatch(it.match,ok=>done(ok,it.match==='iupac'?2:it.match==='begriffe'?7:1)));
+    else box.appendChild(renderQuestion(it,ok=>done(ok,it.t))); };
+  $('#tr-topics').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(!b) return; tr.topic=+b.dataset.t; setTopics(); next(); });
+  setTopics(); upd(); next();
+}
+/* Lernvideos (Studyflix + YouTube-Suche) */
+const SF='https://studyflix.de/chemie/';
+const VIDEOS={
+1:[['Alkane einfach erklärt','Homologe Reihe, Namen, Eigenschaften',SF+'alkane-einfach-erklart-4124'],['Alkane und Cycloalkane','Reihe der n-Alkane, Isomere, IUPAC',SF+'alkane-und-cycloalkane-434'],['YouTube','Homologe Reihe der Alkane','yt:Homologe Reihe der Alkane']],
+2:[['Nomenklatur einfach erklärt','Hauptkette, Nummerieren, Seitenketten',SF+'nomenklatur-einfach-erklart-4097'],['YouTube','Verzweigte Alkane benennen','yt:IUPAC Nomenklatur verzweigte Alkane benennen']],
+3:[['Isomere','Definition, Arten, Beispiele',SF+'isomere-1922'],['YouTube','Isomere von Hexan zeichnen','yt:Konstitutionsisomere Alkane Hexan Isomere zeichnen']],
+4:[['Elektronegativität','EN-Werte, Trend, ΔEN',SF+'elektronegativitat-1569'],['Polarität','polar und unpolar, δ+ und δ−',SF+'polaritat-2024'],['YouTube','Elektronegativität und Partialladung','yt:Elektronegativität Polarität Partialladung einfach erklärt']],
+5:[['Zwischenmolekulare Kräfte','Van der Waals, Dipol-Dipol, H-Brücken',SF+'zwischenmolekulare-krafte-2392'],['Dipol-Dipol-Wechselwirkung','Dipole und H-Brücken am Wasser',SF+'dipol-dipol-wechselwirkung-2391'],['YouTube','Van der Waals und H-Brücken','yt:Van-der-Waals-Kräfte Wasserstoffbrückenbindung einfach erklärt']],
+6:[['Alkane einfach erklärt','Siedetemperatur, Löslichkeit',SF+'alkane-einfach-erklart-4124'],['Zwischenmolekulare Kräfte','Warum lange Alkane höher sieden',SF+'zwischenmolekulare-krafte-2392'],['YouTube','Eigenschaften der Alkane','yt:Alkane Eigenschaften Siedetemperatur Löslichkeit Viskosität']],
+7:[['Strukturformel','Lewis, Skelett, Keil-Strich, Halbstruktur',SF+'strukturformel-1958'],['YouTube','Summen-, Struktur- und Skelettformel','yt:Summenformel Strukturformel Skelettformel Halbstrukturformel']]};
+function videoHTML(id){ return (VIDEOS[id]||[]).map(([t,d,u])=>{ const yt=u.startsWith('yt:'); const href=yt?'https://www.youtube.com/results?search_query='+encodeURIComponent(u.slice(3)):u;
+  return `<a class="vid" href="${href}" target="_blank" rel="noopener"><span class="vid-src">${yt?'YouTube-Suche':'Studyflix'}</span><b>${yt?d:t}</b><span class="muted">${yt?'Videos zum Thema':d}</span></a>`; }).join(''); }
+
+/* Zuordnen: Paare verbinden */
+const MATCH_KINDS={
+ homolog:{label:'Homologe Reihe',make:()=>shuffle([2,3,4,5,6,7,8,9,10]).slice(0,5).map(n=>({k:'h'+n,a:`${ALKANES[n].name}`,b:skeletonSVG({n,subs:[]},{scale:1.1}),t:1}))},
+ iupac:{label:'Verzweigt (IUPAC)',make:()=>{ const out=[],seen=new Set(); for(let i=0;i<200&&out.length<5;i++){ const m=randomMolecule(), nm=nameOf(m); if(seen.has(nm)) continue; seen.add(nm); out.push({k:nm,a:nm,b:skeletonSVG(m,{scale:1.1,flip:Math.random()<.5}),t:2}); } return out; }},
+ formel:{label:'Summenformeln',make:()=>shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0,5).map(n=>({k:'f'+n,a:ALKANES[n].name,b:`<span class="mono" style="font-size:1.05rem">${FA(n)}</span>`,t:1}))},
+ begriffe:{label:'Begriffe',make:()=>shuffle(CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.85rem;line-height:1.3">${c[1]}</span>`,t:0}))}
+};
+function renderMatch(kind,onDone){
+  const K=MATCH_KINDS[kind], pairs=K.make();
+  const box=el(`<div class="q"><div class="eyebrow">Zuordnen · ${K.label}</div><div class="qt">Tippe links einen Namen und rechts das passende Gegenstück an.</div><div class="match"><div class="mcol" data-side="a"></div><div class="mcol" data-side="b"></div></div><div class="res"></div></div>`);
+  const ca=box.querySelector('[data-side="a"]'), cb=box.querySelector('[data-side="b"]');
+  shuffle(pairs).forEach(p=>ca.appendChild(el(`<button class="mitem" type="button" data-k="${p.k}">${p.a}</button>`)));
+  shuffle(pairs).forEach(p=>cb.appendChild(el(`<button class="mitem mfig" type="button" data-k="${p.k}">${p.b}</button>`)));
+  let selA=null, selB=null, solved=0, miss=0;
+  const check=()=>{ if(!selA||!selB) return;
+    if(selA.dataset.k===selB.dataset.k){ [selA,selB].forEach(x=>{x.classList.remove('sel');x.classList.add('done');x.disabled=true;}); solved++;
+      if(solved===pairs.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg">Alle Paare fehlerfrei verbunden!</div>':`<div class="expl">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}.</div>`; onDone&&onDone(miss===0); } }
+    else { miss++; const a=selA,b=selB; [a,b].forEach(x=>{x.classList.add('bad');}); if(navigator.vibrate){try{navigator.vibrate(40);}catch(e){}} setTimeout(()=>[a,b].forEach(x=>x.classList.remove('bad','sel')),450); }
+    selA=selB=null; };
+  ca.addEventListener('click',e=>{ const b=e.target.closest('.mitem'); if(!b||b.disabled) return; ca.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selA=b; check(); });
+  cb.addEventListener('click',e=>{ const b=e.target.closest('.mitem'); if(!b||b.disabled) return; cb.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selB=b; check(); });
+  return box;
+}
+let matchKind='iupac';
+function viewMatch(){
+  app.innerHTML=`<div class="topbar"><a class="back" href="#training" style="text-decoration:none">← Training</a><span class="eyebrow">5 Paare pro Runde</span></div>
+  <header><h1>Zuordnen</h1></header>
+  <section class="card"><div class="row" id="mk">${Object.keys(MATCH_KINDS).map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===matchKind}">${MATCH_KINDS[k].label}</button>`).join('')}</div></section>
+  <section class="card" id="m-box"></section><div id="m-nav"></div>`;
+  const round=()=>{ const b=$('#m-box'); b.innerHTML=''; $('#m-nav').innerHTML='';
+    b.appendChild(renderMatch(matchKind,()=>{ $('#m-nav').innerHTML='<button class="btn primary" type="button" id="m-next" style="width:100%">Neue Runde</button>'; $('#m-next').addEventListener('click',round); })); };
+  $('#mk').addEventListener('click',e=>{ const c=e.target.closest('[data-k]'); if(!c) return; matchKind=c.dataset.k; app.querySelectorAll('#mk .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===matchKind)); round(); });
+  round();
+}
+function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
+function viewSpick(){
+  const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
+  const T=TOPICS;
+  app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
+  <header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Nicht in die Klausur mitnehmen, aber vorher einmal durchlesen.</p></header>
+  ${B(T[0],['Alkane: nur C und H, nur Einfachbindungen (gesättigt)','<b>C<sub>n</sub>H<sub>2n+2</sub></b>: H = 2 · C + 2','Homologe Reihe: Glieder unterscheiden sich um je eine CH<sub>2</sub>-Gruppe','Meth, Eth, Prop, But, Pent, Hex, Hept, Oct, Non, Dec + „-an“','C ist vierbindig, Tetraeder 109,5°, Kette zickzack'])}
+  ${B(T[1],['1. längste Kette = Stammname','2. so nummerieren, dass Seitenketten kleinste Nummern haben','3. Seitenketten: Methyl, Ethyl, Propyl, Butyl (-yl)','4. gleiche zusammenfassen: di, tri, tetra (jede Nummer einzeln)','5. alphabetisch (di/tri zählen nicht): Ethyl vor Methyl','gleiche Nummern von beiden Seiten: alphabetisch erste Seitenkette bekommt die kleinere Nummer','Beispiel: <b>3-Ethyl-2,4-dimethylhexan</b>'])}
+  ${B(T[2],['Isomere: gleiche Summenformel, andere Struktur, andere Eigenschaften','C4: 2 · C5: 3 · C6: 5 · C7: 9 Isomere','mehr Verzweigung → kleinere Oberfläche → schwächere VdW → niedrigere Siedetemperatur','geknickt gezeichnet ist kein neues Isomer: über den Namen prüfen'])}
+  ${B(T[3],['EN: Fähigkeit, Bindungselektronen anzuziehen. F = 4,0 ist am höchsten','ΔEN &lt; 0,5 unpolar · 0,5 bis 1,7 polar · &gt; 1,7 Ionenbindung','δ− am elektronegativeren Atom, δ+ am anderen','Dipol: polare Bindungen + Ladungsschwerpunkte fallen nicht zusammen (H<sub>2</sub>O ja, CO<sub>2</sub> nein)','C–H: ΔEN 0,3, Alkane sind unpolar'])}
+  ${B(T[4],['VdW: temporärer Dipol → induzierter Dipol → Anziehung; stärker bei größerer Oberfläche','Dipol-Dipol: zwischen permanenten Dipolen','H-Brücke: H an F/O/N + freies Elektronenpaar an F/O/N im Nachbarmolekül','Stärke: VdW &lt; Dipol-Dipol &lt; H-Brücken','Alkane: nur VdW'])}
+  ${B(T[5],['Je länger die Kette, desto größer die Oberfläche, desto stärker die VdW, desto mehr Energie zum Trennen, desto höher die Siedetemperatur','C1–C4 gasförmig, C5–C16 flüssig, ab C17 fest','Viskosität steigt mit der Kettenlänge (Verhaken + stärkere VdW)','„Ähnliches löst sich in Ähnlichem“: Alkane hydrophob/lipophil, löslich in Benzin, nicht in Wasser','Grund: Alkane können keine H-Brücken bilden, sie würden die H-Brücken im Wasser nur stören'])}
+  ${B(T[6],['Summenformel: C<sub>4</sub>H<sub>10</sub> (nur Anzahl)','Strukturformel = Lewis-Formel bei Alkanen: alle Atome, alle Striche','Halbstrukturformel: CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub>','Skelettformel: Ecken und Enden = C, H weglassen','Keil-Strich: Keil nach vorn, gestrichelt nach hinten · Kugel-Stab: Winkel und Bindungen · Kalotten: Raumbedarf','Jede Formel mit C<sub>n</sub>H<sub>2n+2</sub> kontrollieren'])}`;
+}
+let exam=null;
+function viewExam(){
+  if(!exam){
+    app.innerHTML=`<header><span class="eyebrow">Alle Themen gemischt</span><h1>Probeklausur</h1></header>
+    <section class="card"><p style="margin-top:0">15 Fragen aus allen 7 Themen. Die Hälfte davon wird jedes Mal neu erzeugt, mit anderen Molekülen, Zahlen und Atomen. Am Ende siehst du, welche Themen du noch wiederholen solltest.</p>
+    <div class="row"><button class="btn primary" type="button" id="ex-start">Probeklausur starten</button>${wrongQs().length?`<button class="btn" type="button" id="ex-wrong">Fehler wiederholen (${wrongQs().length})</button>`:''}</div>
+    <p class="muted" style="font-size:.88rem;margin-bottom:0">${wrongQs().length?'Im Fehlerheft landet jede Frage, die du falsch beantwortet hast. Beantwortest du sie richtig, fliegt sie wieder raus.':'Dein Fehlerheft ist leer. Falsch beantwortete Fragen sammeln sich hier automatisch.'}</p></section>
+    <section class="card"><h2>Tipps für Dienstag</h2><ul>
+    <li>Bei „Erkläre“-Aufgaben immer die <b>Je-desto-Kette</b> und die <b>Art der Wechselwirkung</b> nennen.</li>
+    <li>Beim Benennen zuerst die <b>längste Kette</b> markieren, dann von beiden Seiten nummerieren und vergleichen.</li>
+    <li>Jede gezeichnete Formel mit <b>C<sub>n</sub>H<sub>2n+2</sub></b> kontrollieren.</li>
+    <li>Partialladungen immer an <b>beide</b> Atome schreiben: δ+ und δ−.</li></ul></section>`;
+    $('#ex-start').addEventListener('click',()=>{
+      const per=[1,2,3,4,5,6,7].map(t=>shuffle(QUESTIONS.filter(q=>q.t===t)));
+      let items=per.map(a=>a[0]).concat([1,2,3,4,5,6,7].map(genQ),[namingQuestion()]);
+      exam={items:shuffle(items),i:0,res:[]}; viewExam(); });
+    const wb=$('#ex-wrong'); if(wb) wb.addEventListener('click',()=>{ exam={items:shuffle(wrongQs()),i:0,res:[],drill:true}; viewExam(); });
+    return;
+  }
+  if(exam.i>=exam.items.length){
+    const r=exam.res.filter(x=>x.ok).length, n=exam.res.length;
+    const by={}; exam.res.forEach(x=>{ by[x.t]=by[x.t]||{r:0,n:0}; by[x.t].n++; if(x.ok) by[x.t].r++; });
+    const weak=Object.keys(by).filter(t=>by[t].r<by[t].n).map(Number).sort();
+    const pct=Math.round(r/n*100);
+    if(!exam.drill) S.exams.push({d:new Date().toLocaleString('de-DE',{weekday:'short',hour:'2-digit',minute:'2-digit'}),r,n}); save();
+    app.innerHTML=`<header><span class="eyebrow">Ergebnis</span><h1>Probeklausur</h1></header>
+    <section class="card"><div class="score">${r}/${n}</div><p>${pct>=85?'Sehr gut, du bist bereit.':pct>=65?'Gut. Wiederhole die markierten Themen, dann sitzt es.':'Da geht noch was. Arbeite die Themen unten nochmal durch.'}</p>
+    <div class="tbl"><table><tr><th>Thema</th><th>Richtig</th></tr>${Object.keys(by).sort().map(t=>`<tr><td><a href="#thema-${t}" style="color:inherit">${t} · ${TOPICS[t-1].title}</a></td><td style="color:${by[t].r===by[t].n?'var(--good)':'var(--bad)'};font-weight:700">${by[t].r} / ${by[t].n}</td></tr>`).join('')}</table></div>
+    ${weak.length?`<p><b>Wiederholen:</b> ${weak.map(t=>`<a class="pill" href="#thema-${t}">${t} · ${TOPICS[t-1].title}</a>`).join(' ')}</p>`:''}
+    <button class="btn primary" type="button" id="ex-new">Neue Probeklausur</button></section>`;
+    $('#ex-new').addEventListener('click',()=>{ exam=null; viewExam(); });
+    return;
+  }
+  const q=exam.items[exam.i];
+  app.innerHTML=`<div class="topbar"><span class="eyebrow">Frage ${exam.i+1} von ${exam.items.length}</span><button class="back" type="button" id="ex-quit">Abbrechen</button></div>
+   <div class="progress"><span style="width:${exam.i/exam.items.length*100}%;background:var(--accent)"></span></div>
+   <section class="card" id="ex-q"></section><div id="ex-nav"></div>`;
+  $('#ex-q').appendChild(renderQuestion(q,ok=>{ exam.res.push({t:q.t,ok});
+    $('#ex-nav').innerHTML=`<button class="btn primary" type="button" id="ex-next" style="width:100%">${exam.i+1<exam.items.length?'Weiter':'Auswertung'}</button>`;
+    $('#ex-next').addEventListener('click',()=>{ exam.i++; viewExam(); window.scrollTo(0,0); }); }));
+  $('#ex-quit').addEventListener('click',()=>{ exam=null; viewExam(); });
+}
+let deck=null, flipped=false;
+function viewCards(){
+  if(!deck){ const unknown=CARDS.filter(c=>S.cards[c[0]]!=='ok'), known=CARDS.filter(c=>S.cards[c[0]]==='ok'); deck=shuffle(unknown).concat(shuffle(known)); }
+  const sure=CARDS.filter(c=>S.cards[c[0]]==='ok').length;
+  if(!deck.length){
+    app.innerHTML=`<header><span class="eyebrow">Definitionen</span><h1>Karteikarten</h1></header><section class="card"><div class="score">${sure}/${CARDS.length}</div><p>Runde fertig. Alle Karten einmal geschafft.</p><button class="btn primary" type="button" id="cd-again">Neue Runde</button> <button class="btn" type="button" id="cd-reset">Fortschritt zurücksetzen</button></section>`;
+    $('#cd-again').addEventListener('click',()=>{ deck=null; viewCards(); });
+    $('#cd-reset').addEventListener('click',()=>{ S.cards={}; save(); deck=null; viewCards(); });
+    return;
+  }
+  const c=deck[0];
+  app.innerHTML=`<header><span class="eyebrow">Definitionen · ${sure} von ${CARDS.length} sicher · noch ${deck.length} in dieser Runde</span><h1>Karteikarten</h1></header>
+   <button class="flash" type="button" id="cd-card" aria-live="polite">${flipped?`<span class="eyebrow">${c[0]}</span><span class="def">${c[1]}</span>`:`<span class="term">${c[0]}</span><span class="tap">Antippen zum Umdrehen</span>`}</button>
+   <div class="row" style="justify-content:center"><button class="btn" type="button" id="cd-no" style="flex:1">Nochmal</button><button class="btn primary" type="button" id="cd-ok" style="flex:1">Wusste ich</button></div>
+   <p class="muted" style="font-size:.88rem;text-align:center">Erst selbst laut definieren, dann umdrehen. Ehrlich bewerten.</p>`;
+  $('#cd-card').addEventListener('click',()=>{ flipped=!flipped; viewCards(); });
+  $('#cd-ok').addEventListener('click',()=>{ S.cards[c[0]]='ok'; save(); deck.shift(); flipped=false; viewCards(); });
+  $('#cd-no').addEventListener('click',()=>{ S.cards[c[0]]='no'; save(); deck.shift(); deck.splice(Math.min(3,deck.length),0,c); flipped=false; viewCards(); });
+}
+function viewTasks(){
+  app.innerHTML=`<header><span class="eyebrow">Wie in der Klausur</span><h1>Aufgaben</h1></header>
+   <section class="card"><div class="sec-label">Operatoren</div><ul style="margin:0">
+   <li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe</b>: in ganzen Sätzen wiedergeben, was passiert</li><li><b>Erkläre / Begründe</b>: mit Fachbegriffen den Grund angeben (weil …, je … desto …)</li><li><b>Zeichne</b>: Formel vollständig und sauber, mit allen H-Atomen, wenn Strukturformel verlangt ist</li></ul></section>
+   <p class="muted" style="margin:0">Schreib deine Antwort zuerst auf Papier oder in GoodNotes. Dann Lösung aufdecken und vergleichen.</p>
+   ${TASKS.map((t,i)=>`<section class="card task"><div class="eyebrow">Aufgabe ${i+1} · Thema ${t.t}</div><p style="font-size:1.05rem">${t.q}</p><button class="btn small" type="button" data-sol="${i}">Lösung zeigen</button><div class="sol" id="sol-${i}" hidden></div>
+   <div class="rate" data-rate="${i}"><span class="muted" style="font-size:.85rem;align-self:center">Wie lief's?</span>${[['g','Konnte ich'],['m','Teilweise'],['b','Noch nicht']].map(([k,l])=>`<button class="chip ${k}" type="button" data-k="${k}" aria-pressed="${S.tasks[i]===k}">${l}</button>`).join('')}</div></section>`).join('')}`;
+  app.addEventListener('click',taskClick);
+}
+function taskClick(e){
+  if(!location.hash.startsWith('#aufgaben')) return;
+  const s=e.target.closest('[data-sol]');
+  if(s){ const i=+s.dataset.sol, box=$('#sol-'+i); if(box.hidden){ box.innerHTML=TASKS[i].sol(); box.hidden=false; s.textContent='Lösung verbergen'; } else { box.hidden=true; s.textContent='Lösung zeigen'; } return; }
+  const r=e.target.closest('.rate [data-k]');
+  if(r){ const grp=r.closest('[data-rate]'); const i=+grp.dataset.rate; S.tasks[i]=r.dataset.k; save(); grp.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===S.tasks[i])); }
+}
+
+/* ---------- Routing ---------- */
+function route(){
+  app.removeEventListener('click',taskClick);
+  const h=(location.hash||'#start').slice(1);
+  let nav='start';
+  if(h.startsWith('thema-')){ viewTopic(+h.split('-')[1]); nav='start'; }
+  else if(h==='klausur'){ viewExam(); nav='klausur'; }
+  else if(h==='karten'){ deck=null; flipped=false; viewCards(); nav='karten'; }
+  else if(h==='aufgaben'){ viewTasks(); nav='aufgaben'; }
+  else if(h==='spick'){ viewSpick(); nav='start'; }
+  else if(h==='training'){ viewTrain(); nav='training'; }
+  else if(h==='zuordnen'){ viewMatch(); nav='training'; }
+  else viewStart();
+  document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',false));
+  const cur=document.querySelector(`[data-nav="${nav}"]`); if(cur) cur.setAttribute('aria-current','page');
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+route();
+</script>
+
+</body>
+</html>
