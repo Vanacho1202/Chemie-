@@ -4,3 +4,4 @@ android/app/build/
 android/local.properties
 *.apk
 .idea/
+server/node_modules/

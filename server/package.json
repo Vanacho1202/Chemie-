@@ -1,0 +1,10 @@
+{
+  "name": "alkane-battle-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "1-gegen-1-Battle-Server für den Alkane Trainer (WebSocket)",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "ws": "8.18.0" }
+}
