@@ -4,9 +4,36 @@
 const http = require('http');
 const crypto = require('crypto');
 const { WebSocketServer } = require('ws');
-// Google zuerst über IPv4 ansprechen: IPv6 hängt bei Render oft minutenlang
-require('dns').setDefaultResultOrder('ipv4first');
-try { require('net').setDefaultAutoSelectFamily(true); } catch {}
+const https = require('https');
+const dnsp = require('dns').promises;
+// Eigene Adress-Auflösung mit Zeitlimit: die System-Auflösung hängt bei Render teils minutenlang
+const pubResolver = new dnsp.Resolver({ timeout: 3000, tries: 2 }); pubResolver.setServers(['8.8.8.8', '1.1.1.1']);
+const sysResolver = new dnsp.Resolver({ timeout: 3000, tries: 2 });
+const dnsCache = new Map();
+async function resolve4(host) {
+  if (require('net').isIP(host)) return host;
+  const c = dnsCache.get(host); if (c && c.exp > Date.now()) return c.ip;
+  let ips; try { ips = await pubResolver.resolve4(host); } catch { ips = await sysResolver.resolve4(host); }
+  const ip = ips[Math.floor(Math.random() * ips.length)];
+  dnsCache.set(host, { ip, exp: Date.now() + 5 * 60 * 1000 });
+  return ip;
+}
+function lookup(hostname, opts, cb) {
+  if (typeof opts === 'function') { cb = opts; opts = {}; }
+  resolve4(hostname).then(ip => (opts && opts.all) ? cb(null, [{ address: ip, family: 4 }]) : cb(null, ip, 4), err => cb(err));
+}
+// HTTPS-Anfrage über die eigene Auflösung, mit Zeitlimit bis zur ersten Antwort
+function httpsReq(url, { method = 'GET', headers = {}, body = null, timeout = 15000 } = {}) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const h = { ...headers }; if (body) h['Content-Length'] = Buffer.byteLength(body);
+    const req = https.request({ hostname: u.hostname, port: u.port || 443, path: u.pathname + u.search, method, headers: h, lookup, family: 4 }, res => { clearTimeout(t); resolve(res); });
+    const t = setTimeout(() => req.destroy(Object.assign(new Error('keine Antwort nach ' + timeout + ' ms'), { name: 'TimeoutError' })), timeout);
+    req.on('error', e => { clearTimeout(t); reject(e); });
+    req.end(body || undefined);
+  });
+}
+const readAll = res => new Promise((ok, bad) => { let d = ''; res.setEncoding('utf8'); res.on('data', c => d += c); res.on('end', () => ok(d)); res.on('error', bad); });
 
 const PORT = process.env.PORT || 10000;
 const LIMIT_MS = 20000;            // Zeit pro Frage
@@ -54,24 +81,22 @@ function geminiBody(messages, thinkingOff) {
 let thinkingSupported = true;   // falls das Modell thinkingBudget ablehnt, ab dann ohne
 async function geminiStream(messages, onText) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse`;
-  const once = off => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off), signal: AbortSignal.timeout(20000) });
+  const once = off => httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off), timeout: 20000 });
   const go = async off => {   // bei Netzwerkfehler oder Zeitüberschreitung einmal neu versuchen
     try { return await once(off); }
-    catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.cause && (e.cause.code || e.cause.message)); return await once(off); }
+    catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.code || e.message); dnsCache.clear(); return await once(off); }
   };
   let r = await go(thinkingSupported);
-  if (!r.ok && thinkingSupported) {
-    const t = await r.text();
+  if (r.statusCode !== 200 && thinkingSupported) {
+    const t = await readAll(r);
     if (/think/i.test(t)) { thinkingSupported = false; r = await go(false); }
-    else throw new Error(t.slice(0, 300));
+    else throw new Error('HTTP ' + r.statusCode + ' ' + t.slice(0, 300));
   }
-  if (!r.ok) throw new Error((await r.text()).slice(0, 300));
-  const reader = r.body.getReader(), dec = new TextDecoder();
+  if (r.statusCode !== 200) throw new Error('HTTP ' + r.statusCode + ' ' + (await readAll(r)).slice(0, 300));
+  r.setEncoding('utf8');
   let buf = '', total = '';
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
+  for await (const chunk of r) {
+    buf += chunk;
     let k;
     while ((k = buf.indexOf('\n')) >= 0) {
       const line = buf.slice(0, k).trim(); buf = buf.slice(k + 1);
@@ -93,11 +118,10 @@ async function runDiag() {
   const time = async (name, fn) => { const t0 = Date.now(); try { out[name] = { ok: true, ...(await fn()), ms: Date.now() - t0 }; } catch (e) { out[name] = { ok: false, ms: Date.now() - t0, error: e.name + ': ' + e.message + (e.cause ? ' / ' + (e.cause.code || e.cause.message) : '') }; } };
   const T = 12000;
   await Promise.all([
-    time('dns', async () => ({ addresses: (await require('dns').promises.lookup('generativelanguage.googleapis.com', { all: true })).map(a => a.address) })),
-    time('google204', async () => ({ status: (await fetch('https://www.google.com/generate_204', { signal: AbortSignal.timeout(T) })).status })),
-    time('anthropic', async () => ({ status: (await fetch('https://api.anthropic.com/', { signal: AbortSignal.timeout(T) })).status })),
-    time('models', async () => { const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=50', { headers: { 'x-goog-api-key': GEMINI_KEY }, signal: AbortSignal.timeout(T) }); const j = await r.json(); return { status: r.status, error: j.error && j.error.message, flash: (j.models || []).map(m => m.name).filter(n => /flash/.test(n)).slice(0, 12) }; }),
-    time('generate', async () => { const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), signal: AbortSignal.timeout(T) }); const t = await r.text(); return { status: r.status, body: t.slice(0, 300) }; })
+    time('dns', async () => ({ ip: await resolve4('generativelanguage.googleapis.com') })),
+    time('google204', async () => ({ status: (await httpsReq('https://www.google.com/generate_204', { timeout: T })).statusCode })),
+    time('models', async () => { const r = await httpsReq('https://generativelanguage.googleapis.com/v1beta/models?pageSize=50', { headers: { 'x-goog-api-key': GEMINI_KEY }, timeout: T }); const j = JSON.parse(await readAll(r)); return { status: r.statusCode, error: j.error && j.error.message, flash: (j.models || []).map(m => m.name).filter(n => /flash/.test(n)).slice(0, 12) }; }),
+    time('generate', async () => { const r = await httpsReq(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Antworte nur mit OK' }] }] }), timeout: T }); return { status: r.statusCode, body: (await readAll(r)).slice(0, 300) }; })
   ]);
   console.log('DIAG', JSON.stringify(out));
   return out;
