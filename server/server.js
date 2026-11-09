@@ -299,7 +299,7 @@ wss.on('connection', ws => {
     const room = ws.room;
     switch (m.type) {
       case 'hello':
-        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
+        ws.named = !!clean(m.name, 16).trim(); ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
         ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
         if (/^[a-f0-9]{16,32}$/.test(m.id || '')) {
           ws.pid = m.id;
@@ -312,7 +312,7 @@ wss.on('connection', ws => {
       case 'resume': resume(ws, m); break;
       case 'who': {
         // alle, die gerade die App offen haben (ohne einen selbst)
-        const list = [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.name).slice(0, 200).map(pub);
+        const list = [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.named).slice(0, 200).map(pub);
         const ids = Array.isArray(m.friends) ? m.friends.slice(0, 300) : [];
         send(ws, { type: 'who', list, friendsOnline: ids.filter(id => online.has(id)) });
         break;
