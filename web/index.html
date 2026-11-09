@@ -1235,7 +1235,7 @@ const PLAN=[
 let timer=null;
 function viewStart(){
   const done=TOPICS.filter(t=>S.done[t.id]).length;
-  app.innerHTML=`<header class="hero"><span class="eyebrow">1. Chemieklausur · Freie Waldorfschule</span><h1>Alkane</h1>
+  app.innerHTML=`<header class="hero"><span class="eyebrow">1. Chemieklausur · Freie Waldorfschule</span><span class="eyebrow" style="display:block;opacity:.6;margin-top:2px">Version ${APP_VERSION}</span><h1>Alkane</h1>
    <div class="cd-box"><div class="eyebrow">Noch bis zur Klausur · Di 10.11.26, 11:30</div><div class="cd" id="cd" aria-live="off"></div></div>
    <div class="count"><div><div class="num">${done}/7</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
    <div class="progress" aria-hidden="true"><span style="width:${done/7*100}%"></span></div>
@@ -1365,7 +1365,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='2.6';
+const APP_VERSION='2.7';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
