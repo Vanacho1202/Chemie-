@@ -1343,7 +1343,7 @@ function bConnect(then){
   fetch(BATTLE_HTTP,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(r=>r.json()).then(()=>{
     clearTimeout(to); let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return fail(); }
     B.ws=ws;
-    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color}); then(); };
+    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true}); then(); };
     ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
     ws.onclose=()=>{ B.ws=null; if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } };
     ws.onerror=()=>{};
@@ -1407,8 +1407,8 @@ function drawBattle(){
         return `<button class="${cls}" type="button" data-k="${i}" ${B.pick>=0||rv?'disabled':''}><span class="ks">${KSHAPE[i]}</span><span class="kt">${o}</span>${marks}</button>`; }).join('')}</div>`;
       if(B.phase==='question'&&B.pick>=0) h+=`<p class="muted" style="text-align:center;margin:0">${B.oppDone?'Beide haben geantwortet …':'Warte auf '+opp.name+' …'}</p>`;
       if(rv){ const g=rv.gained[B.you], ok=rv.picks[B.you]===rv.a; h+=`<div class="${ok?'okmsg':'warn'}" style="text-align:center">${ok?`Richtig! +${g} Punkte`:(rv.picks[B.you]<0?'Zeit abgelaufen':'Leider falsch')}</div>${rv.e?`<div class="expl">${rv.e}</div>`:''}
-        <button class="btn primary big" type="button" data-b="ready" ${B.myReady?'disabled':''}>${B.myReady?(B.oppReady?'Los geht\'s …':`Warte auf ${opp.name} …`):(rv.last?'Zum Ergebnis':'Weiter')}</button>
-        <p class="muted" style="text-align:center;margin:0;font-size:.85rem">${B.oppReady?`✓ ${opp.name} ist bereit`:`${opp.name} liest noch die Lösung`}</p>`; }
+        ${rv.auto?`<p class="muted" style="text-align:center;margin:0;font-size:.85rem">${opp.name} hat eine ältere App-Version, darum geht es automatisch weiter. Sag ihm, er soll die App neu starten.</p>`:`<button class="btn primary big" type="button" data-b="ready" ${B.myReady?'disabled':''}>${B.myReady?(B.oppReady?'Los geht\'s …':`Warte auf ${opp.name} …`):(rv.last?'Zum Ergebnis':'Weiter')}</button>
+        <p class="muted" style="text-align:center;margin:0;font-size:.85rem">${B.oppReady?`✓ ${opp.name} ist bereit`:`${opp.name} liest noch die Lösung`}</p>`}`; }
     }
     if(B.phase==='end'){ const w=B.end.winner, res=w===-1?'Unentschieden!':(w===B.you?'Du hast gewonnen!':opp.name+' hat gewonnen');
       h+=`<section class="card bwait"><span class="eyebrow">Battle vorbei</span><div class="bres">${w===B.you?'🏆 ':''}${res}</div><div class="bcode" style="font-size:2.2rem">${s0} : ${s1}</div><p class="muted" style="margin:0">${B.correct} von ${B.total} richtig</p>

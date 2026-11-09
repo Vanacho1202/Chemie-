@@ -52,9 +52,11 @@ function reveal(room) {
   const gained = room.answers.map(a => (a && a.i === q.a) ? Math.round(500 + 500 * Math.max(0, 1 - a.ms / LIMIT_MS)) : 0);
   room.scores = room.scores.map((s, i) => s + gained[i]);
   room.ready = [false, false];
-  both(room, () => ({ type: 'reveal', qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores }));
+  both(room, () => ({ type: 'reveal', auto: !room.players.every(p => p && p.canReady), qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, scores: room.scores }));
   // Weiter erst, wenn beide die Lösung gelesen haben (oder nach 5 Minuten)
-  room.timer = setTimeout(() => nextQuestion(room), READY_MS);
+  // Alte App-Versionen kennen den Weiter-Knopf nicht: dann wie früher nach 5 s weiter
+  const allReady = room.players.every(p => p && p.canReady);
+  room.timer = setTimeout(() => nextQuestion(room), allReady ? READY_MS : 5000);
 }
 
 function endMatch(room) {
@@ -81,7 +83,7 @@ wss.on('connection', ws => {
     const room = ws.room;
     switch (m.type) {
       case 'hello':
-        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling'; ws.color = clean(m.color, 12) || 'std';
+        ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling'; ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
         send(ws, { type: 'hi', online: wss.clients.size });
         break;
       case 'quick':
