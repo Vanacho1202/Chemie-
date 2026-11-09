@@ -1371,7 +1371,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.2';
+const APP_VERSION='3.3';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1459,7 +1459,7 @@ function admSheet(id){
   const opts=SHOP.filter(i=>i.price>0).map(i=>`<option value="${esc(i.id)}">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}</option>`).join('');
   const sh=el(`<div id="adm-sheet" class="adm-sheet" role="dialog" aria-modal="true" aria-label="Spieler verwalten"><div class="adm-box card">
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div class="row" style="gap:10px;flex-wrap:nowrap;min-width:0"><span class="av-big">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b style="font-size:1.15rem">${esc(p.name)||'ohne Name'}</b><div class="muted" style="font-size:.8rem;word-break:break-all">ID ${esc(p.id)}${p.code?'<br>Code '+esc(p.code):''}${p.coins!=null?' · 🪙 '+p.coins:''}${p.online?' · <span style="color:var(--ok,#3c9)">online</span>':''}</div></div></div><button class="xbtn" type="button" data-admx aria-label="Schließen">×</button></div>
-    <label class="eyebrow" for="adm-coins">Münzen geben (minus nimmt weg)</label><div class="row" style="flex-wrap:nowrap"><input id="adm-coins" class="inp" type="number" inputmode="numeric" placeholder="z. B. 500" style="flex:1;min-width:0;margin:0"><button class="btn primary" type="button" data-adm="coins">Geben</button></div>
+    <label class="eyebrow" for="adm-coins">Münzen</label><div class="row" style="flex-wrap:nowrap"><input id="adm-coins" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="z. B. 500" style="flex:1;min-width:0;margin:0"><button class="btn primary" type="button" data-adm="coins">+ Geben</button><button class="btn" type="button" data-adm="take">− Weg</button></div>
     <label class="eyebrow" for="adm-name">Name ändern</label><div class="row" style="flex-wrap:nowrap"><input id="adm-name" class="inp" maxlength="16" placeholder="Neuer Name" value="${esc(p.name)}" style="flex:1;min-width:0;margin:0"><button class="btn" type="button" data-adm="name">Ändern</button></div>
     <label class="eyebrow" for="adm-item">Item schenken</label><div class="row" style="flex-wrap:nowrap"><select id="adm-item" class="inp" style="flex:1;min-width:0;margin:0">${opts}</select><button class="btn" type="button" data-adm="item">Schenken</button></div>
     <div class="row"><button class="btn" type="button" data-adm="all">🎁 Alle Items schenken</button>${p.online?'<button class="btn" type="button" data-adm="kick">Verbindung trennen</button>':''}</div>
@@ -1470,15 +1470,15 @@ function admSheet(id){
     if(e.target===sh||e.target.closest('[data-admx]')) return sh.remove();
     const b=e.target.closest('[data-adm]'); if(!b) return;
     const a=b.dataset.adm, body={target:p.id};
-    if(a==='coins'){ body.coins=parseInt($('#adm-coins').value,10)||0; if(!body.coins) return toast('Zahl eingeben'); }
+    if(a==='coins'||a==='take'){ const n=Math.abs(parseInt(String($('#adm-coins').value).replace(/[^0-9]/g,''),10)||0); if(!n) return toast('Zahl eingeben'); body.coins=a==='take'?-n:n; }
     if(a==='name'){ body.name=$('#adm-name').value.trim(); if(!body.name) return toast('Namen eingeben'); }
     if(a==='item') body.items=[$('#adm-item').value];
     if(a==='all') body.allItems=true;
     b.disabled=true;
     admPost(a==='kick'?'kick':'gift',body).then(({status,j})=>{ b.disabled=false;
       if(status!==200) return toast(j.error||'Fehler');
-      toast(a==='kick'?'Getrennt':j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
-      if(a==='coins'&&p.coins!=null){ p.coins=Math.max(0,p.coins+body.coins); }
+      toast(a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
+      if((a==='coins'||a==='take')&&p.coins!=null){ p.coins=Math.max(0,p.coins+body.coins); }
       if(a==='name') p.name=body.name;
       drawAdmin(); }).catch(()=>{ b.disabled=false; toast('Server nicht erreichbar'); });
   });
