@@ -97,6 +97,46 @@ async function takeGifts(pid, m) {
     return r.rows.length ? r.rows : undefined;
   } catch (e) { console.log('Geschenke-Fehler', e.message); return undefined; }
 }
+// ---------- Admin (nur Gabriels Account; geprüft über Spieler-ID + geheimen Schlüssel) ----------
+const ADMIN_PIDS = (process.env.ADMIN_PIDS || '05ea7edd8086cbd1712f').split(',').map(x => x.trim()).filter(Boolean);
+async function isAdmin(m) {
+  if (!pool || !ADMIN_PIDS.includes(String(m.pid || '')) || !HEX.test(m.secret || '')) return false;
+  const r = await pool.query('select 1 from saves where pid = $1 and secret = $2', [m.pid, m.secret]);
+  return r.rows.length > 0;
+}
+const PID = /^[a-f0-9]{8,64}$/;
+async function adminRoute(path, m) {
+  if (!pool) return [503, { error: 'Datenbank fehlt.' }];
+  if (path === '/admin/me') return [200, { admin: await isAdmin(m) }];
+  if (!(await isAdmin(m))) return [403, { error: 'Kein Admin.' }];
+  if (path === '/admin/players') {
+    const r = await pool.query(`select pid, name, code, (data->>'coins')::int as coins, data->'eq' as eq, updated_at from saves order by updated_at desc limit 300`);
+    const known = new Set(r.rows.map(x => x.pid));
+    const list = r.rows.map(x => ({ id: x.pid, name: x.name || '', code: x.code, coins: x.coins, avatar: x.eq && x.eq.avatar, updated: x.updated_at, online: online.has(x.pid) }));
+    // online, aber noch nie gespeichert
+    for (const [pid, ws] of online) if (!known.has(pid) && ws.readyState === 1) list.unshift({ id: pid, name: ws.name || '', code: null, coins: null, avatar: ws.avatar, updated: null, online: true });
+    return [200, { players: list }];
+  }
+  const target = String(m.target || '');
+  if (!PID.test(target)) return [400, { error: 'Ungültige Spieler-ID.' }];
+  if (path === '/admin/gift') {
+    const coins = Math.max(-1000000, Math.min(1000000, parseInt(m.coins, 10) || 0));
+    const name = m.name ? String(m.name).replace(/[<>]/g, '').trim().slice(0, 16) : null;
+    const items = Array.isArray(m.items) ? m.items.map(String).filter(x => /^[eatc]_[^<>"]{1,40}$/.test(x)).slice(0, 300) : [];
+    const extra = {}; if (items.length) extra.items = items; if (m.allItems) extra.allItems = true;
+    if (!coins && !name && !items.length && !m.allItems) return [400, { error: 'Nichts zu schenken.' }];
+    await pool.query('insert into gifts (pid, coins, name, note, extra) values ($1,$2,$3,$4,$5)', [target, coins, name, 'Admin', Object.keys(extra).length ? extra : null]);
+    const ws = online.get(target); if (ws) send(ws, { type: 'gift' });
+    console.log('Admin-Geschenk an', target.slice(0, 8), { coins, name, items: items.length, all: !!m.allItems });
+    return [200, { ok: true, live: !!ws }];
+  }
+  if (path === '/admin/kick') {
+    const ws = online.get(target); if (!ws) return [404, { error: 'Nicht online.' }];
+    send(ws, { type: 'error_soft', msg: 'Du wurdest vom Admin getrennt.' }); setTimeout(() => { try { ws.close(); } catch {} }, 300);
+    return [200, { ok: true }];
+  }
+  return [404, { error: 'unbekannt' }];
+}
 async function cloudRoute(path, m) {
   if (!pool) return [503, { error: 'Cloud-Speicher ist noch nicht eingerichtet.' }];
   if (path === '/cloud/save') {
@@ -268,14 +308,15 @@ const server = http.createServer((req, res) => {
     runDiag().then(out => json(200, out));
     return;
   }
-  if (req.method === 'POST' && req.url.startsWith('/cloud/')) {
+  if (req.method === 'POST' && (req.url.startsWith('/cloud/') || req.url.startsWith('/admin/'))) {
     let body = '';
     req.on('data', c => { body += c; if (body.length > 250000) req.destroy(); });
     req.on('end', async () => {
       const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0];
       if (req.url.startsWith('/cloud/load') && limited('load:' + ip)) return json(429, { error: 'Zu viele Versuche. Warte eine Minute.' });
       let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
-      try { const [code, out] = await cloudRoute(req.url.split('?')[0], m); json(code, out); }
+      if (req.url.startsWith('/admin/') && limited('admin:' + ip)) return json(429, { error: 'Zu viele Anfragen.' });
+      try { const path = req.url.split('?')[0]; const [code, out] = path.startsWith('/admin/') ? await adminRoute(path, m) : await cloudRoute(path, m); json(code, out); }
       catch (e) { console.log('Cloud-Fehler:', e.message); json(500, { error: 'Speichern gerade nicht möglich.' }); }
     });
     return;
