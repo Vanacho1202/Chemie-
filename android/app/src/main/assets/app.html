@@ -243,6 +243,10 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .pop-in{display:flex; align-items:center; gap:12px}
 .pop-in .av{font-size:2.2rem; line-height:1}
 /* Update-Hinweis */
+.name-msg{font-size:.85rem; min-height:0; margin-top:4px}
+.name-msg.bad{color:#e5534b; font-weight:700}
+.name-msg.ok{color:#3fb950}
+.name-msg:empty{display:none}
 .adm-sheet{position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; padding:12px; padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
 .adm-box{width:100%; max-width:520px; max-height:88vh; overflow:auto; display:flex; flex-direction:column; gap:8px; margin:0}
 .upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
@@ -1367,7 +1371,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.1';
+const APP_VERSION='3.2';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1401,7 +1405,7 @@ function cloudSoon(){ if(!cloudOk()) return; clearTimeout(cloudT); cloudT=setTim
 function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; return d; }
 function cloudPush(){ if(!cloudOk()) return; cloudSecret();
   cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:2}).then(({status,j})=>{
-    if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; } else S.cloud.err=j.error||('Fehler '+status);
+    if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; if(j.nameTaken){ const back=(S.nameOk&&S.nameOk!==S.name)?S.nameOk:''; toast('Name „'+String(S.name).replace(/[<&]/g,'')+'“ ist schon vergeben'); S.name=back; S.nameOk=back; bSend(helloMsg()); const inp=$('#b-name'); if(inp) inp.value=back; } } else S.cloud.err=j.error||('Fehler '+status);
     save(true); drawCloud(); applyGifts(j&&j.gifts); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
 /* Geschenke vom Server (Münzen, neuer Name), werden genau einmal ausgeliefert */
 function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null, nf=0, ni=0, nu=0;
@@ -1414,7 +1418,7 @@ function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=nul
     ids.forEach(id=>{ if(SHOP.some(i=>i.id===id)&&!S.owned[id]){ S.owned[id]=1; ni++; } }); });
   if(nu){ save(); if(/^#battle/.test(location.hash)) try{ route(); }catch(e){} }
   if(!c&&!nm&&!nf&&!ni) return;
-  if(c) S.coins=Math.max(0,(S.coins||0)+c); if(nm) S.name=nm; save();
+  if(c) S.coins=Math.max(0,(S.coins||0)+c); if(nm){ S.name=nm; S.nameOk=nm; } save();
   toast('🎁 '+[c?'<b>'+(c>0?'+':'')+c+'</b> 🪙':'', nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':'', nf?'<b>'+nf+'</b> neue Freunde':'', ni?'<b>'+ni+'</b> neue Items':''].filter(Boolean).join(' · '));
   document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins);
   const inp=document.getElementById('b-name'); if(inp&&nm) inp.value=nm;
@@ -1522,7 +1526,7 @@ const SHOP=[
  ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t})),
  ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
-function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
+function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; if(S.nameOk===undefined) S.nameOk=S.name; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
   if(!S.pid){ try{ const a=new Uint8Array(10); crypto.getRandomValues(a); S.pid=[...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ S.pid=(Date.now().toString(16)+Math.random().toString(16).slice(2)).slice(0,20).padEnd(20,'0'); } save(); } }
 initProfile();
 function toast(html){ let t=$('#toast'); if(!t){ t=el('<div id="toast" class="toast" role="status"></div>'); document.body.appendChild(t); } t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('show'),1600); }
@@ -1751,7 +1755,7 @@ function drawBattle(){
   let h='';
   if(['lobby','connecting','searching','room'].includes(B.phase)){
     h=`<header class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="eyebrow">1 gegen 1 · online</span><h1>Battle</h1></div>${coinPill()}</header>
-    <section class="card"><div class="row" style="gap:12px"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div style="flex:1;min-width:0"><label for="b-name" class="eyebrow">Dein Name</label><input id="b-name" class="inp" maxlength="16" value="${S.name.replace(/"/g,'')}" placeholder="z. B. Gabriel"><div class="muted" style="font-size:.85rem;margin-top:4px">${S.eq.title} · <a href="#shop" style="color:var(--accent);font-weight:700">Shop</a> · Bilanz ${S.bstats.w} S / ${S.bstats.d} U / ${S.bstats.l} N</div></div></div></section>
+    <section class="card"><div class="row" style="gap:12px"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div style="flex:1;min-width:0"><label for="b-name" class="eyebrow">Dein Name</label><input id="b-name" class="inp" maxlength="16" value="${S.name.replace(/"/g,'')}" placeholder="z. B. Gabriel"><div id="b-name-msg" class="name-msg" aria-live="polite"></div><div class="muted" style="font-size:.85rem;margin-top:4px">${S.eq.title} · <a href="#shop" style="color:var(--accent);font-weight:700">Shop</a> · Bilanz ${S.bstats.w} S / ${S.bstats.d} U / ${S.bstats.l} N</div></div></div></section>
     ${B.msg?`<div class="${B.phase==='connecting'?'expl':'warn'}">${B.msg}</div>`:''}`;
     if(B.phase==='searching') h+=`<section class="card bwait"><div class="spin"></div><b>Suche Gegner …</b><p class="muted" style="margin:0">Sobald jemand anderes auf „Schneller Gegner“ tippt, geht es los.</p><button class="btn" type="button" data-b="cancel">Abbrechen</button></section>`;
     else if(B.phase==='room') h+=`<section class="card bwait"><span class="eyebrow">Raum-Code</span><div class="bcode">${B.code}</div><p class="muted" style="margin:0">Sag deinem Gegner den Code. Er tippt auf „Raum beitreten“ und gibt ihn ein.</p><button class="btn" type="button" data-b="cancel">Abbrechen</button></section>`;
@@ -1903,7 +1907,7 @@ function battleClick(e){
   if(!location.hash.startsWith('#battle')) return;
   if(admClick(e)) return;
   if(socialClick(e)) return;
-  const nm=$('#b-name'); if(nm){ S.name=nm.value.trim().slice(0,16); save(); }
+  const nm=$('#b-name'); if(nm&&nm.value.trim().slice(0,16)!==S.name&&$('#b-name-msg')&&!$('#b-name-msg').classList.contains('bad')){ clearTimeout(B.nameT); claimName(nm.value.trim().slice(0,16)); }
   const b=e.target.closest('[data-b]'), k=e.target.closest('.kopt'), em=e.target.closest('[data-e]');
   if(k && B.phase==='question' && B.pick<0){ B.pick=+k.dataset.k; bSend({type:'answer',qi:B.qi,i:B.pick}); drawBattle(); return; }
   if(em){ const now=Date.now(); if(now-(B.lastEmo||0)<1200) return; B.lastEmo=now; bSend({type:'emote',e:em.dataset.e}); return; }
@@ -2198,7 +2202,21 @@ function route(){
 }
 window.addEventListener('hashchange',route);
 app.addEventListener('click',battleClick);
-app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ S.name=e.target.value.trim().slice(0,16); save(); clearTimeout(B.nameT); B.nameT=setTimeout(()=>bSend(helloMsg()),800); } });
+app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ const v=e.target.value.trim().slice(0,16); clearTimeout(B.nameT); nameMsg(''); B.nameT=setTimeout(()=>claimName(v),600); } });
+/* Namen sind einmalig: der Server prüft, ob jemand anderes den Namen schon hat */
+function nameMsg(t,ok){ const m=$('#b-name-msg'); if(m){ m.textContent=t; m.className='name-msg'+(t?(ok?' ok':' bad'):''); } }
+function claimName(v){
+  if(v===S.name){ nameMsg(''); return; }
+  const set=()=>{ S.name=v; S.nameOk=v; save(); bSend(helloMsg()); };
+  if(!v){ set(); return; }
+  if(!cloudOk()){ set(); return; }
+  cloudPost('name',{pid:S.pid,name:v}).then(({status,j})=>{
+    const inp=$('#b-name'); if(inp&&inp.value.trim().slice(0,16)!==v) return;   // inzwischen weitergetippt
+    if(status===200&&j.ok){ set(); nameMsg('✓ Name gehört dir',true); setTimeout(()=>nameMsg(''),2000); }
+    else if(status===200) nameMsg('Name bereits vergeben');
+    else set();
+  }).catch(()=>set());
+}
 route();
 </script>
 

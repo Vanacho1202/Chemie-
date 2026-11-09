@@ -126,6 +126,7 @@ async function adminRoute(path, m) {
     const items = Array.isArray(m.items) ? m.items.map(String).filter(x => /^[eatc]_[^<>"]{1,40}$/.test(x)).slice(0, 300) : [];
     const extra = {}; if (items.length) extra.items = items; if (m.allItems) extra.allItems = true;
     if (!coins && !name && !items.length && !m.allItems) return [400, { error: 'Nichts zu schenken.' }];
+    if (name && await nameTaken(name, target)) return [409, { error: 'Name bereits vergeben.' }];
     await pool.query('insert into gifts (pid, coins, name, note, extra) values ($1,$2,$3,$4,$5)', [target, coins, name, 'Admin', Object.keys(extra).length ? extra : null]);
     const ws = online.get(target); if (ws) send(ws, { type: 'gift' });
     console.log('Admin-Geschenk an', target.slice(0, 8), { coins, name, items: items.length, all: !!m.allItems });
@@ -138,18 +139,31 @@ async function adminRoute(path, m) {
   }
   return [404, { error: 'unbekannt' }];
 }
+// Namen sind einmalig (Groß/Klein egal): gespeicherte Spielstände und gerade verbundene Spieler
+async function nameTaken(name, pid) {
+  const n = String(name || '').trim().toLowerCase(); if (!n) return false;
+  for (const [id, ws] of online) if (id !== pid && ws.named && String(ws.name || '').trim().toLowerCase() === n) return true;
+  if (!pool) return false;
+  const r = await pool.query('select 1 from saves where lower(trim(name)) = $1 and pid <> $2 limit 1', [n, String(pid || '')]);
+  return r.rows.length > 0;
+}
 async function cloudRoute(path, m) {
   if (!pool) return [503, { error: 'Cloud-Speicher ist noch nicht eingerichtet.' }];
+  if (path === '/cloud/name') {
+    if (!HEX.test(m.pid || '')) return [400, { error: 'bad' }];
+    return [200, { ok: !(await nameTaken(String(m.name || '').slice(0, 16), m.pid)) }];
+  }
   if (path === '/cloud/save') {
     if (!HEX.test(m.pid || '') || !HEX.test(m.secret || '') || typeof m.data !== 'object') return [400, { error: 'bad' }];
     const data = JSON.stringify(m.data); if (data.length > 200000) return [413, { error: 'zu groß' }];
+    const wantName = String(m.data.name || '').slice(0, 16), taken = await nameTaken(wantName, m.pid);
     for (let i = 0; i < 3; i++) {
       try {
         const r = await pool.query(`insert into saves (pid, secret, code, name, data) values ($1,$2,$3,$4,$5)
-          on conflict (pid) do update set data = excluded.data, name = excluded.name, updated_at = now() where saves.secret = excluded.secret
-          returning code, updated_at`, [m.pid, m.secret, newSaveCode(), String(m.data.name || '').slice(0, 16), data]);
+          on conflict (pid) do update set data = excluded.data, name = coalesce(excluded.name, saves.name), updated_at = now() where saves.secret = excluded.secret
+          returning code, updated_at`, [m.pid, m.secret, newSaveCode(), taken ? null : wantName, data]);
         if (!r.rows.length) return [403, { error: 'Falscher Schlüssel für diesen Spielstand.' }];
-        return [200, { ok: true, code: r.rows[0].code, updated: r.rows[0].updated_at, gifts: await takeGifts(m.pid, m) }];
+        return [200, { ok: true, code: r.rows[0].code, updated: r.rows[0].updated_at, nameTaken: taken || undefined, gifts: await takeGifts(m.pid, m) }];
       } catch (e) { if (!/saves_code_key/.test(e.message)) throw e; }   // Code schon vergeben: neu würfeln
     }
     return [500, { error: 'code' }];
