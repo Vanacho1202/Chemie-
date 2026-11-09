@@ -48,6 +48,8 @@ const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade di
 
 // ---------- Cloud-Spielstand (Postgres) ----------
 let pool = null;
+const BANS = new Map();   // Spieler-ID -> { until (ms), reason }
+const banOf = pid => { const b = BANS.get(pid); if (b && b.until > Date.now()) return b; if (b) BANS.delete(pid); return null; };
 const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newSaveCode = () => Array.from(crypto.randomBytes(8), b => CODE_ABC[b % CODE_ABC.length]).join('').replace(/^(.{4})/, '$1-');
 async function makePool(urlStr) {
@@ -69,6 +71,9 @@ async function initDb() {
     await pool.query(SAVES_TABLE);
     await pool.query(`create table if not exists gifts (id serial primary key, pid text not null, coins int not null default 0, name text, note text, created_at timestamptz not null default now(), delivered_at timestamptz)`);
     await pool.query('alter table gifts add column if not exists extra jsonb');
+    await pool.query(`create table if not exists bans (pid text primary key, until timestamptz not null, reason text, created_at timestamptz not null default now())`);
+    const b = await pool.query('select pid, until, reason from bans where until > now()');
+    b.rows.forEach(r => BANS.set(r.pid, { until: new Date(r.until).getTime(), reason: r.reason || '' }));
     console.log('Cloud-Spielstand: Datenbank bereit');
   } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; return; }
   // Umzug: Spielstände aus der alten Datenbank übernehmen (neuere gewinnen)
@@ -111,11 +116,12 @@ async function adminRoute(path, m) {
   if (path === '/admin/me') return [200, { admin: await isAdmin(m) }];
   if (!(await isAdmin(m))) return [403, { error: 'Kein Admin.' }];
   if (path === '/admin/players') {
-    const r = await pool.query(`select pid, name, code, (data->>'coins')::int as coins, data->'eq' as eq, updated_at from saves order by updated_at desc limit 300`);
+    const r = await pool.query(`select pid, name, code, (data->>'coins')::int as coins, data->'eq' as eq, (select coalesce(array_agg(k), '{}') from jsonb_object_keys(coalesce(data->'owned', '{}'::jsonb)) k) as owned, updated_at from saves order by updated_at desc limit 300`);
     const known = new Set(r.rows.map(x => x.pid));
-    const list = r.rows.map(x => ({ id: x.pid, name: x.name || '', code: x.code, coins: x.coins, avatar: x.eq && x.eq.avatar, updated: x.updated_at, online: online.has(x.pid) }));
+    const banInfo = pid => { const b = banOf(pid); return b ? new Date(b.until).toISOString() : null; };
+    const list = r.rows.map(x => ({ id: x.pid, name: x.name || '', code: x.code, coins: x.coins, avatar: x.eq && x.eq.avatar, owned: x.owned, updated: x.updated_at, online: online.has(x.pid), banned: banInfo(x.pid) }));
     // online, aber noch nie gespeichert
-    for (const [pid, ws] of online) if (!known.has(pid) && ws.readyState === 1) list.unshift({ id: pid, name: ws.name || '', code: null, coins: null, avatar: ws.avatar, updated: null, online: true });
+    for (const [pid, ws] of online) if (!known.has(pid) && ws.readyState === 1) list.unshift({ id: pid, name: ws.name || '', code: null, coins: null, avatar: ws.avatar, owned: null, updated: null, online: true, banned: banInfo(pid) });
     return [200, { players: list }];
   }
   const target = String(m.target || '');
@@ -124,13 +130,31 @@ async function adminRoute(path, m) {
     const coins = Math.max(-1000000, Math.min(1000000, parseInt(m.coins, 10) || 0));
     const name = m.name ? String(m.name).replace(/[<>]/g, '').trim().slice(0, 16) : null;
     const items = Array.isArray(m.items) ? m.items.map(String).filter(x => /^[eatc]_[^<>"]{1,40}$/.test(x)).slice(0, 300) : [];
+    const remove = Array.isArray(m.removeItems) ? m.removeItems.map(String).filter(x => /^[eatc]_[^<>"]{1,40}$/.test(x)).slice(0, 300) : [];
     const extra = {}; if (items.length) extra.items = items; if (m.allItems) extra.allItems = true;
-    if (!coins && !name && !items.length && !m.allItems) return [400, { error: 'Nichts zu schenken.' }];
+    if (remove.length) extra.removeItems = remove; if (m.removeAll) extra.removeAll = true;
+    if (remove.length || m.removeAll) extra.minv = 3;   // nur Apps ab 3.4 verstehen das
+    if (!coins && !name && !items.length && !m.allItems && !remove.length && !m.removeAll) return [400, { error: 'Nichts zu ändern.' }];
     if (name && await nameTaken(name, target)) return [409, { error: 'Name bereits vergeben.' }];
     await pool.query('insert into gifts (pid, coins, name, note, extra) values ($1,$2,$3,$4,$5)', [target, coins, name, 'Admin', Object.keys(extra).length ? extra : null]);
     const ws = online.get(target); if (ws) send(ws, { type: 'gift' });
     console.log('Admin-Geschenk an', target.slice(0, 8), { coins, name, items: items.length, all: !!m.allItems });
     return [200, { ok: true, live: !!ws }];
+  }
+  if (path === '/admin/ban') {
+    const secs = Math.max(1, Math.min(10 * 365 * 86400, parseInt(m.seconds, 10) || 0));
+    const reason = String(m.reason || '').replace(/[<>]/g, '').slice(0, 100);
+    const until = new Date(Date.now() + secs * 1000);
+    await pool.query('insert into bans (pid, until, reason) values ($1,$2,$3) on conflict (pid) do update set until = excluded.until, reason = excluded.reason, created_at = now()', [target, until, reason]);
+    BANS.set(target, { until: until.getTime(), reason });
+    const ws = online.get(target);
+    if (ws) { send(ws, { type: 'banned', until: until.toISOString(), reason }); setTimeout(() => { try { ws.close(); } catch {} }, 300); }
+    console.log('Admin-Bann', target.slice(0, 8), secs, 's');
+    return [200, { ok: true, until: until.toISOString() }];
+  }
+  if (path === '/admin/unban') {
+    await pool.query('delete from bans where pid = $1', [target]); BANS.delete(target);
+    return [200, { ok: true }];
   }
   if (path === '/admin/kick') {
     const ws = online.get(target); if (!ws) return [404, { error: 'Nicht online.' }];
@@ -641,6 +665,10 @@ wss.on('connection', ws => {
       case 'hello':
         ws.named = !!clean(m.name, 16).trim(); ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
         ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
+        if (/^[a-f0-9]{16,32}$/.test(m.id || '') && banOf(m.id)) {
+          const b = banOf(m.id); send(ws, { type: 'banned', until: new Date(b.until).toISOString(), reason: b.reason });
+          setTimeout(() => { try { ws.close(); } catch {} }, 200); break;
+        }
         if (/^[a-f0-9]{16,32}$/.test(m.id || '')) {
           ws.pid = m.id;
           online.set(ws.pid, ws);   // pro Spieler-ID zählt nur die neueste Verbindung

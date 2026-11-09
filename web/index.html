@@ -247,6 +247,7 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .name-msg.bad{color:#e5534b; font-weight:700}
 .name-msg.ok{color:#3fb950}
 .name-msg:empty{display:none}
+.ban-bar{position:fixed; left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); bottom:calc(76px + env(safe-area-inset-bottom,0px)); max-width:560px; margin:0 auto; z-index:65; background:#5a1d1d; color:#fff; border:2px solid #e5534b; border-radius:12px; padding:9px 12px; font-size:.9rem; font-weight:700; text-align:center}
 .adm-sheet{position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; padding:12px; padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
 .adm-box{width:100%; max-width:520px; max-height:88vh; overflow:auto; display:flex; flex-direction:column; gap:8px; margin:0}
 .upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
@@ -1371,7 +1372,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.3';
+const APP_VERSION='3.4';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1404,29 +1405,32 @@ let cloudT=null;
 function cloudSoon(){ if(!cloudOk()) return; clearTimeout(cloudT); cloudT=setTimeout(cloudPush,4000); }
 function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; return d; }
 function cloudPush(){ if(!cloudOk()) return; cloudSecret();
-  cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:2}).then(({status,j})=>{
+  cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData(),gifts:3}).then(({status,j})=>{
     if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; if(j.nameTaken){ const back=(S.nameOk&&S.nameOk!==S.name)?S.nameOk:''; toast('Name „'+String(S.name).replace(/[<&]/g,'')+'“ ist schon vergeben'); S.name=back; S.nameOk=back; bSend(helloMsg()); const inp=$('#b-name'); if(inp) inp.value=back; } } else S.cloud.err=j.error||('Fehler '+status);
     save(true); drawCloud(); applyGifts(j&&j.gifts); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
 /* Geschenke vom Server (Münzen, neuer Name), werden genau einmal ausgeliefert */
-function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null, nf=0, ni=0, nu=0;
+function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null, nf=0, ni=0, nu=0, nr=0;
   S.friends=S.friends||{}; S.owned=S.owned||{};
   g.forEach(x=>{ c+=Math.max(-1000000,Math.min(1000000,parseInt(x.coins,10)||0)); if(x.name) nm=String(x.name).slice(0,16);
     const ex=x.extra||{};
     (Array.isArray(ex.friends)?ex.friends:[]).forEach(f=>{ if(!f||!f.id||f.id===S.pid||S.friends[f.id]) return; S.friends[f.id]={name:String(f.name||'').slice(0,16),avatar:f.avatar||'scientist',title:f.title||'Neuling',color:f.color||'std',since:Date.now()}; nf++; });
     (Array.isArray(ex.unfriend)?ex.unfriend:[]).forEach(id=>{ if(S.friends[id]){ delete S.friends[id]; nu++; } });
     const ids=ex.allItems?SHOP.map(i=>i.id):(Array.isArray(ex.items)?ex.items:[]);
-    ids.forEach(id=>{ if(SHOP.some(i=>i.id===id)&&!S.owned[id]){ S.owned[id]=1; ni++; } }); });
+    ids.forEach(id=>{ if(SHOP.some(i=>i.id===id)&&!S.owned[id]){ S.owned[id]=1; ni++; } });
+    const rm=ex.removeAll?Object.keys(S.owned):(Array.isArray(ex.removeItems)?ex.removeItems:[]);
+    rm.forEach(id=>{ const it=SHOP.find(i=>i.id===id); if(it&&it.price>0&&S.owned[id]){ delete S.owned[id]; nr++; } }); });
+  if(nr){ const def={avatar:'scientist',title:'Neuling',color:'std'}; Object.keys(def).forEach(k=>{ const it=SHOP.find(i=>i.kind===k&&i.key===S.eq[k]); if(it&&!S.owned[it.id]) S.eq[k]=def[k]; }); }
   if(nu){ save(); if(/^#battle/.test(location.hash)) try{ route(); }catch(e){} }
-  if(!c&&!nm&&!nf&&!ni) return;
+  if(!c&&!nm&&!nf&&!ni&&!nr) return;
   if(c) S.coins=Math.max(0,(S.coins||0)+c); if(nm){ S.name=nm; S.nameOk=nm; } save();
-  toast('🎁 '+[c?'<b>'+(c>0?'+':'')+c+'</b> 🪙':'', nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':'', nf?'<b>'+nf+'</b> neue Freunde':'', ni?'<b>'+ni+'</b> neue Items':''].filter(Boolean).join(' · '));
+  toast((nr&&!c&&!nm&&!nf&&!ni?'🛠️ ':'🎁 ')+[c?'<b>'+(c>0?'+':'')+c+'</b> 🪙':'', nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':'', nf?'<b>'+nf+'</b> neue Freunde':'', ni?'<b>'+ni+'</b> neue Items':'', nr?'<b>'+nr+'</b> Items entfernt':''].filter(Boolean).join(' · '));
   document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins);
   const inp=document.getElementById('b-name'); if(inp&&nm) inp.value=nm;
   if(nm&&typeof bSend==='function'&&typeof helloMsg==='function') try{ bSend(helloMsg()); }catch(e){}
   if(nf&&typeof bWho==='function') try{ bWho(); }catch(e){}
-  if((nf||ni||nm)&&/^#(battle|shop)/.test(location.hash)) try{ route(); }catch(e){} }
+  if((nf||ni||nm||nr)&&/^#(battle|shop)/.test(location.hash)) try{ route(); }catch(e){} }
 function cloudPull(){ if(!cloudOk()) return; cloudSecret();
-  cloudPost('get',{pid:S.pid,secret:S.cloud.secret,gifts:2}).then(({status,j})=>{ setTimeout(()=>applyGifts(j&&j.gifts),50);
+  cloudPost('get',{pid:S.pid,secret:S.cloud.secret,gifts:3}).then(({status,j})=>{ setTimeout(()=>applyGifts(j&&j.gifts),50);
     if(status!==200) { if(status===503){ S.cloud.err=j.error; drawCloud(); } return; }
     if(!j.found){ cloudPush(); return; }
     S.cloud.code=j.code;
@@ -1436,6 +1440,19 @@ function cloudPull(){ if(!cloudOk()) return; cloudSecret();
   }).catch(()=>{}); }
 setTimeout(cloudPull,2500);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') cloudPull(); });
+
+/* ---------- Bann ---------- */
+function banActive(){ return !!(B.ban&&B.ban.until>Date.now()); }
+function banLeft(){ const t=Math.max(0,Math.ceil((B.ban.until-Date.now())/1000)), d=Math.floor(t/86400), h=Math.floor(t%86400/3600), m=Math.floor(t%3600/60), sec=t%60;
+  return d?`${d} T ${h} Std`:h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')} Std`:m?`${m}:${String(sec).padStart(2,'0')} Min`:`${sec} s`; }
+function banText(){ return banActive()?`🚫 Du bist gebannt, noch ${banLeft()}.${B.ban.reason?' Grund: '+String(B.ban.reason).replace(/[<&]/g,''):''} Lernen geht trotzdem.`:''; }
+function banBar(){
+  let bar=$('#ban-bar');
+  if(!banActive()){ if(bar){ bar.remove(); clearInterval(banBar.t); banBar.t=null; if(B.ban){ B.ban=null; if(location.hash.startsWith('#battle')){ B.msg=''; drawBattle(); } setTimeout(bSilentConnect,500); } } return; }
+  if(!bar){ bar=el('<div id="ban-bar" class="ban-bar" role="status"></div>'); document.body.appendChild(bar); }
+  bar.textContent=banText();
+  if(!banBar.t) banBar.t=setInterval(banBar,1000);
+}
 /* ---------- Admin (nur für freigeschaltete Accounts, Server prüft ID + Schlüssel) ---------- */
 const ADMIN_URL='https://alkane-battle.onrender.com/admin/';
 const ADM={on:false,players:null,q:'',busy:false};
@@ -1451,18 +1468,26 @@ function drawAdmin(){
   const list=(ADM.players||[]).filter(p=>!q||(p.name||'').toLowerCase().includes(q)||p.id.startsWith(q)||(p.code||'').toLowerCase().includes(q));
   box.innerHTML=`<section class="card"><div class="row" style="justify-content:space-between"><div class="sec-label" style="margin:0">🛠️ Admin · Spieler</div><button class="btn small" type="button" data-admload>${ADM.busy?'Lade …':ADM.players?'Aktualisieren':'Spieler laden'}</button></div>
    ${ADM.players?`<input id="adm-q" class="inp" placeholder="Name, ID oder Code suchen" value="${esc(ADM.q)}" autocomplete="off">
-   <div class="flist">${list.map(p=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn">${esc(p.name)||'<i class="muted">ohne Name</i>'}</b><div class="ft"><span class="dot ${p.online?'online':'offline'}"></span>ID ${p.id.slice(0,8)}${p.code?' · '+p.code:''}${p.coins!=null?' · 🪙 '+p.coins:''}</div></div><button class="btn small" type="button" data-admopen="${p.id}">Verwalten</button></div>`).join('')||'<p class="muted" style="margin:0">Niemand gefunden.</p>'}</div>`:'<p class="muted" style="margin:6px 0 0;font-size:.9rem">Alle Spieler mit ID, Code und Münzen. Tippe auf „Verwalten“, um Münzen, Namen oder Items zu ändern.</p>'}</section>`;
+   <div class="flist">${list.map(p=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn">${esc(p.name)||'<i class="muted">ohne Name</i>'}</b><div class="ft"><span class="dot ${p.online?'online':'offline'}"></span>ID ${p.id.slice(0,8)}${p.code?' · '+p.code:''}${p.coins!=null?' · 🪙 '+p.coins:''}${p.banned&&Date.parse(p.banned)>Date.now()?' · 🚫 gebannt':''}</div></div><button class="btn small" type="button" data-admopen="${p.id}">Verwalten</button></div>`).join('')||'<p class="muted" style="margin:0">Niemand gefunden.</p>'}</div>`:'<p class="muted" style="margin:6px 0 0;font-size:.9rem">Alle Spieler mit ID, Code und Münzen. Tippe auf „Verwalten“, um Münzen, Namen oder Items zu ändern.</p>'}</section>`;
 }
 function admSheet(id){
   const p=admFind(id); $('#adm-sheet')&&$('#adm-sheet').remove();
   const kinds={emote:'Emote',avatar:'Avatar',title:'Titel',color:'Namensfarbe'};
+  const ownedOpts=(p.owned||[]).map(id=>SHOP.find(i=>i.id===id)).filter(i=>i&&i.price>0).map(i=>`<option value="${esc(i.id)}">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}</option>`).join('');
   const opts=SHOP.filter(i=>i.price>0).map(i=>`<option value="${esc(i.id)}">${kinds[i.kind]||i.kind}: ${esc(i.label||i.key||i.id)}</option>`).join('');
   const sh=el(`<div id="adm-sheet" class="adm-sheet" role="dialog" aria-modal="true" aria-label="Spieler verwalten"><div class="adm-box card">
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div class="row" style="gap:10px;flex-wrap:nowrap;min-width:0"><span class="av-big">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b style="font-size:1.15rem">${esc(p.name)||'ohne Name'}</b><div class="muted" style="font-size:.8rem;word-break:break-all">ID ${esc(p.id)}${p.code?'<br>Code '+esc(p.code):''}${p.coins!=null?' · 🪙 '+p.coins:''}${p.online?' · <span style="color:var(--ok,#3c9)">online</span>':''}</div></div></div><button class="xbtn" type="button" data-admx aria-label="Schließen">×</button></div>
     <label class="eyebrow" for="adm-coins">Münzen</label><div class="row" style="flex-wrap:nowrap"><input id="adm-coins" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="z. B. 500" style="flex:1;min-width:0;margin:0"><button class="btn primary" type="button" data-adm="coins">+ Geben</button><button class="btn" type="button" data-adm="take">− Weg</button></div>
     <label class="eyebrow" for="adm-name">Name ändern</label><div class="row" style="flex-wrap:nowrap"><input id="adm-name" class="inp" maxlength="16" placeholder="Neuer Name" value="${esc(p.name)}" style="flex:1;min-width:0;margin:0"><button class="btn" type="button" data-adm="name">Ändern</button></div>
     <label class="eyebrow" for="adm-item">Item schenken</label><div class="row" style="flex-wrap:nowrap"><select id="adm-item" class="inp" style="flex:1;min-width:0;margin:0">${opts}</select><button class="btn" type="button" data-adm="item">Schenken</button></div>
-    <div class="row"><button class="btn" type="button" data-adm="all">🎁 Alle Items schenken</button>${p.online?'<button class="btn" type="button" data-adm="kick">Verbindung trennen</button>':''}</div>
+    <div class="row"><button class="btn" type="button" data-adm="all">🎁 Alle Items schenken</button></div>
+    ${ownedOpts?`<label class="eyebrow" for="adm-rm">Item wegnehmen</label><div class="row" style="flex-wrap:nowrap"><select id="adm-rm" class="inp" style="flex:1;min-width:0;margin:0">${ownedOpts}</select><button class="btn" type="button" data-adm="rm">Wegnehmen</button></div>
+    <div class="row"><button class="btn" type="button" data-adm="rmall">🗑️ Alle Items wegnehmen</button></div>`:(p.owned?'<p class="muted" style="margin:0;font-size:.85rem">Hat keine gekauften Items.</p>':'')}
+    <label class="eyebrow" for="adm-bn">Bannen</label>
+    ${p.banned&&Date.parse(p.banned)>Date.now()?`<div class="warn" style="margin:0">Gebannt bis ${new Date(p.banned).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'})} <button class="btn small" type="button" data-adm="unban">Entbannen</button></div>`:''}
+    <div class="row" style="flex-wrap:nowrap"><input id="adm-bn" class="inp" type="text" inputmode="numeric" pattern="[0-9]*" value="1" style="width:70px;flex:none;margin:0"><select id="adm-bu" class="inp" style="flex:1;min-width:0;margin:0"><option value="1">Sekunden</option><option value="60" selected>Minuten</option><option value="3600">Stunden</option><option value="86400">Tage</option></select><button class="btn primary" type="button" data-adm="ban">🚫 Bannen</button></div>
+    <input id="adm-br" class="inp" maxlength="100" placeholder="Grund (optional)" style="margin:0">
+    ${p.online?'<div class="row"><button class="btn" type="button" data-adm="kick">Verbindung trennen</button></div>':''}
     <p class="muted" style="margin:0;font-size:.8rem">Kommt sofort an, wenn der Spieler online ist, sonst beim nächsten Öffnen der App.</p>
   </div></div>`);
   document.body.appendChild(sh);
@@ -1474,12 +1499,18 @@ function admSheet(id){
     if(a==='name'){ body.name=$('#adm-name').value.trim(); if(!body.name) return toast('Namen eingeben'); }
     if(a==='item') body.items=[$('#adm-item').value];
     if(a==='all') body.allItems=true;
+    if(a==='rm') body.removeItems=[$('#adm-rm').value];
+    if(a==='rmall') body.removeAll=true;
+    if(a==='ban'){ const n=parseInt(String($('#adm-bn').value).replace(/[^0-9]/g,''),10)||0; if(!n) return toast('Dauer eingeben'); body.seconds=n*(+$('#adm-bu').value); body.reason=$('#adm-br').value.trim(); }
     b.disabled=true;
-    admPost(a==='kick'?'kick':'gift',body).then(({status,j})=>{ b.disabled=false;
+    admPost(a==='kick'?'kick':a==='ban'?'ban':a==='unban'?'unban':'gift',body).then(({status,j})=>{ b.disabled=false;
       if(status!==200) return toast(j.error||'Fehler');
-      toast(a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
+      toast(a==='ban'?'🚫 Gebannt':a==='unban'?'Entbannt':a==='rm'||a==='rmall'?(j.live?'✅ Entfernt':'✅ Wird beim nächsten Öffnen entfernt'):a==='kick'?'Getrennt':a==='take'?(j.live?'✅ Abgezogen':'✅ Wird beim nächsten Öffnen abgezogen'):j.live?'✅ Kommt sofort an':'✅ Kommt beim nächsten Öffnen an');
       if((a==='coins'||a==='take')&&p.coins!=null){ p.coins=Math.max(0,p.coins+body.coins); }
       if(a==='name') p.name=body.name;
+      if(a==='ban') p.banned=j.until; if(a==='unban') p.banned=null;
+      if(a==='rm'&&p.owned) p.owned=p.owned.filter(x=>x!==body.removeItems[0]); if(a==='rmall'&&p.owned) p.owned=p.owned.filter(id=>{ const it=SHOP.find(i=>i.id===id); return !it||it.price===0; });
+      if(['ban','unban','rm','rmall'].includes(a)){ admSheet(p.id); }
       drawAdmin(); }).catch(()=>{ b.disabled=false; toast('Server nicht erreichbar'); });
   });
 }
@@ -1581,6 +1612,7 @@ function battleQuestions(){
 const helloMsg=()=>({type:'hello',id:S.pid,name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true});
 function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
 function bConnect(then){
+  if(banActive()){ B.phase='lobby'; B.msg=banText(); drawBattle(); return; }
   if(B.ws&&B.ws.readyState===1){ then(); return; }
   if(B.ws&&B.ws.readyState===0){ B.ws.addEventListener('open',()=>setTimeout(then,50),{once:true}); return; }
   B.phase='connecting'; B.msg='Verbinde mit dem Battle-Server …'; drawBattle();
@@ -1591,7 +1623,7 @@ function bConnect(then){
     B.ws=ws;
     ws.onopen=()=>{ clearTimeout(slow); bSend(helloMsg()); then(); };
     ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
-    ws.onclose=()=>{ if(B.ws===ws) B.ws=null; if(B.token && B.phase!=='lobby') bReconnect(); else { if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } setTimeout(bSilentConnect,5000); } };
+    ws.onclose=()=>{ if(B.ws===ws) B.ws=null; if(B.token && B.phase!=='lobby') bReconnect(); else { if(!['lobby','end'].includes(B.phase)||banActive()){ B.phase='lobby'; B.msg=banActive()?banText():'Verbindung verloren. Versuch es nochmal.'; drawBattle(); } setTimeout(bSilentConnect,5000); } };
     ws.onerror=()=>{};
   }).catch(fail);
   function fail(){ clearTimeout(slow); clearTimeout(to); B.phase='lobby'; B.msg= location.protocol==='https:'&&!/onrender\.com$/.test(location.hostname) ? 'Hier ist keine Online-Verbindung möglich. Battle geht in der App oder auf alkane-trainer.onrender.com.' : 'Server nicht erreichbar. Prüfe dein Internet und versuch es nochmal.'; drawBattle(); }
@@ -1604,6 +1636,7 @@ function bReconnect(){
   B.reconnecting=true; B.reTries=0; drawBattle();
   const tryOnce=()=>{
     if(!B.token){ B.reconnecting=false; return; }
+    if(banActive()){ B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg=banText(); drawBattle(); return; }
     if(B.reTries++>45){ B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Verbindung verloren. Das Battle ist leider vorbei.'; drawBattle(); return; }
     let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return setTimeout(tryOnce,2000); }
     B.ws=ws; let opened=false;
@@ -1640,8 +1673,9 @@ function bMsg(m){
       bSaveSession(); toast('Wieder verbunden'); break; }
     case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Das Battle wurde unterbrochen, weil der Server neu gestartet ist oder du länger als 90 Sekunden weg warst. Starte einfach ein neues.'; break;
     case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); if(B.phase==='tlobby') drawTeamInvites(); return;
-    case 'hi': B.onlineCount=m.online; return;
+    case 'hi': B.onlineCount=m.online; if(B.ban){ B.ban=null; banBar(); } return;
     case 'gift': cloudPull(); return;
+    case 'banned': B.ban={until:Date.parse(m.until)||0,reason:m.reason||''}; banBar(); if(location.hash.startsWith('#battle')){ B.phase='lobby'; B.msg=banText(); drawBattle(); } return;
     case 'friend_req': if(S.friends[m.from.id]){ bSend({type:'friend_ok',to:m.from.id}); return; } popup({kind:'friend',from:m.from}); return;
     case 'friend_ok': S.friends[m.from.id]={name:m.from.name,avatar:m.from.avatar,title:m.from.title,color:m.from.color,since:Date.now()}; save(); toast(`${m.from.name} ist jetzt dein Freund`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
     case 'friend_no': toast(`${m.from.name} hat abgelehnt`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
