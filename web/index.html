@@ -245,6 +245,11 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 /* Update-Hinweis */
 .upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
 @keyframes updin{from{transform:translateY(-120%)}to{transform:none}}
+/* Spielstand */
+.savecode{font-family:var(--f-mono); font-weight:600; font-size:1.4rem; letter-spacing:.08em; color:var(--accent)}
+/* Bots */
+.botrow{display:flex; flex-direction:column; gap:6px}
+.botlv{color:var(--muted); font-weight:400; font-size:.8em}
 /* Team-Battle */
 .tcols{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 .tcol{display:flex; flex-direction:column; gap:6px; min-width:0}
@@ -373,7 +378,7 @@ nav.tabs a[aria-current="page"]{color:var(--accent)}
 const KEY='alkane-klausur-v1';
 let S={done:{},cards:{},tasks:{},exams:[],wrong:{},theme:'system',hunt:{}};
 try{ const raw=localStorage.getItem(KEY); if(raw){ S=Object.assign(S,JSON.parse(raw)); } }catch(e){}
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function save(noCloud){ S.savedAt=Date.now(); try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} if(!noCloud&&typeof cloudSoon==='function') cloudSoon(); }
 const THEMES={system:'Automatisch',light:'Hell',dark:'Dunkel'};
 let themeTouched=false;
 function applyTheme(){ const r=document.documentElement; if(S.theme==='system'){ if(themeTouched) r.removeAttribute('data-theme'); } else { r.setAttribute('data-theme',S.theme); themeTouched=true; } }
@@ -1239,6 +1244,7 @@ function viewStart(){
    <div class="row" id="chat-sug">${BOT_SUGGEST.map(q=>`<button class="chip" type="button" data-sug>${q}</button>`).join('')}</div>
    <form class="chat-in" id="chat-form"><label for="chat-q" class="sr">Deine Frage</label><input id="chat-q" class="inp" autocomplete="off" maxlength="500" placeholder="Frag einfach, z. B. Was ist ein Dipol?"><button class="btn primary" type="submit" id="chat-send">Senden</button></form>
    ${BOT.msgs.length?'<button class="xlink" type="button" id="chat-clear">Chat leeren</button>':''}</section>
+  <section class="card"><h2 style="font-size:1.15rem">Spielstand</h2><div id="cloud" style="margin-top:8px">${cloudHTML()}</div></section>
   ${S.exams.length?`<section class="card"><h2>Deine Probeklausuren</h2><div class="tbl"><table><tr><th>Wann</th><th>Ergebnis</th></tr>${S.exams.slice(-5).reverse().map(x=>`<tr><td>${x.d}</td><td>${x.r} von ${x.n} (${Math.round(x.r/x.n*100)} %)</td></tr>`).join('')}</table></div></section>`:''}`;
   const tick=()=>{ const ms=EXAM-new Date(); const e=$('#cd'); if(!e) return;
     if(ms<=0){ e.innerHTML='<div class="cd-unit"><span class="num">Heute!</span><span class="lbl">Viel Erfolg</span></div>'; return; }
@@ -1353,7 +1359,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='2.2';
+const APP_VERSION='2.3';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1372,6 +1378,52 @@ function checkUpdate(){
 }
 setTimeout(checkUpdate,8000); setInterval(checkUpdate,3*60*1000);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkUpdate(); });
+
+/* ---------- Cloud-Spielstand ---------- */
+const CLOUD='https://alkane-battle.onrender.com/cloud/';
+function cloudOk(){ return netCapable(); }
+function cloudPost(path,obj){ return fetch(CLOUD+path,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(obj)}).then(r=>r.json().then(j=>({status:r.status,j}))); }
+function cloudSecret(){ S.cloud=S.cloud||{}; if(!S.cloud.secret){ try{ const a=new Uint8Array(16); crypto.getRandomValues(a); S.cloud.secret=[...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ S.cloud.secret=(Math.random().toString(16).slice(2)+Date.now().toString(16)).padEnd(32,'0').slice(0,32); } } return S.cloud.secret; }
+let cloudT=null;
+function cloudSoon(){ if(!cloudOk()) return; clearTimeout(cloudT); cloudT=setTimeout(cloudPush,4000); }
+function cloudData(){ const d=JSON.parse(JSON.stringify(S)); delete d.cloud; return d; }
+function cloudPush(){ if(!cloudOk()) return; cloudSecret();
+  cloudPost('save',{pid:S.pid,secret:S.cloud.secret,data:cloudData()}).then(({status,j})=>{
+    if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; } else S.cloud.err=j.error||('Fehler '+status);
+    save(true); drawCloud(); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
+function cloudPull(){ if(!cloudOk()) return; cloudSecret();
+  cloudPost('get',{pid:S.pid,secret:S.cloud.secret}).then(({status,j})=>{
+    if(status!==200) { if(status===503){ S.cloud.err=j.error; drawCloud(); } return; }
+    if(!j.found){ cloudPush(); return; }
+    S.cloud.code=j.code;
+    if(j.data && (j.data.savedAt||0) > (S.savedAt||0)+1000){ const keep={cloud:S.cloud,pid:S.pid}; S=Object.assign({},j.data,keep); initProfile(); save(true); toast('Spielstand vom anderen Gerät geladen'); route(); }
+    else if((S.savedAt||0) > (j.data&&j.data.savedAt||0)+1000) cloudPush();
+    else { S.cloud.at=Date.now(); save(true); drawCloud(); }
+  }).catch(()=>{}); }
+setTimeout(cloudPull,2500);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') cloudPull(); });
+function cloudHTML(){
+  if(!cloudOk()) return '<p class="muted" style="margin:0">Online-Speichern geht in der App und auf alkane-trainer.onrender.com.</p>';
+  const c=S.cloud||{};
+  const st=c.err?`<span class="warn" style="display:inline-block;padding:2px 8px">${c.err}</span>`:c.at?`☁️ Gespeichert ${new Date(c.at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`:'Wird gespeichert …';
+  return `<div style="font-size:.92rem">${st}</div>
+   ${c.code?`<div class="row" style="justify-content:space-between;margin-top:8px"><div><div class="eyebrow">Dein Spielstand-Code</div><div class="savecode">${c.code}</div></div><button class="btn small" type="button" id="cl-copy">Kopieren</button></div>
+   <p class="muted" style="font-size:.85rem;margin:.4em 0 0">Mit diesem Code holst du deinen Spielstand (Münzen, Shop, Freunde, Fortschritt) auf ein anderes Gerät. Gib ihn niemandem.</p>`:''}
+   <div class="sec-label" style="margin-top:14px">Spielstand von anderem Gerät holen</div>
+   <div class="row" style="flex-wrap:nowrap"><input id="cl-code" class="inp" maxlength="9" placeholder="z. B. ABCD-2345" autocomplete="off" style="flex:1;min-width:0;margin:0;text-transform:uppercase"><button class="btn" type="button" id="cl-load">${B.clConfirm?'Wirklich ersetzen?':'Laden'}</button></div>
+   ${B.clConfirm?'<p class="warn" style="margin:6px 0 0;font-size:.85rem">Der Spielstand auf diesem Gerät wird dabei ersetzt. Tippe nochmal zum Bestätigen.</p>':''}`;
+}
+function drawCloud(){ const box=$('#cloud'); if(box) box.innerHTML=cloudHTML(); }
+document.addEventListener('click',e=>{
+  if(e.target.id==='cl-copy'){ const t=(S.cloud||{}).code||''; try{ navigator.clipboard.writeText(t).then(()=>toast('Code kopiert'),()=>toast(t)); }catch(x){ toast(t); } }
+  if(e.target.id==='cl-load'){ const inp=$('#cl-code'); const code=(inp&&inp.value||'').trim(); if(code.replace(/[^A-Za-z0-9]/g,'').length!==8){ toast('Der Code hat 8 Zeichen, z. B. ABCD-2345'); return; }
+    if(!B.clConfirm){ B.clConfirm=true; B.clCode=code; drawCloud(); $('#cl-code').value=code; setTimeout(()=>{ B.clConfirm=false; drawCloud(); },8000); return; }
+    B.clConfirm=false;
+    cloudPost('load',{code}).then(({status,j})=>{
+      if(status!==200){ toast(j.error||'Laden fehlgeschlagen'); drawCloud(); return; }
+      S=Object.assign({},j.data,{pid:j.pid,cloud:{secret:j.secret,code:j.code,at:Date.now()}}); initProfile(); save(true);
+      toast('Spielstand geladen! 🎉'); try{ if(B.ws) B.ws.close(); }catch(x){} setTimeout(bSilentConnect,500); route(); }).catch(()=>toast('Keine Verbindung. Versuch es nochmal.')); }
+});
 
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
@@ -1508,14 +1560,15 @@ function bMsg(m){
     case 'tinvite': popup({kind:'tinvite',from:m.from,code:m.code,size:m.size}); return;
     case 'tlobby': Object.assign(B,{isTeam:true,phase:'tlobby',code:m.code,size:m.size,you:m.you,host:m.host,token:m.token,players:m.players,msg:'',end:null,correct:0,awarded:false}); bSaveSession(); if(!location.hash.startsWith('#battle')) location.hash='#battle'; break;
     case 'tplayers': B.players=m.players; if(typeof m.host==='number') B.host=(m.host===B.you); break;
-    case 'tprep': Object.assign(B,{isTeam:true,phase:'matched',players:m.players,host:m.host,correct:0,awarded:false,pscores:[],tscores:[0,0]}); if(m.host) bSend({type:'questions',list:battleQuestions()}); if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} } break;
+    case 'tprep': Object.assign(B,{isTeam:true,phase:'matched',players:m.players,host:m.host,correct:0,awarded:false,pscores:[],tscores:[0,0]}); if(m.size){ Object.assign(B,{size:m.size,you:m.you,code:m.code,token:m.token}); bSaveSession(); } if(m.host) bSend({type:'questions',list:battleQuestions()}); if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} } break;
     case 'tanswered': B.ansCount=m.count; B.ansTotal=m.total; break;
     case 'treveal': Object.assign(B,{phase:'reveal',reveal:m,pscores:m.pscores,tscores:m.tscores,players:m.players,myReady:false,readyCount:0}); if(m.picks[B.you]===m.a) B.correct++; break;
     case 'tready': B.readyCount=m.count; B.readyTotal=m.total; break;
     case 'tleft': toast(`${m.name} hat das Battle verlassen`); return;
     case 'tend': { Object.assign(B,{phase:'end',end:m,pscores:m.pscores,tscores:m.tscores,players:m.players}); if(B.awarded) break; B.awarded=true;
       const my=B.players[B.you]?B.players[B.you].team:0, res=m.winner===-1?'d':(m.winner===my?'w':'l'); S.bstats[res]++; save();
-      award({w:60,d:30,l:15}[res]+B.correct*5,{w:'Team-Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
+      const withBots=(B.players||[]).some(p=>p&&p.bot), pts={w:60,d:30,l:15}[res]+B.correct*5;
+      award(withBots?Math.round(pts/2):pts,(withBots?'mit Bots: halbe Münzen · ':'')+{w:'Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
     case 'invite_no': B.inviting=null; toast(`${m.from.name} hat abgelehnt`); drawSocial(); return;
     case 'error_soft': B.inviting=null; toast(m.msg); if(B.spec&&!SP){ B.spec=false; drawBattle(); } else drawSocial(); return;
     case 'opp_away': B.oppAway=true; break;
@@ -1571,6 +1624,7 @@ function bSilentConnect(){
   }).catch(()=>setTimeout(bSilentConnect,30000));
 }
 setTimeout(bSilentConnect,1500);
+addEventListener('pagehide',()=>{ try{ if(B.ws&&B.phase==='lobby'&&!B.spec) B.ws.close(); }catch(e){} });
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && !(B.ws&&B.ws.readyState<=1) && !B.token) bSilentConnect(); });
 function bWho(){ bSend({type:'who',friends:Object.keys(S.friends)}); }
 setInterval(()=>{ if(location.hash.startsWith('#battle') && B.ws && B.ws.readyState===1 && ['lobby','connecting','searching','room','tlobby'].includes(B.phase)) bWho(); },8000);
@@ -1620,9 +1674,10 @@ function drawBattle(){
       <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
       <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
       <div class="row" style="flex-wrap:nowrap"><button class="btn big" type="button" data-b="tcreate2" style="flex:1">👥 2 gegen 2</button><button class="btn big" type="button" data-b="tcreate3" style="flex:1">👥 3 gegen 3</button></div>
+      <div class="botrow"><span class="eyebrow">🤖 Gegen einen Bot</span><div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-b="bot-easy" style="flex:1">Leicht</button><button class="btn" type="button" data-b="bot-medium" style="flex:1">Mittel</button><button class="btn" type="button" data-b="bot-hard" style="flex:1">Schwer</button></div></div>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
       <div id="b-social"></div>
-      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
+      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg. Mit Bots gibt es die Hälfte.</li><li>Keiner da? Spiel gegen einen Bot oder füll dein Team mit Bots auf.</li></ul></section>`;
   } else {
     const opp=B.opp||{name:'Gegner'};
     const s0=B.scores[B.you], s1=B.scores[1-B.you];
@@ -1698,25 +1753,27 @@ function drawSpec(){
 }
 
 /* ---------- Team-Battle-Ansicht ---------- */
-const TEAMN=['Team Rot','Team Blau'];
+const TEAMN0=['Team Rot','Team Blau']; let TEAMN=TEAMN0;
 function drawTeam(){
   clearInterval(B.timer);
   const P=(B.players||[]), me=P[B.you]||{}, myTeam=me.team||0;
   const members=t=>P.filter(p=>p&&p.team===t);
-  const chip=p=>`<div class="tmem${p.away?' away':''}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><span class="tn"><span ${nameStyle(p.color)}>${p.name}</span>${p.slot===B.you?' (du)':''}${p.host?' 👑':''}${p.away?' · weg':''}</span>${B.pscores&&B.pscores[p.slot]!=null&&B.phase!=='tlobby'?`<b class="tp">${B.pscores[p.slot]}</b>`:''}</div>`;
+  TEAMN = B.size===1 ? [0,1].map(t=>(members(t)[0]||{}).name||TEAMN0[t]) : TEAMN0;
+  const chip=p=>`<div class="tmem${p.away?' away':''}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><span class="tn"><span ${nameStyle(p.color)}>${p.name}</span>${p.slot===B.you?' (du)':''}${p.host?' 👑':''}${p.away?' · weg':''}${p.bot?`<span class="botlv"> ${p.title.replace('Bot ','')}</span>`:''}</span>${B.pscores&&B.pscores[p.slot]!=null&&B.phase!=='tlobby'?`<b class="tp">${B.pscores[p.slot]}</b>`:''}${p.bot&&B.host&&B.phase==='tlobby'?`<button class="xbtn" type="button" data-b="tkick" data-slot="${p.slot}" aria-label="Bot entfernen">×</button>`:''}</div>`;
   let h='';
   if(B.phase==='tlobby'){
     const a=members(0).length, b=members(1).length, ok=a&&b&&a===b;
-    h=`<header><span class="eyebrow">Team-Battle · ${B.size} gegen ${B.size}</span><h1>Warteraum</h1></header>
+    h=`<header><span class="eyebrow">${B.size===1?'1 gegen 1':'Team-Battle · '+B.size+' gegen '+B.size}</span><h1>Warteraum</h1></header>
     <section class="card bwait"><span class="eyebrow">Raum-Code</span><div class="bcode">${B.code}</div><p class="muted" style="margin:0">Freunde können mit diesem Code über „Raum beitreten“ mitmachen oder du lädst sie unten ein.</p></section>
     <div class="tcols">${[0,1].map(t=>`<section class="card tcol t${t}"><div class="tname">${TEAMN[t]} · ${members(t).length}/${B.size}</div>${members(t).map(chip).join('')}${Array.from({length:Math.max(0,B.size-members(t).length)},()=>'<div class="tmem free">frei</div>').join('')}</section>`).join('')}</div>
     <div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-b="tswitch" style="flex:1">Team wechseln</button><button class="btn" type="button" data-b="leave" style="flex:1">Verlassen</button></div>
+    ${B.host&&P.filter(Boolean).length<B.size*2?`<div class="botrow"><span class="eyebrow">🤖 Bot hinzufügen (kommt ins kleinere Team)</span><div class="row" style="flex-wrap:nowrap"><button class="btn small" type="button" data-b="tbot-easy" style="flex:1">Leicht</button><button class="btn small" type="button" data-b="tbot-medium" style="flex:1">Mittel</button><button class="btn small" type="button" data-b="tbot-hard" style="flex:1">Schwer</button></div></div>`:''}
     ${B.host?`<button class="btn primary big" type="button" data-b="tstart" ${ok?'':'disabled'}>${ok?'Battle starten':'Teams müssen gleich groß sein'}</button>`:'<p class="muted" style="text-align:center;margin:0">Warte, bis der Raum-Ersteller startet …</p>'}
     <section class="card"><div class="sec-label">Freunde einladen</div><div class="flist" id="t-inv"></div></section>`;
     app.innerHTML=h; drawTeamInvites(); bWho(); return;
   }
   const ts=B.tscores||[0,0];
-  h=`<div class="muted" id="b-specs" style="text-align:center;font-size:.85rem">${B.specs?`👀 ${B.specs} schau${B.specs===1?'t':'en'} zu`:''}</div><div class="tbar2">${[0,1].map(t=>`<div class="tbox t${t}${t===myTeam?' mine':''}"><div class="tname">${TEAMN[t]}${t===myTeam?' (dein Team)':''}</div><div class="tscore">${ts[t]}</div><div class="tavs">${members(t).map(p=>`<span title="${p.name}" class="${p.away?'away':''}">${AVATAR[p.avatar]||'🧑‍🔬'}</span>`).join('')}</div></div>`).join('')}</div>`;
+  h=`<div class="muted" id="b-specs" style="text-align:center;font-size:.85rem">${B.specs?`👀 ${B.specs} schau${B.specs===1?'t':'en'} zu`:''}</div><div class="tbar2">${[0,1].map(t=>`<div class="tbox t${t}${t===myTeam?' mine':''}"><div class="tname">${TEAMN[t]}${t===myTeam?(B.size===1?' (du)':' (dein Team)'):''}</div><div class="tscore">${ts[t]}</div><div class="tavs">${members(t).map(p=>`<span title="${p.name}" class="${p.away?'away':''}">${AVATAR[p.avatar]||'🧑‍🔬'}</span>`).join('')}</div></div>`).join('')}</div>`;
   if(B.phase==='matched') h+=`<section class="card bwait"><div class="spin"></div><b>Team-Battle startet</b><p class="muted" style="margin:0">Fragen werden vorbereitet …</p></section>`;
   if(B.phase==='countdown') h+=`<section class="card bwait"><span class="eyebrow">Gleich geht's los</span><div class="bcode" id="b-cd">3</div></section>`;
   if(B.phase==='question'||B.phase==='reveal'){
@@ -1737,7 +1794,7 @@ function drawTeam(){
       <p class="muted" style="text-align:center;margin:0;font-size:.85rem">${B.readyCount||0} von ${B.readyTotal||P.filter(p=>p&&!p.away).length} bereit</p>`; }
   }
   if(B.phase==='end'){ const w=B.end.winner, mvp=P[B.end.mvp];
-    h+=`<section class="card bwait"><span class="eyebrow">Team-Battle vorbei</span><div class="bres">${w===-1?'Unentschieden!':(w===myTeam?'🏆 Dein Team hat gewonnen!':TEAMN[w]+' hat gewonnen')}</div>
+    h+=`<section class="card bwait"><span class="eyebrow">${B.size===1?'Battle vorbei':'Team-Battle vorbei'}</span><div class="bres">${w===-1?'Unentschieden!':(w===myTeam?(B.size===1?'🏆 Du hast gewonnen!':'🏆 Dein Team hat gewonnen!'):TEAMN[w]+' hat gewonnen')}</div>
       <div class="bcode" style="font-size:2.2rem"><span class="tcolor0">${ts[0]}</span> : <span class="tcolor1">${ts[1]}</span></div>
       ${mvp?`<p style="margin:0">⭐ MVP: <b><span ${nameStyle(mvp.color)}>${mvp.name}</span></b> mit ${B.pscores[mvp.slot]} Punkten</p>`:''}
       <p class="muted" style="margin:0">Du: ${B.correct} von ${B.total} richtig, ${B.pscores[B.you]||0} Punkte</p>
@@ -1773,6 +1830,9 @@ function battleClick(e){
   if(a==='ready'){ if(B.phase==='reveal'&&!B.myReady){ B.myReady=true; bSend({type:'ready',qi:B.qi}); drawBattle(); } return; }
   if(a==='tcreate2'||a==='tcreate3'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'tcreate',size:a==='tcreate3'?3:2})); }
   if(a==='unwatch'){ bSend({type:'unwatch'}); B.spec=false; SP=null; B.phase='lobby'; B.msg=''; drawBattle(); return; }
+  if(a.startsWith('bot-')){ if(needName()) return; B.msg=''; const lv=a.slice(4); bConnect(()=>bSend({type:'botduel',level:lv})); return; }
+  if(a.startsWith('tbot-')){ bSend({type:'tbot',level:a.slice(5)}); return; }
+  if(a==='tkick'){ bSend({type:'tkick',slot:+b.dataset.slot}); return; }
   if(a==='tswitch'){ bSend({type:'tswitch'}); }
   if(a==='tstart'){ bSend({type:'tstart'}); }
   if(a==='tagain'){ bSend({type:'rematch'}); }

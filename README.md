@@ -1,40 +1,64 @@
 # Chemie: Alkane Trainer
 
-Interaktive Lern-App für die 1. Chemieklausur (Alkane): 7 Themen mit Erklärungen, endloses Training mit immer neuen Aufgaben, Probeklausur, Karteikarten und Aufgaben mit Musterlösung.
+Lern-App für die 1. Chemieklausur (Alkane, 10.11.26) mit Training, Online-Battles, Shop und KI-Nachhilfe.
+Läuft als Android-App (APK), als installierbare Web-App auf iPhone/iPad und im Browser.
+
+- **Web-App:** https://alkane-trainer.onrender.com (iPhone/iPad: Safari → Teilen → „Zum Home-Bildschirm“)
+- **Battle-Server:** https://alkane-battle.onrender.com (Render, Region Frankfurt, kostenloser Plan)
+- **Repo:** Vanacho1202/Chemie-
+
+## Funktionen
+
+| Bereich | Was es kann |
+|---|---|
+| Lernplan | Countdown bis zur Klausur, Themenliste mit Fortschritt, Spickzettel, Hell/Dunkel |
+| 7 Themen | Erklärung, interaktiver Teil (Baukasten, ΔEN-Rechner, Isomer-Jagd, Van-der-Waals-Animation …), Lernvideos, Check mit 5 Fragen |
+| Training | endlos neue Aufgaben (Generatoren), Schwächen zuerst, Satz-Puzzles, Zuordnen-Spiel, Trefferquote pro Thema |
+| Probeklausur | 15 Fragen, halb neu erzeugt, Auswertung pro Thema, Fehlerheft |
+| Karteikarten / Aufgaben | 26 Definitionen, 10 Klausuraufgaben mit Musterlösung |
+| Battle | 1 gegen 1 (Schnellsuche, Raum-Code, Freund herausfordern), 2 gegen 2 und 3 gegen 3, Kahoot-Punkte, 20 s pro Frage, Weiter erst wenn alle bereit, Emotes, Revanche |
+| Bots | 1 gegen Bot oder Teams mit Bots auffüllen, Stufen leicht/mittel/schwer, mit Bots halbe Münzen |
+| Freunde | Online-Liste, Freundschaftsanfragen, Herausfordern, in Team-Raum einladen, 👀 Zuschauen |
+| Shop | Münzen für richtige Antworten, Emotes, Avatare, Titel, Namensfarben |
+| Alki | KI-Chemie-Nachhilfe (Google Gemini), Live-Text; ohne KI Antworten aus dem Lernstoff |
+| Spielstand | lokal gespeichert und zusätzlich in der Cloud, Spielstand-Code zum Übertragen auf andere Geräte |
+| Updates | App lädt die neueste Version von GitHub, Hinweis „Update verfügbar“ mit Neu-laden-Knopf |
 
 ## Aufbau
 
 | Ordner | Inhalt |
 |---|---|
-| `web/` | Die eigentliche App (eine HTML-Datei). Render veröffentlicht diesen Ordner als Website. |
-| `server/` | Battle-Server (Node + WebSocket), läuft auf Render als `alkane-battle`. |
-| `android/` | Android-Hülle (WebView). Lädt die Live-Version von Render, offline die eingebaute Kopie. |
+| `web/` | Die App (eine HTML-Datei) plus Manifest, Service Worker, Icons, `version.json`. Render veröffentlicht diesen Ordner. |
+| `server/` | Battle-Server (Node + WebSocket): Battles, Teams, Bots, Freunde, Zuschauer, KI-Proxy, Cloud-Spielstand. |
+| `android/` | Android-Hülle (WebView). `assets/index.html` ist eine Ladeseite, die `web/index.html` von GitHub holt; `assets/app.html` ist die Offline-Kopie. |
+| `tools/` | `build_web.sh` (baut `web/index.html`), `rebuild.py` + `sign_v2.py` (APK ohne Android SDK umbauen und signieren). |
+| `docs/` | Projektnotiz für Obsidian. |
 
-## iPhone und iPad
+## Server (Render-Dienst `alkane-battle`)
 
-Die Website ist eine installierbare Web-App: In Safari https://alkane-trainer.onrender.com öffnen → Teilen → „Zum Home-Bildschirm“.
-Sie startet dann im Vollbild mit eigenem Symbol. `web/manifest.webmanifest`, `web/sw.js` (offline) und die Icons gehören dazu.
-`tools/build_web.sh <app.html>` baut `web/index.html` mit den nötigen Kopfzeilen.
+Umgebungsvariablen:
+- `GEMINI_API_KEY`: Schlüssel aus Google AI Studio für Alki
+- `GEMINI_MODEL` (optional): Komma-Liste von Modellen; beim Start wird das schnellste gewählt
+- `DATABASE_URL`: „Internal Database URL“ der Render-Datenbank `alkane-saves` (Cloud-Spielstand)
 
-## Live-Updates
+HTTP-Endpunkte: `GET /` (Status), `GET /diag` (Verbindung zu Gemini prüfen), `POST /ask` (Alki, Antwort als Text-Stream), `POST /cloud/save|get|load` (Spielstand).
+WebSocket-Nachrichten: `hello`, `who`, `quick`, `create`, `join`, `tcreate`, `tbot`, `tkick`, `botduel`, `tswitch`, `tstart`, `tinvite`, `invite`, `friend_req`, `watch`, `answer`, `ready`, `emote`, `rematch`, `resume`, `leave`.
 
-1. `web/index.html` ändern und auf `main` pushen.
-2. **Render** veröffentlicht die Website automatisch: https://alkane-trainer.onrender.com
-3. **Die Android-App** lädt beim Start `web/index.html` direkt von GitHub (raw.githubusercontent.com) und merkt sich die Version. Ohne Internet nimmt sie die zuletzt geladene Version, beim allerersten Start ohne Internet die eingebaute Kopie `assets/app.html`. Eine neue APK ist für Inhalts-Updates nicht nötig.
-
-Der Lernfortschritt bleibt dabei erhalten, weil die App immer unter derselben lokalen Adresse läuft.
-
-## APK
-
-- `android/app/src/main/assets/index.html`: Ladeseite (holt die Live-Version)
-- `android/app/src/main/assets/app.html`: Offline-Kopie der App
-
-Bauen (Windows): `cd android` → `gradlew.bat assembleDebug`
-
-`tools/rebuild.py` und `tools/sign_v2.py` bauen eine vorhandene APK ohne Android SDK um (Assets tauschen, ausrichten mit `repro-apk zipalign`, v2-signieren). Wichtig: Eine Version, die mit einem anderen Schlüssel signiert ist, lässt sich nicht über die installierte App installieren. Dann vorher deinstallieren.
+Wichtig:
+- Die System-Adressauflösung hängt bei Render teils minutenlang. Der Server löst Adressen deshalb selbst über 8.8.8.8/1.1.1.1 auf.
+- Gemini 2.5 ist für neue Schlüssel nicht mehr verfügbar; Gemini 3 läuft mit `thinkingLevel: minimal`.
+- Die kostenlose Render-Datenbank läuft am 09.12.2026 ab, wenn sie nicht auf einen Bezahlplan umgestellt wird. Der Spielstand bleibt lokal trotzdem erhalten.
 
 ## Updates ohne Battle-Abbruch
 
-Render baut bei jedem Commit auch den Battle-Server neu, und dabei gehen laufende Battles verloren.
-Commits, die nur `web/` oder `android/` ändern, deshalb mit `[skip render]` in der Commit-Nachricht pushen
-und danach nur die statische Seite `alkane-trainer` neu deployen. Die App holt sich die Änderung direkt von GitHub.
+Render baut bei jedem Commit auch den Battle-Server neu, dabei gehen laufende Battles verloren.
+Commits, die nur `web/` oder `android/` ändern, mit `[skip render]` in der Commit-Nachricht pushen
+und danach nur die statische Seite `alkane-trainer` neu deployen. Bei jeder neuen App-Version
+`APP_VERSION` in der App und `web/version.json` erhöhen, dann erscheint der Update-Hinweis.
+
+## APK
+
+Die installierte APK holt sich Inhalts-Updates selbst. Eine neue APK braucht es nur, wenn sich die Android-Hülle ändert.
+Bauen (Windows): `cd android` → `gradlew.bat assembleDebug`.
+Ohne Android SDK: `tools/rebuild.py` tauscht die Assets einer vorhandenen APK, `repro-apk zipalign` richtet sie aus, `tools/sign_v2.py` signiert sie (v2).
+Eine anders signierte APK lässt sich nicht über die installierte App installieren, dann vorher deinstallieren.

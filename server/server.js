@@ -46,6 +46,54 @@ const rooms = new Map();     // code -> room
 let waiting = null;          // Spieler in der Schnellsuche
 const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade die App offen hat)
 
+// ---------- Cloud-Spielstand (Postgres) ----------
+let pool = null;
+const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const newSaveCode = () => Array.from(crypto.randomBytes(8), b => CODE_ABC[b % CODE_ABC.length]).join('').replace(/^(.{4})/, '$1-');
+async function initDb() {
+  if (!process.env.DATABASE_URL) return console.log('Cloud-Spielstand: keine DATABASE_URL gesetzt');
+  try {
+    const u = new URL(process.env.DATABASE_URL);
+    // Adresse selbst auflösen (System-Auflösung hängt bei Render teils)
+    let host = u.hostname; try { if (!require('net').isIP(host)) host = (await sysResolver.resolve4(host))[0]; } catch {}
+    const { Pool } = require('pg');
+    pool = new Pool({ host, port: +u.port || 5432, user: decodeURIComponent(u.username), password: decodeURIComponent(u.password), database: u.pathname.slice(1),
+      ssl: /render\.com$/.test(u.hostname) ? { rejectUnauthorized: false, servername: u.hostname } : false, max: 3, connectionTimeoutMillis: 8000 });
+    await pool.query(`create table if not exists saves (pid text primary key, secret text not null, code text unique not null, name text, data jsonb not null, updated_at timestamptz not null default now())`);
+    console.log('Cloud-Spielstand: Datenbank bereit');
+  } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; }
+}
+const HEX = /^[a-f0-9]{16,64}$/;
+async function cloudRoute(path, m) {
+  if (!pool) return [503, { error: 'Cloud-Speicher ist noch nicht eingerichtet.' }];
+  if (path === '/cloud/save') {
+    if (!HEX.test(m.pid || '') || !HEX.test(m.secret || '') || typeof m.data !== 'object') return [400, { error: 'bad' }];
+    const data = JSON.stringify(m.data); if (data.length > 200000) return [413, { error: 'zu groß' }];
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await pool.query(`insert into saves (pid, secret, code, name, data) values ($1,$2,$3,$4,$5)
+          on conflict (pid) do update set data = excluded.data, name = excluded.name, updated_at = now() where saves.secret = excluded.secret
+          returning code, updated_at`, [m.pid, m.secret, newSaveCode(), String(m.data.name || '').slice(0, 16), data]);
+        if (!r.rows.length) return [403, { error: 'Falscher Schlüssel für diesen Spielstand.' }];
+        return [200, { ok: true, code: r.rows[0].code, updated: r.rows[0].updated_at }];
+      } catch (e) { if (!/saves_code_key/.test(e.message)) throw e; }   // Code schon vergeben: neu würfeln
+    }
+    return [500, { error: 'code' }];
+  }
+  if (path === '/cloud/get') {
+    if (!HEX.test(m.pid || '') || !HEX.test(m.secret || '')) return [400, { error: 'bad' }];
+    const r = await pool.query('select code, data, updated_at from saves where pid = $1 and secret = $2', [m.pid, m.secret]);
+    return [200, r.rows.length ? { found: true, code: r.rows[0].code, data: r.rows[0].data, updated: r.rows[0].updated_at } : { found: false }];
+  }
+  if (path === '/cloud/load') {
+    const code = String(m.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{4})/, '$1-');
+    const r = await pool.query('select pid, secret, code, data from saves where code = $1', [code]);
+    if (!r.rows.length) return [404, { error: 'Diesen Code gibt es nicht. Prüf ihn nochmal.' }];
+    return [200, r.rows[0]];
+  }
+  return [404, { error: 'unbekannt' }];
+}
+
 // ---------- KI-Bot (Google Gemini) ----------
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
 // Schnelle Modelle zuerst; beim Start wird das schnellste, das antwortet, ausgewählt
@@ -158,6 +206,18 @@ const server = http.createServer((req, res) => {
     runDiag().then(out => json(200, out));
     return;
   }
+  if (req.method === 'POST' && req.url.startsWith('/cloud/')) {
+    let body = '';
+    req.on('data', c => { body += c; if (body.length > 250000) req.destroy(); });
+    req.on('end', async () => {
+      const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0];
+      if (req.url.startsWith('/cloud/load') && limited('load:' + ip)) return json(429, { error: 'Zu viele Versuche. Warte eine Minute.' });
+      let m; try { m = JSON.parse(body); } catch { return json(400, { error: 'bad_json' }); }
+      try { const [code, out] = await cloudRoute(req.url.split('?')[0], m); json(code, out); }
+      catch (e) { console.log('Cloud-Fehler:', e.message); json(500, { error: 'Speichern gerade nicht möglich.' }); }
+    });
+    return;
+  }
   if (req.method === 'POST' && req.url.startsWith('/ask')) {
     let body = '';
     req.on('data', c => { body += c; if (body.length > 40000) req.destroy(); });
@@ -183,7 +243,7 @@ const server = http.createServer((req, res) => {
     });
     return;
   }
-  json(200, { ok: true, online: online.size, rooms: rooms.size, ai: !!GEMINI_KEY });
+  json(200, { ok: true, online: online.size, rooms: rooms.size, ai: !!GEMINI_KEY, cloud: !!pool });
 });
 const wss = new WebSocketServer({ server, maxPayload: 600 * 1024 });
 
@@ -243,6 +303,33 @@ function endMatch(room) {
   both(room, () => room.end); spec(room, room.end);
 }
 
+// ================= Bots =================
+// Leicht: oft falsch und langsam, Mittel: solide, Schwer: fast immer richtig und schnell
+const BOT_LEVEL = { easy: { p: 0.45, min: 7000, max: 15000, label: 'leicht' }, medium: { p: 0.72, min: 4000, max: 10000, label: 'mittel' }, hard: { p: 0.92, min: 1800, max: 5500, label: 'schwer' } };
+const BOT_NAMES = ['Methan-Max', 'Ethan-Emma', 'Propan-Paul', 'Butan-Bella', 'Pentan-Pia', 'Hexan-Hugo', 'Heptan-Hanna', 'Octan-Otto'];
+const BOT_AVATARS = ['robot', 'alien', 'owl', 'penguin', 'fox', 'panda'];
+function makeBot(room, level) {
+  const L = BOT_LEVEL[level] ? level : 'medium';
+  const used = new Set(room.players.filter(Boolean).map(p => p.name));
+  const name = (BOT_NAMES.find(n => !used.has('🤖 ' + n)) || 'Bot');
+  return { isBot: true, level: L, name: '🤖 ' + name, avatar: BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)], title: 'Bot (' + BOT_LEVEL[L].label + ')', color: 'std', readyState: 0, token: crypto.randomBytes(12).toString('hex'), send() {}, terminate() {} };
+}
+function botsAnswer(room) {
+  const qi = room.qi, q = room.questions[qi];
+  room.players.forEach((p, slot) => {
+    if (!p || !p.isBot) return;
+    const L = BOT_LEVEL[p.level];
+    const delay = L.min + Math.random() * (L.max - L.min);
+    setTimeout(() => {
+      if (room.state !== 'question' || room.qi !== qi || room.answers[slot] || room.players[slot] !== p) return;
+      const right = Math.random() < L.p;
+      const wrong = q.o.map((_, i) => i).filter(i => i !== q.a);
+      room.answers[slot] = { i: right || !wrong.length ? q.a : wrong[Math.floor(Math.random() * wrong.length)], ms: Date.now() - room.t0 };
+      tCheckAnswers(room);
+    }, Math.min(delay, LIMIT_MS - 300));
+  });
+}
+
 // ================= Zuschauer =================
 function spec(room, msg) { if (room.spectators) room.spectators.forEach(w => send(w, msg)); }
 function specCount(room) { const n = room.spectators ? room.spectators.size : 0; room.players.forEach(p => p && send(p, { type: 'specs', n })); }
@@ -263,7 +350,7 @@ function unwatch(ws) { const r = ws.watching; if (!r) return; ws.watching = null
 const tAll = (room, msg) => room.players.forEach(p => p && send(p, typeof msg === 'function' ? msg(p) : msg));
 const tActive = room => room.players.filter(p => p && !p.away);
 const tCount = (room, team) => room.players.filter((p, i) => p && room.teams[i] === team).length;
-const tPlayers = room => room.players.map((p, i) => p ? { ...profile(p), slot: i, team: room.teams[i], away: !!p.away, host: i === room.hostSlot } : null);
+const tPlayers = room => room.players.map((p, i) => p ? { ...profile(p), slot: i, team: room.teams[i], away: !!p.away, host: i === room.hostSlot, bot: !!p.isBot, level: p.level } : null);
 function tLobby(room) { tAll(room, p => ({ type: 'tlobby', code: room.code, size: room.size, you: p.slot, host: p.slot === room.hostSlot, token: p.token, players: tPlayers(room) })); }
 function tPlayersUpdate(room) { tAll(room, { type: 'tplayers', players: tPlayers(room), host: room.hostSlot }); spec(room, { type: 'tplayers', players: tPlayers(room) }); }
 function tSeat(room, ws) {
@@ -276,7 +363,7 @@ function tSeat(room, ws) {
 function tStartPrep(room) {
   room.state = 'prep'; room.qi = -1; room.questions = null; room.lastReveal = null; room.end = null;
   room.pscores = room.players.map(() => 0);
-  tAll(room, p => ({ type: 'tprep', host: p.slot === room.hostSlot, players: tPlayers(room) }));
+  tAll(room, p => ({ type: 'tprep', host: p.slot === room.hostSlot, size: room.size, you: p.slot, code: room.code, token: p.token, players: tPlayers(room) }));
 }
 function tNext(room) {
   clearTimeout(room.timer);
@@ -285,6 +372,7 @@ function tNext(room) {
   room.state = 'question'; room.answers = room.players.map(() => null); room.t0 = Date.now();
   const q = room.questions[room.qi];
   tAll(room, { type: 'q', qi: room.qi, total: room.questions.length, limit: LIMIT_MS, q: { q: q.q, o: q.o, svg: q.svg || '', t: q.t } });
+  botsAnswer(room);
   spec(room, { type: 'q', qi: room.qi, total: room.questions.length, limit: LIMIT_MS, q: { q: q.q, o: q.o, svg: q.svg || '', t: q.t } });
   room.timer = setTimeout(() => tReveal(room), LIMIT_MS + 300);
 }
@@ -300,7 +388,7 @@ function tReveal(room) {
   const q = room.questions[room.qi];
   const gained = room.answers.map(a => (a && a.i === q.a) ? Math.round(500 + 500 * Math.max(0, 1 - a.ms / LIMIT_MS)) : 0);
   room.pscores = room.pscores.map((s, i) => s + (gained[i] || 0));
-  room.ready = room.players.map(() => false);
+  room.ready = room.players.map(p => !!(p && p.isBot));
   room.lastReveal = { type: 'treveal', qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, pscores: room.pscores, tscores: tScores(room), players: tPlayers(room) };
   tAll(room, room.lastReveal); spec(room, room.lastReveal);
   room.timer = setTimeout(() => tNext(room), READY_MS);
@@ -320,8 +408,8 @@ function tEnd(room) {
 function tRemove(room, ws) {
   const slot = room.players.indexOf(ws); if (slot < 0) return;
   room.players[slot] = null; ws.room = null; clearTimeout((room.grace || [])[slot]);
-  if (!room.players.some(Boolean)) { clearTimeout(room.timer); rooms.delete(room.code); spec(room, { type: 'spec_end' }); return; }
-  if (room.hostSlot === slot) room.hostSlot = room.players.findIndex(Boolean);
+  if (!room.players.some(p => p && !p.isBot)) { clearTimeout(room.timer); rooms.delete(room.code); spec(room, { type: 'spec_end' }); return; }
+  if (room.hostSlot === slot) room.hostSlot = room.players.findIndex(p => p && !p.isBot);
   if (room.state === 'lobby' || room.state === 'end') return tLobbyOrUpdate(room);
   tAll(room, { type: 'tleft', name: ws.name });
   tPlayersUpdate(room);
@@ -410,7 +498,8 @@ function resume(ws, m) {
 
 wss.on('connection', ws => {
   ws.name = 'Spieler'; ws.avatar = 'scientist'; ws.title = 'Neuling'; ws.color = 'std'; ws.alive = true;
-  ws.on('pong', () => { ws.alive = true; });
+  ws.lastPong = Date.now();
+  ws.on('pong', () => { ws.alive = true; ws.lastPong = Date.now(); });
   ws.on('message', raw => {
     let m; try { m = JSON.parse(raw); } catch { return; }
     const room = ws.room;
@@ -420,16 +509,17 @@ wss.on('connection', ws => {
         ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
         if (/^[a-f0-9]{16,32}$/.test(m.id || '')) {
           ws.pid = m.id;
-          const prev = online.get(ws.pid);
-          if (prev && prev !== ws && !prev.room && prev.readyState === 1) { try { prev.close(); } catch {} }
-          online.set(ws.pid, ws);
+          online.set(ws.pid, ws);   // pro Spieler-ID zählt nur die neueste Verbindung
         }
         send(ws, { type: 'hi', online: online.size });
         break;
       case 'resume': resume(ws, m); break;
       case 'who': {
         // alle, die gerade die App offen haben (ohne einen selbst)
-        const list = [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.named).slice(0, 200).map(pub);
+        // gleiche Person (Name + Avatar) nur einmal, tote Verbindungen weglassen
+        const seen = new Set(), list = [];
+        [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.named && p.pid !== ws.pid && Date.now() - (p.lastPong || 0) < 40000)
+          .sort((a, b) => (b.room ? 1 : 0) - (a.room ? 1 : 0)).forEach(p => { const k = p.name.toLowerCase() + '|' + p.avatar; if (k === (ws.name || '').toLowerCase() + '|' + ws.avatar || seen.has(k)) return; seen.add(k); list.push(pub(p)); });
         const ids = Array.isArray(m.friends) ? m.friends.slice(0, 300) : [];
         send(ws, { type: 'who', list, friendsOnline: ids.filter(id => online.has(id)) });
         break;
@@ -473,6 +563,24 @@ wss.on('connection', ws => {
         break;
       }
       case 'unwatch': unwatch(ws); break;
+      case 'tbot': {   // Raum-Ersteller fügt einen Bot hinzu (ins kleinere Team)
+        if (!room || !room.team || room.state !== 'lobby' || ws.slot !== room.hostSlot) return;
+        if (room.players.filter(Boolean).length >= room.size * 2) return send(ws, { type: 'error_soft', msg: 'Der Raum ist schon voll.' });
+        const bot = makeBot(room, m.level); tSeat(room, bot); tLobby(room);
+        break;
+      }
+      case 'tkick': {  // Bot wieder entfernen
+        if (!room || !room.team || room.state !== 'lobby' || ws.slot !== room.hostSlot) return;
+        const b = room.players[m.slot | 0]; if (b && b.isBot) { room.players[m.slot | 0] = null; tLobby(room); }
+        break;
+      }
+      case 'botduel': {  // 1 gegen 1 gegen einen Bot: sofort los
+        leave(ws);
+        const code = newCode(); const r = { code, team: true, size: 1, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [] };
+        rooms.set(code, r); tSeat(r, ws); tSeat(r, makeBot(r, m.level));
+        tStartPrep(r);
+        break;
+      }
       case 'tcreate': {
         const size = m.size === 3 ? 3 : 2;
         leave(ws);
@@ -553,12 +661,13 @@ wss.on('connection', ws => {
 });
 
 // Verbindungen am Leben halten, tote Verbindungen aufräumen
-setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; ws.ping(); }), 25000);
+setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; ws.ping(); }), 15000);
 
 server.listen(PORT, () => {
   console.log('Alkane Battle läuft auf Port ' + PORT);
   // Beim Start: schnellstes Modell auswählen, Ergebnis steht im Log
   if (GEMINI_KEY) pickModel();
+  initDb();
   if (false) {
     const t0 = Date.now();
     geminiStream([{ role: 'user', text: 'Antworte nur mit: OK' }], () => {})
