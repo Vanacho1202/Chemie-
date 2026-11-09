@@ -90,6 +90,10 @@ svg text{fill:var(--ink)}
 .st-bond{stroke:var(--ink); stroke-width:1.6}
 .st-atom{font-family:var(--f-mono); font-size:15px; font-weight:600}
 .st-h{fill:var(--muted)!important; font-weight:400}
+.hs-t{font-family:var(--f-mono); font-size:15px; font-weight:600; fill:var(--ink)}
+.hs-s{font-size:10px}
+.hs-b{stroke:var(--ink); stroke-width:1.5}
+.kopt .hs-t{fill:#fff} .kopt .hs-b{stroke:#fff}
 
 /* Kopf */
 .hero{display:flex; flex-direction:column; gap:10px; padding-top:6px}
@@ -374,6 +378,24 @@ function condensed(m){
   }
   return parts.join('–');
 }
+/* Halbstrukturformel wie im Heft: Hauptkette waagerecht, Seitenketten mit Strichen nach oben/unten */
+function halb(m,opt={}){
+  if(!m.subs.length) return `<span class="mono">${fm(condensed(m))}</span>`;
+  const by={}; m.subs.forEach(s=>(by[s.p]=by[s.p]||[]).push(s));
+  const mainLab=i=>{ const nb=(i===1||i===m.n)?1:2; const h=4-nb-(by[i]||[]).length; return h>0?'CH'+(h>1?h:''):'C'; };
+  const w=l=>l.replace(/\d/g,'').length*9.2+(/\d/.test(l)?6.5:0);
+  const T=(x,y,l)=>`<text class="hs-t" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${l.replace(/(\d)/,'<tspan class="hs-s" dy="4">$1</tspan>')}</text>`;
+  const L=(x1,y1,x2,y2)=>`<line class="hs-b" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  let up=0,down=0; Object.values(by).forEach(list=>list.forEach((s,j)=>{ if(j===0) up=Math.max(up,s.l); else down=Math.max(down,s.l); }));
+  const CW=48, RH=30, W=m.n*CW, H=(up+down+1)*RH, y0=up*RH+RH/2, cx=i=>(i-0.5)*CW;
+  let out='';
+  for(let i=1;i<=m.n;i++){ const l=mainLab(i); out+=T(cx(i),y0,l);
+    if(i<m.n){ const r=mainLab(i+1); out+=L(cx(i)+w(l)/2+4,y0,cx(i+1)-w(r)/2-4,y0); } }
+  Object.keys(by).forEach(pk=>{ const i=+pk; by[i].forEach((s,j)=>{ const d=j===0?-1:1; let py=y0;
+    for(let k=1;k<=s.l;k++){ const y=y0+d*k*RH, l=k<s.l?'CH2':'CH3'; out+=L(cx(i),py+d*9,cx(i),y-d*9)+T(cx(i),y,l); py=y; } }); });
+  const sc=opt.scale||1.2;
+  return `<svg class="fig hs" viewBox="0 0 ${W} ${H}" width="${Math.round(W*sc)}" role="img" aria-label="Halbstrukturformel ${condensed(m)}">${out}</svg>`;
+}
 /* Skelettformel als SVG */
 function skeletonSVG(m,opt={}){
   if(m.n===1) return '<p class="muted" style="text-align:center">Methan hat nur ein C-Atom. Eine Skelettformel ist hier nicht üblich.</p>';
@@ -578,7 +600,7 @@ const TOPICS=[
  <tr><th>Schreibweise</th><th>Was sie zeigt</th><th>Butan</th></tr>
  <tr><td><b>Summenformel</b></td><td>nur Art und Anzahl der Atome. Sagt nichts über die Struktur: Isomere haben dieselbe!</td><td class="mono">C<sub>4</sub>H<sub>10</sub></td></tr>
  <tr><td><b>Strukturformel</b> (Valenzstrich-, Lewis-Formel)</td><td>alle Atome und alle Bindungen als Striche</td><td>siehe unten</td></tr>
- <tr><td><b>Halbstrukturformel</b></td><td>C–C-Bindungen als Strich, H am C zusammengefasst</td><td class="mono">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub></td></tr>
+ <tr><td><b>Halbstrukturformel</b></td><td>C–C-Bindungen als Strich, H am C zusammengefasst. Seitenketten hängen mit einem senkrechten Strich oben oder unten am C</td><td class="mono">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub></td></tr>
  <tr><td><b>Skelettformel</b></td><td>Zickzack-Linie: jede Ecke und jedes Ende ist ein C-Atom, H am C wird weggelassen</td><td>siehe unten</td></tr>
  </table></div>
  <h3>Räumliche Darstellungen</h3>
@@ -606,7 +628,7 @@ const QUESTIONS=[
 {t:1,q:'Warum nennt man Alkane „gesättigt“?',o:['Sie haben nur Einfachbindungen und damit die größtmögliche Zahl an H-Atomen.','Sie enthalten gelöstes Wasser.','Sie können keine weiteren Stoffe lösen.','Ihre Siedetemperatur ist erreicht.'],a:0,e:'Gesättigt heißt: keine Doppel- oder Dreifachbindungen, mehr H passt nicht dran.'},
 {t:1,q:'Welche Summenformel hat Decan?',o:['C<sub>10</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>20</sub>','C<sub>12</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>24</sub>'],a:0,e:'2 · 10 + 2 = 22.'},
 // Thema 2
-{t:2,q:'Wie heißt CH<sub>3</sub>–CH(CH<sub>3</sub>)–CH<sub>2</sub>–CH<sub>3</sub>?',o:['2-Methylbutan','3-Methylbutan','2-Ethylpropan','1-Methylbutan'],a:0,e:'Hauptkette 4 C (Butan). Nummerierung von links gibt der Methylgruppe die kleinere Nummer: 2.'},
+{t:2,q:'Wie heißt dieses Alkan?',svg:halb({n:4,subs:[{p:2,l:1}]}),o:['2-Methylbutan','3-Methylbutan','2-Ethylpropan','1-Methylbutan'],a:0,e:'Hauptkette 4 C (Butan). Nummerierung von links gibt der Methylgruppe die kleinere Nummer: 2.'},
 {t:2,q:'Welcher Name ist richtig geschrieben?',o:['3-Ethyl-2-methylpentan','2-Methyl-3-ethylpentan','3-Ethyl-4-methylpentan','2-Methyl-3-Ethylpentan'],a:0,e:'Alphabetisch: Ethyl vor Methyl. Nummern so klein wie möglich (2,3 statt 3,4). Nur der erste Buchstabe groß.'},
 {t:2,q:'Warum ist der Name „1-Methylbutan“ falsch?',o:['Die Methylgruppe verlängert die Kette, die längste Kette hat dann 5 C: Pentan.','Methylgruppen dürfen nur an C2 sitzen.','Butan hat keine Seitenketten.','Es müsste „1-Methylbutyl“ heißen.'],a:0,e:'Eine Seitenkette am Kettenende gehört zur Hauptkette.'},
 {t:2,q:'Was bedeutet „di“ in 2,2-Dimethylbutan?',o:['Es gibt zwei Methylgruppen.','Die Methylgruppe sitzt an C2.','Das Molekül hat eine Doppelbindung.','Es gibt zwei Hauptketten.'],a:0,e:'di = 2, tri = 3, tetra = 4. Beide Methylgruppen sitzen hier an C2.'},
@@ -660,7 +682,7 @@ const QUESTIONS=[
 {t:6,q:'In welchem Zustand liegt Butan bei 20 °C vor?',o:['gasförmig','flüssig','fest','als Plasma'],a:0,e:'Butan siedet schon bei −0,5 °C. Im Feuerzeug ist es nur unter Druck flüssig.'},
 {t:6,q:'Warum bildet Benzin auf Wasser eine Schicht oben?',o:['Es ist unpolar, mischt sich nicht mit Wasser und hat eine geringere Dichte.','Es ist polarer als Wasser.','Es bildet H-Brücken mit der Luft.','Es ist schwerer als Wasser.'],a:0,e:'Nicht mischbar (unpolar gegen polar) und leichter: Darum schwimmt es oben.'},
 {t:7,q:'Wie viele Bindungsstriche hat jedes C-Atom in einer Strukturformel?',o:['4','2','3','1'],a:0,e:'Kohlenstoff ist vierbindig. H ist einbindig.'},
-{t:7,q:'Welche Summenformel gehört zu CH<sub>3</sub>–CH(CH<sub>3</sub>)–CH<sub>3</sub>?',o:['C<sub>4</sub>H<sub>10</sub>','C<sub>3</sub>H<sub>8</sub>','C<sub>4</sub>H<sub>8</sub>','C<sub>3</sub>H<sub>10</sub>'],a:0,e:'3 C in der Kette + 1 C in der Seitenkette = 4 C. Das ist 2-Methylpropan.'},
+{t:7,q:'Welche Summenformel gehört zu dieser Halbstrukturformel?',svg:halb({n:3,subs:[{p:2,l:1}]}),o:['C<sub>4</sub>H<sub>10</sub>','C<sub>3</sub>H<sub>8</sub>','C<sub>4</sub>H<sub>8</sub>','C<sub>3</sub>H<sub>10</sub>'],a:0,e:'3 C in der Kette + 1 C in der Seitenkette = 4 C. Das ist 2-Methylpropan.'},
 {t:2,q:'Wie heißt die Seitenkette –C<sub>4</sub>H<sub>9</sub>?',o:['Butyl','Butan','Propyl','Pentyl'],a:0,e:'Vom Butan abgeleitet, ein H weniger, Endung -yl.'},
 {t:2,q:'Welcher Name ist richtig?',o:['3-Ethyl-5-methylheptan','5-Ethyl-3-methylheptan','3-Methyl-5-ethylheptan','5-Methyl-3-ethylheptan'],a:0,e:'Von beiden Seiten ergeben sich die Nummern 3 und 5. Dann bekommt die alphabetisch erste Seitenkette (Ethyl) die kleinere Nummer.'},
 {t:2,q:'Welche Reihenfolge der Seitenketten ist alphabetisch richtig?',o:['Butyl, Ethyl, Methyl, Propyl','Methyl, Ethyl, Propyl, Butyl','Ethyl, Butyl, Methyl, Propyl','Propyl, Methyl, Ethyl, Butyl'],a:0,e:'B vor E vor M vor P. Die Länge der Seitenkette spielt keine Rolle.'},
@@ -706,7 +728,7 @@ const TASKS=[
 {t:3,q:'<b>Zeichne</b> alle Isomere von C<sub>5</sub>H<sub>12</sub> als Skelettformel und <b>benenne</b> sie.',
  sol:()=>`<div class="iso-grid">${[{n:5,subs:[]},{n:4,subs:[{p:2,l:1}]},{n:3,subs:[{p:2,l:1},{p:2,l:1}]}].map(m=>`<div class="iso">${skeletonSVG(m,{scale:1.3})}<div class="nm">${nameOf(m)}</div></div>`).join('')}</div>`},
 {t:2,q:'<b>Zeichne</b> 3-Ethyl-2,4-dimethylhexan als Skelettformel und gib die Summenformel an.',
- sol:()=>{const m={n:6,subs:[{p:2,l:1},{p:3,l:2},{p:4,l:1}]}; return `<div class="figbox">${skeletonSVG(m,{nums:true,dots:true})}</div><p class="mono">${fm(condensed(m))}</p><p>Hauptkette 6 C (schwarz), Seitenketten orange. Summenformel: 6 + 2 + 1 + 1 = 10 C, also <b>${fm(sumFormula(m))}</b>.</p>`;}},
+ sol:()=>{const m={n:6,subs:[{p:2,l:1},{p:3,l:2},{p:4,l:1}]}; return `<div class="figbox">${skeletonSVG(m,{nums:true,dots:true})}</div><div class="figbox">${halb(m)}</div><p>Hauptkette 6 C (schwarz), Seitenketten orange. Summenformel: 6 + 2 + 1 + 1 = 10 C, also <b>${fm(sumFormula(m))}</b>.</p>`;}},
 {t:4,q:'<b>Ordne</b> die Bindungen nach steigender Polarität und <b>begründe</b>: O–H, C–H, C–O, N–H. (EN: H 2,2; C 2,5; N 3,0; O 3,5)',
  sol:()=>`<p>ΔEN berechnen: C–H = 0,3; N–H = 0,8; C–O = 1,0; O–H = 1,3.</p><p><b>C–H &lt; N–H &lt; C–O &lt; O–H</b></p><p>Je größer die Elektronegativitätsdifferenz, desto stärker sind die Bindungselektronen zum elektronegativeren Atom verschoben, desto polarer ist die Bindung. C–H ist praktisch unpolar.</p>`},
 {t:5,q:'<b>Erkläre</b> am Beispiel von Wasser, wie eine Wasserstoffbrückenbindung entsteht. Zeichne eine Skizze.',
@@ -749,7 +771,7 @@ const GEN={
  namingQuestion, namingQuestion,
  ()=>{const m=randomMolecule(),c=carbons(m); return mk(2,`Welche Summenformel hat ${nameOf(m)}?`,FA(c),shuffle([FA(m.n),F(c,2*c),F(c+1,2*c+4),F(c-1,2*c)]),`Hauptkette ${m.n} C + Seitenketten ${c-m.n} C = ${c} C. H = 2 · ${c} + 2 = ${2*c+2}.`);},
  ()=>{const m=randomMolecule(); return mk(2,'Wie viele C-Atome hat die Hauptkette (längste Kette) dieses Moleküls?',String(m.n),shuffle([String(m.n-1),String(m.n+1),String(carbons(m)),String(m.n+2)]),`Die längste Kette hat ${m.n} C-Atome, Stammname ${cap(STEMS[m.n])}an. Ganzer Name: <b>${nameOf(m)}</b>.`,skeletonSVG(m,{flip:Math.random()<.5,scale:1.6,dots:true}));},
- ()=>{const m=randomMolecule(),nm=nameOf(m); return mk(2,`Welche Halbstrukturformel gehört zu ${nm}?`,`<span class="mono">${fm(condensed(m))}</span>`,(()=>{const w=[]; for(let i=0;i<40&&w.length<3;i++){const x=randomMolecule(); if(nameOf(x)!==nm){const s=`<span class="mono">${fm(condensed(x))}</span>`; if(!w.includes(s)) w.push(s);}} return w;})(),`Hauptkette ${m.n} C, dann die Seitenketten an die genannten Positionen hängen.`);}
+ ()=>{const m=randomMolecule(),nm=nameOf(m); return mk(2,`Welche Halbstrukturformel gehört zu ${nm}?`,halb(m,{scale:1}),(()=>{const w=[]; for(let i=0;i<40&&w.length<3;i++){const x=randomMolecule(); if(nameOf(x)!==nm){const s=halb(x,{scale:1}); if(!w.includes(s)) w.push(s);}} return w;})(),`Hauptkette ${m.n} C, dann die Seitenketten an die genannten Positionen hängen.`);}
 ],
 3:[
  ()=>{const m1=randomMolecule(); const m2=(Math.random()<.55&&sameCarbonPartner(m1))||randomMolecule(); const iso=carbons(m1)===carbons(m2)&&nameOf(m1)!==nameOf(m2);
@@ -792,8 +814,8 @@ const GEN={
 7:[
  ()=>{const n=randInt(3,10); return mk(7,'Welches Alkan zeigt diese Skelettformel?',ALKANES[n].name,shuffle([n-2,n-1,n+1,n+2].filter(x=>x>=2&&x<=10)).map(x=>ALKANES[x].name),`Ecken und Enden zählen: ${n} C-Atome.`,skeletonSVG({n,subs:[]},{scale:1.5}));},
  ()=>{const n=randInt(1,5); return mk(7,'Welche Summenformel gehört zu dieser Strukturformel?',FA(n),shuffle([FA(n+1),F(n,2*n),F(n,2*n+4),FA(Math.max(1,n-1))]),`${n} C-Atome, ${2*n+2} H-Atome: ${ALKANES[n].name}.`,structSVG({n,subs:[]}));},
- ()=>{const m=randomMolecule(),o=nameOptions(m); return mk(7,`Wie heißt das Alkan mit der Halbstrukturformel <span class="mono">${fm(condensed(m))}</span>?`,o.correct,o.wrong,`Längste Kette ${m.n} C, kleinste Nummern, alphabetisch: ${o.correct}.`);},
- ()=>{const m=pick([randomMolecule(),{n:randInt(3,7),subs:[]}]); const kinds=[['Summenformel',`<span class="mono" style="font-size:1.4rem">${FA(carbons(m))}</span>`],['Halbstrukturformel',`<span class="mono">${fm(condensed(m))}</span>`],['Skelettformel',skeletonSVG(m,{scale:1.4})]]; if(!m.subs.length) kinds.push(['Strukturformel',structSVG(m)]);
+ ()=>{const m=randomMolecule(),o=nameOptions(m); return mk(7,'Wie heißt das Alkan mit dieser Halbstrukturformel?',o.correct,o.wrong,`Längste Kette ${m.n} C, kleinste Nummern, alphabetisch: ${o.correct}.`,halb(m));},
+ ()=>{const m=pick([randomMolecule(),{n:randInt(3,7),subs:[]}]); const kinds=[['Summenformel',`<span class="mono" style="font-size:1.4rem">${FA(carbons(m))}</span>`],['Halbstrukturformel',halb(m)],['Skelettformel',skeletonSVG(m,{scale:1.4})]]; if(!m.subs.length) kinds.push(['Strukturformel',structSVG(m)]);
   const k=pick(kinds); return mk(7,'Welche Schreibweise ist das?',k[0],shuffle(['Summenformel','Strukturformel','Halbstrukturformel','Skelettformel'].filter(x=>x!==k[0])),`Das ist die ${k[0]} von ${nameOf(m)}.`,`<div style="text-align:center;overflow-wrap:anywhere">${k[1]}</div>`);}
 ]};
 function genQ(t){ return pick(GEN[t])(); }
@@ -890,7 +912,7 @@ W.homolog=root=>{
     $('#hom-nv',root).textContent=n; $('#hom-name',root).textContent=a.name;
     $('#hom-f',root).innerHTML=fm(sumFormula(m)); $('#hom-r',root).textContent=`2 · ${n} + 2 = ${2*n+2}`;
     $('#hom-bp',root).textContent=dec(a.bp)+' °C'; $('#hom-st',root).textContent=a.bp<20?'gasförmig':'flüssig';
-    $('#hom-struct',root).innerHTML=structSVG(m); $('#hom-cond',root).innerHTML=fm(condensed(m));
+    $('#hom-struct',root).innerHTML=structSVG(m); $('#hom-cond',root).innerHTML=halb(m);
     $('#hom-sk',root).innerHTML=skeletonSVG(m,{dots:true,nums:true}); };
   r.addEventListener('input',up); up();
 };
@@ -918,7 +940,7 @@ W.branch=root=>{
     $('#br-subs',root).innerHTML=m.subs.map((s,i)=>`<span class="subchip">${s.p}-${cap(ALKYL[s.l])}<button type="button" data-rm="${i}" aria-label="Entfernen">×</button></span>`).join('')||'<span class="muted" style="font-size:.9rem">Noch keine Seitenkette: unverzweigtes Alkan.</span>';
     $('#br-svg',root).innerHTML=skeletonSVG(m,{nums:true,dots:true});
     $('#br-name',root).textContent=nameOf(m);
-    $('#br-f',root).innerHTML=fm(sumFormula(m)); $('#br-c',root).innerHTML=fm(condensed(m));
+    $('#br-f',root).innerHTML=fm(sumFormula(m)); $('#br-c',root).innerHTML=`<div class="figbox">${halb(m,{scale:1.05})}</div>`;
   };
   const msg=(h,cls)=>{ $('#br-msg',root).innerHTML=h?`<div class="${cls||'warn'}">${h}</div>`:''; };
   nSel.addEventListener('change',()=>{ const n=+nSel.value; const keep=[];
@@ -1106,7 +1128,7 @@ W.notation=root=>{
   <div class="notation" id="no-out"></div>`;
   const show=i=>{ const m=PRE[i];
     $('#no-out',root).innerHTML=`<div class="stat"><div class="k">Summenformel</div><div class="v mono">${fm(sumFormula(m))}</div></div>
-     <div class="stat"><div class="k">Halbstrukturformel</div><div class="v mono" style="font-size:.95rem">${fm(condensed(m))}</div></div>
+     <div class="stat"><div class="k">Halbstrukturformel</div><div class="figbox">${halb(m)}</div></div>
      <div class="stat"><div class="k">Strukturformel / Lewis-Formel</div><div class="figbox">${structSVG(m)}</div></div>
      <div class="stat"><div class="k">Skelettformel</div><div class="figbox">${skeletonSVG(m,{scale:1.5})}</div></div>`;
     root.querySelectorAll('#no-btns .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i)); };
