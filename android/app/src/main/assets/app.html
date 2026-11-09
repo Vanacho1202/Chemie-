@@ -1367,7 +1367,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='3.0';
+const APP_VERSION='3.1';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1404,13 +1404,15 @@ function cloudPush(){ if(!cloudOk()) return; cloudSecret();
     if(status===200){ S.cloud.code=j.code; S.cloud.at=Date.now(); S.cloud.err=''; } else S.cloud.err=j.error||('Fehler '+status);
     save(true); drawCloud(); applyGifts(j&&j.gifts); }).catch(()=>{ S.cloud.err='Gerade offline, wird später gespeichert'; drawCloud(); }); }
 /* Geschenke vom Server (Münzen, neuer Name), werden genau einmal ausgeliefert */
-function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null, nf=0, ni=0;
+function applyGifts(g){ if(!Array.isArray(g)||!g.length) return; let c=0, nm=null, nf=0, ni=0, nu=0;
   S.friends=S.friends||{}; S.owned=S.owned||{};
   g.forEach(x=>{ c+=Math.max(-1000000,Math.min(1000000,parseInt(x.coins,10)||0)); if(x.name) nm=String(x.name).slice(0,16);
     const ex=x.extra||{};
     (Array.isArray(ex.friends)?ex.friends:[]).forEach(f=>{ if(!f||!f.id||f.id===S.pid||S.friends[f.id]) return; S.friends[f.id]={name:String(f.name||'').slice(0,16),avatar:f.avatar||'scientist',title:f.title||'Neuling',color:f.color||'std',since:Date.now()}; nf++; });
+    (Array.isArray(ex.unfriend)?ex.unfriend:[]).forEach(id=>{ if(S.friends[id]){ delete S.friends[id]; nu++; } });
     const ids=ex.allItems?SHOP.map(i=>i.id):(Array.isArray(ex.items)?ex.items:[]);
     ids.forEach(id=>{ if(SHOP.some(i=>i.id===id)&&!S.owned[id]){ S.owned[id]=1; ni++; } }); });
+  if(nu){ save(); if(/^#battle/.test(location.hash)) try{ route(); }catch(e){} }
   if(!c&&!nm&&!nf&&!ni) return;
   if(c) S.coins=Math.max(0,(S.coins||0)+c); if(nm) S.name=nm; save();
   toast('🎁 '+[c?'<b>'+(c>0?'+':'')+c+'</b> 🪙':'', nm?'Neuer Name: <b>'+nm.replace(/[<&]/g,'')+'</b>':'', nf?'<b>'+nf+'</b> neue Freunde':'', ni?'<b>'+ni+'</b> neue Items':''].filter(Boolean).join(' · '));
