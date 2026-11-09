@@ -241,6 +241,100 @@ function endMatch(room) {
   both(room, () => room.end);
 }
 
+// ================= Team-Battles (2 gegen 2, 3 gegen 3) =================
+const tAll = (room, msg) => room.players.forEach(p => p && send(p, typeof msg === 'function' ? msg(p) : msg));
+const tActive = room => room.players.filter(p => p && !p.away);
+const tCount = (room, team) => room.players.filter((p, i) => p && room.teams[i] === team).length;
+const tPlayers = room => room.players.map((p, i) => p ? { ...profile(p), slot: i, team: room.teams[i], away: !!p.away, host: i === room.hostSlot } : null);
+function tLobby(room) { tAll(room, p => ({ type: 'tlobby', code: room.code, size: room.size, you: p.slot, host: p.slot === room.hostSlot, token: p.token, players: tPlayers(room) })); }
+function tPlayersUpdate(room) { tAll(room, { type: 'tplayers', players: tPlayers(room), host: room.hostSlot }); }
+function tSeat(room, ws) {
+  let slot = room.players.findIndex(p => !p); if (slot < 0) slot = room.players.length;
+  room.players[slot] = null;
+  const team = tCount(room, 0) <= tCount(room, 1) ? 0 : 1;      // ins kleinere Team
+  room.players[slot] = ws; room.teams[slot] = team;
+  ws.slot = slot; ws.room = room; ws.away = false; ws.token = ws.token || crypto.randomBytes(12).toString('hex');
+}
+function tStartPrep(room) {
+  room.state = 'prep'; room.qi = -1; room.questions = null; room.lastReveal = null; room.end = null;
+  room.pscores = room.players.map(() => 0);
+  tAll(room, p => ({ type: 'tprep', host: p.slot === room.hostSlot, players: tPlayers(room) }));
+}
+function tNext(room) {
+  clearTimeout(room.timer);
+  room.qi++;
+  if (room.qi >= room.questions.length) return tEnd(room);
+  room.state = 'question'; room.answers = room.players.map(() => null); room.t0 = Date.now();
+  const q = room.questions[room.qi];
+  tAll(room, { type: 'q', qi: room.qi, total: room.questions.length, limit: LIMIT_MS, q: { q: q.q, o: q.o, svg: q.svg || '', t: q.t } });
+  room.timer = setTimeout(() => tReveal(room), LIMIT_MS + 300);
+}
+const tScores = room => [0, 1].map(t => room.pscores.reduce((s, v, i) => s + (room.players[i] && room.teams[i] === t ? v : 0), 0));
+function tCheckAnswers(room) {
+  const act = tActive(room), done = act.filter(p => room.answers[p.slot]).length;
+  tAll(room, { type: 'tanswered', count: done, total: act.length });
+  if (act.length && done >= act.length) tReveal(room);
+}
+function tReveal(room) {
+  if (room.state !== 'question') return;
+  clearTimeout(room.timer); room.state = 'reveal';
+  const q = room.questions[room.qi];
+  const gained = room.answers.map(a => (a && a.i === q.a) ? Math.round(500 + 500 * Math.max(0, 1 - a.ms / LIMIT_MS)) : 0);
+  room.pscores = room.pscores.map((s, i) => s + (gained[i] || 0));
+  room.ready = room.players.map(() => false);
+  room.lastReveal = { type: 'treveal', qi: room.qi, last: room.qi === room.questions.length - 1, a: q.a, e: q.e || '', picks: room.answers.map(a => a ? a.i : -1), gained, pscores: room.pscores, tscores: tScores(room), players: tPlayers(room) };
+  tAll(room, room.lastReveal);
+  room.timer = setTimeout(() => tNext(room), READY_MS);
+}
+function tCheckReady(room) {
+  const act = tActive(room), done = act.filter(p => room.ready[p.slot]).length;
+  tAll(room, { type: 'tready', count: done, total: act.length });
+  if (act.length && done >= act.length) tNext(room);
+}
+function tEnd(room) {
+  clearTimeout(room.timer); room.state = 'end';
+  const ts = tScores(room);
+  let mvp = -1; room.pscores.forEach((v, i) => { if (room.players[i] && (mvp < 0 || v > room.pscores[mvp])) mvp = i; });
+  room.end = { type: 'tend', tscores: ts, pscores: room.pscores, winner: ts[0] === ts[1] ? -1 : (ts[0] > ts[1] ? 0 : 1), mvp, players: tPlayers(room) };
+  tAll(room, room.end);
+}
+function tRemove(room, ws) {
+  const slot = room.players.indexOf(ws); if (slot < 0) return;
+  room.players[slot] = null; ws.room = null; clearTimeout((room.grace || [])[slot]);
+  if (!room.players.some(Boolean)) { clearTimeout(room.timer); rooms.delete(room.code); return; }
+  if (room.hostSlot === slot) room.hostSlot = room.players.findIndex(Boolean);
+  if (room.state === 'lobby' || room.state === 'end') return tLobbyOrUpdate(room);
+  tAll(room, { type: 'tleft', name: ws.name });
+  tPlayersUpdate(room);
+  if (room.state === 'prep') { const h = room.players[room.hostSlot]; if (h) send(h, { type: 'tprep', host: true, players: tPlayers(room) }); }
+  if (room.state === 'question') tCheckAnswers(room);
+  if (room.state === 'reveal') tCheckReady(room);
+}
+function tLobbyOrUpdate(room) { if (room.state === 'lobby') tLobby(room); else tPlayersUpdate(room); }
+function tDropped(room, ws) {
+  const slot = ws.slot;
+  ws.away = true; room.grace = room.grace || [];
+  clearTimeout(room.grace[slot]);
+  tPlayersUpdate(room);
+  if (room.state === 'question') tCheckAnswers(room);
+  if (room.state === 'reveal') tCheckReady(room);
+  room.grace[slot] = setTimeout(() => { if (room.players[slot] === ws) tRemove(room, ws); }, GRACE_MS);
+}
+function tResume(ws, room, slot) {
+  const st = { type: 'resume_ok', team: true, code: room.code, token: ws.token, you: slot, host: slot === room.hostSlot, size: room.size, state: room.state, players: tPlayers(room),
+    pscores: room.pscores || [], tscores: room.pscores ? tScores(room) : [0, 0], total: room.questions ? room.questions.length : 10 };
+  if (room.state === 'countdown') st.startIn = Math.max(0, START_MS - (Date.now() - room.cdStart));
+  if (room.state === 'question') {
+    const q = room.questions[room.qi];
+    Object.assign(st, { qi: room.qi, limit: LIMIT_MS, elapsed: Date.now() - room.t0, q: { q: q.q, o: q.o, svg: q.svg || '', t: q.t }, myPick: room.answers[slot] ? room.answers[slot].i : -1 });
+  }
+  if (room.state === 'reveal') Object.assign(st, { qi: room.qi, reveal: room.lastReveal, myReady: room.ready[slot] });
+  if (room.state === 'end') st.end = room.end;
+  send(ws, st);
+  tPlayersUpdate(room);
+  if (room.state === 'lobby') tLobby(room);
+}
+
 function closeRoom(room, except) {
   clearTimeout(room.timer); (room.grace || []).forEach(t => clearTimeout(t));
   room.players.forEach(p => { if (p && p !== except) { p.room = null; send(p, { type: 'opp_left' }); } });
@@ -251,6 +345,7 @@ function closeRoom(room, except) {
 function leave(ws) {
   if (waiting === ws) waiting = null;
   const room = ws.room; if (!room) return;
+  if (room.team) return tRemove(room, ws);
   ws.room = null;
   closeRoom(room, ws);
 }
@@ -261,6 +356,7 @@ function dropped(ws) {
   const room = ws.room; if (!room || !rooms.has(room.code)) return;
   const slot = ws.slot;
   if (room.players[slot] !== ws) return;          // schon durch neue Verbindung ersetzt
+  if (room.team) return tDropped(room, ws);
   room.grace = room.grace || [null, null];
   clearTimeout(room.grace[slot]);
   send(room.players[1 - slot], { type: 'opp_away' });
@@ -274,6 +370,7 @@ function resume(ws, m) {
   const old = room.players[slot];
   ws.token = old.token; ws.name = old.name; ws.avatar = old.avatar; ws.title = old.title; ws.color = old.color; ws.canReady = old.canReady;
   old.room = null; try { old.terminate(); } catch {}
+  if (room.team) { room.players[slot] = ws; ws.slot = slot; ws.room = room; ws.away = false; clearTimeout((room.grace || [])[slot]); return tResume(ws, room, slot); }
   seat(room, ws, slot);
   clearTimeout((room.grace || [])[slot]);
   const other = room.players[1 - slot];
@@ -345,7 +442,40 @@ wss.on('connection', ws => {
         rooms.set(code, r); seat(r, ws, 0); send(ws, { type: 'room', code, token: ws.token });
         break;
       }
+      case 'tcreate': {
+        const size = m.size === 3 ? 3 : 2;
+        leave(ws);
+        const code = newCode(); const r = { code, team: true, size, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [] };
+        rooms.set(code, r); tSeat(r, ws); tLobby(r);
+        break;
+      }
+      case 'tswitch':
+        if (!room || !room.team || room.state !== 'lobby') return;
+        { const other = 1 - room.teams[ws.slot]; if (tCount(room, other) >= room.size) return send(ws, { type: 'error_soft', msg: 'Das andere Team ist schon voll.' }); room.teams[ws.slot] = other; tLobby(room); }
+        break;
+      case 'tstart':
+        if (!room || !room.team || room.state !== 'lobby' || ws.slot !== room.hostSlot) return;
+        { const a = tCount(room, 0), b = tCount(room, 1);
+          if (!a || !b || a !== b) return send(ws, { type: 'error_soft', msg: 'Beide Teams müssen gleich groß sein (mindestens 1 Spieler pro Team).' });
+          tStartPrep(room); }
+        break;
+      case 'tinvite': {
+        const to = online.get(String(m.to || ''));
+        if (!room || !room.team || room.state !== 'lobby') return;
+        if (!to) return send(ws, { type: 'error_soft', msg: 'Der Spieler ist gerade nicht online.' });
+        if (to.room && to.room.state && to.room.state !== 'lobby') return send(ws, { type: 'error_soft', msg: to.name + ' ist gerade in einem Battle.' });
+        send(to, { type: 'tinvite', from: pub(ws), code: room.code, size: room.size });
+        break;
+      }
       case 'join': {
+        const tr = rooms.get(clean(m.code, 4));
+        if (tr && tr.team) {
+          if (tr.players.includes(ws)) return tLobby(tr);
+          if (tr.state !== 'lobby') return send(ws, { type: 'error', msg: 'Das Team-Battle läuft schon.' });
+          if (tr.players.filter(Boolean).length >= tr.size * 2) return send(ws, { type: 'error', msg: 'Der Raum ist schon voll.' });
+          leave(ws); tSeat(tr, ws); tLobby(tr);
+          break;
+        }
         const r = rooms.get(clean(m.code, 4));
         if (!r || r.state !== 'lobby' || r.players[1]) return send(ws, { type: 'error', msg: 'Raum nicht gefunden oder schon voll.' });
         if (r.players[0] === ws) return;
@@ -354,22 +484,24 @@ wss.on('connection', ws => {
       }
       case 'cancel': leave(ws); send(ws, { type: 'cancelled' }); break;
       case 'questions':
-        if (!room || ws.slot !== 0 || room.state !== 'prep' || !Array.isArray(m.list)) return;
+        if (!room || ws.slot !== (room.team ? room.hostSlot : 0) || room.state !== 'prep' || !Array.isArray(m.list)) return;
         room.questions = m.list.slice(0, 15).map(q => ({ q: String(q.q).slice(0, 2000), o: (q.o || []).slice(0, 4).map(x => String(x).slice(0, 4000)), a: q.a | 0, e: String(q.e || '').slice(0, 2000), svg: String(q.svg || '').slice(0, 60000), t: q.t | 0 }));
         if (!room.questions.length) return;
         room.state = 'countdown'; room.cdStart = Date.now();
         both(room, () => ({ type: 'start', in: START_MS, total: room.questions.length }));
-        room.timer = setTimeout(() => nextQuestion(room), START_MS);
+        room.timer = setTimeout(() => room.team ? tNext(room) : nextQuestion(room), START_MS);
         break;
       case 'answer':
         if (!room || room.state !== 'question' || m.qi !== room.qi || room.answers[ws.slot]) return;
         room.answers[ws.slot] = { i: m.i | 0, ms: Date.now() - room.t0 };
+        if (room.team) { tCheckAnswers(room); break; }
         send(room.players[1 - ws.slot], { type: 'opp_answered' });
         if (room.answers[0] && room.answers[1]) reveal(room);
         break;
       case 'ready':
         if (!room || room.state !== 'reveal' || m.qi !== room.qi || room.ready[ws.slot]) return;
         room.ready[ws.slot] = true;
+        if (room.team) { tCheckReady(room); break; }
         send(room.players[1 - ws.slot], { type: 'opp_ready' });
         if (room.ready[0] && room.ready[1]) nextQuestion(room);
         break;
@@ -378,6 +510,7 @@ wss.on('connection', ws => {
         break;
       case 'rematch':
         if (!room || room.state !== 'end') return;
+        if (room.team) { if (ws.slot !== room.hostSlot) return; room.state = 'lobby'; room.players.forEach((p, i) => { if (p && p.away) tRemove(room, p); }); tLobby(room); break; }
         room.rematch[ws.slot] = true;
         send(room.players[1 - ws.slot], { type: 'opp_rematch' });
         if (room.rematch[0] && room.rematch[1]) startMatch(room);

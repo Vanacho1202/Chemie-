@@ -242,6 +242,32 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .popup.show{transform:none}
 .pop-in{display:flex; align-items:center; gap:12px}
 .pop-in .av{font-size:2.2rem; line-height:1}
+/* Update-Hinweis */
+.upd{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); max-width:560px; margin:0 auto; z-index:70; display:flex; align-items:center; gap:10px; background:var(--paper); border:2px solid var(--accent); border-radius:14px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:updin .35s ease-out}
+@keyframes updin{from{transform:translateY(-120%)}to{transform:none}}
+/* Team-Battle */
+.tcols{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.tcol{display:flex; flex-direction:column; gap:6px; min-width:0}
+.tcol.t0{border-top:4px solid var(--k0)} .tcol.t1{border-top:4px solid var(--k1)}
+.tname{font-family:var(--f-display); font-weight:800; font-size:.95rem}
+.tmem{display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:10px; background:var(--paper-2); min-width:0}
+.tmem .av{font-size:1.3rem; line-height:1}
+.tmem .tn{flex:1; min-width:0; font-weight:700; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tmem .tp{font-variant-numeric:tabular-nums; color:var(--accent)}
+.tmem.free{color:var(--muted); justify-content:center; border:1px dashed var(--line); background:none; font-size:.85rem}
+.tmem.away{opacity:.5}
+.tbar2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.tbox{border-radius:12px; padding:8px 10px; background:var(--paper); border:1px solid var(--line); min-width:0}
+.tbox.t0{border-top:4px solid var(--k0)} .tbox.t1{border-top:4px solid var(--k1)}
+.tbox.mine{box-shadow:0 0 0 2px var(--accent)}
+.tbox .tname{font-size:.78rem}
+.tscore{font-family:var(--f-display); font-weight:800; font-size:1.5rem; font-variant-numeric:tabular-nums}
+.tavs{font-size:1.1rem; display:flex; gap:2px; flex-wrap:wrap} .tavs .away{opacity:.35}
+.whos{position:absolute; top:-12px; right:6px; display:flex; gap:2px}
+.tw{background:var(--paper); border-radius:99px; padding:0 3px; font-size:.85rem; border:2px solid var(--line)}
+.tw.t0{border-color:var(--k0)} .tw.t1{border-color:var(--k1)}
+.tcolor0{color:var(--k0)} .tcolor1{color:var(--k1)}
+.btn:disabled{opacity:.6; cursor:default}
 /* Battle */
 :root{--k0:#e21b3c; --k1:#1368ce; --k2:#c88a00; --k3:#26890c; --kfg:#ffffff}
 .bwait{display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
@@ -1326,6 +1352,27 @@ function viewMatch(){
   $('#mk').addEventListener('click',e=>{ const c=e.target.closest('[data-k]'); if(!c) return; matchKind=c.dataset.k; app.querySelectorAll('#mk .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===matchKind)); round(); });
   round();
 }
+/* ---------- Update-Hinweis ---------- */
+const APP_VERSION='2.1';
+function versionUrl(){
+  if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
+  if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
+  return null;
+}
+function checkUpdate(){
+  const u=versionUrl(); if(!u||$('#upd')) return;
+  fetch(u,{cache:'no-store'}).then(r=>r.json()).then(j=>{
+    if(!j||!j.version||j.version===APP_VERSION||$('#upd')) return;
+    const inGame=B.phase&&!['lobby','tlobby','connecting','end'].includes(B.phase);
+    const bar=el(`<div id="upd" class="upd" role="status"><div style="min-width:0;flex:1"><b>Update verfügbar 🎉</b><div class="muted" style="font-size:.85rem">${j.note?j.note+' · ':''}${inGame?'Lade nach dem Battle neu.':'Tippe auf „Neu laden“ oder schließe die App und öffne sie neu.'}</div></div><button class="btn small primary" type="button" id="upd-go">Neu laden</button><button class="xbtn" type="button" id="upd-x" aria-label="Später">×</button></div>`);
+    document.body.appendChild(bar);
+    $('#upd-go').addEventListener('click',()=>{ if(B.ws&&B.phase&&!['lobby','end'].includes(B.phase)) bSend({type:'leave'}); location.reload(); });
+    $('#upd-x').addEventListener('click',()=>bar.remove());
+  }).catch(()=>{});
+}
+setTimeout(checkUpdate,8000); setInterval(checkUpdate,3*60*1000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkUpdate(); });
+
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
  heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌'};
@@ -1433,6 +1480,14 @@ function bMsg(m){
     case 'resume_ok': {
       B.reconnecting=false; Object.assign(B,{code:m.code,token:m.token,you:m.you,host:m.host,scores:m.scores,total:m.total,msg:''}); if(m.opp) B.opp=m.opp;
       const st=m.state;
+      if(m.team){ Object.assign(B,{isTeam:true,size:m.size,players:m.players,pscores:m.pscores,tscores:m.tscores});
+        if(st==='lobby') B.phase='tlobby';
+        else if(st==='prep'){ B.phase='matched'; if(m.host) bSend({type:'questions',list:battleQuestions()}); }
+        else if(st==='countdown'){ B.phase='countdown'; B.cdEnd=Date.now()+m.startIn; }
+        else if(st==='question') Object.assign(B,{phase:'question',q:m.q,qi:m.qi,limit:m.limit,qStart:Date.now()-m.elapsed,pick:m.myPick,reveal:null});
+        else if(st==='reveal') Object.assign(B,{phase:'reveal',qi:m.qi,reveal:m.reveal,myReady:m.myReady});
+        else if(st==='end'){ B.phase='end'; if(!B.awarded) bMsg(m.end); }
+        bSaveSession(); toast('Wieder verbunden'); break; }
       if(st==='lobby') B.phase='room';
       else if(st==='prep'){ B.phase='matched'; if(m.host) bSend({type:'questions',list:battleQuestions()}); }
       else if(st==='countdown'){ B.phase='countdown'; B.cdEnd=Date.now()+m.startIn; }
@@ -1441,12 +1496,23 @@ function bMsg(m){
       else if(st==='end'){ B.phase='end'; B.end=m.end; if(!B.awarded) bMsg(m.end); }
       bSaveSession(); toast('Wieder verbunden'); break; }
     case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Das Battle wurde unterbrochen, weil der Server neu gestartet ist oder du länger als 90 Sekunden weg warst. Starte einfach ein neues.'; break;
-    case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); return;
+    case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); if(B.phase==='tlobby') drawTeamInvites(); return;
     case 'hi': B.onlineCount=m.online; return;
     case 'friend_req': if(S.friends[m.from.id]){ bSend({type:'friend_ok',to:m.from.id}); return; } popup({kind:'friend',from:m.from}); return;
     case 'friend_ok': S.friends[m.from.id]={name:m.from.name,avatar:m.from.avatar,title:m.from.title,color:m.from.color,since:Date.now()}; save(); toast(`${m.from.name} ist jetzt dein Freund`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
     case 'friend_no': toast(`${m.from.name} hat abgelehnt`); B.sent&&B.sent.delete(m.from.id); drawSocial(); return;
     case 'invite': popup({kind:'invite',from:m.from}); return;
+    case 'tinvite': popup({kind:'tinvite',from:m.from,code:m.code,size:m.size}); return;
+    case 'tlobby': Object.assign(B,{isTeam:true,phase:'tlobby',code:m.code,size:m.size,you:m.you,host:m.host,token:m.token,players:m.players,msg:'',end:null,correct:0,awarded:false}); bSaveSession(); if(!location.hash.startsWith('#battle')) location.hash='#battle'; break;
+    case 'tplayers': B.players=m.players; if(typeof m.host==='number') B.host=(m.host===B.you); break;
+    case 'tprep': Object.assign(B,{isTeam:true,phase:'matched',players:m.players,host:m.host,correct:0,awarded:false,pscores:[],tscores:[0,0]}); if(m.host) bSend({type:'questions',list:battleQuestions()}); if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} } break;
+    case 'tanswered': B.ansCount=m.count; B.ansTotal=m.total; break;
+    case 'treveal': Object.assign(B,{phase:'reveal',reveal:m,pscores:m.pscores,tscores:m.tscores,players:m.players,myReady:false,readyCount:0}); if(m.picks[B.you]===m.a) B.correct++; break;
+    case 'tready': B.readyCount=m.count; B.readyTotal=m.total; break;
+    case 'tleft': toast(`${m.name} hat das Battle verlassen`); return;
+    case 'tend': { Object.assign(B,{phase:'end',end:m,pscores:m.pscores,tscores:m.tscores,players:m.players}); if(B.awarded) break; B.awarded=true;
+      const my=B.players[B.you]?B.players[B.you].team:0, res=m.winner===-1?'d':(m.winner===my?'w':'l'); S.bstats[res]++; save();
+      award({w:60,d:30,l:15}[res]+B.correct*5,{w:'Team-Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
     case 'invite_no': B.inviting=null; toast(`${m.from.name} hat abgelehnt`); drawSocial(); return;
     case 'error_soft': B.inviting=null; toast(m.msg); drawSocial(); return;
     case 'opp_away': B.oppAway=true; break;
@@ -1455,19 +1521,19 @@ function bMsg(m){
     case 'room': B.phase='room'; B.code=m.code; B.token=m.token; bSaveSession(); break;
     case 'error': B.phase='lobby'; B.msg=m.msg; break;
     case 'cancelled': B.phase='lobby'; B.msg=''; break;
-    case 'matched': Object.assign(B,{phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,token:m.token,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,oppAway:false,awarded:false,msg:''}); bSaveSession();
+    case 'matched': Object.assign(B,{isTeam:false,phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,token:m.token,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,oppAway:false,awarded:false,msg:''}); bSaveSession();
       B.inviting=null; if(!location.hash.startsWith('#battle')) location.hash='#battle';
       if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} }
       if(m.host) bSend({type:'questions',list:battleQuestions()}); break;
     case 'start': B.phase='countdown'; B.total=m.total; B.cdEnd=Date.now()+m.in; break;
-    case 'q': Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
+    case 'q': B.ansCount=0; Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
     case 'opp_answered': B.oppDone=true; break;
     case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; B.myReady=false; B.oppReady=false; if(m.picks[B.you]===m.a) B.correct++; break;
     case 'opp_ready': B.oppReady=true; break;
     case 'end': { B.phase='end'; B.end=m; B.scores=m.scores; if(B.awarded) break; B.awarded=true; const res=m.winner===-1?'d':(m.winner===B.you?'w':'l'); S.bstats[res]++; save();
       const bonus={w:60,d:30,l:15}[res]+B.correct*5; award(bonus,{w:'Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
     case 'opp_rematch': B.oppRematch=true; break;
-    case 'opp_left': bClearSession(); if(B.phase!=='end'){ B.phase='lobby'; B.msg='Dein Gegner hat das Battle verlassen.'; } else B.oppLeft=true; break;
+    case 'opp_left': if(B.isTeam) return; bClearSession(); if(B.phase!=='end'){ B.phase='lobby'; B.msg='Dein Gegner hat das Battle verlassen.'; } else B.oppLeft=true; break;
     case 'emote': floatEmote(m.e, m.from===B.you); return;
   }
   drawBattle();
@@ -1479,12 +1545,13 @@ function showPopup(){
   let box=$('#popup'); if(!box){ box=el('<div id="popup" class="popup" role="dialog" aria-live="assertive"></div>'); document.body.appendChild(box);
     box.addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(!b) return; const it=POP.shift(); const yes=b.dataset.p==='yes';
       if(it.kind==='friend'){ if(yes){ S.friends[it.from.id]={name:it.from.name,avatar:it.from.avatar,title:it.from.title,color:it.from.color,since:Date.now()}; save(); toast(`${it.from.name} ist jetzt dein Freund`); } bSend({type:yes?'friend_ok':'friend_no',to:it.from.id}); }
+      if(it.kind==='tinvite'){ if(yes){ if(!location.hash.startsWith('#battle')) location.hash='#battle'; if(!S.name){ toast('Gib zuerst deinen Namen ein'); } else bConnect(()=>bSend({type:'join',code:it.code})); } }
       if(it.kind==='invite'){ if(yes){ if(!location.hash.startsWith('#battle')) location.hash='#battle'; bSend({type:'invite_ok',to:it.from.id}); } else bSend({type:'invite_no',to:it.from.id}); }
       drawSocial(); showPopup(); }); }
   const it=POP[0]; if(!it){ box.classList.remove('show'); return; }
   const f=it.from;
-  box.innerHTML=`<div class="pop-in"><span class="av">${AVATAR[f.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b><span ${nameStyle(f.color)}>${f.name}</span></b><div class="muted" style="font-size:.85rem">${it.kind==='invite'?'fordert dich zum Battle heraus! ⚔️':'möchte mit dir befreundet sein'}</div></div></div>
-    <div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-p="no" style="flex:1">Ablehnen</button><button class="btn primary" type="button" data-p="yes" style="flex:1">${it.kind==='invite'?'Los geht\'s':'Annehmen'}</button></div>`;
+  box.innerHTML=`<div class="pop-in"><span class="av">${AVATAR[f.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b><span ${nameStyle(f.color)}>${f.name}</span></b><div class="muted" style="font-size:.85rem">${it.kind==='invite'?'fordert dich zum Battle heraus! ⚔️':it.kind==='tinvite'?`lädt dich zum ${it.size} gegen ${it.size} ein! 👥`:'möchte mit dir befreundet sein'}</div></div></div>
+    <div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-p="no" style="flex:1">Ablehnen</button><button class="btn primary" type="button" data-p="yes" style="flex:1">${it.kind==='invite'||it.kind==='tinvite'?'Los geht\'s':'Annehmen'}</button></div>`;
   box.classList.add('show');
 }
 /* Beim App-Start still verbinden, damit Freunde einen online sehen */
@@ -1503,7 +1570,7 @@ function bSilentConnect(){
 setTimeout(bSilentConnect,1500);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && !(B.ws&&B.ws.readyState<=1) && !B.token) bSilentConnect(); });
 function bWho(){ bSend({type:'who',friends:Object.keys(S.friends)}); }
-setInterval(()=>{ if(location.hash.startsWith('#battle') && B.ws && B.ws.readyState===1 && ['lobby','connecting','searching','room'].includes(B.phase)) bWho(); },8000);
+setInterval(()=>{ if(location.hash.startsWith('#battle') && B.ws && B.ws.readyState===1 && ['lobby','connecting','searching','room','tlobby'].includes(B.phase)) bWho(); },8000);
 function drawSocial(){
   const box=$('#b-social'); if(!box) return;
   B.sent=B.sent||new Set();
@@ -1533,6 +1600,7 @@ function floatEmote(e,mine){ let box=$('#emo-layer'); if(!box){ box=el('<div id=
 function playerChip(p,score,side,extra){ return `<div class="pchip ${side}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b class="pn"><span ${nameStyle(p.color)}>${p.name||'Spieler'}</span></b><div class="pt">${p.title||''}</div></div><div class="ps">${score}${extra||''}</div></div>`; }
 function drawBattle(){
   if(!location.hash.startsWith('#battle')) return;
+  if(B.isTeam && B.phase!=='lobby' && B.phase!=='connecting'){ clearInterval(B.timer); return drawTeam(); }
   clearInterval(B.timer);
   const me={name:S.name||'Du',avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color};
   let h='';
@@ -1546,6 +1614,7 @@ function drawBattle(){
     else h+=`<section class="card" style="display:flex;flex-direction:column;gap:10px">
       <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
       <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
+      <div class="row" style="flex-wrap:nowrap"><button class="btn big" type="button" data-b="tcreate2" style="flex:1">👥 2 gegen 2</button><button class="btn big" type="button" data-b="tcreate3" style="flex:1">👥 3 gegen 3</button></div>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
       <div id="b-social"></div>
       <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
@@ -1580,6 +1649,65 @@ function drawBattle(){
     const tb=$('#b-tb'); if(tb){ tb.style.animationDelay=-(Date.now()-B.qStart)+'ms'; } }
   if(B.phase==='countdown'){ const cd=$('#b-cd'); const tick=()=>{ if(cd) cd.textContent=Math.max(1,Math.ceil((B.cdEnd-Date.now())/1000)); }; tick(); B.timer=setInterval(tick,200); }
 }
+/* ---------- Team-Battle-Ansicht ---------- */
+const TEAMN=['Team Rot','Team Blau'];
+function drawTeam(){
+  clearInterval(B.timer);
+  const P=(B.players||[]), me=P[B.you]||{}, myTeam=me.team||0;
+  const members=t=>P.filter(p=>p&&p.team===t);
+  const chip=p=>`<div class="tmem${p.away?' away':''}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><span class="tn"><span ${nameStyle(p.color)}>${p.name}</span>${p.slot===B.you?' (du)':''}${p.host?' 👑':''}${p.away?' · weg':''}</span>${B.pscores&&B.pscores[p.slot]!=null&&B.phase!=='tlobby'?`<b class="tp">${B.pscores[p.slot]}</b>`:''}</div>`;
+  let h='';
+  if(B.phase==='tlobby'){
+    const a=members(0).length, b=members(1).length, ok=a&&b&&a===b;
+    h=`<header><span class="eyebrow">Team-Battle · ${B.size} gegen ${B.size}</span><h1>Warteraum</h1></header>
+    <section class="card bwait"><span class="eyebrow">Raum-Code</span><div class="bcode">${B.code}</div><p class="muted" style="margin:0">Freunde können mit diesem Code über „Raum beitreten“ mitmachen oder du lädst sie unten ein.</p></section>
+    <div class="tcols">${[0,1].map(t=>`<section class="card tcol t${t}"><div class="tname">${TEAMN[t]} · ${members(t).length}/${B.size}</div>${members(t).map(chip).join('')}${Array.from({length:Math.max(0,B.size-members(t).length)},()=>'<div class="tmem free">frei</div>').join('')}</section>`).join('')}</div>
+    <div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-b="tswitch" style="flex:1">Team wechseln</button><button class="btn" type="button" data-b="leave" style="flex:1">Verlassen</button></div>
+    ${B.host?`<button class="btn primary big" type="button" data-b="tstart" ${ok?'':'disabled'}>${ok?'Battle starten':'Teams müssen gleich groß sein'}</button>`:'<p class="muted" style="text-align:center;margin:0">Warte, bis der Raum-Ersteller startet …</p>'}
+    <section class="card"><div class="sec-label">Freunde einladen</div><div class="flist" id="t-inv"></div></section>`;
+    app.innerHTML=h; drawTeamInvites(); bWho(); return;
+  }
+  const ts=B.tscores||[0,0];
+  h=`<div class="tbar2">${[0,1].map(t=>`<div class="tbox t${t}${t===myTeam?' mine':''}"><div class="tname">${TEAMN[t]}${t===myTeam?' (dein Team)':''}</div><div class="tscore">${ts[t]}</div><div class="tavs">${members(t).map(p=>`<span title="${p.name}" class="${p.away?'away':''}">${AVATAR[p.avatar]||'🧑‍🔬'}</span>`).join('')}</div></div>`).join('')}</div>`;
+  if(B.phase==='matched') h+=`<section class="card bwait"><div class="spin"></div><b>Team-Battle startet</b><p class="muted" style="margin:0">Fragen werden vorbereitet …</p></section>`;
+  if(B.phase==='countdown') h+=`<section class="card bwait"><span class="eyebrow">Gleich geht's los</span><div class="bcode" id="b-cd">3</div></section>`;
+  if(B.phase==='question'||B.phase==='reveal'){
+    const q=B.q, rv=B.reveal;
+    h+=`<div class="row" style="justify-content:space-between"><span class="eyebrow">Frage ${B.qi+1} von ${B.total} · Thema ${q.t}</span>${B.phase==='question'?'<span class="mono" id="b-sec"></span>':''}</div>
+    ${B.phase==='question'?`<div class="tbar"><span id="b-tb" style="animation-duration:${B.limit}ms"></span></div>`:''}
+    <section class="card"><div class="qt" style="font-weight:700;font-size:1.08rem">${q.q}</div>${q.svg?`<div class="figbox">${q.svg}</div>`:''}</section>
+    <div class="kgrid${q.o.length===2?' two':''}">${q.o.map((o,i)=>{ let cls='kopt k'+i; if(rv){ cls+= i===rv.a?' right':' dim'; } else if(B.pick>=0){ cls+= i===B.pick?' picked':' dim'; }
+      const who= rv? P.filter(p=>p&&rv.picks[p.slot]===i).map(p=>`<span class="tw t${p.team}">${AVATAR[p.avatar]||'🧑‍🔬'}</span>`).join(''):'';
+      return `<button class="${cls}" type="button" data-k="${i}" ${B.pick>=0||rv?'disabled':''}><span class="ks">${KSHAPE[i]}</span><span class="kt">${o}</span>${who?`<span class="whos">${who}</span>`:''}</button>`; }).join('')}</div>`;
+    if(B.phase==='question') h+=`<p class="muted" style="text-align:center;margin:0">${B.pick>=0?'Warte auf die anderen … ':''}${B.ansCount||0} von ${B.ansTotal||P.filter(p=>p&&!p.away).length} haben geantwortet</p>`;
+    if(rv){ const g=rv.gained[B.you]||0, ok=rv.picks[B.you]===rv.a;
+      const tg=[0,1].map(t=>P.reduce((s,p)=>s+(p&&p.team===t?(rv.gained[p.slot]||0):0),0));
+      h+=`<div class="${ok?'okmsg':'warn'}" style="text-align:center">${ok?`Richtig! +${g} Punkte`:(rv.picks[B.you]<0?'Zeit abgelaufen':'Leider falsch')}</div>
+      <div class="row" style="justify-content:center;gap:16px;font-weight:700"><span class="tcolor0">${TEAMN[0]} +${tg[0]}</span><span class="tcolor1">${TEAMN[1]} +${tg[1]}</span></div>
+      ${rv.e?`<div class="expl">${rv.e}</div>`:''}
+      <button class="btn primary big" type="button" data-b="ready" ${B.myReady?'disabled':''}>${B.myReady?'Warte auf die anderen …':(rv.last?'Zum Ergebnis':'Weiter')}</button>
+      <p class="muted" style="text-align:center;margin:0;font-size:.85rem">${B.readyCount||0} von ${B.readyTotal||P.filter(p=>p&&!p.away).length} bereit</p>`; }
+  }
+  if(B.phase==='end'){ const w=B.end.winner, mvp=P[B.end.mvp];
+    h+=`<section class="card bwait"><span class="eyebrow">Team-Battle vorbei</span><div class="bres">${w===-1?'Unentschieden!':(w===myTeam?'🏆 Dein Team hat gewonnen!':TEAMN[w]+' hat gewonnen')}</div>
+      <div class="bcode" style="font-size:2.2rem"><span class="tcolor0">${ts[0]}</span> : <span class="tcolor1">${ts[1]}</span></div>
+      ${mvp?`<p style="margin:0">⭐ MVP: <b><span ${nameStyle(mvp.color)}>${mvp.name}</span></b> mit ${B.pscores[mvp.slot]} Punkten</p>`:''}
+      <p class="muted" style="margin:0">Du: ${B.correct} von ${B.total} richtig, ${B.pscores[B.you]||0} Punkte</p>
+      <div class="tcols" style="width:100%">${[0,1].map(t=>`<div class="tcol t${t}" style="padding:8px"><div class="tname">${TEAMN[t]}</div>${members(t).sort((a,b)=>(B.pscores[b.slot]||0)-(B.pscores[a.slot]||0)).map(chip).join('')}</div>`).join('')}</div>
+      <div class="row" style="justify-content:center">${B.host?'<button class="btn primary" type="button" data-b="tagain">Neue Runde</button>':'<span class="muted">Der Raum-Ersteller kann eine neue Runde starten.</span>'}<button class="btn" type="button" data-b="leave">Verlassen</button></div></section>`; }
+  const owned=Object.keys(EMOTE).filter(k=>S.owned['e_'+k]);
+  if(B.phase!=='end') h+=`<div class="emobar">${owned.map(k=>`<button type="button" class="emo" data-e="${k}" aria-label="Emote senden">${EMOTE[k]}</button>`).join('')}<a class="emo more" href="#shop" aria-label="Mehr Emotes im Shop">+</a></div>`;
+  app.innerHTML=h;
+  if(B.phase==='question'){ const sec=$('#b-sec'); const tick=()=>{ const left=Math.max(0,Math.ceil((B.limit-(Date.now()-B.qStart))/1000)); if(sec) sec.textContent=left+' s'; }; tick(); B.timer=setInterval(tick,250); const tb=$('#b-tb'); if(tb) tb.style.animationDelay=-(Date.now()-B.qStart)+'ms'; }
+  if(B.phase==='countdown'){ const cd=$('#b-cd'); const tick=()=>{ if(cd) cd.textContent=Math.max(1,Math.ceil((B.cdEnd-Date.now())/1000)); }; tick(); B.timer=setInterval(tick,200); }
+}
+function drawTeamInvites(){
+  const box=$('#t-inv'); if(!box) return;
+  const wm=B.whoMap||{}, inRoom=new Set((B.players||[]).filter(Boolean).map(p=>p.name));
+  B.tinvSent=B.tinvSent||new Set();
+  const fr=Object.entries(S.friends).filter(([id])=>wm[id]&&wm[id].status==='online'&&!inRoom.has(wm[id].name));
+  box.innerHTML=fr.length?fr.map(([id,f])=>`<div class="frow"><span class="av">${AVATAR[f.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn"><span ${nameStyle(f.color)}>${f.name}</span></b><div class="ft"><span class="dot online"></span>online</div></div>${B.tinvSent.has(id)?'<span class="muted" style="font-size:.85rem">Eingeladen</span>':`<button class="btn small primary" type="button" data-b="tinv" data-id="${id}">Einladen</button>`}</div>`).join(''):'<p class="muted" style="margin:0;font-size:.9rem">Gerade ist kein Freund online. Du kannst den Code auch per WhatsApp schicken.</p>';
+}
 function battleClick(e){
   if(!location.hash.startsWith('#battle')) return;
   if(socialClick(e)) return;
@@ -1593,10 +1721,15 @@ function battleClick(e){
   if(a==='quick'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'quick'})); }
   if(a==='create'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'create'})); }
   if(a==='join'){ if(needName()) return; const c=($('#b-code').value||'').trim(); if(!/^\d{4}$/.test(c)){ B.msg='Der Code hat 4 Ziffern.'; drawBattle(); return; } B.msg=''; bConnect(()=>bSend({type:'join',code:c})); }
-  if(a==='cancel'){ bSend({type:'cancel'}); bClearSession(); B.phase='lobby'; drawBattle(); }
+  if(a==='cancel'){ bSend({type:'cancel'}); bClearSession(); B.phase='lobby'; B.isTeam=false; drawBattle(); }
   if(a==='ready'){ if(B.phase==='reveal'&&!B.myReady){ B.myReady=true; bSend({type:'ready',qi:B.qi}); drawBattle(); } return; }
+  if(a==='tcreate2'||a==='tcreate3'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'tcreate',size:a==='tcreate3'?3:2})); }
+  if(a==='tswitch'){ bSend({type:'tswitch'}); }
+  if(a==='tstart'){ bSend({type:'tstart'}); }
+  if(a==='tagain'){ bSend({type:'rematch'}); }
+  if(a==='tinv'){ bSend({type:'tinvite',to:b.dataset.id}); B.tinvSent=B.tinvSent||new Set(); B.tinvSent.add(b.dataset.id); toast('Einladung gesendet'); drawTeam(); }
   if(a==='rematch'){ B.myRematch=true; bSend({type:'rematch'}); drawBattle(); }
-  if(a==='leave'){ bSend({type:'leave'}); bClearSession(); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); drawBattle(); }
+  if(a==='leave'){ bSend({type:'leave'}); bClearSession(); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false,isTeam:false}); drawBattle(); }
 }
 function viewBattle(){ if(B.phase==='end'&&B.oppLeft) B.phase='lobby'; drawBattle(); }
 function leaveBattleIfAway(){ if(!location.hash.startsWith('#battle') && !location.hash.startsWith('#shop') && B.ws && !['lobby'].includes(B.phase)){ bSend({type:'leave'}); bClearSession(); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); } }
