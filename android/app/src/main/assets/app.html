@@ -176,6 +176,55 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 @media (min-width:620px){ .notation{grid-template-columns:1fr 1fr} }
 .chart-info{min-height:2.8em; font-size:.95rem}
 
+/* Münzen, Shop */
+.coins{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:99px; background:var(--paper); border:1.5px solid var(--accent); color:var(--ink); text-decoration:none; font-variant-numeric:tabular-nums}
+.toast{position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,20px); opacity:0; background:var(--ink); color:var(--paper); padding:9px 16px; border-radius:99px; font-size:.95rem; z-index:40; pointer-events:none; transition:opacity .25s, transform .25s; white-space:nowrap}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+.av-big{font-size:2.6rem; line-height:1}
+.shop{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; margin-top:12px}
+.sitem{display:flex; flex-direction:column; align-items:center; justify-content:space-between; gap:8px; padding:12px 8px; border:1px solid var(--line); border-radius:12px; background:var(--paper-2); text-align:center; min-height:120px}
+.sitem.own{border-color:var(--good)}
+.semoji{font-size:2.4rem; line-height:1.1}
+.stitle{font-family:var(--f-display); font-weight:800; font-size:1rem; line-height:1.2; overflow-wrap:break-word; hyphens:auto}
+.inp{font:inherit; width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:var(--paper); color:var(--ink); margin-top:4px}
+.btn.big{padding:14px; font-size:1.05rem}
+/* Battle */
+:root{--k0:#e21b3c; --k1:#1368ce; --k2:#c88a00; --k3:#26890c; --kfg:#ffffff}
+.bwait{display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center}
+.bcode{font-family:var(--f-display); font-weight:800; font-size:3.4rem; letter-spacing:.12em; color:var(--accent); line-height:1; font-variant-numeric:tabular-nums}
+.bres{font-family:var(--f-display); font-weight:800; font-size:1.6rem}
+.spin{width:34px; height:34px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pbar{display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:6px; align-items:center}
+.pchip{display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:var(--paper); border:1px solid var(--line); min-width:0}
+.pchip.opp{flex-direction:row-reverse; text-align:right}
+.pchip .av{font-size:1.7rem; line-height:1}
+.pchip .pn{display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:.92rem}
+.pchip .pt{font-size:.72rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pchip > div{flex:1}
+.pchip .ps{font-family:var(--f-display); font-weight:800; font-size:1.15rem; font-variant-numeric:tabular-nums; color:var(--accent)}
+.odone{color:var(--good); margin-left:4px}
+.vs{font-family:var(--f-display); font-weight:800; color:var(--muted); font-size:.9rem}
+.tbar{height:8px; border-radius:8px; background:var(--paper-2); overflow:hidden; border:1px solid var(--line)}
+.tbar span{display:block; height:100%; background:var(--accent); animation-name:tdrain; animation-timing-function:linear; animation-fill-mode:forwards}
+@keyframes tdrain{from{width:100%}to{width:0}}
+.kgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.kopt{position:relative; min-height:96px; border:0; border-radius:12px; color:var(--kfg); display:flex; align-items:center; gap:10px; padding:12px; text-align:left; font-weight:700; line-height:1.25; box-shadow:0 4px 0 rgba(0,0,0,.25); overflow-wrap:break-word; hyphens:auto; transition:opacity .2s, transform .1s}
+.kopt:active{transform:translateY(2px)}
+.kopt .kt{min-width:0; flex:1}
+.kopt .ks{font-size:1.4rem}
+.kopt.k0{background:var(--k0)} .kopt.k1{background:var(--k1)} .kopt.k2{background:var(--k2)} .kopt.k3{background:var(--k3)}
+.kopt.dim{opacity:.35} .kopt.picked{outline:4px solid var(--ink); outline-offset:2px}
+.kopt.right{outline:4px solid var(--good); outline-offset:2px}
+.kopt:disabled{cursor:default; color:var(--kfg)}
+.kopt sub{font-size:.75em}
+.kopt .who{position:absolute; top:-10px; right:8px; background:var(--paper); color:var(--ink); border-radius:99px; padding:1px 8px; font-size:.8rem; border:1px solid var(--line)}
+.kopt .who + .who{right:52px}
+.emobar{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding-top:4px}
+.emo{font-size:1.5rem; width:46px; height:46px; border-radius:12px; border:1px solid var(--line); background:var(--paper); display:grid; place-items:center; text-decoration:none; color:var(--muted)}
+.emo-layer{position:fixed; inset:0; pointer-events:none; z-index:30}
+.emo-fly{position:absolute; bottom:120px; font-size:3.2rem; animation:fly 2.2s ease-out forwards}
+@keyframes fly{0%{transform:translateY(0) scale(.6); opacity:0}15%{opacity:1; transform:translateY(-30px) scale(1.15)}100%{transform:translateY(-320px) scale(1); opacity:0}}
 /* Zuordnen */
 .match{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:10px}
 .mcol{display:flex; flex-direction:column; gap:8px; min-width:0}
@@ -219,8 +268,8 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 
 /* Navigation */
 nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--paper); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px); padding-left:max(8px,env(safe-area-inset-left,0px)); padding-right:max(8px,env(safe-area-inset-right,0px))}
-nav.tabs .in{max-width:720px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr)}
-nav.tabs a{display:flex; flex-direction:column; align-items:center; gap:2px; padding:9px 4px 10px; text-decoration:none; color:var(--muted); font-size:.78rem; font-weight:700}
+nav.tabs .in{max-width:720px; margin:0 auto; display:grid; grid-template-columns:repeat(6,1fr)}
+nav.tabs a{display:flex; flex-direction:column; align-items:center; gap:2px; padding:9px 2px 10px; text-decoration:none; color:var(--muted); font-size:.72rem; font-weight:700; min-width:0}
 nav.tabs a svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 nav.tabs a[aria-current="page"]{color:var(--accent)}
 @media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
@@ -230,6 +279,7 @@ nav.tabs a[aria-current="page"]{color:var(--accent)}
 <nav class="tabs" aria-label="Bereiche"><div class="in">
   <a href="#start" data-nav="start"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Plan</a>
   <a href="#training" data-nav="training"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Training</a>
+  <a href="#battle" data-nav="battle"><svg viewBox="0 0 24 24"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/><path d="M9.5 6.5L13 3h3v3l-3.5 3.5"/><path d="M5 14l4 4M7 17l-3 3M3 19l2 2"/></svg>Battle</a>
   <a href="#klausur" data-nav="klausur"><svg viewBox="0 0 24 24"><path d="M7 3h10l3 3v15H4V3h3"/><path d="M8 11l2.5 2.5L16 8"/><path d="M8 17h8"/></svg>Klausur</a>
   <a href="#karten" data-nav="karten"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="13" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v11"/></svg>Karten</a>
   <a href="#aufgaben" data-nav="aufgaben"><svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>Aufgaben</a>
@@ -798,7 +848,7 @@ function renderOrder(set,onDone){
   pool.innerHTML=shuffle(set.parts.map((p,i)=>i)).map(i=>`<button type="button" data-i="${i}">${set.parts[i]}</button>`).join('');
   pool.addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(!b) return;
     if(+b.dataset.i===step){ done.appendChild(el(`<div>${set.parts[step]}</div>`)); b.remove(); step++;
-      if(step===set.parts.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg" style="margin-top:8px">Fehlerfrei! So schreibst du es in der Klausur.</div>':`<div class="expl" style="margin-top:8px">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}. Lies die fertige Antwort noch einmal laut.</div>`; onDone&&onDone(miss===0); } }
+      if(step===set.parts.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg" style="margin-top:8px">Fehlerfrei! So schreibst du es in der Klausur.</div>':`<div class="expl" style="margin-top:8px">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}. Lies die fertige Antwort noch einmal laut.</div>`; if(miss===0) award(10,'fehlerfrei'); onDone&&onDone(miss===0); } }
     else { miss++; b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); if(navigator.vibrate){ try{navigator.vibrate(40);}catch(e){} } } });
   return box;
 }
@@ -816,6 +866,7 @@ function renderQuestion(q,onDone){
     if(!ok) b.classList.add('wrong');
     box.appendChild(el(`<div class="expl">${ok?'<b class="r">Richtig.</b> ':'<b class="f">Leider falsch.</b> '}${q.e}</div>`));
     if(!q.gen){ S.wrong=S.wrong||{}; if(ok) delete S.wrong[q.q]; else S.wrong[q.q]=1; save(); }
+    if(ok) award(5);
     if(!ok && navigator.vibrate){ try{ navigator.vibrate(60); }catch(e){} }
     onDone&&onDone(ok);
   });
@@ -1078,6 +1129,7 @@ function viewStart(){
    <div class="count"><div><div class="num">${done}/7</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
    <div class="progress" aria-hidden="true"><span style="width:${done/7*100}%"></span></div>
    <a class="btn primary" href="#training" style="text-decoration:none;text-align:center">Training starten: jedes Mal neue Aufgaben</a>
+   <div class="row"><a class="btn" href="#battle" style="text-decoration:none;flex:1;text-align:center">⚔️ Battle gegen andere</a>${coinPill()}</div>
    <div class="row"><a class="btn small" href="#spick" style="text-decoration:none">Spickzettel</a><button class="btn small" type="button" id="theme-btn">Design: ${THEMES[S.theme]}</button></div></header>
   <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.</p>
    <div class="plan">${PLAN.map(b=>`<div class="block"><div class="when"><b>${b.when}</b>${b.sub}</div><div class="what">${b.topics.map(id=>`<a class="pill${S.done[id]?' done':''}" href="#thema-${id}">${id} · ${TOPICS[id-1].title}</a>`).join('')}${b.extra}</div></div>`).join('')}</div></section>
@@ -1176,7 +1228,7 @@ function renderMatch(kind,onDone){
   let selA=null, selB=null, solved=0, miss=0;
   const check=()=>{ if(!selA||!selB) return;
     if(selA.dataset.k===selB.dataset.k){ [selA,selB].forEach(x=>{x.classList.remove('sel');x.classList.add('done');x.disabled=true;}); solved++;
-      if(solved===pairs.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg">Alle Paare fehlerfrei verbunden!</div>':`<div class="expl">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}.</div>`; onDone&&onDone(miss===0); } }
+      if(solved===pairs.length){ $('.res',box).innerHTML= miss===0?'<div class="okmsg">Alle Paare fehlerfrei verbunden!</div>':`<div class="expl">Geschafft mit ${miss} Fehlversuch${miss>1?'en':''}.</div>`; if(miss===0) award(10,'fehlerfrei'); onDone&&onDone(miss===0); } }
     else { miss++; const a=selA,b=selB; [a,b].forEach(x=>{x.classList.add('bad');}); if(navigator.vibrate){try{navigator.vibrate(40);}catch(e){}} setTimeout(()=>[a,b].forEach(x=>x.classList.remove('bad','sel')),450); }
     selA=selB=null; };
   ca.addEventListener('click',e=>{ const b=e.target.closest('.mitem'); if(!b||b.disabled) return; ca.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selA=b; check(); });
@@ -1194,6 +1246,153 @@ function viewMatch(){
   $('#mk').addEventListener('click',e=>{ const c=e.target.closest('[data-k]'); if(!c) return; matchKind=c.dataset.k; app.querySelectorAll('#mk .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===matchKind)); round(); });
   round();
 }
+/* ---------- Münzen, Shop, Profil ---------- */
+const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏'};
+const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄'};
+const SHOP=[
+ ...[['fire',0],['wave',0],['gg',0],['laugh',40],['eyes',40],['clap',50],['cool',60],['cry',60],['muscle',70],['salute',80],['nerd',90],['flask',100],['mind',120],['cold',120],['skull',150],['alembic',200],['crown',250],['goat',400]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id]})),
+ ...[['scientist',0],['frog',80],['cat',80],['fox',120],['panda',120],['octopus',150],['robot',200],['alien',250],['trex',300],['unicorn',500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
+ ...[['Neuling',0],['Kettenzähler',80],['Elektronegativ',120],['Isomer-Jäger',150],['Van-der-Waals-Fan',150],['IUPAC-Profi',200],['H-Brücken-Baumeister',250],['Alkan-König',500],['Chemie-Legende',1000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t}))
+];
+function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.name=S.name||''; S.bstats=S.bstats||{w:0,l:0,d:0}; }
+initProfile();
+function toast(html){ let t=$('#toast'); if(!t){ t=el('<div id="toast" class="toast" role="status"></div>'); document.body.appendChild(t); } t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove('show'),1600); }
+function award(n,why){ S.coins=(S.coins||0)+n; save(); toast(`<b>+${n}</b> 🪙${why?' · '+why:''}`); document.querySelectorAll('.coin-n').forEach(x=>x.textContent=S.coins); }
+const coinPill=()=>`<a class="coins" href="#shop" title="Zum Shop"><span>🪙</span><b class="coin-n">${S.coins}</b></a>`;
+let shopTab='emote';
+function viewShop(){
+  const tabs={emote:'Emotes',avatar:'Avatare',title:'Titel'};
+  app.innerHTML=`<div class="topbar"><a class="back" href="#battle" style="text-decoration:none">← Battle</a>${coinPill()}</div>
+  <header><h1>Shop</h1><p class="muted" style="margin:.3em 0 0">Münzen gibt es für jede richtige Antwort: 5 im Training, Check und Probeklausur, 10 für Puzzles und Zuordnen. Im Battle 5 pro richtiger Antwort, dazu 60 für einen Sieg.</p></header>
+  <section class="card"><div class="row" style="justify-content:space-between"><div class="row"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div><b>${S.name||'Noch kein Name'}</b><div class="muted" style="font-size:.88rem">${S.eq.title}</div></div></div></div></section>
+  <section class="card"><div class="row" id="sh-tabs">${Object.keys(tabs).map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===shopTab}">${tabs[k]}</button>`).join('')}</div><div class="shop" id="sh-grid"></div></section>`;
+  const draw=()=>{ $('#sh-grid').innerHTML=SHOP.filter(i=>i.kind===shopTab).map(i=>{ const own=S.owned[i.id], eq=(i.kind==='avatar'&&S.eq.avatar===i.key)||(i.kind==='title'&&S.eq.title===i.key);
+    const act= i.kind==='emote' ? (own?'<span class="muted">Im Battle dabei</span>':`<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`)
+      : own ? (eq?'<span class="okmsg" style="padding:4px 10px">Ausgerüstet</span>':`<button class="btn small" type="button" data-eq="${i.id}">Ausrüsten</button>`) : `<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`;
+    return `<div class="sitem${own?' own':''}"><span class="${i.kind==='title'?'stitle':'semoji'}">${i.label}</span>${act}</div>`; }).join('');
+    app.querySelectorAll('#sh-tabs .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===shopTab)); };
+  $('#sh-tabs').addEventListener('click',e=>{ const c=e.target.closest('[data-k]'); if(c){ shopTab=c.dataset.k; draw(); } });
+  $('#sh-grid').addEventListener('click',e=>{
+    const b=e.target.closest('[data-buy]'), q=e.target.closest('[data-eq]');
+    if(b){ const it=SHOP.find(x=>x.id===b.dataset.buy); if(S.coins<it.price){ toast(`Dir fehlen noch ${it.price-S.coins} 🪙`); return; } S.coins-=it.price; S.owned[it.id]=1; if(it.kind==='avatar') S.eq.avatar=it.key; if(it.kind==='title') S.eq.title=it.key; save(); toast(`Gekauft: ${it.label}`); viewShop(); }
+    if(q){ const it=SHOP.find(x=>x.id===q.dataset.eq); if(it.kind==='avatar') S.eq.avatar=it.key; else S.eq.title=it.key; save(); viewShop(); } });
+  draw();
+}
+
+/* ---------- Battle: 1 gegen 1 online (Kahoot-Stil) ---------- */
+const BATTLE_HTTP='https://alkane-battle.onrender.com/', BATTLE_WS='wss://alkane-battle.onrender.com';
+const KSHAPE=['▲','◆','●','■'];
+let B={ws:null,phase:'lobby',msg:'',code:'',you:0,host:false,opp:null,scores:[0,0],q:null,qi:0,total:10,pick:-1,oppDone:false,reveal:null,end:null,correct:0,oppRematch:false,timer:null};
+function battleQuestions(){
+  const topics=shuffle([1,2,3,4,5,6,7,1,2,6]); return topics.map(t=>{
+    const r=Math.random(); let q;
+    if(r<0.15){ const x=pick(TF.filter(y=>y[0]===t)); return {t, q:'Richtig oder falsch? '+x[1], o:['Richtig','Falsch'], a:x[2]?0:1, e:x[3]}; }
+    q = r<0.3 ? pick(QUESTIONS.filter(y=>y.t===t)) : genQ(t);
+    const order=shuffle(q.o.map((_,i)=>i));
+    return {t, q:q.q, o:order.map(i=>q.o[i]), a:order.indexOf(q.a), e:q.e||'', svg:q.svg||''}; }); }
+function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
+function bConnect(then){
+  if(B.ws&&B.ws.readyState===1){ then(); return; }
+  B.phase='connecting'; B.msg='Verbinde mit dem Battle-Server …'; drawBattle();
+  const slow=setTimeout(()=>{ if(B.phase==='connecting'){ B.msg='Der Server wird gerade aufgeweckt. Beim ersten Mal kann das bis zu einer Minute dauern.'; drawBattle(); } },3000);
+  const ctl=('AbortController' in window)?new AbortController():null; const to=setTimeout(()=>ctl&&ctl.abort(),75000);
+  fetch(BATTLE_HTTP,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(r=>r.json()).then(()=>{
+    clearTimeout(to); let ws; try{ ws=new WebSocket(BATTLE_WS); }catch(e){ return fail(); }
+    B.ws=ws;
+    ws.onopen=()=>{ clearTimeout(slow); bSend({type:'hello',name:S.name,avatar:S.eq.avatar,title:S.eq.title}); then(); };
+    ws.onmessage=ev=>{ let m; try{ m=JSON.parse(ev.data); }catch(e){ return; } bMsg(m); };
+    ws.onclose=()=>{ B.ws=null; if(!['lobby','end'].includes(B.phase)){ B.phase='lobby'; B.msg='Verbindung verloren. Versuch es nochmal.'; drawBattle(); } };
+    ws.onerror=()=>{};
+  }).catch(fail);
+  function fail(){ clearTimeout(slow); clearTimeout(to); B.phase='lobby'; B.msg= location.protocol==='https:'&&!/onrender\.com$/.test(location.hostname) ? 'Hier ist keine Online-Verbindung möglich. Battle geht in der App oder auf alkane-trainer.onrender.com.' : 'Server nicht erreichbar. Prüfe dein Internet und versuch es nochmal.'; drawBattle(); }
+}
+function bMsg(m){
+  switch(m.type){
+    case 'searching': B.phase='searching'; break;
+    case 'room': B.phase='room'; B.code=m.code; break;
+    case 'error': B.phase='lobby'; B.msg=m.msg; break;
+    case 'cancelled': B.phase='lobby'; B.msg=''; break;
+    case 'matched': Object.assign(B,{phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,msg:''});
+      if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} }
+      if(m.host) bSend({type:'questions',list:battleQuestions()}); break;
+    case 'start': B.phase='countdown'; B.total=m.total; B.cdEnd=Date.now()+m.in; break;
+    case 'q': Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
+    case 'opp_answered': B.oppDone=true; break;
+    case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; if(m.picks[B.you]===m.a) B.correct++; break;
+    case 'end': { B.phase='end'; B.end=m; B.scores=m.scores; const res=m.winner===-1?'d':(m.winner===B.you?'w':'l'); S.bstats[res]++; save();
+      const bonus={w:60,d:30,l:15}[res]+B.correct*5; award(bonus,{w:'Sieg!',d:'Unentschieden',l:'Gut gekämpft'}[res]); break; }
+    case 'opp_rematch': B.oppRematch=true; break;
+    case 'opp_left': if(B.phase!=='end'){ B.phase='lobby'; B.msg='Dein Gegner hat das Battle verlassen.'; } else B.oppLeft=true; break;
+    case 'emote': floatEmote(m.e, m.from===B.you); return;
+  }
+  drawBattle();
+}
+function floatEmote(e,mine){ let box=$('#emo-layer'); if(!box){ box=el('<div id="emo-layer" class="emo-layer" aria-hidden="true"></div>'); document.body.appendChild(box); } const f=el(`<span class="emo-fly ${mine?'me':'opp'}">${EMOTE[e]||''}</span>`); f.style.left=(mine?10:55)+Math.random()*30+'%'; box.appendChild(f); setTimeout(()=>f.remove(),2200); }
+function playerChip(p,score,side,extra){ return `<div class="pchip ${side}"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0"><b class="pn">${p.name||'Spieler'}</b><div class="pt">${p.title||''}</div></div><div class="ps">${score}${extra||''}</div></div>`; }
+function drawBattle(){
+  if(!location.hash.startsWith('#battle')) return;
+  clearInterval(B.timer);
+  const me={name:S.name||'Du',avatar:S.eq.avatar,title:S.eq.title};
+  let h='';
+  if(['lobby','connecting','searching','room'].includes(B.phase)){
+    h=`<header class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="eyebrow">1 gegen 1 · online</span><h1>Battle</h1></div>${coinPill()}</header>
+    <section class="card"><div class="row" style="gap:12px"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div style="flex:1;min-width:0"><label for="b-name" class="eyebrow">Dein Name</label><input id="b-name" class="inp" maxlength="16" value="${S.name.replace(/"/g,'')}" placeholder="z. B. Gabriel"><div class="muted" style="font-size:.85rem;margin-top:4px">${S.eq.title} · <a href="#shop" style="color:var(--accent);font-weight:700">Shop</a> · Bilanz ${S.bstats.w} S / ${S.bstats.d} U / ${S.bstats.l} N</div></div></div></section>
+    ${B.msg?`<div class="${B.phase==='connecting'?'expl':'warn'}">${B.msg}</div>`:''}`;
+    if(B.phase==='searching') h+=`<section class="card bwait"><div class="spin"></div><b>Suche Gegner …</b><p class="muted" style="margin:0">Sobald jemand anderes auf „Schneller Gegner“ tippt, geht es los.</p><button class="btn" type="button" data-b="cancel">Abbrechen</button></section>`;
+    else if(B.phase==='room') h+=`<section class="card bwait"><span class="eyebrow">Raum-Code</span><div class="bcode">${B.code}</div><p class="muted" style="margin:0">Sag deinem Gegner den Code. Er tippt auf „Raum beitreten“ und gibt ihn ein.</p><button class="btn" type="button" data-b="cancel">Abbrechen</button></section>`;
+    else if(B.phase==='connecting') h+=`<section class="card bwait"><div class="spin"></div></section>`;
+    else h+=`<section class="card" style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn primary big" type="button" data-b="quick">Schneller Gegner</button>
+      <button class="btn big" type="button" data-b="create">Raum erstellen (Code für Freunde)</button>
+      <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
+      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>15 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg.</li></ul></section>`;
+  } else {
+    const opp=B.opp||{name:'Gegner'};
+    const s0=B.scores[B.you], s1=B.scores[1-B.you];
+    h=`<div class="pbar">${playerChip(me,s0,'me')}<span class="vs">VS</span>${playerChip(opp,s1,'opp',B.phase==='question'&&B.oppDone?'<span class="odone">✓</span>':'')}</div>`;
+    if(B.phase==='matched') h+=`<section class="card bwait"><div class="spin"></div><b>Gegner gefunden: ${opp.name}</b><p class="muted" style="margin:0">Fragen werden vorbereitet …</p></section>`;
+    if(B.phase==='countdown') h+=`<section class="card bwait"><span class="eyebrow">Gleich geht's los</span><div class="bcode" id="b-cd">3</div></section>`;
+    if(B.phase==='question'||B.phase==='reveal'){
+      const q=B.q, rv=B.reveal;
+      h+=`<div class="row" style="justify-content:space-between"><span class="eyebrow">Frage ${B.qi+1} von ${B.total} · Thema ${q.t}</span>${B.phase==='question'?'<span class="mono" id="b-sec"></span>':''}</div>
+      ${B.phase==='question'?`<div class="tbar"><span id="b-tb" style="animation-duration:${B.limit}ms"></span></div>`:''}
+      <section class="card"><div class="qt" style="font-weight:700;font-size:1.08rem">${q.q}</div>${q.svg?`<div class="figbox">${q.svg}</div>`:''}</section>
+      <div class="kgrid${q.o.length===2?' two':''}">${q.o.map((o,i)=>{ let cls='kopt k'+i; if(rv){ if(i===rv.a) cls+=' right'; else cls+=' dim'; } else if(B.pick>=0){ cls+= i===B.pick?' picked':' dim'; }
+        const marks= rv? `${rv.picks[B.you]===i?'<span class="who">Du</span>':''}${rv.picks[1-B.you]===i?`<span class="who">${AVATAR[opp.avatar]||''}</span>`:''}`:'';
+        return `<button class="${cls}" type="button" data-k="${i}" ${B.pick>=0||rv?'disabled':''}><span class="ks">${KSHAPE[i]}</span><span class="kt">${o}</span>${marks}</button>`; }).join('')}</div>`;
+      if(B.phase==='question'&&B.pick>=0) h+=`<p class="muted" style="text-align:center;margin:0">${B.oppDone?'Beide haben geantwortet …':'Warte auf '+opp.name+' …'}</p>`;
+      if(rv){ const g=rv.gained[B.you], ok=rv.picks[B.you]===rv.a; h+=`<div class="${ok?'okmsg':'warn'}" style="text-align:center">${ok?`Richtig! +${g} Punkte`:(rv.picks[B.you]<0?'Zeit abgelaufen':'Leider falsch')}</div>${rv.e?`<div class="expl">${rv.e}</div>`:''}`; }
+    }
+    if(B.phase==='end'){ const w=B.end.winner, res=w===-1?'Unentschieden!':(w===B.you?'Du hast gewonnen!':opp.name+' hat gewonnen');
+      h+=`<section class="card bwait"><span class="eyebrow">Battle vorbei</span><div class="bres">${w===B.you?'🏆 ':''}${res}</div><div class="bcode" style="font-size:2.2rem">${s0} : ${s1}</div><p class="muted" style="margin:0">${B.correct} von ${B.total} richtig</p>
+        <div class="row" style="justify-content:center">${B.oppLeft?'<span class="muted">Dein Gegner ist gegangen.</span>':`<button class="btn primary" type="button" data-b="rematch">${B.myRematch?'Warte auf Gegner …':'Revanche'}${B.oppRematch&&!B.myRematch?' (Gegner will!)':''}</button>`}<button class="btn" type="button" data-b="leave">Zurück</button></div></section>`; }
+    const owned=Object.keys(EMOTE).filter(k=>S.owned['e_'+k]);
+    if(B.phase!=='end') h+=`<div class="emobar">${owned.map(k=>`<button type="button" class="emo" data-e="${k}" aria-label="Emote senden">${EMOTE[k]}</button>`).join('')}<a class="emo more" href="#shop" aria-label="Mehr Emotes im Shop">+</a></div>`;
+  }
+  app.innerHTML=h;
+  if(B.phase==='question'){ const sec=$('#b-sec'); const tick=()=>{ const left=Math.max(0,Math.ceil((B.limit-(Date.now()-B.qStart))/1000)); if(sec) sec.textContent=left+' s'; }; tick(); B.timer=setInterval(tick,250);
+    const tb=$('#b-tb'); if(tb){ tb.style.animationDelay=-(Date.now()-B.qStart)+'ms'; } }
+  if(B.phase==='countdown'){ const cd=$('#b-cd'); const tick=()=>{ if(cd) cd.textContent=Math.max(1,Math.ceil((B.cdEnd-Date.now())/1000)); }; tick(); B.timer=setInterval(tick,200); }
+}
+function battleClick(e){
+  if(!location.hash.startsWith('#battle')) return;
+  const nm=$('#b-name'); if(nm){ S.name=nm.value.trim().slice(0,16); save(); }
+  const b=e.target.closest('[data-b]'), k=e.target.closest('.kopt'), em=e.target.closest('[data-e]');
+  if(k && B.phase==='question' && B.pick<0){ B.pick=+k.dataset.k; bSend({type:'answer',qi:B.qi,i:B.pick}); drawBattle(); return; }
+  if(em){ const now=Date.now(); if(now-(B.lastEmo||0)<1200) return; B.lastEmo=now; bSend({type:'emote',e:em.dataset.e}); return; }
+  if(!b) return;
+  const a=b.dataset.b;
+  const needName=()=>{ if(!S.name){ B.msg='Gib zuerst deinen Namen ein.'; drawBattle(); const n=$('#b-name'); n&&n.focus(); return true; } return false; };
+  if(a==='quick'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'quick'})); }
+  if(a==='create'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'create'})); }
+  if(a==='join'){ if(needName()) return; const c=($('#b-code').value||'').trim(); if(!/^\d{4}$/.test(c)){ B.msg='Der Code hat 4 Ziffern.'; drawBattle(); return; } B.msg=''; bConnect(()=>bSend({type:'join',code:c})); }
+  if(a==='cancel'){ bSend({type:'cancel'}); B.phase='lobby'; drawBattle(); }
+  if(a==='rematch'){ B.myRematch=true; bSend({type:'rematch'}); drawBattle(); }
+  if(a==='leave'){ bSend({type:'leave'}); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); drawBattle(); }
+}
+function viewBattle(){ if(B.phase==='end'&&B.oppLeft) B.phase='lobby'; drawBattle(); }
+function leaveBattleIfAway(){ if(!location.hash.startsWith('#battle') && !location.hash.startsWith('#shop') && B.ws && !['lobby'].includes(B.phase)){ bSend({type:'leave'}); Object.assign(B,{phase:'lobby',msg:'',myRematch:false,oppLeft:false}); } }
+
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
@@ -1289,6 +1488,7 @@ function taskClick(e){
 /* ---------- Routing ---------- */
 function route(){
   app.removeEventListener('click',taskClick);
+  leaveBattleIfAway(); clearInterval(B.timer);
   const h=(location.hash||'#start').slice(1);
   let nav='start';
   if(h.startsWith('thema-')){ viewTopic(+h.split('-')[1]); nav='start'; }
@@ -1298,12 +1498,16 @@ function route(){
   else if(h==='spick'){ viewSpick(); nav='start'; }
   else if(h==='training'){ viewTrain(); nav='training'; }
   else if(h==='zuordnen'){ viewMatch(); nav='training'; }
+  else if(h==='battle'){ viewBattle(); nav='battle'; }
+  else if(h==='shop'){ viewShop(); nav='battle'; }
   else viewStart();
   document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',false));
   const cur=document.querySelector(`[data-nav="${nav}"]`); if(cur) cur.setAttribute('aria-current','page');
   window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',route);
+app.addEventListener('click',battleClick);
+app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ S.name=e.target.value.trim().slice(0,16); save(); } });
 route();
 </script>
 

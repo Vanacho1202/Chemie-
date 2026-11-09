@@ -7,6 +7,7 @@ Interaktive Lern-App für die 1. Chemieklausur (Alkane): 7 Themen mit Erklärung
 | Ordner | Inhalt |
 |---|---|
 | `web/` | Die eigentliche App (eine HTML-Datei). Render veröffentlicht diesen Ordner als Website. |
+| `server/` | Battle-Server (Node + WebSocket), läuft auf Render als `alkane-battle`. |
 | `android/` | Android-Hülle (WebView). Lädt die Live-Version von Render, offline die eingebaute Kopie. |
 
 ## Live-Updates
