@@ -50,18 +50,41 @@ const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade di
 let pool = null;
 const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newSaveCode = () => Array.from(crypto.randomBytes(8), b => CODE_ABC[b % CODE_ABC.length]).join('').replace(/^(.{4})/, '$1-');
+async function makePool(urlStr) {
+  const u = new URL(urlStr);
+  // Adresse selbst auflösen (System-Auflösung hängt bei Render teils)
+  let host = u.hostname; try { if (!require('net').isIP(host)) host = (await sysResolver.resolve4(host))[0]; } catch {}
+  const { Pool } = require('pg');
+  // Render-interne Adressen (ohne Punkt) brauchen kein SSL; extern (Render, Neon …) mit SSL und SNI
+  const internal = !u.hostname.includes('.') || u.searchParams.get('sslmode') === 'disable';
+  return new Pool({ host, port: +u.port || 5432, user: decodeURIComponent(u.username), password: decodeURIComponent(u.password), database: u.pathname.slice(1),
+    ssl: internal ? false : { rejectUnauthorized: false, servername: u.hostname }, max: 3, connectionTimeoutMillis: 15000, idleTimeoutMillis: 60000 });
+}
+const SAVES_TABLE = `create table if not exists saves (pid text primary key, secret text not null, code text unique not null, name text, data jsonb not null, updated_at timestamptz not null default now())`;
 async function initDb() {
   if (!process.env.DATABASE_URL) return console.log('Cloud-Spielstand: keine DATABASE_URL gesetzt');
   try {
-    const u = new URL(process.env.DATABASE_URL);
-    // Adresse selbst auflösen (System-Auflösung hängt bei Render teils)
-    let host = u.hostname; try { if (!require('net').isIP(host)) host = (await sysResolver.resolve4(host))[0]; } catch {}
-    const { Pool } = require('pg');
-    pool = new Pool({ host, port: +u.port || 5432, user: decodeURIComponent(u.username), password: decodeURIComponent(u.password), database: u.pathname.slice(1),
-      ssl: /render\.com$/.test(u.hostname) ? { rejectUnauthorized: false, servername: u.hostname } : false, max: 3, connectionTimeoutMillis: 8000 });
-    await pool.query(`create table if not exists saves (pid text primary key, secret text not null, code text unique not null, name text, data jsonb not null, updated_at timestamptz not null default now())`);
+    pool = await makePool(process.env.DATABASE_URL);
+    pool.on('error', e => console.log('Cloud-Spielstand: Verbindung', e.message));
+    await pool.query(SAVES_TABLE);
     console.log('Cloud-Spielstand: Datenbank bereit');
-  } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; }
+  } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; return; }
+  // Umzug: Spielstände aus der alten Datenbank übernehmen (neuere gewinnen)
+  if (process.env.OLD_DATABASE_URL) {
+    try {
+      const old = await makePool(process.env.OLD_DATABASE_URL);
+      const { rows } = await old.query('select pid, secret, code, name, data, updated_at from saves');
+      let n = 0;
+      for (const r of rows) {
+        const res = await pool.query(`insert into saves (pid, secret, code, name, data, updated_at) values ($1,$2,$3,$4,$5,$6)
+          on conflict (pid) do update set secret=excluded.secret, code=excluded.code, name=excluded.name, data=excluded.data, updated_at=excluded.updated_at
+          where saves.updated_at < excluded.updated_at`, [r.pid, r.secret, r.code, r.name, JSON.stringify(r.data), r.updated_at]);
+        n += res.rowCount;
+      }
+      await old.end();
+      console.log(`Cloud-Spielstand: Umzug fertig, ${n} von ${rows.length} Spielständen übernommen`);
+    } catch (e) { console.log('Cloud-Spielstand: Umzug-Fehler', e.message); }
+  }
 }
 const HEX = /^[a-f0-9]{16,64}$/;
 async function cloudRoute(path, m) {

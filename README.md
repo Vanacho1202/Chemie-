@@ -39,7 +39,8 @@ Läuft als Android-App (APK), als installierbare Web-App auf iPhone/iPad und im 
 Umgebungsvariablen:
 - `GEMINI_API_KEY`: Schlüssel aus Google AI Studio für Alki
 - `GEMINI_MODEL` (optional): Komma-Liste von Modellen; beim Start wird das schnellste gewählt
-- `DATABASE_URL`: „Internal Database URL“ der Render-Datenbank `alkane-saves` (Cloud-Spielstand)
+- `DATABASE_URL`: Postgres für den Cloud-Spielstand (Neon, läuft nicht ab; vorher Render `alkane-saves`)
+- `OLD_DATABASE_URL` (optional, nur beim Umzug): alte Datenbank; beim Start werden ihre Spielstände übernommen, danach wieder entfernen
 
 HTTP-Endpunkte: `GET /` (Status), `GET /diag` (Verbindung zu Gemini prüfen), `POST /ask` (Alki, Antwort als Text-Stream), `POST /cards` (Karteikarten als JSON), `POST /cloud/save|get|load` (Spielstand).
 WebSocket-Nachrichten: `hello`, `who`, `quick`, `create`, `join`, `tcreate`, `tbot`, `tkick`, `botduel`, `tswitch`, `tstart`, `tinvite`, `invite`, `friend_req`, `watch`, `answer`, `ready`, `emote`, `rematch`, `resume`, `leave`.
