@@ -1,4 +1,4 @@
-# Alkane Trainer
+# Chemie: Alkane Trainer
 
 Interaktive Lern-App für die 1. Chemieklausur (Alkane): 7 Themen mit Erklärungen, endloses Training mit immer neuen Aufgaben, Probeklausur, Karteikarten und Aufgaben mit Musterlösung.
 
