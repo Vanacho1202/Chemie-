@@ -38,7 +38,8 @@ Läuft als Android-App (APK), als installierbare Web-App auf iPhone/iPad und im 
 
 Umgebungsvariablen:
 - `GEMINI_API_KEY`: Schlüssel aus Google AI Studio für Alki
-- `GEMINI_MODEL` (optional): Komma-Liste von Modellen; beim Start wird das schnellste gewählt
+- `GEMINI_SMART_MODEL` (optional): schlaues Modell für Alki und Karteikarten, Standard `gemini-3-flash-preview` mit kurzem Nachdenken; bei Fehler oder Kontingent-Ende 15 min Pause und Ausweichen aufs schnelle Modell
+- `GEMINI_MODEL` (optional): Komma-Liste schneller Ersatzmodelle; beim Start wird das schnellste gewählt
 - `ADMIN_PIDS` (optional): Komma-Liste von Spieler-IDs mit Admin-Menü; Standard ist Gabriels Account
 - `DATABASE_URL`: Postgres für den Cloud-Spielstand (Neon, läuft nicht ab; vorher Render `alkane-saves`)
 - `OLD_DATABASE_URL` (optional, nur beim Umzug): alte Datenbank; beim Start werden ihre Spielstände übernommen, danach wieder entfernen

@@ -214,22 +214,40 @@ async function cloudRoute(path, m) {
 // ---------- KI-Bot (Google Gemini) ----------
 const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
 // Schnelle Modelle zuerst; beim Start wird das schnellste, das antwortet, ausgewählt
-const MODEL_CANDIDATES = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite,gemini-flash-lite-latest,gemini-3-flash-preview,gemini-3.1-flash-lite-preview').split(',').map(x => x.trim()).filter(Boolean);
+const MODEL_CANDIDATES = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite,gemini-flash-lite-latest,gemini-3.1-flash-lite-preview').split(',').map(x => x.trim()).filter(Boolean);
 let GEMINI_MODEL = MODEL_CANDIDATES[0];
-const SYSTEM = `Du bist "Alki", ein freundlicher Chemie-Nachhilfelehrer in einer Lern-App.
-Der Schüler (ca. 10. Klasse, Waldorfschule) schreibt bald eine Chemieklausur über Alkane mit diesen Themen:
-1. Homologe Reihe der Alkane (CnH2n+2, Methan bis Decan)
+// Schlaueres Modell für Alki und Karteikarten; bei Fehler oder Kontingent-Ende automatisch das schnelle Modell
+const SMART_MODEL = process.env.GEMINI_SMART_MODEL || 'gemini-3-flash-preview';
+let smartPauseUntil = 0;
+const SYSTEM = `Du bist "Alki", ein freundlicher, kluger Chemie-Nachhilfelehrer in einer Lern-App.
+Der Schüler (ca. 10. Klasse, Waldorfschule) lernt für eine Chemieklausur über Alkane. Themen:
+1. Homologe Reihe der Alkane (CₙH₂ₙ₊₂, Methan bis Decan)
 2. Verzweigte Alkane: Benennung nach IUPAC und Zeichnen
-3. Isomerie
-4. Elektronegativität und Polarität (polar, unpolar, Partialladungen); in der App gilt: ΔEN unter 0,5 unpolar, 0,5 bis 1,7 polar, über 1,7 ionisch
-5. Zwischenmolekulare Wechselwirkungen (Van-der-Waals-Kräfte, Wasserstoffbrücken: Entstehung, Anwendung)
-6. Eigenschaften der Alkane (Löslichkeit, Siedetemperatur, Viskosität) und ihre Veränderung in der Reihe
+3. Isomerie (Konstitutionsisomere)
+4. Elektronegativität und Polarität (polar, unpolar, Partialladungen δ+ und δ−)
+5. Zwischenmolekulare Wechselwirkungen (Van-der-Waals-Kräfte, Dipol-Dipol, Wasserstoffbrücken)
+6. Eigenschaften der Alkane (Löslichkeit, Siedetemperatur, Viskosität, Brennbarkeit) und ihre Veränderung in der Reihe
 7. Formelschreibweisen (Summen-, Struktur-, Halbstruktur-, Skelettformel) und Definitionen
-Regeln:
-- Antworte immer auf Deutsch, mit ä, ö, ü und ß, locker und ermutigend, aber fachlich korrekt.
-- Erkläre einfach, Schritt für Schritt, mit einem konkreten Beispiel. Bei Begründungen nutze Je-desto-Ketten.
-- Halte dich kurz: höchstens etwa 150 Wörter, außer der Schüler möchte ausdrücklich mehr.
-- Formeln mit Unicode-Tiefstellung schreiben, z. B. C₆H₁₄, CH₃–CH₂–CH₃.
+
+Fakten, die in der App gelten (nutze genau diese):
+- Namen: Meth-, Eth-, Prop-, But-, Pent-, Hex-, Hept-, Oct-, Non-, Dec- + "-an". Siedetemperaturen ca.: Methan −162 °C, Ethan −89, Propan −42, Butan −1, Pentan 36, Hexan 69, Heptan 98, Octan 126, Nonan 151, Decan 174 °C. Bei 20 °C: C₁–C₄ gasförmig, ab C₅ flüssig.
+- Seitenketten: Methyl- (–CH₃), Ethyl- (–C₂H₅), Propyl- (–C₃H₇), Butyl- (–C₄H₉). IUPAC: längste Kette = Stammname; so nummerieren, dass die Seitenketten möglichst kleine Nummern bekommen; gleiche Seitenketten mit di-, tri-, tetra-; Seitenketten alphabetisch (Vorsilben di/tri zählen nicht); Zahlen mit Komma trennen, Zahl und Wort mit Bindestrich, z. B. 2,3-Dimethylpentan.
+- Isomere: gleiche Summenformel, andere Strukturformel und andere Eigenschaften. Butan hat 2, Pentan 3, Hexan 5, Heptan 9 Isomere.
+- ΔEN: unter 0,5 unpolar, 0,5 bis 1,7 polar, über 1,7 ionisch. EN-Werte: H 2,2 · C 2,5 · N 3,0 · O 3,5 · F 4,0 · Cl 3,0. C–H ist praktisch unpolar, darum sind Alkane unpolar. Das elektronegativere Atom bekommt δ−. Ein Molekül ist ein Dipol, wenn es polare Bindungen hat UND die Ladungsschwerpunkte nicht zusammenfallen (CO₂ und CH₄ sind keine Dipole, H₂O und HCl schon).
+- Van-der-Waals-Kräfte: Anziehung durch spontane (temporäre) und induzierte Dipole; je größer die Moleküloberfläche, desto stärker. Verzweigte Alkane haben eine kleinere Oberfläche als unverzweigte, deshalb niedrigere Siedetemperatur.
+- Wasserstoffbrücken: zwischen einem H-Atom, das an ein stark elektronegatives Atom (F, O, N) gebunden ist, und einem freien Elektronenpaar von F, O oder N eines anderen Moleküls; stärkste der zwischenmolekularen Kräfte (Reihenfolge: Van-der-Waals < Dipol-Dipol < H-Brücken). Beispiel: Wasser hat deshalb eine hohe Siedetemperatur.
+- Löslichkeit: "Ähnliches löst sich in Ähnlichem". Alkane sind hydrophob/lipophil: löslich in Benzin, Öl, Hexan; nicht in Wasser.
+- Je länger die Kette, desto größer die Oberfläche, desto stärker die Van-der-Waals-Kräfte, desto höher Siedetemperatur und Viskosität.
+- Bindungswinkel am C-Atom im Alkan: 109,5° (Tetraeder). Skelettformel: Zickzacklinie, jede Ecke und jedes Ende ist ein C-Atom, H-Atome werden weggelassen.
+
+So antwortest du:
+- Verstehe, was gemeint ist, auch bei Umgangssprache, Tippfehlern, Abkürzungen oder halben Sätzen (z. B. "was is homolog reihe", "wieso kocht hexan später", "check meine antwort"). Beantworte die gemeinte Frage direkt. Rückfragen nur, wenn wirklich unklar ist, was gemeint ist.
+- Beginne mit der Antwort in einem Satz, dann kurz die Erklärung Schritt für Schritt mit einem konkreten Beispiel. Begründungen als Je-desto-Kette.
+- Schickt der Schüler eine eigene Antwort oder Lösung, prüfe sie ehrlich: sag klar, was richtig und was falsch ist, und wie es richtig heißt. Lob nur, wenn es stimmt.
+- Bei Rechen- oder Benennungsaufgaben: rechne bzw. benenne sauber Schritt für Schritt und kontrolliere dein Ergebnis, bevor du es nennst.
+- Beziehe dich auf den bisherigen Chat (z. B. "und bei Pentan?" bezieht sich auf die letzte Frage).
+- Deutsch mit ä, ö, ü und ß, locker und ermutigend, aber fachlich korrekt. Meist 60 bis 150 Wörter; mehr nur, wenn der Schüler es will oder die Aufgabe es braucht.
+- Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.
 - Formatierung nur so: **fett** für Fachbegriffe und Aufzählungen mit "- " am Zeilenanfang. Keine Tabellen, keine Überschriften.
 - Wenn du dir unsicher bist, sag es ehrlich. Erfinde keine Fakten.
 - Bei Fragen ohne Chemie-Bezug antworte kurz und lenke freundlich zurück zum Lernen.`;
@@ -240,27 +258,35 @@ function limited(ip, max = 20) {
   return list.length > max;
 }
 const thinkCfg = model => /gemini-3/.test(model) ? { thinkingLevel: 'minimal' } : { thinkingBudget: 0 };
-function geminiBody(messages, thinkingOff) {
-  const contents = messages.slice(-12).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 2000) }] }));
-  const generationConfig = { temperature: 0.4, maxOutputTokens: 900 };
-  if (thinkingOff) generationConfig.thinkingConfig = thinkCfg(GEMINI_MODEL);   // schneller: kein langes Nachdenken
+function geminiBody(messages, model, smart) {
+  const contents = messages.slice(-16).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 3000) }] }));
+  const generationConfig = { temperature: smart ? 0.5 : 0.4, maxOutputTokens: smart ? 2500 : 900 };
+  if (smart) generationConfig.thinkingConfig = { thinkingLevel: 'low' };            // kurz nachdenken = bessere Antworten
+  else if (thinkingSupported) generationConfig.thinkingConfig = thinkCfg(model);    // schnell: kein langes Nachdenken
   return JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig });
 }
-let thinkingSupported = true;   // falls das Modell thinkingBudget ablehnt, ab dann ohne
+let thinkingSupported = true;   // falls das schnelle Modell die Denk-Einstellung ablehnt, ab dann ohne
+// welche Modelle probieren: erst das schlaue, bei Problemen das schnelle
+function modelPlan() { return (SMART_MODEL && SMART_MODEL !== GEMINI_MODEL && Date.now() > smartPauseUntil) ? [[SMART_MODEL, true], [GEMINI_MODEL, false]] : [[GEMINI_MODEL, false]]; }
+function smartFailed(status, text) { if (status === 429 || status === 404 || status === 403) { smartPauseUntil = Date.now() + 15 * 60000; console.log('Schlaues Modell pausiert 15 min:', status, String(text).slice(0, 120)); } }
 async function geminiStream(messages, onText) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse`;
-  const once = off => httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, off), timeout: 20000 });
-  const go = async off => {   // bei Netzwerkfehler oder Zeitüberschreitung einmal neu versuchen
-    try { return await once(off); }
-    catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.code || e.message); dnsCache.clear(); return await once(off); }
-  };
-  let r = await go(thinkingSupported);
-  if (r.statusCode !== 200 && thinkingSupported) {
-    const t = await readAll(r);
-    if (/think/i.test(t)) { thinkingSupported = false; r = await go(false); }
-    else throw new Error('HTTP ' + r.statusCode + ' ' + t.slice(0, 300));
+  let r = null, lastErr = '';
+  for (const [model, smart] of modelPlan()) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
+    const once = () => httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, model, smart), timeout: smart ? 25000 : 20000 });
+    try {
+      try { r = await once(); } catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.code || e.message); dnsCache.clear(); r = await once(); }
+      if (r.statusCode !== 200 && !smart && thinkingSupported) {
+        const t = await readAll(r);
+        if (/think/i.test(t)) { thinkingSupported = false; r = await once(); } else { lastErr = 'HTTP ' + r.statusCode + ' ' + t.slice(0, 300); r = null; continue; }
+      }
+      if (r.statusCode === 200) break;
+      const t = await readAll(r); lastErr = 'HTTP ' + r.statusCode + ' ' + t.slice(0, 300);
+      if (smart) smartFailed(r.statusCode, t);
+      r = null;
+    } catch (e) { lastErr = e.message; r = null; }
   }
-  if (r.statusCode !== 200) throw new Error('HTTP ' + r.statusCode + ' ' + (await readAll(r)).slice(0, 300));
+  if (!r) throw new Error(lastErr || 'kein Modell erreichbar');
   r.setEncoding('utf8');
   let buf = '', total = '';
   for await (const chunk of r) {
@@ -282,31 +308,47 @@ async function geminiStream(messages, onText) {
 
 // Karteikarten erstellen lassen: Gemini liefert eine JSON-Liste {front, back}
 async function geminiCards(topic) {
-  const prompt = `Erstelle 10 bis 14 Karteikarten zum Thema: "${topic}".
-Zielgruppe: Schüler der 10. Klasse, Chemieklausur über Alkane (homologe Reihe CnH2n+2 von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).
-Regeln:
-- Vorderseite: kurzer Begriff, Name oder Frage (höchstens 80 Zeichen).
-- Rückseite: knappe, fachlich sichere Antwort (höchstens 220 Zeichen), zum Auswendiglernen geeignet.
-- Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.
-- Deutsch mit ä, ö, ü und ß. Keine Wiederholungen. Nichts erfinden.
-- Bei Reihen oder Listen (z. B. homologe Reihe) je eine Karte pro Glied, z. B. Vorderseite "Hexan", Rückseite "C₆H₁₄ · 6 C-Atome · flüssig".`;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+  const m = String(topic).match(/(\d{1,2})\s*(karteikarten|lernkarten|karten|flashcards)/i);
+  const want = m ? Math.max(3, Math.min(25, +m[1])) : 0;
+  const prompt = `Ein Schüler bittet dich in einer Lern-App: "${topic}"
+Erstelle dazu Karteikarten. ${want ? 'Genau ' + want + ' Karten.' : 'So viele, wie das Thema sinnvoll hergibt: meist 8 bis 16 (bei einer Reihe eine Karte pro Glied).'}
+
+Kontext: 10. Klasse, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen). Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
+
+Gute Karten:
+- Erst verstehen, was genau gewünscht ist (Thema, Umfang, Art), auch bei Tippfehlern oder Umgangssprache.
+- Mischung: Definitionen, "Warum …?"-Fragen mit Je-desto-Begründung, Beispiele, typische Klausurfragen, Unterscheidungen ("Unterschied zwischen … und …?") und Rechen- bzw. Benennungsbeispiele, wo es passt.
+- Vorderseite: eine klare Frage oder ein Begriff (höchstens 90 Zeichen).
+- Rückseite: die Antwort, knapp und vollständig, zum Auswendiglernen (höchstens 240 Zeichen), gern mit Beispiel.
+- Jede Karte deckt etwas anderes ab, keine Wiederholungen, keine trivialen Füllkarten.
+- Fachlich korrekt; prüfe jede Karte, bevor du sie ausgibst. Nichts erfinden.
+- Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃. Deutsch mit ä, ö, ü und ß.`;
   const schema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { front: { type: 'STRING' }, back: { type: 'STRING' } }, required: ['front', 'back'] } };
-  const call = async (withSchema, withThink) => {
-    const generationConfig = { temperature: 0.3, maxOutputTokens: 3000, responseMimeType: 'application/json' };
+  const call = async (model, smart, withSchema) => {
+    const generationConfig = { temperature: 0.4, maxOutputTokens: smart ? 8000 : 3000, responseMimeType: 'application/json' };
     if (withSchema) generationConfig.responseSchema = schema;
-    if (withThink) generationConfig.thinkingConfig = thinkCfg(GEMINI_MODEL);
-    const r = await httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig }), timeout: 30000 });
+    if (smart) generationConfig.thinkingConfig = { thinkingLevel: 'low' };
+    else if (thinkingSupported) generationConfig.thinkingConfig = thinkCfg(model);
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const r = await httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig }), timeout: smart ? 45000 : 30000 });
     return { status: r.statusCode, body: await readAll(r) };
   };
-  let x = await call(true, thinkingSupported);
-  if (x.status === 400) x = await call(false, false);
-  if (x.status !== 200) throw new Error('HTTP ' + x.status + ' ' + x.body.slice(0, 200));
+  let x = null, lastErr = '';
+  for (const [model, smart] of modelPlan()) {
+    try {
+      x = await call(model, smart, true);
+      if (x.status === 400) x = await call(model, smart, false);
+      if (x.status === 200) break;
+      lastErr = 'HTTP ' + x.status + ' ' + x.body.slice(0, 200); if (smart) smartFailed(x.status, x.body); x = null;
+    } catch (e) { lastErr = e.message; x = null; }
+  }
+  if (!x) throw new Error(lastErr);
   const j = JSON.parse(x.body);
   const text = ((((j.candidates || [])[0] || {}).content || {}).parts || []).filter(p => !p.thought).map(p => p.text || '').join('');
   const arr = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim());
-  return (Array.isArray(arr) ? arr : []).filter(c => c && c.front && c.back).slice(0, 20)
-    .map(c => ({ front: String(c.front).replace(/[<>]/g, '').slice(0, 120), back: String(c.back).replace(/[<>]/g, '').slice(0, 300) }));
+  const seen = new Set();
+  return (Array.isArray(arr) ? arr : []).filter(c => c && c.front && c.back && !seen.has(String(c.front).toLowerCase()) && seen.add(String(c.front).toLowerCase())).slice(0, 25)
+    .map(c => ({ front: String(c.front).replace(/[<>]/g, '').slice(0, 140), back: String(c.back).replace(/[<>]/g, '').slice(0, 360) }));
 }
 
 async function pickModel() {
