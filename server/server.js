@@ -104,7 +104,7 @@ async function takeGifts(pid, m) {
   } catch (e) { console.log('Geschenke-Fehler', e.message); return undefined; }
 }
 // ---------- Admin (nur Gabriels Account; geprüft über Spieler-ID + geheimen Schlüssel) ----------
-const ADMIN_PIDS = (process.env.ADMIN_PIDS || '05ea7edd8086cbd1712f').split(',').map(x => x.trim()).filter(Boolean);
+const ADMIN_PIDS = (process.env.ADMIN_PIDS || '05ea7edd8086cbd1712f,d93cc5ca02dc3647d3d0').split(',').map(x => x.trim()).filter(Boolean);
 async function isAdmin(m) {
   if (!pool || !ADMIN_PIDS.includes(String(m.pid || '')) || !HEX.test(m.secret || '')) return false;
   const r = await pool.query('select 1 from saves where pid = $1 and secret = $2', [m.pid, m.secret]);
