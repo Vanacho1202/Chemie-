@@ -1377,7 +1377,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='4.2';
+const APP_VERSION='4.3';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2142,7 +2142,7 @@ function viewExam(){
 let deck=null, flipped=false, CUR_DECK='std', NEWDECK=false, DECK_BUSY=false, DEL_DECK=false;
 const SUB={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
 const usub=f=>f.replace(/([A-Z\)])(\d+)/g,(m,a,d)=>a+d.split('').map(x=>SUB[x]).join(''));
-function deckList(){ const hid=S.stdHidden||{}; return [{id:'std',title:'Klausur-Definitionen',cards:CARDS.filter(c=>!hid[c[0]])}].concat((S.decks||[]).map(d=>({id:d.id,title:d.title,cards:d.cards}))); }
+function deckList(){ const hid=S.stdHidden||{}; return [{id:'std',title:'Klausur-Definitionen',cards:CARDS.filter(c=>!hid[c[0]])}].concat((S.decks||[]).map(d=>({id:d.id,title:d.title,cards:d.cards,ordered:!!d.ordered}))); }
 let EDIT_DECK=false, DEL_CARD=false;
 function knownMap(id){ if(id==='std') return S.cards; S.deckKnown=S.deckKnown||{}; return S.deckKnown[id]=S.deckKnown[id]||{}; }
 function deckTitle(topic){
@@ -2163,13 +2163,21 @@ function localDeck(topic){
 }
 async function makeDeck(topic){
   let cards=null, ai=false;
+  const wantsOrder=/reihenfolge|der reihe nach|sortiert|geordnet|nacheinander/i.test(topic);
+  // homologe Reihe: sicher und in der richtigen Reihenfolge direkt aus der App (Methan bis Decan)
+  const homolog=/homolog/i.test(topic)&&!/frage|quiz|warum|wieso|eigenschaft|siede|löslich|definition/i.test(topic);
+  if(homolog){
+    cards=[]; for(let n=1;n<=10;n++) cards.push([`${n}. ${ALKANES[n].name}`, `${usub('C'+(n>1?n:'')+'H'+(2*n+2))} · ${n} C-Atom${n>1?'e':''} · Sdp. ${dec(ALKANES[n].bp)} °C · bei 20 °C ${ALKANES[n].bp<20?'gasförmig':'flüssig'}`]);
+    const d={id:'d'+Date.now().toString(36),title:'Homologe Reihe (Methan bis Decan)',cards,at:Date.now(),ai:false,ordered:true};
+    S.decks=S.decks||[]; S.decks.unshift(d); save(); return d;
+  }
   if(netCapable()){
     try{ const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),45000);
       const r=await fetch(BOT_URL.replace('/ask','/cards'),{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({topic}),signal:ctl.signal});
       clearTimeout(to); const j=await r.json(); if(r.ok&&j.cards&&j.cards.length){ cards=j.cards.map(c=>[c.front,c.back]); ai=true; } }catch(e){}
   }
   if(!cards){ cards=localDeck(topic); if(cards.length<3) return null; }
-  const d={id:'d'+Date.now().toString(36),title:deckTitle(topic),cards,at:Date.now(),ai};
+  const d={id:'d'+Date.now().toString(36),title:deckTitle(topic),cards,at:Date.now(),ai,ordered:wantsOrder};
   S.decks=S.decks||[]; S.decks.unshift(d); save(); return d;
 }
 function openDeck(id){ CUR_DECK=id; deck=null; flipped=false; DEL_DECK=false; EDIT_DECK=false; if(location.hash==='#karten') viewCards(); else location.hash='#karten'; }
@@ -2208,7 +2216,8 @@ document.addEventListener('submit',e=>{
 function viewCards(){
   const decks=deckList(); let D=decks.find(d=>d.id===CUR_DECK); if(!D){ CUR_DECK='std'; D=decks[0]; }
   const K=knownMap(D.id), C=D.cards;
-  if(!deck){ const unknown=C.filter(c=>K[c[0]]!=='ok'), known=C.filter(c=>K[c[0]]==='ok'); deck=shuffle(unknown).concat(shuffle(known)); }
+  S.deckMode=S.deckMode||{}; const ordered=(S.deckMode[D.id]||(D.ordered?'order':'mix'))==='order';
+  if(!deck){ if(ordered) deck=C.slice(); else { const unknown=C.filter(c=>K[c[0]]!=='ok'), known=C.filter(c=>K[c[0]]==='ok'); deck=shuffle(unknown).concat(shuffle(known)); } }
   const sure=C.filter(c=>K[c[0]]==='ok').length;
   const isStd=D.id==='std', show=t=>isStd?t:esc(t);
   const head=`<header><span class="eyebrow">Karteikarten · ${esc(D.title)}</span><h1>Karteikarten</h1></header>
@@ -2224,7 +2233,8 @@ function viewCards(){
      <button class="flash" type="button" id="cd-card" aria-live="polite">${flipped?`<span class="eyebrow">${show(c[0])}</span><span class="def">${show(c[1])}</span>`:`<span class="term">${show(c[0])}</span><span class="tap">Antippen zum Umdrehen</span>`}</button>
      <div class="row" style="justify-content:center"><button class="btn" type="button" id="cd-no" style="flex:1">Nochmal</button><button class="btn primary" type="button" id="cd-ok" style="flex:1">Wusste ich</button></div>
      <p class="muted" style="font-size:.88rem;text-align:center;margin:0">Erst selbst laut sagen, dann umdrehen. Ehrlich bewerten.</p>
-     <div class="row" style="justify-content:center"><button class="btn small" type="button" id="cd-del">${DEL_CARD?(isStd?'Wirklich ausblenden?':'Wirklich löschen?'):(isStd?'🙈 Karte ausblenden':'🗑️ Karte löschen')}</button><button class="btn small" type="button" id="dk-edit">✏️ Karten bearbeiten</button></div>`;
+     <div class="row" style="justify-content:center"><button class="btn small" type="button" id="cd-del">${DEL_CARD?(isStd?'Wirklich ausblenden?':'Wirklich löschen?'):(isStd?'🙈 Karte ausblenden':'🗑️ Karte löschen')}</button><button class="btn small" type="button" id="dk-edit">✏️ Karten bearbeiten</button><button class="btn small" type="button" id="cd-mode">${ordered?'🔢 In Reihenfolge':'🔀 Gemischt'}</button></div>`;
+    $('#cd-mode').addEventListener('click',()=>{ S.deckMode[D.id]=ordered?'mix':'order'; save(); deck=null; flipped=false; toast(ordered?'Karten werden gemischt':'Karten in Reihenfolge'); viewCards(); });
     $('#cd-card').addEventListener('click',()=>{ flipped=!flipped; viewCards(); });
     $('#cd-ok').addEventListener('click',()=>{ K[c[0]]='ok'; save(); deck.shift(); flipped=false; viewCards(); });
     $('#cd-no').addEventListener('click',()=>{ K[c[0]]='no'; save(); deck.shift(); deck.splice(Math.min(3,deck.length),0,c); flipped=false; viewCards(); });
