@@ -247,6 +247,9 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .name-msg.bad{color:#e5534b; font-weight:700}
 .name-msg.ok{color:#3fb950}
 .name-msg:empty{display:none}
+.fach-card{display:flex;gap:14px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border:2px solid var(--line)}
+.fach-card[aria-pressed="true"]{border-color:var(--accent)}
+.fach-emo{font-size:2.4rem;line-height:1}
 .ban-bar{position:fixed; left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); bottom:calc(76px + env(safe-area-inset-bottom,0px)); max-width:560px; margin:0 auto; z-index:65; background:#5a1d1d; color:#fff; border:2px solid #e5534b; border-radius:12px; padding:9px 12px; font-size:.9rem; font-weight:700; text-align:center}
 .adm-items{display:flex; flex-wrap:wrap; gap:6px}
 .adm-chip{display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--line); border-radius:999px; padding:4px 4px 4px 10px; font-size:.88rem}
@@ -1237,6 +1240,439 @@ W.notation=root=>{
 
 /* ---------- Ansichten ---------- */
 const app=$('#app');
+
+/* ================= Fach Deutsch GK: Der zerbrochne Krug + Szenenanalyse ================= */
+const DE={};
+DE.FIG=[
+ {k:'adam',name:'Adam',role:'Dorfrichter in Huisum',av:'⚖️',
+  traits:'seit zehn Jahren im Amt, unverheiratet, hat einen Klumpfuß; genusssüchtig, lüstern, feige, schlagfertig, ein Meister der Ausrede',
+  more:'Täter und Richter zugleich: Er war nachts bei Eve, hat den Krug zerbrochen und soll nun selbst darüber urteilen. Er missbraucht sein Amt (gefälschtes Attest, Erpressung Eves, lenkt den Verdacht auf Ruprecht und Lebrecht). Sein Name spielt auf den Sündenfall an, sein Klumpfuß auf den Teufel (Pferdefuß).',
+  rel:'begehrt Eve und erpresst sie · Vorgesetzter und Konkurrent von Licht · wird von Walter überprüft'},
+ {k:'walter',name:'Walter',role:'Gerichtsrat aus Utrecht',av:'🎩',
+  traits:'korrekt, formbewusst, zunehmend misstrauisch; will vor allem die Ehre des Gerichts retten',
+  more:'Er ist auf Revisionsreise, um die Rechtspflege auf dem Land zu verbessern („sehn … bloß, nicht strafen“). Er verhört Adam in der Weinpause (10. Auftritt), lässt ihn aber zunächst ein Fehlurteil sprechen. Am Ende suspendiert er Adam, will ihn aber nicht ganz fallen lassen, wenn die Kassen stimmen.',
+  rel:'Aufsicht über Adam · glaubt Eve am Ende · entlarvt den gefälschten Brief'},
+ {k:'licht',name:'Licht',role:'Schreiber am Gericht',av:'🕯️',
+  traits:'klug, ehrgeizig, durchschaut Adam früh',
+  more:'Seit neun Jahren im Amt; er möchte selbst Dorfrichter werden. Er spottet vom „Adamsfall“, holt Frau Brigitte, setzt Adam die Perücke auf und wird am Ende vorläufig mit dem Richteramt betraut. Er ist also auch Nutznießer der Aufklärung.',
+  rel:'Adams Untergebener und Konkurrent · Walters Helfer'},
+ {k:'marthe',name:'Frau Marthe Rull',role:'Klägerin, Eves Mutter, Witwe',av:'🏺',
+  traits:'redselig, hartnäckig, aufbrausend; ihr geht es um die Ehre ihres Hauses',
+  more:'Sie verklagt Ruprecht wegen des zerbrochenen Krugs. Vordergründig geht es um den Krug, eigentlich um Eves guten Ruf („Dein guter Name lag in diesem Topfe“). Berühmt ist ihre lange Krugbeschreibung im 7. Auftritt. Am Schluss will sie in Utrecht weiterklagen.',
+  rel:'Mutter von Eve · Gegnerin von Veit und Ruprecht'},
+ {k:'eve',name:'Eve',role:'Marthes Tochter, Ruprechts Verlobte',av:'👩',
+  traits:'schweigt lange aus Angst und Rücksicht, fordert Vertrauen, ist mutig, als es darauf ankommt',
+  more:'Adam hat sie mit einem gefälschten Attest erpresst: Es sollte Ruprecht vor dem Militärdienst in Ostindien bewahren, dafür verlangte Adam „das Schändliche“. Sie schweigt vor Gericht, entlastet aber Ruprecht und Lebrecht. Nach Adams Urteil ruft sie: „Der Richter Adam hat den Krug zerbrochen!“',
+  rel:'verlobt mit Ruprecht · wird von Adam erpresst · Tochter Marthes'},
+ {k:'ruprecht',name:'Ruprecht',role:'Sohn von Veit Tümpel, Eves Verlobter',av:'👨‍🌾',
+  traits:'eifersüchtig, hitzköpfig, glaubt nur, was er „mit Händen greife“',
+  more:'Er hat in der Nacht einen Mann bei Eve überrascht, die Tür eingetreten und ihn mit der Türklinke getroffen; dafür bekam er Sand in die Augen. Er hält Lebrecht für den Täter, beschimpft Eve als „Metze“ und löst die Verlobung. Er soll zum Militär (Konskription). Am Ende bittet er Eve um Verzeihung.',
+  rel:'verlobt mit Eve · Sohn Veits · Neffe Brigittes'},
+ {k:'veit',name:'Veit Tümpel',role:'Bauer, Ruprechts Vater',av:'🧑‍🌾',
+  traits:'besonnen, will den Streit praktisch lösen',
+  more:'Er will den Krug ersetzen, falls Ruprecht schuld ist, verdächtigt seinen Sohn zeitweise (weil Ruprecht gepackt hatte) und schlägt am Ende die Hochzeit zu Pfingsten vor.',
+  rel:'Vater Ruprechts · Bruder Brigittes'},
+ {k:'brigitte',name:'Frau Brigitte',role:'Ruprechts Muhme (Tante), Zeugin',av:'👵',
+  traits:'abergläubisch, aber eine genaue Beobachterin',
+  more:'Sie findet Adams Perücke im Weinspalier unter Eves Fenster und folgt einer Spur im Schnee (rechts Menschenfuß, links Pferdefuß) bis zu Adams Haus. Sie hält den Flüchtenden für den Teufel. Ihre Aussage im 11. Auftritt bringt die Wende.',
+  rel:'Tante Ruprechts · Schwester Veits'},
+ {k:'lebrecht',name:'Lebrecht',role:'Flickschuster (tritt nicht auf)',av:'👞',
+  traits:'angeblicher Nebenbuhler Ruprechts',
+  more:'Ruprecht verdächtigt ihn. Eve entlastet ihn: Adam selbst hatte ihn am Abend mit dem Attest nach Utrecht geschickt.',
+  rel:'Ruprechts Verdacht · von Adam weggeschickt'}];
+DE.AUF=[
+ {n:1,who:'Adam, Licht',sum:'Adam verbindet sich das Bein; er ist an Fuß, Wange, Nase und Auge verletzt. Ausrede: Er sei beim Aufstehen gestrauchelt und auf den „Ziegenbock“ am Ofen gefallen. Licht spottet über den „Adamsfall“. Licht meldet die Revisionsreise von Gerichtsrat Walter; in Holla hat Walter den Richter Pfaul suspendiert.',key:'Exposition: Verletzungen, erste Ausrede, Sündenfall-Anspielung, Bedrohung durch Walter'},
+ {n:2,who:'Bedienter, Mägde',sum:'Walter ist schon im Dorf (sein Wagen ist umgeworfen). Chaos: Würste und Akten werden verwechselt. Adams Perücke fehlt; laut Mägden kam er gestern gegen elf ohne Perücke und blutend heim. Ausrede: Die Katze habe darin gejungt.',key:'Situationskomik, erste Perücken-Ausrede'},
+ {n:3,who:'Adam, Licht',sum:'Adam erzählt seinen Traum: Ein Kläger schleppt ihn vor den Richterstuhl, und er verurteilt sich dort selbst.',key:'Vorausdeutung auf das ganze Stück'},
+ {n:4,who:'Walter kommt',sum:'Walter erklärt seinen Auftrag: Das Obertribunal in Utrecht will die Rechtspflege auf dem Land verbessern. Adam weiß verräterisch schon von Holla. Er hat fünf Kassen, Walter rechnete mit vier. Walter will der Verhandlung beiwohnen.',key:'Walter als Kontrollinstanz'},
+ {n:5,who:'Magd, Büttel',sum:'Die Küsterin kann keine Perücke leihen; Adam muss kahlköpfig Gericht halten. Walter fragt nach den Wunden, Adam wiederholt die Sturzgeschichte.',key:'Adam ohne Perücke: Spannung steigt'},
+ {n:6,who:'Marthe, Eve, Veit, Ruprecht',sum:'Die Parteien streiten vor der Verhandlung (ohne Adam). Marthe spielt mit Worten („Meint Er, dass die Justiz ein Töpfer ist?“), Ruprecht löst die Verlobung und nennt Eve „Metze“. Marthe: „Dein guter Name lag in diesem Topfe.“',key:'Konflikt der Parteien, Krug = Eves Ehre'},
+ {n:7,who:'Verhandlung (längster Auftritt)',sum:'Adam erkennt die Parteien („Die werden mich doch nicht bei mir verklagen?“) und bedrängt Eve heimlich mit dem Attest. Er will Ruprecht sofort verurteilen; Walter rügt das „gewaltsame Verfahren“. Marthe beschreibt den Krug (Karl V. übergibt die Niederlande an Philipp) und seine Geschichte. Ruprecht berichtet von der Nacht: ein Mann bei Eve, Klinke, Sand in den Augen, Verdacht auf Lebrecht. Adam verrät sich: „War’s eine Klinke?“',key:'Krugbeschreibung, Ruprechts Bericht, Adams Selbstverrat'},
+ {n:8,who:'Magd',sum:'Nur zwei Verse: Adam lässt Wasser bringen und bietet Walter Wein an.',key:'kürzester Auftritt, zeigt Adams Nervosität'},
+ {n:9,who:'Eves Befragung',sum:'Adam verspricht sich („Leberecht“) und drängt Eve, Lebrecht oder Ruprecht zu nennen. Eve entlastet Ruprecht („Den irdnen Krug zerschlug der Ruprecht nicht“) und Lebrecht (Adam schickte ihn nach Utrecht), nennt aber keinen Namen. Marthe ruft Frau Brigitte als Zeugin; Licht holt sie.',key:'Eves Schweigen, Vertrauen, Druck durch Adam'},
+ {n:10,who:'Pause mit Wein',sum:'Walter verhört Adam beim Wein: Wunden vorne und hinten, Kratzer (angeblich Strauchwerk für Seidenwürmer), die Perücke sei nun beim Aktenlesen an der Kerze verbrannt. Adam verrät sich bei Ruprechts Aussagen.',key:'Walter wird misstrauisch, zweite Perücken-Ausrede'},
+ {n:11,who:'Frau Brigitte',sum:'Brigitte bringt die Perücke, gefunden im Weinspalier unter Eves Fenster. Adam: Er habe sie Ruprecht für den Perückenmacher Meister Mehl mitgegeben. Brigitte sah einen kahlen Kerl mit Pferdefuß und eine Spur im Schnee bis zu Adams Haus. Die Perücke passt Adam. Adam verurteilt trotzdem Ruprecht. Eve: „Der Richter Adam hat den Krug zerbrochen!“ Adam flieht.',key:'Wende und Entlarvung'},
+ {n:12,who:'ohne Adam',sum:'Ruprecht bittet Eve um Verzeihung. Eve erzählt von der Drohung, Ruprecht komme nach Ostindien („Nach Bantam“), und zeigt den Brief. Walter: „Der Brief ist falsch!“, die Truppen bleiben im Inland. Versöhnung; Veit: Hochzeit zu Pfingsten. Licht sieht Adam fliehen (Mauerschau). Adam ist suspendiert, Licht verwaltet das Amt vorläufig.',key:'Auflösung (Kurzfassung); dazu die lange Fassung „Variant“'},
+ {n:13,who:'Letzter Auftritt',sum:'Marthe fragt, wo in Utrecht die Regierung sitzt. Walter: „Am großen Markt“, Sitzung Dienstag und Freitag. Marthe will dort weiter um ihren Krug klagen.',key:'Offener, komischer Schluss: Der Krug bekommt kein Recht'}];
+DE.ZIT=[
+ ['Der erste Adamsfall, / Den Ihr aus einem Bett hinaus getan.','Licht',1],
+ ['Gestrauchelt bin ich hier; denn jeder trägt / Den leid’gen Stein zum Anstoß in sich selbst.','Adam',1],
+ ['Meint Er, dass die Justiz ein Töpfer ist?','Frau Marthe',6],
+ ['Dein guter Name lag in diesem Topfe.','Frau Marthe',6],
+ ['Die werden mich doch nicht bei mir verklagen?','Adam',7],
+ ['Ein Krug! So! Ei! – Ei, wer zerbrach den Krug?','Adam',7],
+ ['War’s eine Klinke?','Adam',7],
+ ['Welch ein gewaltsames Verfahren.','Walter',7],
+ ['Der Krüge schönster ist entzwei geschlagen.','Frau Marthe',7],
+ ['Ich bin ein Schelm, wenn’s nicht der Lebrecht war.','Adam',9],
+ ['Wie eine Hand in einen Sack voll Erbsen.','Walter',9],
+ ['Den irdnen Krug zerschlug der Ruprecht nicht.','Eve',9],
+ ['Pfui, Ruprecht, pfui, o schäme dich, dass du / Mir nicht in meiner Tat vertrauen kannst.','Eve',9],
+ ['Brennt sie wie Sodom und Gomorrha schon','Adam',10],
+ ['Der Richter Adam hat den Krug zerbrochen!','Eve',11],
+ ['Der Brief ist falsch!','Walter',12],
+ ['Und Pfingsten, wenn ihr wollt, mag Hochzeit sein!','Veit',12],
+ ['Gut! Auf die Woche stell ich dort mich ein.','Frau Marthe',13]];
+DE.STIL=[
+ ['Akkumulation (Aufzählung)','„Kuhkäse, Schinken, Butter, Würste, Flaschen“ (Adam, 2. Auftritt)','Häufung von Wörtern eines Bereichs'],
+ ['Polysyndeton','„Und Knecht’ und Mägd’ und Hund’ und Katzen kamen“ (Ruprecht, 7. Auftritt)','viele gleiche Bindewörter hintereinander'],
+ ['Rhetorische Frage','„Meint Er, dass die Justiz ein Töpfer ist?“ (Marthe, 6. Auftritt)','Frage, auf die keine Antwort erwartet wird'],
+ ['Vergleich','„Wie eine Hand in einen Sack voll Erbsen“ (Walter, 9. Auftritt)','Verbindung zweier Bereiche mit „wie“'],
+ ['Metapher','„Dein guter Name lag in diesem Topfe“ (Marthe, 6. Auftritt)','bildliche Übertragung ohne „wie“'],
+ ['Aposiopese','„Den ich, soviel –?“ (Adam, 7. Auftritt)','Satz bricht mitten ab'],
+ ['Anapher','„Setz Er den Krug mal hin … / Setz Er’n mal hin …“ (Marthe, 6. Auftritt)','gleicher Anfang aufeinanderfolgender Sätze oder Verse'],
+ ['Hyperbel','„Fünf Junge, gelb und schwarz, und eins ist weiß“ (Adams Katzen-Ausrede, 2. Auftritt)','starke Übertreibung'],
+ ['Biblische Anspielung','„Brennt sie wie Sodom und Gomorrha schon“ (Adam, 10. Auftritt)','Bezug auf die Bibel'],
+ ['Alliteration','„Lärm um nichts; Lappalien“ (Licht, 7. Auftritt)','gleicher Anfangslaut'],
+ ['Doppeldeutigkeit','„Ich bin ein Schelm, wenn’s nicht der Lebrecht war.“ (Adam, 9. Auftritt)','Satz hat zwei Bedeutungen – Adam ist wirklich ein Schelm'],
+ ['Beiseitesprechen','„Die werden mich doch nicht bei mir verklagen?“ (Adam, 7. Auftritt)','Figur spricht für sich, die anderen hören es nicht'],
+ ['Mauerschau (Teichoskopie)','Licht beschreibt vom Fenster aus Adams Flucht übers Feld (12. Auftritt)','Geschehen außerhalb der Bühne wird berichtet'],
+ ['Stichomythie','schneller Wechsel kurzer Repliken, z. B. Klinke oder Degen (7. Auftritt)','rasches Wechselgespräch in kurzen Versen']];
+DE.FAKT=[
+ ['Wer schrieb „Der zerbrochne Krug“?','Heinrich von Kleist',['Johann Wolfgang von Goethe','Friedrich Schiller','Heinrich Zschokke']],
+ ['Lebensdaten von Heinrich von Kleist','1777–1811',['1749–1832','1759–1805','1797–1856']],
+ ['Wann wurde das Stück uraufgeführt?','2. März 1808',['1802','1811','1777']],
+ ['Wo war die Uraufführung?','Weimarer Hoftheater',['Berlin','Dresden','Bern']],
+ ['Wer leitete die Uraufführung?','Goethe',['Schiller','Kleist selbst','Zschokke']],
+ ['Wann erschien der vollständige Erstdruck?','1811 in Berlin',['1808 in Weimar','1802 in Bern','1806 in Königsberg']],
+ ['Was gab den Anstoß zum Stück?','ein französischer Kupferstich („Le juge, ou la cruche cassée“)',['ein Gerichtsprozess in Utrecht','ein Märchen der Brüder Grimm','ein Brief Goethes']],
+ ['Mit wem trat Kleist in Bern in einen Wettstreit zu dem Kupferstich?','Heinrich Zschokke und Ludwig Wieland',['Goethe und Schiller','Novalis und Tieck','Adam Müller und Reimer']],
+ ['Wie viele Auftritte hat das Stück?','13 in einem Akt',['5 Akte','3 Akte mit je 4 Szenen','7 Auftritte']],
+ ['In welchem Versmaß ist das Stück geschrieben?','Blankvers (reimloser fünfhebiger Jambus)',['Alexandriner','Knittelvers','Prosa']],
+ ['Wo spielt die Handlung?','in der Gerichtsstube in Huisum, einem Dorf bei Utrecht',['in Utrecht im Rathaus','in Berlin','in einem Dorf bei Weimar']],
+ ['Wie lange dauert die Handlung?','einen Vormittag (Spielzeit ≈ gespielte Zeit)',['eine Woche','drei Tage','eine Nacht']],
+ ['An welchem Tag ist der Gerichtstag?','am 1. Februar',['am 3. Februar','zu Pfingsten','am 1. Mai']],
+ ['Welches antike Drama ist das Vorbild?','„König Ödipus“ von Sophokles',['„Antigone“','„Medea“','„Die Orestie“']],
+ ['Wie nennt man ein Drama, das eine vergangene Tat Schritt für Schritt enthüllt?','analytisches Drama',['Zieldrama','Stationendrama','episches Theater']],
+ ['Wie ordnet man das Stück epochal am besten ein?','zwischen bzw. neben Klassik und Romantik',['eindeutig Sturm und Drang','eindeutig Realismus','eindeutig Barock']],
+ ['Welche Gattung gibt Kleist im Untertitel an?','Lustspiel',['Trauerspiel','Novelle','Posse in fünf Akten']],
+ ['Wie heißt die lange Fassung des 12. Auftritts?','Variant',['Prolog','Epilog','Intermezzo']],
+ ['Warum fiel die Uraufführung durch?','Goethe teilte den Einakter in drei Akte, das zerstörte das Tempo; der Schluss war zu lang',['das Publikum verstand kein Niederländisch','Kleist spielte den Adam selbst','das Stück wurde verboten']],
+ ['Wie viele Verse hat die Buchfassung?','rund 1974',['rund 500','rund 5000','rund 300']]];
+DE.STEPS=['Einleitung (TATZT: Titel, Autor, Textsorte, Zeit, Thema)','Einordnung in den Handlungszusammenhang (vorher/nachher)','Inhaltsangabe des Auszugs (Präsens, ohne Zitate)','Überleitungssatz (Aspekte nennen)','Hauptteil: Gesprächsanalyse mit Zitaten','Sprachliche und dramatische Gestaltung deuten','Schluss: Ergebnisse und Funktion der Szene'];
+
+(function buildDE(){
+ const FIG=DE.FIG, AUF=DE.AUF, ZIT=DE.ZIT, STIL=DE.STIL, FAKT=DE.FAKT;
+ const ord=n=>n+'. Auftritt';
+ const opts4=(right,pool)=>{ const o=[right]; shuffle(pool.filter(x=>x!==right)).forEach(x=>{ if(o.length<4&&!o.includes(x)) o.push(x); }); return o; };
+ DE.TOPICS=[
+ {id:1,title:'Kleist und die Entstehung',short:'Autor, Kupferstich, Uraufführung 1808, Druck 1811',
+  goals:['Autor, Lebensdaten und Entstehungszeit für die Einleitung nennen','Anlass (Kupferstich) und Wettstreit erklären','Uraufführung 1808 unter Goethe und ihren Misserfolg begründen'],
+  html:`<p><b>Heinrich von Kleist</b> (1777–1811) stammte aus preußischem Adel und war zunächst Offizier. Zu Lebzeiten hatte er wenig Erfolg und galt als Außenseiter. Er starb 1811 am Wannsee bei Berlin. Weitere Werke: „Michael Kohlhaas“, „Die Marquise von O…“, „Das Käthchen von Heilbronn“, „Prinz Friedrich von Homburg“, „Penthesilea“.</p>
+  <h3>Entstehung</h3>
+  <p>1802 sah Kleist in Bern bei Heinrich Zschokke einen französischen <b>Kupferstich</b>: „Le juge, ou la cruche cassée“ (Der Richter oder der zerbrochene Krug). Zschokke, Ludwig Wieland und Kleist verabredeten einen <b>Wettstreit</b>: eine Erzählung, eine Satire, ein Lustspiel. Laut Zschokke trug Kleists Lustspiel den Preis davon. Geschrieben hat Kleist es etwa <b>1802 bis 1806</b>.</p>
+  <h3>Uraufführung und Druck</h3>
+  <p><b>2. März 1808</b>, Weimarer Hoftheater, unter der Leitung von <b>Goethe</b>. Goethe teilte den Einakter in <b>drei Akte</b>. Das zerstörte das Tempo des Enthüllungsdramas, dazu war der lange Schluss ermüdend: Die Aufführung fiel durch. Kleist nahm Goethe das übel.</p>
+  <p>Vollständig gedruckt erschien das Stück <b>1811 in Berlin</b>. Den ursprünglichen, viel längeren 12. Auftritt druckte Kleist als Anhang: den <b>„Variant“</b>.</p>
+  <div class="merk"><span class="merk-label">Für die Einleitung</span>„Das Lustspiel ‚Der zerbrochne Krug‘ von Heinrich von Kleist entstand zwischen 1802 und 1806, wurde 1808 in Weimar uraufgeführt und thematisiert …“</div>
+  <p class="hint">Fallstrick: 1808 ist die Uraufführung, 1811 der Erstdruck.</p>`,
+  widget:'de_fakten'},
+ {id:2,title:'Gattung, Aufbau und Epoche',short:'Lustspiel, analytisches Drama, Blankvers, 13 Auftritte',
+  goals:['Gattung und Bauform (analytisches Drama) erklären','Ort, Zeit, Einheiten und Vers nennen','Epoche begründet einordnen'],
+  html:`<p><b>Gattung:</b> Lustspiel (Komödie) mit ernstem Kern: Machtmissbrauch und sexuelle Erpressung.</p>
+  <p><b>Analytisches Drama:</b> Die entscheidende Tat (die Nacht bei Eve) liegt <b>vor</b> Beginn des Stücks und wird in der Gerichtsverhandlung Schritt für Schritt enthüllt. Vorbild ist <b>Sophokles’ „König Ödipus“</b>: Auch dort sucht der Richter den Täter und findet sich selbst. Der Unterschied: Ödipus weiß nicht, dass er schuldig ist. <b>Adam weiß es von Anfang an</b> und arbeitet an der Verhüllung statt an der Enthüllung. Daraus entsteht die Komik.</p>
+  <h3>Aufbau und Form</h3>
+  <ul><li><b>Ein Akt mit 13 Auftritten</b> (der letzte heißt „Letzter Auftritt“), dazu der Variant zum 12. Auftritt. Ein neuer Auftritt beginnt, wenn Figuren kommen oder gehen.</li>
+  <li><b>Blankvers</b>: reimloser fünfhebiger Jambus, oft durch Versteilung zwischen Sprechern und derbe Wörter gebrochen. Hoher Vers, niederer Inhalt: Das ist selbst komisch.</li>
+  <li><b>Einheit von Ort, Zeit und Handlung:</b> nur die Gerichtsstube, ein Vormittag, eine Handlung ohne Nebenhandlung.</li>
+  <li><b>Ort:</b> Huisum, ein (erfundenes) Dorf bei Utrecht in den Niederlanden. <b>Zeit:</b> 1. Februar; Jahr nicht genannt, Ende des 17. Jahrhunderts.</li>
+  <li>Der 7. Auftritt ist mit fast 600 Versen der längste, der 8. hat nur zwei Verse.</li></ul>
+  <h3>Epoche</h3>
+  <p>Zeitlich fällt das Stück in die Jahre von <b>Weimarer Klassik</b> und <b>Romantik</b>, passt aber zu keiner ganz. Klassisch sind Blankvers, Einheiten und Antikebezug. Gegen die Klassik sprechen die derbe, körperliche Komik und das Fehlen von Idealisierung; gegen die Romantik das Fehlen von Natur- und Gefühlspoesie.</p>
+  <div class="merk"><span class="merk-label">So schreibst du es</span>„Kleists Lustspiel lässt sich keiner Epoche eindeutig zuordnen; es steht zwischen Klassik und Romantik.“</div>`,
+  widget:'de_aufbau'},
+ {id:3,title:'Figuren und Konstellation',short:'Adam, Walter, Licht, Marthe, Eve, Ruprecht …',
+  goals:['Jede Hauptfigur charakterisieren','Beziehungen und Interessen der Figuren erklären','Figuren mit Belegen aus dem Text deuten'],
+  html:`<p>Im Zentrum steht der Dorfrichter <b>Adam</b>, der über eine Tat urteilen muss, die er selbst begangen hat. Um ihn herum stehen drei Gruppen:</p>
+  <ul><li><b>Das Gericht:</b> Adam (Richter, Täter), Licht (Schreiber, will selbst Richter werden), Walter (Gerichtsrat aus Utrecht, Kontrolle von außen).</li>
+  <li><b>Die Klägerseite:</b> Frau Marthe Rull und ihre Tochter Eve.</li>
+  <li><b>Die Beklagtenseite:</b> Veit Tümpel und sein Sohn Ruprecht, Eves Verlobter, dazu Frau Brigitte (Ruprechts Tante) als Zeugin.</li></ul>
+  <p>Der Clou: Nur Adam und Eve kennen die Wahrheit. Adam will sie verbergen, Eve kann sie nicht aussprechen, weil Adam sie erpresst. Das Publikum ahnt sie früh: <b>dramatische Ironie</b>.</p>
+  <p>Tippe unten auf eine Figur, um ihre Charakterisierung und Beziehungen zu sehen.</p>`,
+  widget:'de_figuren'},
+ {id:4,title:'Handlung 1.–6. Auftritt',short:'Exposition: Adams Wunden, Walters Besuch, die Parteien',
+  goals:['Die Auftritte 1 bis 6 in der richtigen Reihenfolge zusammenfassen','Adams Ausreden und die Vorausdeutungen erkennen','Eine Szene in den Zusammenhang einordnen (vorher/nachher)'],
+  html:`<p>Die ersten Auftritte bilden die <b>Exposition</b>: Wir erfahren, dass Adam verletzt ist und seine Perücke fehlt, dass ein Revisor kommt und dass ein Prozess um einen zerbrochenen Krug ansteht.</p>
+  ${AUF.slice(0,6).map(a=>`<h3>${ord(a.n)} · ${a.who}</h3><p>${a.sum}</p><p class="muted" style="font-size:.9rem">→ ${a.key}</p>`).join('')}
+  <div class="merk"><span class="merk-label">Adams Ausreden (Wunden)</span>gestrauchelt beim Aufstehen und auf den „Ziegenbock“ am Ofen gefallen (1.) · später: erst auf die Ofenkante, dann rückwärts auf den Boden (10.)</div>`,
+  widget:'de_auftritte'},
+ {id:5,title:'Handlung 7.–13. Auftritt',short:'Verhandlung, Brigittes Aussage, Entlarvung, Schluss',
+  goals:['Den Verlauf der Verhandlung und die Wende erklären','Die drei Perücken-Ausreden und die Indizien kennen','Kurzfassung und Variant des 12. Auftritts unterscheiden'],
+  html:`${AUF.slice(6).map(a=>`<h3>${ord(a.n)} · ${a.who}</h3><p>${a.sum}</p><p class="muted" style="font-size:.9rem">→ ${a.key}</p>`).join('')}
+  <div class="merk"><span class="merk-label">Die Perücke</span>2. Auftritt: Die Katze hat darin gejungt · 10. Auftritt: an der Kerze verbrannt · 11. Auftritt: Ruprecht für Meister Mehl mitgegeben · Wahrheit: Sie hing im Weinspalier unter Eves Fenster.</div>
+  <h3>Der Variant (lange Fassung des 12. Auftritts)</h3>
+  <p>Eve erzählt ausführlich: das Attest, die angebliche Einschiffung nach <b>Batavia</b>, Adams nächtlichen Besuch, wie er den Krug vom Gesims riss. Sie misstraut sogar Walter; der beweist sein Wort mit einem Beutel Gulden (<b>Münzszene</b>). Ruprecht dient ein Jahr in Utrecht, Walter will zu Pfingsten Hochzeitsgast sein.</p>
+  <p class="hint">Batavia oder Bantam? Beides steht im Text: Im 7. Auftritt droht Adam mit Batavia, in der Kurzfassung des 12. Auftritts sagt Eve „Nach Bantam“.</p>`,
+  widget:'de_auftritte2'},
+ {id:6,title:'Themen, Motive und Sprache',short:'Wahrheit, Justiz, Sündenfall, Krug, Komik',
+  goals:['Zentrale Themen mit Textbelegen erklären','Den Krug als Symbol deuten','Stilmittel und Formen der Komik erkennen und deuten'],
+  html:`<h3>Wahrheit und Lüge</h3><p>Das Stück dreht den analytischen Prozess um: Der Ermittler verhindert die Wahrheit. Adams Lügen widersprechen sich ständig (Wunden, Perücke). Die Wahrheit kommt nicht durch das Verfahren ans Licht, sondern durch Indizien und Eves Ausbruch.</p>
+  <h3>Recht, Justiz, Machtmissbrauch</h3><p>Adam behandelt Recht als ungeschriebene „Huisumer Statuten“, schüchtert Zeugen ein und erpresst Eve. Auch die Obrigkeit ist zwiespältig: Walter schützt vor allem das Ansehen der Justiz, Licht profitiert.</p>
+  <h3>Sündenfall</h3><p><b>Adam</b> und <b>Eve</b> tragen biblische Namen; Licht spricht vom „Adamsfall“. Adam verliert sein „Paradies“, das Amt. Anders als in der Bibel nötigt hier der Mann die Frau.</p>
+  <h3>Der Krug als Symbol</h3><ul><li>Eves Ehre und Unschuld („Dein guter Name lag in diesem Topfe“)</li><li>die zerbrochene Verlobung und das zerbrochene Vertrauen</li><li>die beschädigte Ordnung: Auf dem Krug war die Übergabe der Niederlande durch Karl V. abgebildet</li><li>die Grenzen der Justiz: Sie kann den Krug nicht heilen („Meint Er, dass die Justiz ein Töpfer ist?“)</li></ul>
+  <h3>Teufel und Klumpfuß</h3><p>Klumpfuß, Glatze und Schwefelgestank: Brigitte hält den Flüchtenden für den Teufel. Das ist komisch, zugleich ist Adam im übertragenen Sinn wirklich ein „Teufel“.</p>
+  <h3>Vertrauen</h3><p>Eve verlangt Vertrauen ohne Beweis, Ruprecht glaubt nur, was er „mit Händen greife“. Im Variant weitet sich das zum Vertrauen in den Staat aus.</p>
+  <h3>Komik und dramatische Ironie</h3><p>Das Publikum weiß früh mehr als Walter, Marthe und Ruprecht. Darum hat fast jede Äußerung Adams einen zweiten Sinn: <b>Doppeldeutigkeiten</b> („Ich bin ein Schelm, wenn’s nicht der Lebrecht war“), <b>Versprecher und Selbstverrat</b> („War’s eine Klinke?“, „Leberecht“), <b>Beiseitesprechen</b>, Situationskomik (Würste und Akten) und derbe Körperkomik.</p>`,
+  widget:'de_stil'},
+ {id:7,title:'Szenenanalyse schreiben',short:'Aufbau, Leitfaden, Formulierungen, Zitieren',
+  goals:['Eine aspektorientierte Szenenanalyse aufbauen','Gespräch, Sprache und dramatische Gestaltung untersuchen','Richtig zitieren und passende Formulierungen nutzen'],
+  html:`<h3>Aufbau einer aspektorientierten Analyse und Interpretation</h3>
+  <ol><li><b>Einleitung:</b> Titel, Autor, Entstehungszeit, evtl. historischer Hintergrund, Epoche, Ort, Zeit, Figuren, kurze Übersicht über Inhalt und Thema, <b>Deutungshypothese</b>. Denk an die <b>TATZT-Formel</b>: Titel, Autor, Textsorte, Zeit, Thema.</li>
+  <li><b>Einordnung</b> in den Handlungszusammenhang: Was geschieht vorher, was nachher? Dann <b>Inhaltsangabe</b> des Auszugs: im Präsens, eigene Worte, <b>keine Zitate</b>, Äußerungen in indirekter Rede.</li>
+  <li><b>Überleitungssatz:</b> Nenne die Aspekte, die du im Folgenden untersuchst.</li>
+  <li><b>Hauptteil – nur hier wird zitiert!</b><ul><li><b>Gespräch:</b> Dialog oder Monolog? Wer spricht mit wem worüber? Motive, Brüche, Wendepunkte, Beziehung der Figuren.</li><li><b>Charaktereigenschaften und Gefühle</b> der Figuren.</li><li><b>Sprachliche Gestaltung:</b> Wortwahl, Satzbau, Ellipsen, Fragen, Ausrufe, Wiederholungen, Ironie, Steigerung, Klimax, Hyperbel, hohes Sprachniveau vs. Umgangssprache, Widersprüche.</li><li><b>Dramatische Gestaltung:</b> Regieanweisungen, Redeanteile (symmetrisch oder asymmetrisch?).</li></ul></li>
+  <li><b>Schluss:</b> Ergebnisse in ein bis zwei Sätzen zusammenfassen (nicht mehr zitieren), Funktion der Szene im ganzen Drama.</li></ol>
+  <h3>Linear oder aspektgeleitet?</h3>
+  <p><b>Linear:</b> Abschnitt für Abschnitt von vorne nach hinten. Vorteil: genau, gut bei kurzen Auszügen. Nachteil: Man verliert sich leicht im Detail. <b>Aspektgeleitet:</b> erst Aspekte festlegen, dann nacheinander am Text abarbeiten. Vorteil: zentrale Aspekte von Anfang an im Blick. Nachteil: Manches fällt unter den Tisch.</p>
+  <h3>Formulierungen</h3>
+  <ul><li>„In der vorliegenden Szene des Lustspiels ‚Der zerbrochne Krug‘ von Heinrich von Kleist geht es um …“</li><li>„Der Szene ist vorausgegangen, dass … Auf die Szene folgt …“</li><li>„Zu Beginn der Szene … Im weiteren Verlauf … Gegen Ende …“</li><li>„Im Folgenden wird untersucht, wie …“</li><li>„Durch die Verwendung der rhetorischen Frage „…“ (V. …) wird deutlich, dass …“</li><li>„Das Gespräch wird klar von … dominiert.“ / „Die Redeanteile sind asymmetrisch verteilt.“</li><li>„Zusammenfassend lässt sich sagen … Für die Gesamthandlung ist die Szene insofern bedeutsam, als …“</li></ul>
+  <div class="merk"><span class="merk-label">Wichtig</span>Regieanweisungen einbeziehen · Zitate korrekt einbauen und mit Vers (V.) belegen · Fachbegriffe statt Umgangssprache · Absätze und Überleitungen · roter Faden. Bei Kleist immer prüfen: <b>Wer weiß was?</b> (dramatische Ironie)</div>`,
+  widget:'de_analyse'}];
+
+ DE.QUESTIONS=[
+ {t:1,q:'Welche Angabe gehört NICHT in die Einleitung einer Szenenanalyse zum „Krug“?',o:['ein Zitat aus der Szene','Autor und Entstehungszeit','Titel und Textsorte','Deutungshypothese'],a:0,e:'Zitiert wird erst im Hauptteil.'},
+ {t:1,q:'Wer leitete die Uraufführung 1808?',o:['Goethe','Schiller','Kleist','Zschokke'],a:0,e:'Goethe am Weimarer Hoftheater, am 2. März 1808.'},
+ {t:1,q:'Was ist 1811 passiert?',o:['Der vollständige Erstdruck erschien in Berlin.','Die Uraufführung in Weimar.','Kleist sah den Kupferstich.','Kleist wurde geboren.'],a:0,e:'1811 Erstdruck (und Kleists Tod), 1808 Uraufführung.'},
+ {t:1,q:'Wo sah Kleist den Kupferstich, der zum Stück anregte?',o:['in Bern bei Heinrich Zschokke','in Weimar bei Goethe','in Paris im Louvre','in Utrecht im Gericht'],a:0,e:'1802 in der Schweiz; daraus entstand ein Dichter-Wettstreit.'},
+ {t:1,q:'Welches Werk stammt ebenfalls von Kleist?',o:['Michael Kohlhaas','Faust','Die Räuber','Nathan der Weise'],a:0,e:'Faust: Goethe, Die Räuber: Schiller, Nathan: Lessing.'},
+ {t:1,q:'Warum wurde die Uraufführung ein Misserfolg?',o:['Goethe teilte den Einakter in drei Akte, das zerstörte das Tempo.','Das Stück war verboten.','Es gab keine Schauspieler.','Kleist hatte das Ende vergessen.'],a:0,e:'Dazu kamen ein langer, breiter Schluss und ein schleppender Adam-Darsteller.'},
+ {t:2,q:'Was ist ein analytisches Drama?',o:['Ein Drama, das eine vergangene Tat Schritt für Schritt enthüllt','Ein Drama ohne Handlung','Ein Drama mit fünf Akten und Katastrophe','Ein Drama über Wissenschaft'],a:0,e:'Die Tat (die Nacht bei Eve) liegt vor dem Beginn des Stücks.'},
+ {t:2,q:'Worin unterscheidet sich Adam von Ödipus?',o:['Adam weiß von Anfang an, dass er der Täter ist.','Adam ist unschuldig.','Adam ist ein König.','Adam findet den Täter nie.'],a:0,e:'Ödipus sucht ahnungslos, Adam arbeitet an der Verhüllung – daher die Komik.'},
+ {t:2,q:'Welches Versmaß verwendet Kleist?',o:['Blankvers','Knittelvers','Alexandriner','freie Rhythmen'],a:0,e:'Reimloser fünfhebiger Jambus, oft durch Versteilung gebrochen.'},
+ {t:2,q:'Welche Einheiten hält das Stück ein?',o:['Ort, Zeit und Handlung','nur den Ort','nur die Zeit','keine'],a:0,e:'Gerichtsstube, ein Vormittag, eine Handlung.'},
+ {t:2,q:'Wie viele Auftritte hat „Der zerbrochne Krug“?',o:['13','5','7','24'],a:0,e:'Ein Akt mit 13 Auftritten.'},
+ {t:2,q:'Welche Einordnung in eine Epoche ist am besten begründbar?',o:['zwischen bzw. neben Klassik und Romantik','Barock','Naturalismus','Expressionismus'],a:0,e:'Klassische Form (Blankvers, Einheiten), aber derbe Komik ohne Idealisierung.'},
+ {t:2,q:'Welcher Auftritt ist der längste?',o:['der 7.','der 1.','der 13.','der 8.'],a:0,e:'Fast 600 Verse; der 8. hat nur zwei.'},
+ {t:3,q:'Wer ist Licht?',o:['Gerichtsschreiber, der selbst Richter werden will','Gerichtsrat aus Utrecht','Ruprechts Vater','der Büttel'],a:0,e:'Er wird am Ende vorläufig mit dem Amt betraut.'},
+ {t:3,q:'Warum schweigt Eve so lange?',o:['Adam erpresst sie mit dem Attest für Ruprecht.','Sie war nicht zu Hause.','Sie liebt Lebrecht.','Sie will Ruprecht bestrafen.'],a:0,e:'Das Attest sollte Ruprecht angeblich vor dem Dienst in Ostindien bewahren.'},
+ {t:3,q:'Wer ist Frau Brigitte?',o:['Ruprechts Tante (Muhme) und Zeugin','Eves Großmutter','Adams Haushälterin','die Küsterin'],a:0,e:'Sie liefert mit Perücke und Spur im Schnee die entscheidenden Indizien.'},
+ {t:3,q:'Was will Walter vor allem schützen?',o:['das Ansehen des Gerichts','Adams Freundschaft','Marthes Krug','Lichts Karriere'],a:0,e:'Darum drängt er auf einen Abschluss und lässt Adam zunächst urteilen.'},
+ {t:3,q:'Wen hält Ruprecht anfangs für den Mann bei Eve?',o:['Lebrecht, den Flickschuster','Licht','Walter','den Büttel'],a:0,e:'Lebrecht war aber in Utrecht – Adam hatte ihn selbst geschickt.'},
+ {t:3,q:'Worum geht es Frau Marthe eigentlich?',o:['um die Ehre ihres Hauses und Eves Ruf','nur um Geld','um Ruprechts Militärdienst','um Adams Absetzung'],a:0,e:'„Dein guter Name lag in diesem Topfe.“'},
+ {t:3,q:'Welche körperliche Besonderheit hat Adam?',o:['einen Klumpfuß','eine Augenklappe','einen Buckel','sechs Finger'],a:0,e:'Darum führt die Spur mit dem „Pferdefuß“ zu ihm.'},
+ {t:4,q:'Was meldet Licht im 1. Auftritt?',o:['dass Gerichtsrat Walter auf Revisionsreise kommt','dass der Krug zerbrochen ist','dass Eve verlobt ist','dass Adam befördert wird'],a:0,e:'In Holla hat Walter den Richter Pfaul suspendiert.'},
+ {t:4,q:'Was erzählt Adam im 3. Auftritt?',o:['einen Traum, in dem er sich selbst verurteilt','die Geschichte des Krugs','von seiner Hochzeit','wie Ruprecht den Krug zerbrach'],a:0,e:'Vorausdeutung auf das ganze Stück.'},
+ {t:4,q:'Wie erklärt Adam im 2. Auftritt das Fehlen der Perücke?',o:['Die Katze habe darin gejungt.','Sie sei verbrannt.','Ruprecht habe sie.','Walter habe sie mitgenommen.'],a:0,e:'Später ändert er die Ausrede zweimal.'},
+ {t:4,q:'Wie viele Kassen hat Adam?',o:['fünf','vier','drei','keine'],a:0,e:'Walter rechnete nur mit vier.'},
+ {t:4,q:'In welchem Auftritt fehlt Adam?',o:['im 6.','im 1.','im 7.','im 11.'],a:0,e:'Die Parteien streiten vor der Verhandlung; auch im 12. Auftritt ist Adam weg.'},
+ {t:4,q:'Was sagen die Mägde über den Vorabend?',o:['Adam kam gegen elf ohne Perücke und blutend heim.','Adam war die ganze Nacht im Gericht.','Adam war bei Walter.','Adam schlief früh.'],a:0,e:'Ein frühes Indiz für den Zuschauer.'},
+ {t:5,q:'Was war auf Marthes Krug abgebildet?',o:['die Übergabe der Niederlande durch Kaiser Karl V. an Philipp','die Hochzeit von Adam und Eve','der Dom zu Utrecht','eine Gerichtsszene'],a:0,e:'Ein Bild staatlicher Ordnung – passend zum Symbol des Krugs.'},
+ {t:5,q:'Womit schlug Ruprecht den Flüchtenden?',o:['mit der Türklinke','mit dem Krug','mit einem Stock','mit der Faust'],a:0,e:'Adam verrät sich: „War’s eine Klinke?“'},
+ {t:5,q:'Wo fand Brigitte die Perücke?',o:['im Weinspalier unter Eves Fenster','in Adams Bett','im Gerichtssaal','beim Perückenmacher'],a:0,e:'11. Auftritt.'},
+ {t:5,q:'Was zeigte die Spur im Schnee?',o:['rechts einen Menschenfuß, links einen Pferdefuß','zwei Pferdehufe','nur Schuhabdrücke','Katzenspuren'],a:0,e:'Sie führte bis zu Adams Haus.'},
+ {t:5,q:'Wer ruft „Der Richter Adam hat den Krug zerbrochen!“?',o:['Eve','Licht','Brigitte','Ruprecht'],a:0,e:'11. Auftritt, nachdem Adam Ruprecht verurteilt hat.'},
+ {t:5,q:'Wer übernimmt am Ende vorläufig das Richteramt?',o:['Licht','Walter','Veit','Ruprecht'],a:0,e:'Adam ist suspendiert.'},
+ {t:5,q:'Wer schlägt in der Kurzfassung die Hochzeit zu Pfingsten vor?',o:['Veit','Walter','Marthe','Adam'],a:0,e:'Im Variant kündigt Walter an, zu Pfingsten als Gast zu kommen.'},
+ {t:5,q:'Was will Marthe im letzten Auftritt?',o:['in Utrecht weiter um ihren Krug klagen','Adam heiraten','Licht anzeigen','Eve verstoßen'],a:0,e:'„Am großen Markt“, Sitzung Dienstag und Freitag.'},
+ {t:5,q:'Was erkennt Walter am Brief, den Eve zeigt?',o:['Er ist gefälscht; die Truppen bleiben im Inland.','Er ist echt.','Er ist von Licht.','Er ist ein Liebesbrief.'],a:0,e:'„Der Brief ist falsch!“'},
+ {t:5,q:'Was passiert in Adams Urteil im 11. Auftritt?',o:['Er verurteilt Ruprecht.','Er spricht Ruprecht frei.','Er verurteilt sich selbst.','Er vertagt die Sitzung.'],a:0,e:'Ein Fehlurteil, das Eve zum Reden bringt.'},
+ {t:6,q:'Wofür steht der zerbrochene Krug vor allem?',o:['für Eves verletzte Ehre und das zerbrochene Vertrauen','für Adams Reichtum','für Walters Macht','für die Hochzeit'],a:0,e:'Dazu: zerbrochene Ordnung und die Grenzen der Justiz.'},
+ {t:6,q:'Was ist dramatische Ironie?',o:['Das Publikum weiß mehr als die Figuren.','Eine Figur lügt.','Das Stück endet traurig.','Eine Figur spricht mit sich selbst.'],a:0,e:'Darum haben Adams Sätze oft einen zweiten Sinn.'},
+ {t:6,q:'Worauf spielen die Namen Adam und Eve an?',o:['auf den Sündenfall','auf die Antike','auf Ödipus','auf Napoleon'],a:0,e:'Licht spottet vom „Adamsfall“.'},
+ {t:6,q:'Warum ist Adams Satz „Ich bin ein Schelm, wenn’s nicht der Lebrecht war“ komisch?',o:['Er ist wörtlich wahr – Adam ist der Schelm.','Er reimt sich.','Er ist auf Französisch.','Lebrecht ist anwesend.'],a:0,e:'Eine Doppeldeutigkeit aus dramatischer Ironie.'},
+ {t:6,q:'Was ist ein Beiseitesprechen?',o:['Eine Figur spricht für sich, die anderen hören es nicht.','Ein Gespräch unter vier Augen','Ein Monolog am Anfang','Eine Regieanweisung'],a:0,e:'Etwa Adam: „Die werden mich doch nicht bei mir verklagen?“'},
+ {t:6,q:'Wofür steht Adams Klumpfuß zusätzlich?',o:['für den Teufel (Pferdefuß)','für Adel','für Weisheit','für Armut'],a:0,e:'Brigitte hält den Flüchtenden für den Teufel.'},
+ {t:6,q:'Welches Thema zeigt sich im Konflikt zwischen Eve und Ruprecht?',o:['Vertrauen','Reichtum','Krieg','Religion'],a:0,e:'Eve verlangt Vertrauen ohne Beweis, Ruprecht glaubt nur, was er sieht.'},
+ {t:7,q:'Wo wird in der Szenenanalyse zitiert?',o:['nur im Hauptteil','in der Einleitung','in der Inhaltsangabe','im Schluss'],a:0,e:'Inhaltsangabe und Schluss ohne Zitate.'},
+ {t:7,q:'In welcher Zeitform schreibt man die Inhaltsangabe?',o:['Präsens','Präteritum','Perfekt','Futur'],a:0,e:'Äußerungen anderer gibt man in indirekter Rede wieder.'},
+ {t:7,q:'Was gehört in den Überleitungssatz?',o:['die Aspekte, die man im Hauptteil untersucht','ein Zitat','das Fazit','die Biografie des Autors'],a:0,e:'Er leitet von der Inhaltsangabe zur Analyse über.'},
+ {t:7,q:'Wofür steht TATZT?',o:['Titel, Autor, Textsorte, Zeit, Thema','Text, Absatz, Thema, Zitat, Teil','Titel, Akt, Takt, Zeile, Ton','Thema, Autor, Tempus, Zitat, Text'],a:0,e:'Merkhilfe für den Einleitungssatz.'},
+ {t:7,q:'Was untersuchst du bei der dramatischen Gestaltung?',o:['Regieanweisungen und Redeanteile','Reimschema','Kapitelüberschriften','Erzählperspektive'],a:0,e:'Sind die Redeanteile symmetrisch oder dominiert eine Figur?'},
+ {t:7,q:'Was ist ein Vorteil der linearen Vorgehensweise?',o:['sehr genaue Bearbeitung, gut bei kurzen Auszügen','man spart sich die Einleitung','man braucht keine Zitate','sie ist immer kürzer'],a:0,e:'Nachteil: Man kann sich im Detail verlieren.'},
+ {t:7,q:'Was gehört in den Schluss?',o:['Zusammenfassung und Funktion der Szene im Drama','neue Zitate','die Inhaltsangabe','die Deutungshypothese zum ersten Mal'],a:0,e:'Nicht mehr zitieren.'},
+ {t:7,q:'Wie belegt man ein Zitat aus dem Drama?',o:['mit Versangabe, z. B. (V. 434)','mit Seitenzahl des Internets','gar nicht','mit dem Datum'],a:0,e:'Direkte und indirekte Zitate brauchen eine Fundstelle.'}];
+
+ DE.TF=[
+ [1,'Kleist lebte von 1777 bis 1811.',1,'Geboren in Frankfurt (Oder), gestorben am Wannsee bei Berlin.'],
+ [1,'Das Stück wurde 1811 in Weimar uraufgeführt.',0,'Uraufführung 2. März 1808 in Weimar, Erstdruck 1811 in Berlin.'],
+ [1,'Goethe teilte das Stück für die Uraufführung in drei Akte.',1,'Das zerstörte das Tempo – ein Grund für den Misserfolg.'],
+ [1,'Anstoß war ein Kupferstich, den Kleist in Bern sah.',1,'„Le juge, ou la cruche cassée“ bei Heinrich Zschokke.'],
+ [1,'Die Uraufführung war ein großer Erfolg.',0,'Sie fiel durch.'],
+ [2,'„Der zerbrochne Krug“ ist ein analytisches Drama.',1,'Die Tat liegt vor Beginn und wird enthüllt.'],
+ [2,'Das Stück hat fünf Akte.',0,'Ein Akt mit 13 Auftritten.'],
+ [2,'Die Handlung dauert einen Vormittag.',1,'Einheit der Zeit; Spielzeit und gespielte Zeit sind fast gleich.'],
+ [2,'Das Stück spielt in Utrecht.',0,'In Huisum, einem Dorf bei Utrecht.'],
+ [2,'Kleist nennt im Stück das genaue Jahr der Handlung.',0,'Nur das Datum (1. Februar); das Jahr fehlt, man vermutet Ende des 17. Jahrhunderts.'],
+ [2,'Das Stück ist in Blankversen geschrieben.',1,'Reimloser fünfhebiger Jambus.'],
+ [2,'Man kann das Stück eindeutig der Romantik zuordnen.',0,'Es steht zwischen bzw. neben Klassik und Romantik.'],
+ [3,'Adam ist Täter und Richter zugleich.',1,'Darin liegt die Grundkomik des Stücks.'],
+ [3,'Lebrecht tritt im Stück selbst auf.',0,'Er wird nur erwähnt; er war in Utrecht.'],
+ [3,'Licht möchte selbst Dorfrichter werden.',1,'Am Ende verwaltet er das Amt vorläufig.'],
+ [3,'Frau Brigitte ist Eves Tante.',0,'Sie ist Ruprechts Muhme (Tante).'],
+ [3,'Ruprecht ist der Sohn von Veit Tümpel.',1,'Veit ist Bauer.'],
+ [3,'Walter ist Gerichtsrat aus Utrecht.',1,'Er ist auf Revisionsreise.'],
+ [4,'Adams erste Ausrede: Er sei auf den „Ziegenbock“ am Ofen gefallen.',1,'Der Ziegenbock ist eine Ofenverzierung.'],
+ [4,'Im 3. Auftritt erzählt Adam einen Traum.',1,'Er verurteilt sich darin selbst – Vorausdeutung.'],
+ [4,'Walter kommt erst im 11. Auftritt.',0,'Er erscheint im 4. Auftritt.'],
+ [4,'Im 6. Auftritt löst Ruprecht die Verlobung mit Eve.',1,'Er nennt sie „Metze“.'],
+ [4,'Der Richter in Holla heißt Pfaul.',1,'Walter hatte ihn suspendiert.'],
+ [5,'Ruprecht bekam vom Flüchtenden Sand in die Augen.',1,'„Eine Handvoll grobgekörnten Sandes“.'],
+ [5,'Brigitte fand die Perücke in Adams Schrank.',0,'Im Weinspalier unter Eves Fenster.'],
+ [5,'Adam spricht Ruprecht frei.',0,'Er verurteilt ihn – dann bricht Eve ihr Schweigen.'],
+ [5,'Am Ende wird Adam suspendiert.',1,'Licht verwaltet das Amt vorläufig.'],
+ [5,'Walter erkennt den Brief über Ostindien als Fälschung.',1,'Die Truppen bleiben im Landesinneren.'],
+ [5,'Im letzten Auftritt bekommt Marthe Schadenersatz für den Krug.',0,'Sie will in Utrecht weiterklagen; der Krug bekommt kein Recht.'],
+ [5,'Im Variant beweist Walter sein Wort mit einem Beutel Geld.',1,'Die Münzszene.'],
+ [6,'Der Krug steht symbolisch für Eves Ehre.',1,'„Dein guter Name lag in diesem Topfe.“'],
+ [6,'Bei dramatischer Ironie wissen die Figuren mehr als das Publikum.',0,'Umgekehrt: Das Publikum weiß mehr.'],
+ [6,'„War’s eine Klinke?“ ist ein Selbstverrat Adams.',1,'Er kennt Details, die nur der Täter kennen kann.'],
+ [6,'Die Namen Adam und Eve spielen auf den Sündenfall an.',1,'Licht spricht vom „Adamsfall“.'],
+ [7,'In der Inhaltsangabe wird zitiert.',0,'Zitiert wird nur im Hauptteil.'],
+ [7,'Die Deutungshypothese gehört in die Einleitung.',1,'Sie wird im Hauptteil überprüft.'],
+ [7,'Im Schluss fasst man die Ergebnisse zusammen und ordnet die Szene ins Drama ein.',1,'Ohne neue Zitate.'],
+ [7,'Regieanweisungen spielen für die Analyse keine Rolle.',0,'Sie gehören zur dramatischen Gestaltung und müssen einbezogen werden.'],
+ [7,'Man sollte umgangssprachliche Formulierungen vermeiden.',1,'Fachbegriffe und sachlicher Stil.']];
+
+ DE.CARDS=[
+ ['Analytisches Drama','Drama, in dem eine vor Beginn liegende Tat Schritt für Schritt enthüllt wird. Vorbild: Sophokles’ „König Ödipus“.'],
+ ['Lustspiel','Komödie; „Der zerbrochne Krug“ ist ein Lustspiel mit ernstem Kern (Machtmissbrauch, Erpressung).'],
+ ['Blankvers','reimloser fünfhebiger Jambus; Versmaß des „Krugs“.'],
+ ['Auftritt','Abschnitt eines Dramas; ein neuer Auftritt beginnt, wenn Figuren kommen oder gehen.'],
+ ['Variant','die lange Fassung des 12. Auftritts, die Kleist im Erstdruck 1811 als Anhang abdruckte.'],
+ ['Exposition','Einführung in Figuren, Ort und Konflikt (1.–5. Auftritt: Adams Wunden, fehlende Perücke, Walters Besuch).'],
+ ['Dramatische Ironie','Das Publikum weiß mehr als die Figuren; dadurch bekommen Aussagen einen zweiten Sinn.'],
+ ['Beiseitesprechen','Eine Figur spricht für sich, die anderen auf der Bühne hören es nicht.'],
+ ['Mauerschau (Teichoskopie)','Ein Geschehen außerhalb der Bühne wird von einer Figur beschrieben (Licht sieht Adam fliehen).'],
+ ['Stichomythie','schneller Wechsel kurzer Repliken zwischen Figuren.'],
+ ['Aposiopese','Satzabbruch, z. B. Adam: „Den ich, soviel –?“'],
+ ['Deutungshypothese','vorläufige Deutung des Textes in der Einleitung, die im Hauptteil überprüft wird.'],
+ ['Überleitungssatz','nennt nach der Inhaltsangabe die Aspekte, die im Hauptteil untersucht werden.'],
+ ['TATZT-Formel','Einleitungssatz: Titel, Autor, Textsorte, Zeit, Thema.'],
+ ['Regieanweisung','Hinweis des Autors zu Handlung, Gestik oder Sprechweise; gehört zur dramatischen Gestaltung.'],
+ ['Redeanteile','Wer spricht wie viel? Symmetrisch (gleich verteilt) oder asymmetrisch (eine Figur dominiert).'],
+ ['Kleist','Heinrich von Kleist, 1777–1811, Dramatiker und Erzähler; Außenseiter zwischen Klassik und Romantik.'],
+ ['Uraufführung','2. März 1808, Weimarer Hoftheater, unter Goethe, in drei Akte zerlegt, Misserfolg.'],
+ ['Erstdruck','1811 in Berlin (Realschulbuchhandlung), mit dem Variant im Anhang.'],
+ ['Huisum','erfundenes Dorf bei Utrecht in den Niederlanden; Ort der Handlung (Gerichtsstube).'],
+ ['Adam','Dorfrichter in Huisum, Täter und Richter zugleich; Klumpfuß, lüstern, Meister der Ausrede.'],
+ ['Walter','Gerichtsrat aus Utrecht auf Revisionsreise; korrekt, will das Ansehen der Justiz schützen.'],
+ ['Licht','Gerichtsschreiber, ehrgeizig, durchschaut Adam; verwaltet am Ende vorläufig das Richteramt.'],
+ ['Frau Marthe Rull','Klägerin, Eves Mutter; kämpft um den Krug und eigentlich um die Ehre ihres Hauses.'],
+ ['Eve','Marthes Tochter, Ruprechts Verlobte; von Adam mit einem gefälschten Attest erpresst, schweigt lange.'],
+ ['Ruprecht','Sohn von Veit Tümpel, Eves Verlobter; eifersüchtig, glaubt nur, was er sieht.'],
+ ['Frau Brigitte','Ruprechts Tante; findet die Perücke und die Spur mit dem Pferdefuß – die entscheidende Zeugin.'],
+ ['Attest','Adams angebliches Schreiben, das Ruprecht vom Militärdienst in Ostindien befreien sollte – Mittel der Erpressung.'],
+ ['Die drei Perücken-Ausreden','Katze hat darin gejungt (2.) · an der Kerze verbrannt (10.) · Ruprecht für Meister Mehl mitgegeben (11.).'],
+ ['Krug als Symbol','Eves Ehre, zerbrochene Verlobung und Vertrauen, beschädigte Ordnung, Grenzen der Justiz.'],
+ ['Sündenfall-Motiv','Namen Adam und Eve, „Adamsfall“; Adam verliert sein „Paradies“, das Amt.'],
+ ['Teufelsmotiv','Klumpfuß, Glatze, Schwefelgestank: Brigitte hält den Flüchtenden für den Teufel.'],
+ ['Lineare Analyse','Text wird von vorne nach hinten in Abschnitten bearbeitet; genau, aber Gefahr, sich im Detail zu verlieren.'],
+ ['Aspektgeleitete Analyse','Aspekte werden festgelegt und nacheinander am Text untersucht; klarer Fokus, aber manches fällt weg.']];
+
+ DE.TASKS=[
+ {t:7,q:'<b>Schreibe</b> eine Einleitung (mit Deutungshypothese) zu einer Analyse des 7. Auftritts.',sol:()=>`<p>„Das Lustspiel ‚Der zerbrochne Krug‘ von Heinrich von Kleist, entstanden zwischen 1802 und 1806 und 1808 in Weimar uraufgeführt, handelt von einem Dorfrichter, der über eine Tat urteilen muss, die er selbst begangen hat. Im 7. Auftritt beginnt die Gerichtsverhandlung um Frau Marthes zerbrochenen Krug. Es lässt sich vermuten, dass Adam die Verhandlung gezielt in eine falsche Richtung lenkt und sich dabei gerade durch seinen Eifer selbst verrät.“</p><p class="muted">Enthalten: Titel, Autor, Textsorte, Zeit, Thema, Szene, Deutungshypothese.</p>`},
+ {t:4,q:'<b>Ordne</b> den 9. Auftritt in den Handlungszusammenhang ein (vorher/nachher).',sol:()=>`<p><b>Vorher:</b> Adam hat sich mit Ausreden über Wunden und Perücke gerettet; im 7. Auftritt hat Marthe den Krug beschrieben und Ruprecht von der Nacht berichtet, er verdächtigt Lebrecht. <b>Im 9. Auftritt</b> wird Eve befragt; sie entlastet Ruprecht und Lebrecht, nennt aber keinen Namen. <b>Danach:</b> In der Weinpause (10.) verhört Walter Adam, im 11. Auftritt bringt Brigitte die Perücke und die Spur – Adam wird entlarvt.</p>`},
+ {t:3,q:'<b>Charakterisiere</b> den Dorfrichter Adam.',sol:()=>`<p>Adam ist Dorfrichter in Huisum, seit zehn Jahren im Amt, unverheiratet, mit Klumpfuß. Er ist <b>genusssüchtig</b> und <b>lüstern</b> (er bedrängt Eve), <b>feige</b> und vor allem ein <b>Meister der Ausrede</b>: Für Wunden und Perücke erfindet er immer neue Geschichten (Katze, Kerze, Meister Mehl). Er <b>missbraucht sein Amt</b>, erpresst Eve mit einem gefälschten Attest und lenkt den Verdacht auf Ruprecht und Lebrecht. Zugleich verrät er sich ständig („War’s eine Klinke?“). Sein Name spielt auf den Sündenfall an, sein Klumpfuß auf den Teufel.</p>`},
+ {t:6,q:'<b>Erläutere</b> die Bedeutung des Krugs als Symbol.',sol:()=>`<ul><li>Eves <b>Ehre</b> und Unschuld: „Dein guter Name lag in diesem Topfe“; Sprichwort „Der Krug geht so lange zum Wasser, bis er bricht“.</li><li>die zerbrochene <b>Verlobung</b> und das zerbrochene <b>Vertrauen</b> zwischen Eve und Ruprecht</li><li>die beschädigte <b>Ordnung</b>: Auf dem Krug war die Übergabe der Niederlande durch Karl V. abgebildet</li><li>die <b>Grenzen der Justiz</b>: „Meint Er, dass die Justiz ein Töpfer ist?“ – das Gericht kann den Krug nicht heilen; Marthe klagt am Ende weiter.</li></ul>`},
+ {t:2,q:'<b>Erkläre</b>, warum das Stück ein analytisches Drama ist und worin es sich von „König Ödipus“ unterscheidet.',sol:()=>`<p>Die entscheidende Tat – Adams nächtlicher Besuch bei Eve, bei dem der Krug zerbrach – liegt vor Beginn des Stücks. Die Gerichtsverhandlung enthüllt sie Schritt für Schritt: Das ist ein <b>analytisches Drama</b>. Wie in Sophokles’ „König Ödipus“ sucht der Richter einen Täter und ist es selbst. Doch Ödipus weiß das nicht; <b>Adam weiß es von Anfang an</b> und versucht, die Wahrheit zu verhüllen. Daraus entstehen dramatische Ironie und Komik.</p>`},
+ {t:6,q:'<b>Untersuche</b>, wie Adam sich im 7. Auftritt sprachlich verrät.',sol:()=>`<ul><li><b>Beiseitesprechen</b>: „Die werden mich doch nicht bei mir verklagen?“ – nur das Publikum hört seine Angst.</li><li><b>Selbstverrat</b> durch Detailwissen: „War’s eine Klinke?“</li><li><b>Aposiopese</b>: „Den ich, soviel –?“ – er bricht ab, bevor er zu viel sagt.</li><li>Er will das Verfahren abkürzen und Ruprecht sofort verurteilen; Walter: „Welch ein gewaltsames Verfahren.“ Walter erkennt sogar: Wenn Adam selbst den Krug zerschlagen hätte, könnte er den Verdacht nicht eifriger auf Ruprecht wälzen – <b>dramatische Ironie</b>.</li></ul>`},
+ {t:7,q:'<b>Formuliere</b> einen Überleitungssatz und einen Schluss für eine Analyse des 11. Auftritts.',sol:()=>`<p><b>Überleitung:</b> „Im Folgenden wird untersucht, wie Brigittes Aussage und Adams Ausreden den Gesprächsverlauf bestimmen und wie sich Adams zunehmende Bedrängnis in Sprache und Redeanteilen zeigt.“</p><p><b>Schluss:</b> „Zusammenfassend lässt sich sagen, dass Adam im 11. Auftritt durch die Indizien endgültig in die Enge getrieben wird und sich mit immer absurderen Ausreden (Teufel, Synode) selbst entlarvt. Für die Gesamthandlung ist die Szene insofern bedeutsam, als sie die Wende bringt: Eves Ausruf löst den Konflikt und leitet Adams Flucht und die Auflösung ein.“</p>`},
+ {t:5,q:'<b>Vergleiche</b> die Kurzfassung des 12. Auftritts mit dem Variant.',sol:()=>`<p><b>Kurzfassung</b> (knapp 60 Verse): schnelle Auflösung – Ruprecht bittet um Verzeihung, Eve nennt Bantam und zeigt den Brief, Walter erklärt ihn für falsch, Versöhnung, Veit schlägt Pfingsten als Hochzeit vor, Lichts Mauerschau, Adam suspendiert.</p><p><b>Variant</b> (rund 475–515 Verse): Eve erzählt ausführlich (Attest, Batavia, nächtlicher Besuch, wie der Krug fiel), sie misstraut auch Walter, der sein Wort mit einem Beutel Gulden beweist (Münzszene). Das Thema Vertrauen weitet sich auf den Staat aus; der Schluss ist ernster. Für die Uraufführung war der lange Schluss ein Grund für den Misserfolg.</p>`}];
+
+ DE.ORDERS=[
+ {t:7,title:'Bringe die Teile der Szenenanalyse in die richtige Reihenfolge.',parts:DE.STEPS.slice()},
+ {t:4,title:'Ordne die Ereignisse der Auftritte 1 bis 6.',parts:['Adam verbindet seine Wunden, Licht spottet vom „Adamsfall“.','Die Perücke fehlt – angeblich hat die Katze darin gejungt.','Adam erzählt seinen Traum vom Selbstgericht.','Walter kommt und erklärt seinen Revisionsauftrag.','Die Küsterin kann keine Perücke leihen.','Die Parteien streiten, Ruprecht löst die Verlobung.']},
+ {t:5,title:'Ordne die Ereignisse der Auftritte 7 bis 13.',parts:['Marthe beschreibt den Krug, Ruprecht berichtet von der Nacht.','Eve entlastet Ruprecht und Lebrecht, schweigt aber über den Täter.','Walter verhört Adam bei Wein über Wunden und Perücke.','Brigitte bringt die Perücke und berichtet von der Spur im Schnee.','Adam verurteilt Ruprecht, Eve enthüllt die Wahrheit, Adam flieht.','Walter erklärt den Brief für falsch, Licht übernimmt das Amt.','Marthe will in Utrecht weiter um ihren Krug klagen.']},
+ {t:5,title:'Ordne Adams Perücken-Ausreden in der Reihenfolge des Stücks.',parts:['Die Katze habe darin gejungt.','Sie sei beim Aktenlesen an der Kerze verbrannt.','Er habe sie Ruprecht für Meister Mehl mitgegeben.']},
+ {t:1,title:'Ordne die Stationen der Entstehung.',parts:['Kleist sieht in Bern den Kupferstich bei Zschokke (1802).','Kleist schreibt das Lustspiel (bis 1806).','Uraufführung in Weimar unter Goethe (1808).','Vollständiger Erstdruck in Berlin mit Variant (1811).']}];
+
+ DE.GEN={
+ 1:[()=>{ const f=pick(FAKT.filter((_,i)=>i<8||i===18)); return {t:1,q:f[0],o:[f[1],...f[2]],a:0,e:'Merke: '+f[1]+'.'}; },
+    ()=>{ const ys=[['Geburt Kleists',1777],['Kupferstich in Bern',1802],['Uraufführung in Weimar',1808],['Erstdruck in Berlin',1811]]; const x=pick(ys); return {t:1,q:'Welches Jahr passt: '+x[0]+'?',o:opts4(String(x[1]),['1777','1802','1806','1808','1811','1749']),a:0,e:x[0]+': '+x[1]+'.'}; }],
+ 2:[()=>{ const f=pick(FAKT.filter((_,i)=>i>=8&&i!==18)); return {t:2,q:f[0],o:[f[1],...f[2]],a:0,e:'Merke: '+f[1]+'.'}; },
+    ()=>{ const a=pick(AUF); return {t:2,q:'Was ist das Besondere am '+ord(a.n)+'?',o:opts4(a.key,AUF.map(x=>x.key)),a:0,e:a.key+'.'}; }],
+ 3:[()=>{ const f=pick(FIG); return {t:3,q:'Wer ist '+f.name+'?',o:opts4(f.role,FIG.map(x=>x.role)),a:0,e:f.name+': '+f.role+'. '+f.traits+'.'}; },
+    ()=>{ const f=pick(FIG.slice(0,8)); return {t:3,q:'Welche Figur wird so beschrieben: „'+f.traits+'“?',o:opts4(f.name,FIG.map(x=>x.name)),a:0,e:f.name+' – '+f.role+'.'}; },
+    ()=>{ const z=pick(ZIT); return {t:3,q:'Wer sagt: „'+z[0]+'“?',o:opts4(z[1],['Adam','Walter','Licht','Frau Marthe','Eve','Ruprecht','Veit','Frau Brigitte']),a:0,e:z[1]+', '+ord(z[2])+'.'}; }],
+ 4:[()=>{ const a=pick(AUF.slice(0,6)); return {t:4,q:'In welchem Auftritt passiert das? '+a.sum.split('. ')[0]+'.',o:opts4(ord(a.n),AUF.slice(0,8).map(x=>ord(x.n))),a:0,e:ord(a.n)+': '+a.key+'.'}; },
+    ()=>{ const i=1+Math.floor(Math.random()*5), a=AUF[i]; return {t:4,q:'Was geschieht direkt vor dem '+ord(a.n)+'?',o:opts4(AUF[i-1].key,AUF.slice(0,7).map(x=>x.key)),a:0,e:'Vorher ('+ord(i)+'): '+AUF[i-1].key+'.'}; }],
+ 5:[()=>{ const a=pick(AUF.slice(6)); return {t:5,q:'In welchem Auftritt passiert das? '+a.sum.split('. ')[0]+'.',o:opts4(ord(a.n),AUF.slice(5).map(x=>ord(x.n))),a:0,e:ord(a.n)+': '+a.key+'.'}; },
+    ()=>{ const z=pick(ZIT.filter(x=>x[2]>=7)); return {t:5,q:'In welchem Auftritt fällt der Satz: „'+z[0]+'“?',o:opts4(ord(z[2]),['7. Auftritt','9. Auftritt','10. Auftritt','11. Auftritt','12. Auftritt','13. Auftritt']),a:0,e:z[1]+', '+ord(z[2])+'.'}; }],
+ 6:[()=>{ const s=pick(STIL); return {t:6,q:'Welches Stilmittel liegt vor? '+s[1],o:opts4(s[0],STIL.map(x=>x[0])),a:0,e:s[0]+': '+s[2]+'.'}; },
+    ()=>{ const s=pick(STIL); return {t:6,q:'Was ist ein(e) '+s[0]+'?',o:opts4(s[2],STIL.map(x=>x[2])),a:0,e:'Beispiel: '+s[1]+'.'}; }],
+ 7:[()=>{ const i=Math.floor(Math.random()*(DE.STEPS.length-1)); return {t:7,q:'Was folgt in der Szenenanalyse direkt auf: „'+DE.STEPS[i]+'“?',o:opts4(DE.STEPS[i+1],DE.STEPS),a:0,e:'Reihenfolge: '+DE.STEPS.join(' → ')+'.'}; },
+    ()=>{ const it=pick([['Zu Beginn der Szene … / Im weiteren Verlauf …','Inhaltsangabe'],['Der Szene ist vorausgegangen, dass …','Einordnung in den Zusammenhang'],['Im Folgenden wird untersucht, wie …','Überleitungssatz'],['Durch die Verwendung der rhetorischen Frage „…“ (V. 434) wird deutlich, dass …','Hauptteil (sprachliche Gestaltung)'],['Das Gespräch wird klar von Adam dominiert.','Hauptteil (dramatische Gestaltung)'],['Zusammenfassend lässt sich sagen, …','Schluss'],['Das Lustspiel „Der zerbrochne Krug“ von Heinrich von Kleist …','Einleitung']]);
+      return {t:7,q:'Wohin gehört diese Formulierung? „'+it[0]+'“',o:opts4(it[1],['Einleitung','Einordnung in den Zusammenhang','Inhaltsangabe','Überleitungssatz','Hauptteil (sprachliche Gestaltung)','Hauptteil (dramatische Gestaltung)','Schluss']),a:0,e:'Gehört in: '+it[1]+'.'}; }]};
+
+ for(const t in DE.GEN) DE.GEN[t]=DE.GEN[t].map(f=>()=>Object.assign(f(),{gen:true}));
+ DE.MATCH_KINDS={
+  figuren:{label:'Figuren',topic:3,make:()=>shuffle(FIG.slice(0,8)).slice(0,5).map(f=>({k:f.k,a:f.name,b:`<span style="font-size:.85rem;line-height:1.3">${f.role}</span>`,t:3}))},
+  zitate:{label:'Zitate',topic:3,make:()=>{ const seen=new Set(), out=[]; shuffle(ZIT).forEach(z=>{ if(out.length<5&&!seen.has(z[1])){ seen.add(z[1]); out.push({k:z[1],a:z[1],b:`<span style="font-size:.82rem;line-height:1.3">„${z[0]}“</span>`,t:3}); } }); return out; }},
+  auftritte:{label:'Auftritte',topic:5,make:()=>shuffle(AUF).slice(0,5).map(a=>({k:'a'+a.n,a:ord(a.n),b:`<span style="font-size:.82rem;line-height:1.3">${a.key}</span>`,t:a.n<=6?4:5}))},
+  stil:{label:'Stilmittel',topic:6,make:()=>shuffle(STIL).slice(0,5).map(s=>({k:s[0],a:s[0],b:`<span style="font-size:.8rem;line-height:1.3">${s[1]}</span>`,t:6}))},
+  begriffe:{label:'Begriffe',topic:7,make:()=>shuffle(DE.CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.85rem;line-height:1.3">${c[1]}</span>`,t:7}))}};
+
+ const YT='yt:';
+ DE.VIDEOS={
+ 1:[['YouTube','Kleist: Leben und Werk',YT+'Heinrich von Kleist Leben und Werk einfach erklärt'],['YouTube','Der zerbrochne Krug Entstehung',YT+'Der zerbrochne Krug Entstehung Uraufführung Goethe']],
+ 2:[['YouTube','Analytisches Drama einfach erklärt',YT+'analytisches Drama einfach erklärt'],['YouTube','Der zerbrochne Krug Aufbau und Epoche',YT+'Der zerbrochne Krug Aufbau Epoche Analyse']],
+ 3:[['YouTube','Figuren im zerbrochnen Krug',YT+'Der zerbrochne Krug Figuren Charakterisierung Adam']],
+ 4:[['Der zerbrochne Krug – Zusammenfassung','Inhalt nach Auftritten','https://studyflix.de/deutsch/der-zerbrochene-krug-zusammenfassung-9250'],['YouTube','Inhaltsangabe Der zerbrochne Krug',YT+'Der zerbrochne Krug Inhaltsangabe Zusammenfassung']],
+ 5:[['Der zerbrochne Krug – Zusammenfassung','Inhalt nach Auftritten','https://studyflix.de/deutsch/der-zerbrochene-krug-zusammenfassung-9250'],['YouTube','Der zerbrochne Krug 11. Auftritt',YT+'Der zerbrochne Krug 11. Auftritt Analyse']],
+ 6:[['YouTube','Der zerbrochne Krug Interpretation',YT+'Der zerbrochne Krug Interpretation Motive Symbol Krug'],['YouTube','Rhetorische Stilmittel',YT+'rhetorische Stilmittel einfach erklärt']],
+ 7:[['YouTube','Szenenanalyse schreiben',YT+'Szenenanalyse schreiben Drama Aufbau Beispiel'],['YouTube','Dramenanalyse Einleitung und Schluss',YT+'Dramenanalyse Einleitung Überleitung Schluss']]};
+
+ DE.PLAN=[
+ {when:'Di 10.11.',sub:'abends · 60 Min',topics:[1,2,3],extra:''},
+ {when:'Mi 11.11.',sub:'Block 1 · 60 Min',topics:[4,5],extra:''},
+ {when:'Mi 11.11.',sub:'Block 2 · 60 Min',topics:[6,7],extra:'<a class="pill" href="#aufgaben">Aufgaben schriftlich</a>'},
+ {when:'Mi 11.11.',sub:'abends · 45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Do 12.11.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
+ DE.BOT_SUGGEST=['Erstell mir Karteikarten zu den Figuren','Was passiert im 11. Auftritt?','Wie schreibe ich eine Einleitung?','Warum ist der Krug ein Symbol?'];
+ DE.SPICK=[
+  ['Kleist und die Entstehung',['Heinrich von Kleist, 1777–1811','Anstoß: Kupferstich bei Zschokke in Bern, 1802; Wettstreit mit Zschokke und Ludwig Wieland','entstanden ca. 1802–1806','Uraufführung 2.3.1808 Weimar, Goethe, in drei Akte zerlegt → Misserfolg','Erstdruck 1811 Berlin, mit Variant (lange Fassung 12. Auftritt)']],
+  ['Gattung, Aufbau, Epoche',['Lustspiel mit ernstem Kern','analytisches Drama, Vorbild „König Ödipus“ – aber Adam weiß, dass er schuldig ist','1 Akt, 13 Auftritte, Blankvers, rund 1974 Verse','Einheit von Ort (Gerichtsstube Huisum bei Utrecht), Zeit (ein Vormittag, 1. Februar) und Handlung','Epoche: zwischen/neben Klassik und Romantik']],
+  ['Figuren',['Adam: Dorfrichter, Täter + Richter, Klumpfuß, Ausreden','Walter: Gerichtsrat aus Utrecht, Revisor, schützt Ansehen der Justiz','Licht: Schreiber, ehrgeizig, wird vorläufig Richter','Marthe Rull: Klägerin, Ehre des Hauses','Eve: erpresst (Attest), schweigt, enthüllt die Wahrheit','Ruprecht: Verlobter, eifersüchtig · Veit: sein Vater · Brigitte: seine Tante, Zeugin · Lebrecht: Flickschuster, tritt nicht auf']],
+  ['Handlung',['1.–5.: Wunden, Perücke fehlt, Traum, Walter kommt','6.: Parteien streiten, Ruprecht löst Verlobung','7.: Verhandlung, Krugbeschreibung, Ruprechts Bericht („War’s eine Klinke?“)','9.: Eve schweigt, entlastet Ruprecht und Lebrecht','10.: Weinpause, Walter verhört Adam','11.: Brigitte (Perücke, Spur), Urteil gegen Ruprecht, Eve: „Der Richter Adam hat den Krug zerbrochen!“','12.: Brief gefälscht, Versöhnung, Adam suspendiert, Licht übernimmt · 13.: Marthe will nach Utrecht']],
+  ['Themen und Sprache',['Wahrheit/Lüge, Justiz/Machtmissbrauch, Sündenfall, Vertrauen, Teufelsmotiv','Krug = Ehre, Vertrauen, Ordnung, Grenzen der Justiz','dramatische Ironie, Beiseitesprechen, Doppeldeutigkeit, Versprecher, Situationskomik','Perücke: Katze → Kerze → Meister Mehl']],
+  ['Szenenanalyse',['Einleitung (TATZT + Deutungshypothese)','Einordnung (vorher/nachher) + Inhaltsangabe (Präsens, keine Zitate, indirekte Rede)','Überleitungssatz','Hauptteil mit Zitaten (V. …): Gespräch, Figuren, Sprache, Regieanweisungen, Redeanteile','Schluss: Zusammenfassung + Funktion der Szene']]];
+})();
+
+/* Widgets fürs Fach Deutsch */
+W.de_fakten=root=>{
+  const rows=[['Autor','Heinrich von Kleist (1777–1811)'],['Titel','Der zerbrochne Krug'],['Gattung','Lustspiel, analytisches Drama'],['Entstehung','ca. 1802–1806'],['Anlass','Kupferstich „Le juge, ou la cruche cassée“, Bern 1802'],['Uraufführung','2. März 1808, Weimar, Leitung Goethe (Misserfolg)'],['Erstdruck','1811, Berlin, mit Variant'],['Ort','Gerichtsstube in Huisum bei Utrecht'],['Zeit','ein Vormittag, 1. Februar, Ende 17. Jh.'],['Epoche','zwischen Klassik und Romantik']];
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Steckbrief für die Einleitung. Tippe auf eine Zeile, um sie zu verdecken und dich selbst abzufragen.</p><div class="tbl"><table>${rows.map(r=>`<tr><th style="width:34%">${r[0]}</th><td class="de-hide" style="cursor:pointer">${r[1]}</td></tr>`).join('')}</table></div>`;
+  root.addEventListener('click',e=>{ const td=e.target.closest('.de-hide'); if(td) td.style.filter=td.style.filter?'':'blur(6px)'; });
+};
+W.de_aufbau=root=>{
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Alle 13 Auftritte auf einen Blick. Tippe auf eine Nummer.</p><div class="row" id="de-au">${DE.AUF.map(a=>`<button class="chip" type="button" data-n="${a.n}">${a.n}</button>`).join('')}</div><div id="de-au-out" class="expl" style="margin-top:10px">Wähle einen Auftritt.</div>`;
+  root.querySelector('#de-au').addEventListener('click',e=>{ const b=e.target.closest('[data-n]'); if(!b) return; const a=DE.AUF[b.dataset.n-1];
+    root.querySelectorAll('#de-au .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    root.querySelector('#de-au-out').innerHTML=`<b>${a.n}. Auftritt · ${a.who}</b><br>${a.sum}<br><span class="muted">→ ${a.key}</span>`; });
+};
+W.de_auftritte=root=>{ W.de_aufbau(root); };
+W.de_auftritte2=root=>{
+  const evs=DE.AUF.map(a=>a);
+  let i=0;
+  const draw=()=>{ const a=evs[i]; root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Erinnerst du dich? Überlege erst, was im Auftritt passiert, dann aufdecken.</p>
+   <div class="flash" style="min-height:120px"><span class="term">${a.n}. Auftritt</span><span class="tap">${a.who}</span></div>
+   <div class="row" style="margin-top:8px"><button class="btn small" type="button" id="de-prev">←</button><button class="btn small primary" type="button" id="de-show">Aufdecken</button><button class="btn small" type="button" id="de-next">→</button></div><div id="de-sol" class="expl" hidden>${a.sum}<br><span class="muted">→ ${a.key}</span></div>`;
+   root.querySelector('#de-show').onclick=()=>{ root.querySelector('#de-sol').hidden=false; };
+   root.querySelector('#de-prev').onclick=()=>{ i=(i+evs.length-1)%evs.length; draw(); };
+   root.querySelector('#de-next').onclick=()=>{ i=(i+1)%evs.length; draw(); }; };
+  draw();
+};
+W.de_figuren=root=>{
+  root.innerHTML=`<div class="row" id="de-fig">${DE.FIG.map(f=>`<button class="chip" type="button" data-k="${f.k}">${f.av} ${f.name}</button>`).join('')}</div><div id="de-fig-out" class="expl" style="margin-top:10px">Tippe auf eine Figur.</div>`;
+  root.querySelector('#de-fig').addEventListener('click',e=>{ const b=e.target.closest('[data-k]'); if(!b) return; const f=DE.FIG.find(x=>x.k===b.dataset.k);
+    root.querySelectorAll('#de-fig .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    root.querySelector('#de-fig-out').innerHTML=`<b>${f.av} ${f.name}</b> · ${f.role}<br><b>Eigenschaften:</b> ${f.traits}.<br>${f.more}<br><b>Beziehungen:</b> ${f.rel}.`; });
+};
+W.de_stil=root=>{
+  let s=null;
+  const draw=()=>{ s=pick(DE.STIL); const o=shuffle([s[0],...shuffle(DE.STIL.filter(x=>x!==s).map(x=>x[0])).slice(0,3)]);
+    root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Stilmittel-Detektor: Welches Stilmittel steckt im Zitat?</p><p style="font-size:1.02rem">${s[1]}</p><div class="opts" id="de-st">${o.map(x=>`<button class="opt" type="button">${x}</button>`).join('')}</div><div id="de-st-out"></div>`;
+    root.querySelector('#de-st').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; const ok=b.textContent===s[0];
+      root.querySelectorAll('#de-st .opt').forEach(x=>{ x.disabled=true; if(x.textContent===s[0]) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      root.querySelector('#de-st-out').innerHTML=`<div class="expl">${ok?'Richtig! ':''}<b>${s[0]}</b>: ${s[2]}.</div><button class="btn small" type="button" id="de-st-n" style="margin-top:8px">Nächstes Zitat</button>`;
+      root.querySelector('#de-st-n').onclick=draw; }); };
+  draw();
+};
+W.de_analyse=root=>{
+  const box=renderOrder(DE.ORDERS[0],()=>{});
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Bringe die Bausteine einer Szenenanalyse in die richtige Reihenfolge.</p>`; root.appendChild(box);
+};
+
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
 const PLAN=[
  {when:'So 8.11.',sub:'heute Abend · 60 Min',topics:[1,7,2],extra:''},
@@ -1247,20 +1683,20 @@ const PLAN=[
 let timer=null;
 function viewStart(){
   const done=TOPICS.filter(t=>S.done[t.id]).length;
-  app.innerHTML=`<header class="hero"><span class="eyebrow">1. Chemieklausur · Freie Waldorfschule</span><span class="eyebrow" style="display:block;opacity:.6;margin-top:2px">Version ${APP_VERSION}</span><h1>Alkane</h1>
-   <div class="cd-box"><div class="eyebrow">Noch bis zur Klausur · Di 10.11.26, 11:30</div><div class="cd" id="cd" aria-live="off"></div></div>
+  app.innerHTML=`<header class="hero"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><span class="eyebrow">${FACH.eyebrow}</span><a class="btn small" href="#fach" style="text-decoration:none;white-space:nowrap">${FACH.emoji} Fach wechseln</a></div><span class="eyebrow" style="display:block;opacity:.6;margin-top:2px">Version ${APP_VERSION}</span><h1>${FACH.title}</h1>
+   <div class="cd-box"><div class="eyebrow">Noch bis zur Klausur · ${FACH.examLabel}</div><div class="cd" id="cd" aria-live="off"></div></div>
    <div class="count"><div><div class="num">${done}/7</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
    <div class="progress" aria-hidden="true"><span style="width:${done/7*100}%"></span></div>
    <a class="btn primary" href="#training" style="text-decoration:none;text-align:center">Training starten: jedes Mal neue Aufgaben</a>
    <div class="row"><a class="btn" href="#battle" style="text-decoration:none;flex:1;text-align:center">⚔️ Battle gegen andere</a>${coinPill()}</div>
    <div class="row"><a class="btn small" href="#spick" style="text-decoration:none">Spickzettel</a><button class="btn small" type="button" id="theme-btn">Design: ${THEMES[S.theme]}</button></div></header>
-  <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.</p>
+  <section class="card"><h2>Lernplan</h2><p class="muted" style="margin-top:4px;font-size:.92rem">${FACH.planIntro}</p>
    <div class="plan">${PLAN.map(b=>`<div class="block"><div class="when"><b>${b.when}</b>${b.sub}</div><div class="what">${b.topics.map(id=>`<a class="pill${S.done[id]?' done':''}" href="#thema-${id}">${id} · ${TOPICS[id-1].title}</a>`).join('')}${b.extra}</div></div>`).join('')}</div></section>
   <section class="card"><h2>Themen der Klausur</h2><div class="topics" style="margin-top:6px">${TOPICS.map(t=>`<a class="topic-row${S.done[t.id]?' done':''}" href="#thema-${t.id}" style="text-decoration:none;color:inherit"><span class="tnum">${S.done[t.id]?'✓':t.id}</span><span class="tt">${t.title}<br><span class="ts">${t.short}</span></span><span class="arrow">→</span></a>`).join('')}</div></section>
-  <section class="card bot" id="bot"><div class="row" style="gap:10px"><span class="bot-av">🧪</span><div><h2 style="font-size:1.15rem">Frag Alki</h2><div class="muted" style="font-size:.85rem">Erklärt dir alles zu den Klausurthemen und erstellt dir Karteikarten</div></div></div>
+  <section class="card bot" id="bot"><div class="row" style="gap:10px"><span class="bot-av">${FACH.emoji}</span><div><h2 style="font-size:1.15rem">Frag Alki</h2><div class="muted" style="font-size:.85rem">${FACH.botDesc}</div></div></div>
    <div class="chat" id="chat"></div>
    <div class="row" id="chat-sug">${BOT_SUGGEST.map(q=>`<button class="chip" type="button" data-sug>${q}</button>`).join('')}</div>
-   <form class="chat-in" id="chat-form"><label for="chat-q" class="sr">Deine Frage</label><input id="chat-q" class="inp" autocomplete="off" maxlength="500" placeholder="Frag einfach, z. B. Was ist ein Dipol?"><button class="btn primary" type="submit" id="chat-send">Senden</button></form>
+   <form class="chat-in" id="chat-form"><label for="chat-q" class="sr">Deine Frage</label><input id="chat-q" class="inp" autocomplete="off" maxlength="500" placeholder="${FACH.botPh}"><button class="btn primary" type="submit" id="chat-send">Senden</button></form>
    ${BOT.msgs.length?'<button class="xlink" type="button" id="chat-clear">Chat leeren</button>':''}</section>
   <section class="card"><h2 style="font-size:1.15rem">Spielstand</h2><div id="cloud" style="margin-top:8px">${cloudHTML()}</div></section>
   ${S.exams.length?`<section class="card"><h2>Deine Probeklausuren</h2><div class="tbl"><table><tr><th>Wann</th><th>Ergebnis</th></tr>${S.exams.slice(-5).reverse().map(x=>`<tr><td>${x.d}</td><td>${x.r} von ${x.n} (${Math.round(x.r/x.n*100)} %)</td></tr>`).join('')}</table></div></section>`:''}`;
@@ -1303,13 +1739,13 @@ function trWeights(){ const w={}; const wrong=S.wrong||{}; const st=S.trs||{};
 function trPickTopic(){ if(tr.topic) return tr.topic; const w=trWeights(); let sum=0; for(const t in w) sum+=w[t]; let x=Math.random()*sum; for(const t in w){ x-=w[t]; if(x<=0) return +t; } return 7; }
 function trNext(){ const t=trPickTopic(); const r=Math.random();
   if(r<0.12){ const os=ORDERS.filter(o=>o.t===t); if(os.length) return {order:pick(os)}; }
-  if(r<0.20 && (t===1||t===2||t===7)) return {match:t===2?'iupac':pick(['homolog','formel','begriffe'])};
+  if(r<0.20){ const mk=FACH.trMatch(t); if(mk&&MATCH_KINDS[mk]) return {match:mk}; }
   if(r<0.62) return genQ(t);
   if(r<0.80){ const tfs=TF.filter(x=>x[0]===t); if(tfs.length){ const x=pick(tfs); return {t:x[0],q:'Richtig oder falsch? '+x[1],o:x[2]?['Richtig','Falsch']:['Falsch','Richtig'],a:0,e:x[3],tf:true}; } }
   return pick(QUESTIONS.filter(q=>q.t===t)); }
 function viewTrain(){
   S.trs=S.trs||{};
-  app.innerHTML=`<header><span class="eyebrow">Endlos · jedes Mal neue Aufgaben</span><h1>Training</h1><a class="btn small" href="#zuordnen" style="text-decoration:none;align-self:flex-start;margin-top:6px">Zuordnen-Spiel: Namen und Formeln verbinden</a></header>
+  app.innerHTML=`<header><span class="eyebrow">Endlos · jedes Mal neue Aufgaben</span><h1>Training</h1><a class="btn small" href="#zuordnen" style="text-decoration:none;align-self:flex-start;margin-top:6px">${FACH.matchLink}</a></header>
   <section class="card"><div class="row" id="tr-topics"><button class="chip" type="button" data-t="0">Alle (Schwächen zuerst)</button>${TOPICS.map(t=>`<button class="chip" type="button" data-t="${t.id}">${t.id}</button>`).join('')}</div>
    <div class="w-out" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><div class="k">Richtig</div><div class="v" id="tr-r">0/0</div></div><div class="stat"><div class="k">Serie</div><div class="v" id="tr-s">0</div></div><div class="stat"><div class="k">Beste Serie</div><div class="v" id="tr-b">0</div></div></div>
    <div id="tr-bars" style="margin-top:12px"></div></section>
@@ -1324,7 +1760,7 @@ function viewTrain(){
       $('#tr-nav').innerHTML=`<button class="btn primary" type="button" id="tr-next" style="width:100%">Nächste Aufgabe</button>`;
       $('#tr-next').addEventListener('click',()=>{ next(); window.scrollTo(0,0); }); };
     if(it.order) box.appendChild(renderOrder(it.order,ok=>done(ok,it.order.t)));
-    else if(it.match) box.appendChild(renderMatch(it.match,ok=>done(ok,it.match==='iupac'?2:it.match==='begriffe'?7:1)));
+    else if(it.match) box.appendChild(renderMatch(it.match,ok=>done(ok,MATCH_KINDS[it.match].topic||(it.match==='iupac'?2:it.match==='begriffe'?7:1))));
     else box.appendChild(renderQuestion(it,ok=>done(ok,it.t))); };
   $('#tr-topics').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(!b) return; tr.topic=+b.dataset.t; setTopics(); next(); });
   setTopics(); upd(); next();
@@ -1377,7 +1813,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='4.3';
+const APP_VERSION='5.0';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1439,7 +1875,7 @@ function cloudPull(){ if(!cloudOk()) return; cloudSecret();
     if(status!==200) { if(status===503){ S.cloud.err=j.error; drawCloud(); } return; }
     if(!j.found){ cloudPush(); return; }
     S.cloud.code=j.code;
-    if(j.data && (j.data.savedAt||0) > (S.savedAt||0)+1000){ const keep={cloud:S.cloud,pid:S.pid}; S=Object.assign({},j.data,keep); initProfile(); save(true); toast('Spielstand vom anderen Gerät geladen'); route(); }
+    if(j.data && (j.data.savedAt||0) > (S.savedAt||0)+1000){ const keep={cloud:S.cloud,pid:S.pid}; S=Object.assign({},j.data,keep); initProfile(); try{ applyFachData(FACHER[S.fach]?S.fach:'chemie'); botLoad(); }catch(e){}; save(true); toast('Spielstand vom anderen Gerät geladen'); route(); }
     else if((S.savedAt||0) > (j.data&&j.data.savedAt||0)+1000) cloudPush();
     else { S.cloud.at=Date.now(); save(true); drawCloud(); }
   }).catch(()=>{}); }
@@ -1565,7 +2001,7 @@ document.addEventListener('click',e=>{
     B.clConfirm=false;
     cloudPost('load',{code}).then(({status,j})=>{
       if(status!==200){ toast(j.error||'Laden fehlgeschlagen'); drawCloud(); return; }
-      S=Object.assign({},j.data,{pid:j.pid,cloud:{secret:j.secret,code:j.code,at:Date.now()}}); initProfile(); save(true);
+      S=Object.assign({},j.data,{pid:j.pid,cloud:{secret:j.secret,code:j.code,at:Date.now()}}); initProfile(); try{ applyFachData(FACHER[S.fach]?S.fach:'chemie'); botLoad(); }catch(e){} save(true);
       toast('Spielstand geladen! 🎉'); try{ if(B.ws) B.ws.close(); }catch(x){} setTimeout(bSilentConnect,500); route(); }).catch(()=>toast('Keine Verbindung. Versuch es nochmal.')); }
 });
 
@@ -1991,7 +2427,7 @@ function battleClick(e){
   if(!b) return;
   const a=b.dataset.b;
   const needName=()=>{ if(!S.name){ B.msg='Gib zuerst deinen Namen ein.'; drawBattle(); const n=$('#b-name'); n&&n.focus(); return true; } return false; };
-  if(a==='quick'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'quick'})); }
+  if(a==='quick'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'quick',fach:FACH.id})); }
   if(a==='create'){ if(needName()) return; B.msg=''; bConnect(()=>bSend({type:'create'})); }
   if(a==='join'){ if(needName()) return; const c=($('#b-code').value||'').trim(); if(!/^\d{4}$/.test(c)){ B.msg='Der Code hat 4 Ziffern.'; drawBattle(); return; } B.msg=''; bConnect(()=>bSend({type:'join',code:c})); }
   if(a==='cancel'){ bSend({type:'cancel'}); bClearSession(); B.phase='lobby'; B.isTeam=false; drawBattle(); }
@@ -2016,8 +2452,10 @@ function leaveBattleIfAway(){ if(B.spec && !location.hash.startsWith('#battle'))
 const BOT_URL='https://alkane-battle.onrender.com/ask';
 const BOT_SUGGEST=['Erstell mir Karteikarten zur homologen Reihe','Wie benenne ich verzweigte Alkane?','Warum löst sich Hexan nicht in Wasser?','Erklär mir Van-der-Waals-Kräfte'];
 const BOT={msgs:[],busy:false};
-try{ BOT.msgs=JSON.parse(localStorage.getItem('alkane-bot')||'[]').slice(-20); }catch(e){}
-function botSave(){ try{ localStorage.setItem('alkane-bot',JSON.stringify(BOT.msgs.slice(-20))); }catch(e){} }
+const botKey=()=>'alkane-bot'+((S.fach&&S.fach!=='chemie')?'-'+S.fach:'');
+function botLoad(){ try{ BOT.msgs=JSON.parse(localStorage.getItem(botKey())||'[]').slice(-20); }catch(e){ BOT.msgs=[]; } }
+botLoad();
+function botSave(){ try{ localStorage.setItem(botKey(),JSON.stringify(BOT.msgs.slice(-20))); }catch(e){} }
 function esc(t){ return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function md(t){ // **fett** und "- " Listen, sonst reiner Text
   const lines=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split('\n'); let out='', inList=false;
@@ -2053,7 +2491,7 @@ async function botAsk(q){
     try{
       const ctl=new AbortController(); let to=setTimeout(()=>ctl.abort(),70000);
       // text/plain = einfache Anfrage ohne Vorab-Prüfung (die blockiert Android bei lokalen App-Dateien)
-      const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({messages:BOT.msgs.slice(-12)}),signal:ctl.signal});
+      const r=await fetch(BOT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({messages:BOT.msgs.slice(-12),fach:FACH.id}),signal:ctl.signal});
       const ct=r.headers.get('content-type')||'';
       if(r.ok && ct.startsWith('text/plain') && r.body && r.body.getReader){
         // Live-Text: Antwort erscheint, während die KI schreibt
@@ -2084,6 +2522,7 @@ function initBot(){ drawChat();
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
+  if(FACH.id==='deutsch'){ app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+DE.SPICK.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<7?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
   const T=TOPICS;
   app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
@@ -2096,21 +2535,22 @@ function viewSpick(){
   ${B(T[5],['Je länger die Kette, desto größer die Oberfläche, desto stärker die VdW, desto mehr Energie zum Trennen, desto höher die Siedetemperatur','C1–C4 gasförmig, C5–C16 flüssig, ab C17 fest','Viskosität steigt mit der Kettenlänge (Verhaken + stärkere VdW)','„Ähnliches löst sich in Ähnlichem“: Alkane hydrophob/lipophil, löslich in Benzin, nicht in Wasser','Grund: Alkane können keine H-Brücken bilden, sie würden die H-Brücken im Wasser nur stören'])}
   ${B(T[6],['Summenformel: C<sub>4</sub>H<sub>10</sub> (nur Anzahl)','Strukturformel = Lewis-Formel bei Alkanen: alle Atome, alle Striche','Halbstrukturformel: CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>3</sub>','Skelettformel: Ecken und Enden = C, H weglassen','Keil-Strich: Keil nach vorn, gestrichelt nach hinten · Kugel-Stab: Winkel und Bindungen · Kalotten: Raumbedarf','Jede Formel mit C<sub>n</sub>H<sub>2n+2</sub> kontrollieren'])}`;
 }
+const CHEM_TIPS=`
+    <li>Bei „Erkläre“-Aufgaben immer die <b>Je-desto-Kette</b> und die <b>Art der Wechselwirkung</b> nennen.</li>
+    <li>Beim Benennen zuerst die <b>längste Kette</b> markieren, dann von beiden Seiten nummerieren und vergleichen.</li>
+    <li>Jede gezeichnete Formel mit <b>C<sub>n</sub>H<sub>2n+2</sub></b> kontrollieren.</li>
+    <li>Partialladungen immer an <b>beide</b> Atome schreiben: δ+ und δ−.</li>`;
 let exam=null;
 function viewExam(){
   if(!exam){
     app.innerHTML=`<header><span class="eyebrow">Alle Themen gemischt</span><h1>Probeklausur</h1></header>
-    <section class="card"><p style="margin-top:0">15 Fragen aus allen 7 Themen. Die Hälfte davon wird jedes Mal neu erzeugt, mit anderen Molekülen, Zahlen und Atomen. Am Ende siehst du, welche Themen du noch wiederholen solltest.</p>
+    <section class="card"><p style="margin-top:0">${FACH.examIntro}</p>
     <div class="row"><button class="btn primary" type="button" id="ex-start">Probeklausur starten</button>${wrongQs().length?`<button class="btn" type="button" id="ex-wrong">Fehler wiederholen (${wrongQs().length})</button>`:''}</div>
     <p class="muted" style="font-size:.88rem;margin-bottom:0">${wrongQs().length?'Im Fehlerheft landet jede Frage, die du falsch beantwortet hast. Beantwortest du sie richtig, fliegt sie wieder raus.':'Dein Fehlerheft ist leer. Falsch beantwortete Fragen sammeln sich hier automatisch.'}</p></section>
-    <section class="card"><h2>Tipps für Dienstag</h2><ul>
-    <li>Bei „Erkläre“-Aufgaben immer die <b>Je-desto-Kette</b> und die <b>Art der Wechselwirkung</b> nennen.</li>
-    <li>Beim Benennen zuerst die <b>längste Kette</b> markieren, dann von beiden Seiten nummerieren und vergleichen.</li>
-    <li>Jede gezeichnete Formel mit <b>C<sub>n</sub>H<sub>2n+2</sub></b> kontrollieren.</li>
-    <li>Partialladungen immer an <b>beide</b> Atome schreiben: δ+ und δ−.</li></ul></section>`;
+    <section class="card"><h2>Tipps für die Klausur</h2><ul>${FACH.examTips||CHEM_TIPS}</ul></section>`;
     $('#ex-start').addEventListener('click',()=>{
       const per=[1,2,3,4,5,6,7].map(t=>shuffle(QUESTIONS.filter(q=>q.t===t)));
-      let items=per.map(a=>a[0]).concat([1,2,3,4,5,6,7].map(genQ),[namingQuestion()]);
+      let items=per.map(a=>a[0]).filter(Boolean).concat([1,2,3,4,5,6,7].map(genQ),FACH.id==='chemie'?[namingQuestion()]:[genQ(5)]);
       exam={items:shuffle(items),i:0,res:[]}; viewExam(); });
     const wb=$('#ex-wrong'); if(wb) wb.addEventListener('click',()=>{ exam={items:shuffle(wrongQs()),i:0,res:[],drill:true}; viewExam(); });
     return;
@@ -2165,7 +2605,7 @@ async function makeDeck(topic){
   let cards=null, ai=false;
   const wantsOrder=/reihenfolge|der reihe nach|sortiert|geordnet|nacheinander/i.test(topic);
   // homologe Reihe: sicher und in der richtigen Reihenfolge direkt aus der App (Methan bis Decan)
-  const homolog=/homolog/i.test(topic)&&!/frage|quiz|warum|wieso|eigenschaft|siede|löslich|definition/i.test(topic);
+  const homolog=FACH.id==='chemie'&&/homolog/i.test(topic)&&!/frage|quiz|warum|wieso|eigenschaft|siede|löslich|definition/i.test(topic);
   if(homolog){
     cards=[]; for(let n=1;n<=10;n++) cards.push([`${n}. ${ALKANES[n].name}`, `${usub('C'+(n>1?n:'')+'H'+(2*n+2))} · ${n} C-Atom${n>1?'e':''} · Sdp. ${dec(ALKANES[n].bp)} °C · bei 20 °C ${ALKANES[n].bp<20?'gasförmig':'flüssig'}`]);
     const d={id:'d'+Date.now().toString(36),title:'Homologe Reihe (Methan bis Decan)',cards,at:Date.now(),ai:false,ordered:true};
@@ -2173,7 +2613,7 @@ async function makeDeck(topic){
   }
   if(netCapable()){
     try{ const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),45000);
-      const r=await fetch(BOT_URL.replace('/ask','/cards'),{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({topic}),signal:ctl.signal});
+      const r=await fetch(BOT_URL.replace('/ask','/cards'),{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({topic,fach:FACH.id}),signal:ctl.signal});
       clearTimeout(to); const j=await r.json(); if(r.ok&&j.cards&&j.cards.length){ cards=j.cards.map(c=>[c.front,c.back]); ai=true; } }catch(e){}
   }
   if(!cards){ cards=localDeck(topic); if(cards.length<3) return null; }
@@ -2250,10 +2690,11 @@ function viewCards(){
   const del=$('#dk-del'); if(del) del.addEventListener('click',()=>{ if(!DEL_DECK){ DEL_DECK=true; viewCards(); setTimeout(()=>{ if(DEL_DECK){ DEL_DECK=false; if(location.hash==='#karten') viewCards(); } },4000); return; }
     S.decks=S.decks.filter(d=>d.id!==D.id); if(S.deckKnown) delete S.deckKnown[D.id]; save(); DEL_DECK=false; openDeck('std'); });
 }
+const CHEM_OPS=`<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe</b>: in ganzen Sätzen wiedergeben, was passiert</li><li><b>Erkläre / Begründe</b>: mit Fachbegriffen den Grund angeben (weil …, je … desto …)</li><li><b>Zeichne</b>: Formel vollständig und sauber, mit allen H-Atomen, wenn Strukturformel verlangt ist</li>`;
 function viewTasks(){
   app.innerHTML=`<header><span class="eyebrow">Wie in der Klausur</span><h1>Aufgaben</h1></header>
    <section class="card"><div class="sec-label">Operatoren</div><ul style="margin:0">
-   <li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe</b>: in ganzen Sätzen wiedergeben, was passiert</li><li><b>Erkläre / Begründe</b>: mit Fachbegriffen den Grund angeben (weil …, je … desto …)</li><li><b>Zeichne</b>: Formel vollständig und sauber, mit allen H-Atomen, wenn Strukturformel verlangt ist</li></ul></section>
+   ${FACH.ops||CHEM_OPS}</ul></section>
    <p class="muted" style="margin:0">Schreib deine Antwort zuerst auf Papier oder in GoodNotes. Dann Lösung aufdecken und vergleichen.</p>
    ${TASKS.map((t,i)=>`<section class="card task"><div class="eyebrow">Aufgabe ${i+1} · Thema ${t.t}</div><p style="font-size:1.05rem">${t.q}</p><button class="btn small" type="button" data-sol="${i}">Lösung zeigen</button><div class="sol" id="sol-${i}" hidden></div>
    <div class="rate" data-rate="${i}"><span class="muted" style="font-size:.85rem;align-self:center">Wie lief's?</span>${[['g','Konnte ich'],['m','Teilweise'],['b','Noch nicht']].map(([k,l])=>`<button class="chip ${k}" type="button" data-k="${k}" aria-pressed="${S.tasks[i]===k}">${l}</button>`).join('')}</div></section>`).join('')}`;
@@ -2267,12 +2708,63 @@ function taskClick(e){
   if(r){ const grp=r.closest('[data-rate]'); const i=+grp.dataset.rate; S.tasks[i]=r.dataset.k; save(); grp.querySelectorAll('[data-k]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===S.tasks[i])); }
 }
 
+
+/* ================= Fächer: Inhalte pro Fach, Fortschritt pro Fach ================= */
+const FACHER={
+ chemie:{id:'chemie',name:'Chemie',emoji:'🧪',sub:'Alkane · Klausur Di 10.11.',eyebrow:'1. Chemieklausur · Freie Waldorfschule',title:'Alkane',exam:'2026-11-10T11:30:00+01:00',examLabel:'Di 10.11.26, 11:30',
+  planIntro:'So schaffst du alle 7 Themen bis Dienstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir alles zu den Klausurthemen und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was ist ein Dipol?',matchLink:'Zuordnen-Spiel: Namen und Formeln verbinden',spickWhen:'Dienstag früh',
+  examIntro:'15 Fragen aus allen 7 Themen. Die Hälfte davon wird jedes Mal neu erzeugt, mit anderen Molekülen, Zahlen und Atomen. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
+  trMatch:t=>(t===1||t===2||t===7)?(t===2?'iupac':pick(['homolog','formel','begriffe'])):null},
+ deutsch:{id:'deutsch',name:'Deutsch GK',emoji:'🏺',sub:'Der zerbrochne Krug · Klausur Do 12.11.',eyebrow:'Deutsch GK · Freie Waldorfschule',title:'Der zerbrochne Krug',exam:'2026-11-12T08:00:00+01:00',examLabel:'Do 12.11.26, 8:00',
+  planIntro:'So schaffst du alle 7 Themen bis Donnerstag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir das Stück, die Figuren und die Szenenanalyse und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was passiert im 7. Auftritt?',matchLink:'Zuordnen-Spiel: Figuren, Zitate, Auftritte, Stilmittel',spickWhen:'Donnerstag früh',
+  examIntro:'15 Fragen aus allen 7 Themen: Entstehung, Aufbau, Figuren, Handlung, Motive und Szenenanalyse. Ein Teil wird jedes Mal neu zusammengestellt. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
+  examTips:'<li>Einleitung immer mit <b>TATZT</b> und einer <b>Deutungshypothese</b>.</li><li>Vor der Analyse die Szene <b>einordnen</b>: Was geschah vorher, was folgt?</li><li><b>Nur im Hauptteil zitieren</b>, immer mit Versangabe.</li><li>Bei Kleist immer fragen: <b>Wer weiß was?</b> (dramatische Ironie, Beiseitesprechen)</li><li>Regieanweisungen und Redeanteile nicht vergessen.</li>',
+  ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Fasse zusammen</b>: Inhalt knapp, im Präsens, ohne Zitate</li><li><b>Ordne ein</b>: Was geschieht vorher, was nachher?</li><li><b>Charakterisiere</b>: Eigenschaften mit Textbelegen</li><li><b>Analysiere / Untersuche</b>: Gespräch, Sprache und dramatische Gestaltung mit Zitaten deuten</li><li><b>Erläutere</b>: mit Beispielen und Belegen erklären</li>',
+  trMatch:t=>({3:pick(['figuren','zitate']),4:'auftritte',5:'auftritte',6:'stil',7:'begriffe'})[t]||null}};
+let FACH=FACHER[S.fach]||FACHER.chemie;
+// Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
+const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
+const FACH_DEF={done:{},cards:{},tasks:{},exams:[],wrong:{},hunt:{}};
+let CHEM_SNAP=null;
+function replaceArr(a,b){ a.splice(0,a.length,...b); }
+function replaceObj(o,b){ Object.keys(o).forEach(k=>delete o[k]); Object.assign(o,b); }
+function applyFachData(id){
+  if(!CHEM_SNAP) CHEM_SNAP={TOPICS:TOPICS.slice(),QUESTIONS:QUESTIONS.slice(),TF:TF.slice(),CARDS:CARDS.slice(),TASKS:TASKS.slice(),ORDERS:ORDERS.slice(),GEN:Object.assign({},GEN),MATCH_KINDS:Object.assign({},MATCH_KINDS),VIDEOS:Object.assign({},VIDEOS),PLAN:PLAN.slice(),BOT_SUGGEST:BOT_SUGGEST.slice()};
+  const D=id==='deutsch'?DE:CHEM_SNAP;
+  ['TOPICS','QUESTIONS','TF','CARDS','TASKS','ORDERS','PLAN','BOT_SUGGEST'].forEach(k=>replaceArr({TOPICS,QUESTIONS,TF,CARDS,TASKS,ORDERS,PLAN,BOT_SUGGEST}[k],D[k]));
+  replaceObj(GEN,D.GEN); replaceObj(MATCH_KINDS,D.MATCH_KINDS); replaceObj(VIDEOS,D.VIDEOS);
+  FACH=FACHER[id]; EXAM.setTime(new Date(FACH.exam).getTime());
+  if(!MATCH_KINDS[matchKind]) matchKind=Object.keys(MATCH_KINDS)[0];
+  document.title=FACH.title+' · Lern-App';
+}
+function switchFach(id){
+  if(!FACHER[id]) return;
+  const cur=S.fach||'chemie';
+  if(id!==cur){
+    S.fachData=S.fachData||{};
+    const keep={}; FACH_KEYS.forEach(k=>{ if(S[k]!==undefined) keep[k]=S[k]; }); S.fachData[cur]=JSON.parse(JSON.stringify(keep));
+    const nxt=S.fachData[id]||{}; FACH_KEYS.forEach(k=>{ delete S[k]; }); Object.assign(S,JSON.parse(JSON.stringify(FACH_DEF)),JSON.parse(JSON.stringify(nxt)));
+  }
+  S.fach=id; S.fachChosen=true; save();
+  applyFachData(id); botLoad();
+  deck=null; CUR_DECK='std'; exam=null; tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
+  location.hash='#start'; route();
+}
+function viewPick(){
+  app.innerHTML=`<header class="hero"><span class="eyebrow">Freie Waldorfschule · Lern-App</span><h1>Welches Fach lernst du?</h1><p class="muted" style="margin:.3em 0 0">Du kannst jederzeit oben auf der Startseite wechseln. Dein Fortschritt wird pro Fach gespeichert, Münzen, Shop und Freunde gelten für alle.</p></header>
+  ${Object.values(FACHER).map(f=>`<button class="card fach-card" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${f.emoji}</span><span><b style="font-size:1.2rem">${f.name}</b><br><span class="muted">${f.sub}</span></span></button>`).join('')}`;
+};
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-fach]'); if(b){ e.preventDefault(); switchFach(b.dataset.fach); } });
+
 /* ---------- Routing ---------- */
 function route(){
   app.removeEventListener('click',taskClick);
   leaveBattleIfAway(); clearInterval(B.timer);
   const h=(location.hash||'#start').slice(1);
   let nav='start';
+  if(!S.fachChosen||h==='fach'){ viewPick(); document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',false)); window.scrollTo(0,0); return; }
   if(h.startsWith('thema-')){ viewTopic(+h.split('-')[1]); nav='start'; }
   else if(h==='klausur'){ viewExam(); nav='klausur'; }
   else if(h==='karten'){ deck=null; flipped=false; NEWDECK=false; viewCards(); nav='karten'; }
@@ -2304,6 +2796,7 @@ function claimName(v){
     else set();
   }).catch(()=>set());
 }
+applyFachData(FACH.id);
 route();
 </script>
 

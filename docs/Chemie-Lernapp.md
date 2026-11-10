@@ -5,7 +5,7 @@ tags:
   - webapp
   - backend
 status: funktionsfähig
-version: "2.4"
+version: "5.0"
 aktualisiert: 2026-11-09
 ---
 
@@ -56,6 +56,14 @@ Werte stehen nur bei Render, nie im Repo oder hier.
 - `tools/`: `build_web.sh` baut `web/index.html`; `rebuild.py` + `sign_v2.py` bauen die APK ohne Android SDK um
 - `docs/`: diese Notiz
 - `README.md`: technische Details (Endpunkte, WebSocket-Nachrichten)
+
+## Fächer (ab Version 5.0)
+- Beim ersten Start Fachauswahl, oben auf der Startseite „Fach wechseln“
+- **Chemie**: Alkane (Klausur 10.11.2026)
+- **Deutsch GK**: Kleist, „Der zerbrochne Krug“ + Szenenanalyse (Klausur Do 12.11.2026, 8:00); 7 Themen, Fragenpool, Generatoren (Figuren, Zitate, Auftritte, Stilmittel, Aufbau), Karteikarten, Aufgaben mit Musterlösung, Spickzettel
+- Fortschritt (Themen, Training, Fehlerheft, Probeklausuren, Karten, Stapel) pro Fach gespeichert; Münzen, Shop, Freunde, Name gelten für alle
+- Schnellsuche im Battle nur gegen Spieler im selben Fach; Alki und Karteikarten-KI kennen das gewählte Fach
+- Neues Fach: Inhalte als `DE`-Block in der App + Eintrag in `FACHER`, Server-Prompt `SYSTEM_DE` ergänzen
 
 ## Funktionen
 - **Lernen:** 7 Themen mit Erklärungen, interaktiven Teilen und Videos, Lernplan, Spickzettel, Klausuraufgaben mit Musterlösung

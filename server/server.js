@@ -43,7 +43,7 @@ const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungs
 const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail']);
 
 const rooms = new Map();     // code -> room
-let waiting = null;          // Spieler in der Schnellsuche
+const waitingBy = new Map();  // Schnellsuche: Fach -> wartender Spieler (Chemie und Deutsch getrennt)
 const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade die App offen hat)
 // online = Verbindung offen, App im Vordergrund, letzte Antwort frisch
 const isLive = p => !!p && p.readyState === 1 && !p.away && Date.now() - (p.lastPong || 0) < 12000;
@@ -251,6 +251,29 @@ So antwortest du:
 - Formatierung nur so: **fett** für Fachbegriffe und Aufzählungen mit "- " am Zeilenanfang. Keine Tabellen, keine Überschriften.
 - Wenn du dir unsicher bist, sag es ehrlich. Erfinde keine Fakten.
 - Bei Fragen ohne Chemie-Bezug antworte kurz und lenke freundlich zurück zum Lernen.`;
+const SYSTEM_DE = `Du bist "Alki", ein freundlicher, kluger Deutsch-Nachhilfelehrer in einer Lern-App.
+Der Schüler (Oberstufe, Deutsch Grundkurs, Waldorfschule) schreibt am Donnerstag eine Klausur: Szenenanalyse bzw. Interpretation einer Szene aus Heinrich von Kleists Lustspiel "Der zerbrochne Krug". Er muss das Stück kennen, einordnen können und Figuren und Handlung verstehen.
+
+Gesicherte Fakten (nutze genau diese, erfinde nichts dazu):
+- Heinrich von Kleist, 1777–1811 (gest. am Wannsee). Weitere Werke: Michael Kohlhaas, Die Marquise von O…, Das Käthchen von Heilbronn, Prinz Friedrich von Homburg, Penthesilea, Amphitryon.
+- Anstoß: 1802 in Bern ein französischer Kupferstich ("Le juge, ou la cruche cassée") bei Heinrich Zschokke; Wettstreit Zschokke / Ludwig Wieland / Kleist. Entstanden ca. 1802–1806.
+- Uraufführung 2. März 1808, Weimarer Hoftheater, unter Goethe; Goethe teilte den Einakter in drei Akte, das zerstörte das Tempo; dazu ein zu langer Schluss: Misserfolg. Erstdruck 1811 Berlin; die lange Fassung des 12. Auftritts steht dort als "Variant" im Anhang.
+- Lustspiel mit ernstem Kern; analytisches Drama nach dem Vorbild von Sophokles' "König Ödipus" (Unterschied: Adam weiß von Anfang an, dass er schuldig ist). Blankvers. Ein Akt, 13 Auftritte, rund 1974 Verse. Einheit von Ort (Gerichtsstube in Huisum, erfundenes Dorf bei Utrecht, Niederlande), Zeit (ein Vormittag, 1. Februar; Jahr nicht genannt, Ende 17. Jh.) und Handlung. Epoche: zwischen bzw. neben Klassik und Romantik (keiner eindeutig zuzuordnen).
+- Figuren: Walter (Gerichtsrat aus Utrecht auf Revisionsreise), Adam (Dorfrichter, zehn Jahre im Amt, unverheiratet, Klumpfuß, Täter und Richter zugleich, Meister der Ausrede), Licht (Schreiber, ehrgeizig, will Richter werden, verwaltet am Ende vorläufig das Amt), Frau Marthe Rull (Klägerin, Eves Mutter, Witwe), Eve (ihre Tochter, Ruprechts Verlobte, von Adam erpresst), Veit Tümpel (Bauer), Ruprecht (sein Sohn, Eves Verlobter, eifersüchtig), Frau Brigitte (Ruprechts Muhme/Tante, Zeugin), Lebrecht (Flickschuster, tritt nicht auf), Mägde Liese und Grete, Büttel, Bedienter; erwähnt: Richter Pfaul in Holla, Perückenmacher Meister Mehl in Utrecht.
+- Handlung: 1. Adam verletzt (Fuß, Wange, Nase, Auge), Ausrede: auf den "Ziegenbock" am Ofen gefallen; Licht: "Adamsfall"; Walter auf Revisionsreise, hat in Holla Richter Pfaul suspendiert. 2. Walter im Dorf; Perücke fehlt (Ausrede: Katze hat darin gejungt); Mägde: Adam kam gestern gegen elf ohne Perücke und blutend heim. 3. Adams Traum vom Selbstgericht. 4. Walter kommt: Auftrag des Obertribunals Utrecht; Adam hat fünf Kassen. 5. keine Leih-Perücke; Adam richtet kahlköpfig. 6. Parteien streiten (ohne Adam); Marthe: "Meint Er, dass die Justiz ein Töpfer ist?", "Dein guter Name lag in diesem Topfe"; Ruprecht löst die Verlobung ("Metze"). 7. Verhandlung (längster Auftritt): Adam erkennt die Parteien, bedrängt Eve heimlich (Attest, Batavia), Ausrede krankes Perlhuhn; will Ruprecht sofort verurteilen ("Welch ein gewaltsames Verfahren" – Walter); Marthes Krugbeschreibung (Übergabe der Niederlande durch Karl V. an Philipp) und Geschichte des Krugs; Ruprechts Bericht (Mann bei Eve, Tür eingetreten, Türklinke, Sand in die Augen, Verdacht auf Lebrecht); Adam verrät sich ("War's eine Klinke?"). 8. zwei Verse (Wasser/Wein). 9. Eves Befragung: Adams Versprecher "Leberecht", Eve entlastet Ruprecht und Lebrecht (Adam schickte Lebrecht mit dem Attest nach Utrecht), nennt keinen Namen; Brigitte als Zeugin gerufen. 10. Weinpause: Walter verhört Adam (Wunden, Kratzer, Perücke angeblich an der Kerze verbrannt), Adam verrät sich. 11. Brigitte bringt die Perücke (im Weinspalier unter Eves Fenster); Adam: Ruprecht für Meister Mehl mitgegeben; Brigitte sah einen kahlen Kerl mit Pferdefuß, Spur im Schnee (rechts Menschenfuß, links Pferdefuß) bis zu Adams Haus; Adam will die Synode in Den Haag nach dem Teufel fragen; Perücke passt; Adam verurteilt Ruprecht; Eve: "Der Richter Adam hat den Krug zerbrochen!"; Adam flieht. 12. Kurzfassung: Ruprecht bittet um Verzeihung, Eve nennt die Drohung "Nach Bantam" (Ostindien), Walter: "Der Brief ist falsch!", Truppen bleiben im Inland; Versöhnung; Veit: Hochzeit zu Pfingsten; Licht sieht Adam fliehen (Mauerschau); Adam suspendiert, Licht übernimmt vorläufig. Variant: Eve erzählt ausführlich (Attest, Batavia, nächtlicher Besuch), misstraut Walter, Münzszene (Beutel Gulden), Ruprecht dient ein Jahr in Utrecht, Walter kommt Pfingsten. 13. Marthe fragt nach dem Sitz der Regierung in Utrecht ("Am großen Markt", Dienstag und Freitag) und will weiterklagen.
+- Themen/Motive: Wahrheit und Lüge; Recht, Justiz, Machtmissbrauch; Sündenfall (Adam, Eve, "Adamsfall"); Krug als Symbol (Eves Ehre, zerbrochenes Vertrauen/Verlobung, beschädigte Ordnung, Grenzen der Justiz); Teufelsmotiv (Klumpfuß/Pferdefuß, Glatze, Schwefel); Vertrauen (Eve–Ruprecht); Komik durch dramatische Ironie, Beiseitesprechen, Doppeldeutigkeiten, Versprecher, Situationskomik; hoher Blankvers mit derbem Inhalt.
+- Szenenanalyse (Aufbau laut Unterricht): Einleitung (Titel, Autor, Entstehungszeit, Epoche, Ort, Zeit, Figuren, Thema, Deutungshypothese; TATZT-Formel) – Einordnung in den Zusammenhang (vorher/nachher) und Inhaltsangabe (Präsens, keine Zitate, indirekte Rede) – Überleitungssatz (Aspekte nennen) – Hauptteil, nur hier mit Zitaten und Versangaben: Gesprächsart, Gesprächsverhalten, Motive, Charakter und Gefühle, sprachliche Gestaltung (Wortwahl, Satzbau, Ellipsen, Fragen, Ausrufe, Wiederholungen, Ironie, Klimax, Hyperbel, Sprachniveau, Widersprüche) und dramatische Gestaltung (Regieanweisungen, Redeanteile symmetrisch/asymmetrisch) – Schluss (Zusammenfassung, Funktion der Szene im Drama). Linear vs. aspektgeleitet.
+
+So antwortest du:
+- Verstehe auch Umgangssprache, Tippfehler und halbe Sätze und beantworte die gemeinte Frage direkt; Rückfragen nur, wenn wirklich unklar.
+- Beginne mit der Antwort in einem Satz, dann knapp erklären, mit Beispiel oder kurzem Zitat aus dem Stück.
+- Schickt der Schüler einen eigenen Text (Einleitung, Analyse, Antwort), gib ehrliches, konkretes Feedback: was gut ist, was fehlt, wie man es besser formuliert.
+- Zitiere nur Stellen, die du sicher kennst; sonst beschreibe sie mit eigenen Worten. Gib keine erfundenen Versnummern an.
+- Wenn etwas umstritten oder nicht sicher belegt ist, sag das.
+- Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter; mehr, wenn der Schüler es will.
+- Formatierung nur so: **fett** für Fachbegriffe und Aufzählungen mit "- " am Zeilenanfang. Keine Tabellen, keine Überschriften.
+- Bei Fragen ohne Bezug zum Fach antworte kurz und lenke freundlich zurück zum Lernen.`;
+const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : SYSTEM;
 const rate = new Map(); // IP -> [Zeitstempel]
 function limited(ip, max = 20) {
   const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
@@ -258,22 +281,22 @@ function limited(ip, max = 20) {
   return list.length > max;
 }
 const thinkCfg = model => /gemini-3/.test(model) ? { thinkingLevel: 'minimal' } : { thinkingBudget: 0 };
-function geminiBody(messages, model, smart) {
+function geminiBody(messages, model, smart, fach) {
   const contents = messages.slice(-16).map(m => ({ role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 3000) }] }));
   const generationConfig = { temperature: smart ? 0.5 : 0.4, maxOutputTokens: smart ? 2500 : 900 };
   if (smart) generationConfig.thinkingConfig = { thinkingLevel: 'low' };            // kurz nachdenken = bessere Antworten
   else if (thinkingSupported) generationConfig.thinkingConfig = thinkCfg(model);    // schnell: kein langes Nachdenken
-  return JSON.stringify({ system_instruction: { parts: [{ text: SYSTEM }] }, contents, generationConfig });
+  return JSON.stringify({ system_instruction: { parts: [{ text: systemFor(fach) }] }, contents, generationConfig });
 }
 let thinkingSupported = true;   // falls das schnelle Modell die Denk-Einstellung ablehnt, ab dann ohne
 // welche Modelle probieren: erst das schlaue, bei Problemen das schnelle
 function modelPlan() { return (SMART_MODEL && SMART_MODEL !== GEMINI_MODEL && Date.now() > smartPauseUntil) ? [[SMART_MODEL, true], [GEMINI_MODEL, false]] : [[GEMINI_MODEL, false]]; }
 function smartFailed(status, text) { if (status === 429 || status === 404 || status === 403) { smartPauseUntil = Date.now() + 15 * 60000; console.log('Schlaues Modell pausiert 15 min:', status, String(text).slice(0, 120)); } }
-async function geminiStream(messages, onText) {
+async function geminiStream(messages, onText, fach) {
   let r = null, lastErr = '';
   for (const [model, smart] of modelPlan()) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
-    const once = () => httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, model, smart), timeout: smart ? 25000 : 20000 });
+    const once = () => httpsReq(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY }, body: geminiBody(messages, model, smart, fach), timeout: smart ? 25000 : 20000 });
     try {
       try { r = await once(); } catch (e) { console.log('Gemini nicht erreichbar, neuer Versuch:', e.name, e.code || e.message); dnsCache.clear(); r = await once(); }
       if (r.statusCode !== 200 && !smart && thinkingSupported) {
@@ -307,13 +330,13 @@ async function geminiStream(messages, onText) {
 }
 
 // Karteikarten erstellen lassen: Gemini liefert eine JSON-Liste {front, back}
-async function geminiCards(topic) {
+async function geminiCards(topic, fach) {
   const m = String(topic).match(/(\d{1,2})\s*(karteikarten|lernkarten|karten|flashcards)/i);
   const want = m ? Math.max(3, Math.min(25, +m[1])) : 0;
   const prompt = `Ein Schüler bittet dich in einer Lern-App: "${topic}"
 Erstelle dazu Karteikarten. ${want ? 'Genau ' + want + ' Karten.' : 'So viele, wie das Thema sinnvoll hergibt: meist 8 bis 16 (bei einer Reihe eine Karte pro Glied).'}
 
-Kontext: 10. Klasse, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen). Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
+Kontext: ${fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
 
 Gute Karten:
 - Erst verstehen, was genau gewünscht ist (Thema, Umfang, Art), auch bei Tippfehlern oder Umgangssprache.
@@ -322,7 +345,7 @@ Gute Karten:
 - Rückseite: die Antwort, knapp und vollständig, zum Auswendiglernen (höchstens 240 Zeichen), gern mit Beispiel.
 - Jede Karte deckt etwas anderes ab, keine Wiederholungen, keine trivialen Füllkarten.
 - Fachlich korrekt; prüfe jede Karte, bevor du sie ausgibst. Nichts erfinden.
-- Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃. Deutsch mit ä, ö, ü und ß.`;
+- ${fach === 'deutsch' ? 'Zitate nur, wenn sicher belegt; keine erfundenen Versnummern.' : 'Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.'} Deutsch mit ä, ö, ü und ß.`;
   const schema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { front: { type: 'STRING' }, back: { type: 'STRING' } }, required: ['front', 'back'] } };
   const call = async (model, smart, withSchema) => {
     const generationConfig = { temperature: 0.4, maxOutputTokens: smart ? 8000 : 3000, responseMimeType: 'application/json' };
@@ -418,7 +441,7 @@ const server = http.createServer((req, res) => {
       const topic = String(m.topic || '').replace(/[<>"]/g, '').slice(0, 200).trim();
       if (!topic) return json(400, { error: 'Kein Thema angegeben.' });
       const t0 = Date.now();
-      try { const cards = await geminiCards(topic); console.log('Karteikarten:', cards.length, 'in', Date.now() - t0, 'ms'); json(cards.length ? 200 : 502, cards.length ? { cards } : { error: 'Keine Karten erhalten.' }); }
+      try { const cards = await geminiCards(topic, m.fach === 'deutsch' ? 'deutsch' : 'chemie'); console.log('Karteikarten:', cards.length, 'in', Date.now() - t0, 'ms'); json(cards.length ? 200 : 502, cards.length ? { cards } : { error: 'Keine Karten erhalten.' }); }
       catch (e) { console.log('Karteikarten-Fehler:', e.message); json(502, { error: 'ai_failed' }); }
     });
     return;
@@ -437,7 +460,7 @@ const server = http.createServer((req, res) => {
         await geminiStream(m.messages, t => {
           if (!started) { started = true; res.writeHead(200, { ...CORS, 'Content-Type': 'text/plain; charset=utf-8', 'X-Accel-Buffering': 'no' }); console.log('Alki: erste Wörter nach', Date.now() - t0, 'ms'); }
           res.write(t);
-        });
+        }, m.fach === 'deutsch' ? 'deutsch' : 'chemie');
         console.log('Alki: fertig nach', Date.now() - t0, 'ms');
         if (!started) return json(200, { answer: 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' });
         res.end();
@@ -656,7 +679,7 @@ function closeRoom(room, except) {
 
 // Bewusst verlassen (Knopf, anderer Tab): sofort raus
 function leave(ws) {
-  if (waiting === ws) waiting = null;
+  for (const [k, w] of waitingBy) if (w === ws) waitingBy.delete(k);
   const room = ws.room; if (!room) return;
   if (room.team) return tRemove(room, ws);
   ws.room = null;
@@ -665,7 +688,7 @@ function leave(ws) {
 
 // Verbindung abgerissen (App im Hintergrund): Platz freihalten
 function dropped(ws) {
-  if (waiting === ws) waiting = null;
+  for (const [k, w] of waitingBy) if (w === ws) waitingBy.delete(k);
   const room = ws.room; if (!room || !rooms.has(room.code)) return;
   const slot = ws.slot;
   if (room.players[slot] !== ws) return;          // schon durch neue Verbindung ersetzt
@@ -753,9 +776,10 @@ wss.on('connection', ws => {
       }
       case 'quick':
         leave(ws);
-        if (waiting && waiting !== ws && waiting.readyState === 1) {
-          const code = newCode(); const r = { code, players: [waiting, ws] }; rooms.set(code, r); waiting = null; startMatch(r);
-        } else { waiting = ws; send(ws, { type: 'searching' }); }
+        { const f = m.fach === 'deutsch' ? 'deutsch' : 'chemie'; ws.fach = f; const w = waitingBy.get(f);
+          if (w && w !== ws && w.readyState === 1) {
+            const code = newCode(); const r = { code, players: [w, ws] }; rooms.set(code, r); waitingBy.delete(f); startMatch(r);
+          } else { waitingBy.set(f, ws); send(ws, { type: 'searching' }); } }
         break;
       case 'create': {
         leave(ws);
