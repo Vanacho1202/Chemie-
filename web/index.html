@@ -1377,7 +1377,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='4.1';
+const APP_VERSION='4.2';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1614,25 +1614,40 @@ const BATTLE_HTTP='https://alkane-battle.onrender.com/', BATTLE_WS='wss://alkane
 const KSHAPE=['▲','◆','●','■'];
 let B={ws:null,phase:'lobby',msg:'',code:'',you:0,host:false,opp:null,scores:[0,0],q:null,qi:0,total:10,pick:-1,oppDone:false,reveal:null,end:null,correct:0,oppRematch:false,timer:null};
 function battleQuestions(){
-  // 10 Fragen, keine doppelt: jede Fragenart (Generator), feste Frage und Aussage höchstens einmal
-  const used=new Set(), out=[];
-  for(const t of shuffle([1,2,3,4,5,6,7,1,2,6])){
+  // 10 Fragen, keine doppelt. Dazu ein Gedächtnis über die letzten Battles (S.bSeen),
+  // damit dieselben Fragen und Fragenarten nicht in jedem Match wiederkommen.
+  const seen=new Set(S.bSeen||[]), seenG=new Set(S.bSeenG||[]), used=new Set(), out=[];
+  const stem=c=>'s:'+String(c.q).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,90)+'|'+String(c.svg||'').length;
+  const cardQ=()=>{ const i=Math.floor(Math.random()*CARDS.length), [term,def]=CARDS[i];
+    const others=shuffle(CARDS.filter((_,j)=>j!==i).map(c=>c[0])).slice(0,3);
+    const masked=def.replace(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),'…');
+    return {key:'card:'+term, c:{t:7, q:'Welcher Begriff passt zu dieser Definition?<br><i>„'+masked+'“</i>', o:[term,...others], a:0, e:'<b>'+term+'</b>: '+def}}; };
+  for(const t of shuffle([1,2,3,4,5,6,7,1,2,3,4,5,6,7].slice(0,10))){
     let q=null;
-    for(let tries=0; tries<60 && !q; tries++){
+    for(let tries=0; tries<120 && !q; tries++){
+      const strict=tries<80;            // erst streng (nichts aus den letzten Matches), dann lockerer
       const r=Math.random(); let c, key;
-      if(r<0.15){ const x=pick(TF.filter(y=>y[0]===t)); key='tf:'+x[1]; c={t, q:'Richtig oder falsch? '+x[1], o:['Richtig','Falsch'], a:x[2]?0:1, e:x[3]}; }
-      else if(r<0.3){ const b=pick(QUESTIONS.filter(y=>y.t===t)); key='bank:'+b.q; c=b; }
-      else { const gi=Math.floor(Math.random()*GEN[t].length), g=GEN[t][gi]; key='gen:'+(g.name||t+':'+gi); c=g(); }
-      const txt='txt:'+c.q.replace(/<[^>]+>/g,'')+'|'+(c.svg||'');
-      if(used.has(key)||used.has(txt)) continue;
-      used.add(key); used.add(txt); q=c;
+      if(r<0.14){ const x=pick(TF.filter(y=>y[0]===t)); if(!x) continue; key='tf:'+x[1]; c={t, q:'Richtig oder falsch? '+x[1], o:['Richtig','Falsch'], a:x[2]?0:1, e:x[3]}; }
+      else if(r<0.40){ const b=pick(QUESTIONS.filter(y=>y.t===t)); if(!b) continue; key='bank:'+b.q; c=b; }
+      else if(r<0.50&&t===7){ const k=cardQ(); key=k.key; c=k.c; }
+      else { const gi=Math.floor(Math.random()*GEN[t].length), g=GEN[t][gi]; key='gen:'+t+':'+gi; c=g(); }
+      const st=stem(c);
+      if(used.has(key)||used.has(st)) continue;          // jede Frage und jede Fragenart nur einmal pro Match
+      if(strict&&(seen.has(st)||seenG.has(key))) continue;   // nichts aus den letzten Matches
+      used.add(key); used.add(st); q=c;
     }
     if(!q) continue;
     if(q.o[0]==='Richtig'&&q.o.length===2){ out.push(q); continue; }
     const order=shuffle(q.o.map((_,i)=>i));
     out.push({t:q.t||t, q:q.q, o:order.map(i=>q.o[i]), a:order.indexOf(q.a), e:q.e||'', svg:q.svg||''});
   }
+  bRemember(out); S.bSeenG=[...used].filter(k=>k.startsWith('gen:')); save(true);
   return out;
+}
+/* Gesehene Battle-Fragen merken (auch die vom Gegner erzeugten), die letzten ~3 Matches */
+function bRemember(list){
+  const stem=c=>'s:'+String(c.q).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,90)+'|'+String(c.svg||'').length;
+  S.bSeen=(S.bSeen||[]).concat(list.map(stem)).slice(-60); save(true);
 }
 const helloMsg=()=>({type:'hello',id:S.pid,name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true});
 function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
@@ -1731,7 +1746,7 @@ function bMsg(m){
       if(navigator.vibrate){ try{navigator.vibrate([60,40,60]);}catch(e){} }
       if(m.host) bSend({type:'questions',list:battleQuestions()}); break;
     case 'start': B.phase='countdown'; B.total=m.total; B.cdEnd=Date.now()+m.in; break;
-    case 'q': B.ansCount=0; Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
+    case 'q': try{ bRemember([m.q]); }catch(e){} B.ansCount=0; Object.assign(B,{phase:'question',q:m.q,qi:m.qi,total:m.total,limit:m.limit,pick:-1,oppDone:false,reveal:null,qStart:Date.now()}); break;
     case 'opp_answered': B.oppDone=true; break;
     case 'reveal': B.phase='reveal'; B.reveal=m; B.scores=m.scores; B.myReady=false; B.oppReady=false; if(m.picks[B.you]===m.a) B.correct++; break;
     case 'opp_ready': B.oppReady=true; break;
