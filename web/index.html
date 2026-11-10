@@ -1813,7 +1813,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.1';
+const APP_VERSION='5.2';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2181,6 +2181,7 @@ function bMsg(m){
     case 'searching': B.phase='searching'; break;
     case 'room': B.phase='room'; B.code=m.code; B.token=m.token; bSaveSession(); break;
     case 'error': B.phase='lobby'; B.msg=m.msg; break;
+    case 'wrongfach': { const f=FACHER[m.fach]||FACHER.chemie; B.phase='lobby'; B.msg=`${m.msg||''} Du lernst gerade ${FACH.name}.<div class="row" style="margin-top:8px"><button class="btn small primary" type="button" data-wf="${f.id}" data-code="${m.code||''}">${f.emoji} Zu ${f.name} wechseln${m.code?' und beitreten':''}</button></div>`; break; }
     case 'cancelled': B.phase='lobby'; B.msg=''; break;
     case 'matched': Object.assign(B,{isTeam:false,phase:'matched',you:m.you,host:m.host,opp:m.opp,code:m.code,token:m.token,scores:[0,0],correct:0,end:null,oppRematch:false,myRematch:false,oppLeft:false,oppAway:false,awarded:false,msg:''}); bSaveSession();
       B.inviting=null; if(!location.hash.startsWith('#battle')) location.hash='#battle';
@@ -2244,7 +2245,7 @@ function drawSocial(){
   const others=(B.who||[]).filter(p=>!S.friends[p.id]);
   const dot=st=>`<span class="dot ${st}"></span>`;
   const stTxt={online:'online',battle:'im Battle',offline:'offline'};
-  const row=(p,act)=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn"><span ${nameStyle(p.color)}>${p.name}</span></b><div class="ft">${dot(p.st||p.status)}${stTxt[p.st||p.status]} · ${p.title||''}${ADM.on?' · ID '+p.id.slice(0,8):''}</div></div>${act}${ADM.on?`<button class="xbtn" type="button" data-admopen="${p.id}" aria-label="Verwalten">⚙️</button>`:''}</div>`;
+  const row=(p,act)=>`<div class="frow"><span class="av">${AVATAR[p.avatar]||'🧑‍🔬'}</span><div style="min-width:0;flex:1"><b class="fn"><span ${nameStyle(p.color)}>${p.name}</span></b><div class="ft">${dot(p.st||p.status)}${stTxt[p.st||p.status]} · ${p.title||''}${p.fach&&FACHER[p.fach]?' · '+FACHER[p.fach].emoji+' '+FACHER[p.fach].name:''}${ADM.on?' · ID '+p.id.slice(0,8):''}</div></div>${act}${ADM.on?`<button class="xbtn" type="button" data-admopen="${p.id}" aria-label="Verwalten">⚙️</button>`:''}</div>`;
   box.innerHTML=`<section class="card"><div class="row" style="justify-content:space-between"><div class="sec-label" style="margin:0">Freunde · ${fr.filter(f=>f.st!=='offline').length} online</div>${conn?'':'<span class="muted" style="font-size:.8rem">nicht verbunden</span>'}</div>
      <div class="flist">${fr.length?fr.map(f=>row(f, B.unf===f.id?`<button class="btn small" type="button" data-unf2="${f.id}">Wirklich entfernen?</button>`:
         (f.st==='online'?(B.inviting===f.id?'<span class="muted" style="font-size:.85rem">Warte …</span>':`<button class="btn small primary" type="button" data-inv="${f.id}">⚔️ Battle</button>`):f.st==='battle'?`<button class="btn small" type="button" data-watch="${f.id}">👀 Zuschauen</button>`:'')+`<button class="xbtn" type="button" data-unf="${f.id}" aria-label="Freund entfernen">×</button>`)).join(''):'<p class="muted" style="margin:6px 0 0;font-size:.9rem">Noch keine Freunde. Füg unten jemanden hinzu, der gerade online ist.</p>'}</div></section>
@@ -2744,7 +2745,7 @@ function applyFachData(id){
   if(!MATCH_KINDS[matchKind]) matchKind=Object.keys(MATCH_KINDS)[0];
   document.title=FACH.title+' · Lern-App';
 }
-function switchFach(id){
+function switchFach(id,stay){
   if(!FACHER[id]) return;
   const cur=S.fach||'chemie';
   if(id!==cur){
@@ -2755,13 +2756,16 @@ function switchFach(id){
   S.fach=id; S.fachChosen=true; save();
   applyFachData(id); botLoad(); try{ bSend(helloMsg()); }catch(e){}
   deck=null; CUR_DECK='std'; exam=null; tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
-  location.hash='#start'; route();
+  if(!stay){ location.hash='#start'; route(); } else route();
 }
 function viewPick(){
   app.innerHTML=`<header class="hero"><span class="eyebrow">Freie Waldorfschule · Lern-App</span><h1>Welches Fach lernst du?</h1><p class="muted" style="margin:.3em 0 0">Du kannst jederzeit oben auf der Startseite wechseln. Dein Fortschritt wird pro Fach gespeichert, Münzen, Shop und Freunde gelten für alle.</p></header>
   ${Object.values(FACHER).map(f=>`<button class="card fach-card" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${f.emoji}</span><span><b style="font-size:1.2rem">${f.name}</b><br><span class="muted">${f.sub}</span></span></button>`).join('')}`;
 };
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-fach]'); if(b){ e.preventDefault(); switchFach(b.dataset.fach); } });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-wf]'); if(!b) return; e.preventDefault();
+  const code=b.dataset.code; B.msg=''; switchFach(b.dataset.wf,true);
+  if(code) setTimeout(()=>bConnect(()=>bSend({type:'join',code})),300); else toast('Fach gewechselt – nimm die Herausforderung jetzt noch mal an'); });
 
 /* ---------- Routing ---------- */
 function route(){

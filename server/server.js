@@ -480,7 +480,9 @@ const both = (room, fn) => room.players.forEach((p, i) => p && send(p, fn(i)));
 const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p.color });
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
 const allReady = room => room.players.every(p => p && p.canReady);
-const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
+const fachOf = p => (p && p.fach === 'deutsch') ? 'deutsch' : 'chemie';
+const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK' };
+const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, fach: fachOf(p), status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
 
 function newCode() {
   let c; do { c = String(1000 + Math.floor(Math.random() * 9000)); } while (rooms.has(c));
@@ -764,6 +766,7 @@ wss.on('connection', ws => {
         const to = online.get(String(m.to || ''));
         if (!to || !ws.pid) return send(ws, { type: 'error_soft', msg: 'Der Spieler ist gerade nicht online.' });
         if (m.type === 'invite' && to.room && to.room.state && to.room.state !== 'lobby') return send(ws, { type: 'error_soft', msg: to.name + ' ist gerade in einem Battle.' });
+        if (m.type === 'invite' && fachOf(to) !== fachOf(ws)) return send(ws, { type: 'error_soft', msg: to.name + ' lernt gerade ' + FACH_NAME[fachOf(to)] + '. Herausfordern geht nur im selben Fach.' });
         send(to, { type: m.type, from: pub(ws) });
         break;
       }
@@ -772,8 +775,9 @@ wss.on('connection', ws => {
         const from = online.get(String(m.to || ''));
         if (!from || from.readyState !== 1 || (from.room && from.room.state && from.room.state !== 'lobby'))
           return send(ws, { type: 'error_soft', msg: 'Die Herausforderung ist nicht mehr gültig.' });
+        if (fachOf(from) !== fachOf(ws)) return send(ws, { type: 'wrongfach', fach: fachOf(from), msg: 'Die Herausforderung ist für ' + FACH_NAME[fachOf(from)] + '.' });
         leave(from); leave(ws);
-        const code = newCode(); const r = { code, players: [from, ws] }; rooms.set(code, r); startMatch(r);
+        const code = newCode(); const r = { code, players: [from, ws], fach: fachOf(from) }; rooms.set(code, r); startMatch(r);
         break;
       }
       case 'quick':
@@ -785,7 +789,7 @@ wss.on('connection', ws => {
         break;
       case 'create': {
         leave(ws);
-        const code = newCode(); const r = { code, players: [null, null], state: 'lobby', grace: [null, null] };
+        const code = newCode(); const r = { code, players: [null, null], state: 'lobby', grace: [null, null], fach: fachOf(ws) };
         rooms.set(code, r); seat(r, ws, 0); send(ws, { type: 'room', code, token: ws.token });
         break;
       }
@@ -813,7 +817,7 @@ wss.on('connection', ws => {
       }
       case 'botduel': {  // 1 gegen 1 gegen einen Bot: sofort los
         leave(ws);
-        const code = newCode(); const r = { code, team: true, size: 1, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [] };
+        const code = newCode(); const r = { code, team: true, size: 1, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [], fach: fachOf(ws) };
         rooms.set(code, r); tSeat(r, ws); tSeat(r, makeBot(r, m.level));
         tStartPrep(r);
         break;
@@ -821,7 +825,7 @@ wss.on('connection', ws => {
       case 'tcreate': {
         const size = m.size === 3 ? 3 : 2;
         leave(ws);
-        const code = newCode(); const r = { code, team: true, size, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [] };
+        const code = newCode(); const r = { code, team: true, size, players: [], teams: [], state: 'lobby', hostSlot: 0, grace: [], fach: fachOf(ws) };
         rooms.set(code, r); tSeat(r, ws); tLobby(r);
         break;
       }
@@ -840,11 +844,13 @@ wss.on('connection', ws => {
         if (!room || !room.team || room.state !== 'lobby') return;
         if (!to) return send(ws, { type: 'error_soft', msg: 'Der Spieler ist gerade nicht online.' });
         if (to.room && to.room.state && to.room.state !== 'lobby') return send(ws, { type: 'error_soft', msg: to.name + ' ist gerade in einem Battle.' });
+        if (fachOf(to) !== (room.fach || 'chemie')) return send(ws, { type: 'error_soft', msg: to.name + ' lernt gerade ' + FACH_NAME[fachOf(to)] + '. Einladen geht nur im selben Fach.' });
         send(to, { type: 'tinvite', from: pub(ws), code: room.code, size: room.size });
         break;
       }
       case 'join': {
         const tr = rooms.get(clean(m.code, 4));
+        { const rr = tr; if (rr && rr.fach && rr.fach !== fachOf(ws) && !rr.players.includes(ws)) return send(ws, { type: 'wrongfach', fach: rr.fach, code: rr.code, msg: 'Dieser Raum ist für ' + FACH_NAME[rr.fach] + '.' }); }
         if (tr && tr.team) {
           if (tr.players.includes(ws)) return tLobby(tr);
           if (tr.state !== 'lobby') return send(ws, { type: 'error', msg: 'Das Team-Battle läuft schon.' });
