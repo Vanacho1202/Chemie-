@@ -45,6 +45,11 @@ const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask'
 const rooms = new Map();     // code -> room
 let waiting = null;          // Spieler in der Schnellsuche
 const online = new Map();    // Spieler-ID -> aktuelle Verbindung (wer gerade die App offen hat)
+// online = Verbindung offen, App im Vordergrund, letzte Antwort frisch
+const isLive = p => !!p && p.readyState === 1 && !p.away && Date.now() - (p.lastPong || 0) < 12000;
+// Status hat sich geändert: alle kurz benachrichtigen, damit Listen sofort aktualisieren (gebündelt)
+let presT = null;
+function presence() { if (presT) return; presT = setTimeout(() => { presT = null; wss.clients.forEach(c => { if (c.readyState === 1 && c.pid) send(c, { type: 'pres' }); }); }, 300); }
 
 // ---------- Cloud-Spielstand (Postgres) ----------
 let pool = null;
@@ -673,17 +678,19 @@ wss.on('connection', ws => {
           ws.pid = m.id;
           online.set(ws.pid, ws);   // pro Spieler-ID zählt nur die neueste Verbindung
         }
-        send(ws, { type: 'hi', online: online.size });
+        send(ws, { type: 'hi', online: online.size }); ws.away = false; presence();
         break;
       case 'resume': resume(ws, m); break;
+      case 'away': if (!ws.away) { ws.away = true; presence(); } break;     // App im Hintergrund
+      case 'back': if (ws.away) { ws.away = false; presence(); } break;
       case 'who': {
         // alle, die gerade die App offen haben (ohne einen selbst)
         // gleiche Person (Name + Avatar) nur einmal, tote Verbindungen weglassen
         const seen = new Set(), list = [];
-        [...online.values()].filter(p => p !== ws && p.readyState === 1 && p.named && p.pid !== ws.pid && Date.now() - (p.lastPong || 0) < 40000)
+        [...online.values()].filter(p => p !== ws && isLive(p) && p.named && p.pid !== ws.pid)
           .sort((a, b) => (b.room ? 1 : 0) - (a.room ? 1 : 0)).forEach(p => { const k = p.name.toLowerCase() + '|' + p.avatar; if (k === (ws.name || '').toLowerCase() + '|' + ws.avatar || seen.has(k)) return; seen.add(k); list.push(pub(p)); });
         const ids = Array.isArray(m.friends) ? m.friends.slice(0, 300) : [];
-        send(ws, { type: 'who', list, friendsOnline: ids.filter(id => online.has(id)) });
+        send(ws, { type: 'who', list, friendsOnline: ids.filter(id => isLive(online.get(id))) });
         break;
       }
       case 'friend_req': case 'friend_ok': case 'friend_no': case 'invite': case 'invite_no': {
@@ -819,11 +826,12 @@ wss.on('connection', ws => {
       case 'leave': leave(ws); break;
     }
   });
-  ws.on('close', () => { if (ws.pid && online.get(ws.pid) === ws) online.delete(ws.pid); unwatch(ws); dropped(ws); });
+  ws.on('close', () => { if (ws.pid && online.get(ws.pid) === ws) online.delete(ws.pid); unwatch(ws); dropped(ws); presence(); });
 });
 
 // Verbindungen am Leben halten, tote Verbindungen aufräumen
-setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; ws.ping(); }), 15000);
+// alle 5 s anpingen; wer einmal nicht antwortet, fliegt raus (spätestens nach ~10 s offline)
+setInterval(() => wss.clients.forEach(ws => { if (!ws.alive) return ws.terminate(); ws.alive = false; ws.ping(); }), 5000);
 
 server.listen(PORT, () => {
   console.log('Alkane Battle läuft auf Port ' + PORT);

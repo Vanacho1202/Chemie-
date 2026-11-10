@@ -1377,7 +1377,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='4.0';
+const APP_VERSION='4.1';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -1698,6 +1698,7 @@ function bMsg(m){
       bSaveSession(); toast('Wieder verbunden'); break; }
     case 'resume_fail': B.reconnecting=false; bClearSession(); B.phase='lobby'; B.msg='Das Battle wurde unterbrochen, weil der Server neu gestartet ist oder du länger als 90 Sekunden weg warst. Starte einfach ein neues.'; break;
     case 'who': B.who=m.list; B.whoMap={}; m.list.forEach(p=>{ B.whoMap[p.id]=p; if(S.friends[p.id]){ Object.assign(S.friends[p.id],{name:p.name,avatar:p.avatar,title:p.title,color:p.color}); } }); save(); drawSocial(); if(B.phase==='tlobby') drawTeamInvites(); return;
+    case 'pres': clearTimeout(B.presT); B.presT=setTimeout(()=>{ if(location.hash.startsWith('#battle')&&B.ws&&B.ws.readyState===1) bWho(); },150); return;
     case 'hi': B.onlineCount=m.online; if(B.ban){ B.ban=null; banBar(); } return;
     case 'gift': cloudPull(); return;
     case 'banned': B.ban={until:Date.parse(m.until)||0,reason:m.reason||''}; banBar(); if(location.hash.startsWith('#battle')){ B.phase='lobby'; B.msg=banText(); drawBattle(); } return;
@@ -1772,6 +1773,8 @@ function bSilentConnect(){
   }).catch(()=>setTimeout(bSilentConnect,30000));
 }
 setTimeout(bSilentConnect,1500);
+// App im Hintergrund = offline anzeigen, zurück = online
+document.addEventListener('visibilitychange',()=>{ try{ if(B.ws&&B.ws.readyState===1) bSend({type:document.visibilityState==='visible'?'back':'away'}); }catch(e){} });
 addEventListener('pagehide',()=>{ try{ if(B.ws&&B.phase==='lobby'&&!B.spec) B.ws.close(); }catch(e){} });
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && !(B.ws&&B.ws.readyState<=1) && !B.token) bSilentConnect(); });
 function bWho(){ bSend({type:'who',friends:Object.keys(S.friends)}); }
