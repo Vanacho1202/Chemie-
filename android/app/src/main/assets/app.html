@@ -1813,7 +1813,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.0';
+const APP_VERSION='5.1';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2007,15 +2007,20 @@ document.addEventListener('click',e=>{
 
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
- heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌'};
+ heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌',
+ buch:'📚',feder:'🪶',maske:'🎭',krug:'🏺',waage:'⚖️',rolle:'📜',luege:'🤥',wein:'🍷',katze:'🐈',fuss:'🦶',lupe:'🔍',schock:'😱'};
 const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
- owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅'};
+ owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅',
+ richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭'};
 const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
 const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
- ...[['fire',0],['wave',0],['gg',0],['laugh',120],['eyes',120],['clap',150],['think',150],['sweat',150],['heart',180],['cool',200],['cry',200],['sleep',200],['popcorn',220],['muscle',250],['salute',250],['angry',250],['snail',280],['nerd',300],['party',300],['flask',350],['star',350],['ghost',400],['brain',400],['mind',450],['cold',450],['bolt',450],['hundred',500],['clown',500],['skull',600],['devil',600],['rocket',650],['atom',700],['alembic',750],['trophy',900],['crown',1000],['goat',1500]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id]})),
+ ...[['fire',0],['wave',0],['gg',0],['laugh',120],['eyes',120],['clap',150],['think',150],['sweat',150],['heart',180],['cool',200],['cry',200],['sleep',200],['popcorn',220],['muscle',250],['salute',250],['angry',250],['snail',280],['nerd',300],['party',300],['flask',350],['star',350],['ghost',400],['brain',400],['mind',450],['cold',450],['bolt',450],['hundred',500],['clown',500],['skull',600],['devil',600],['rocket',650],['atom',700],['alembic',750],['trophy',900],['crown',1000],['goat',1500]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:['flask','atom','alembic','brain'].includes(id)?'chemie':undefined})),
+ ...[['buch',120],['feder',150],['katze',180],['wein',200],['lupe',220],['schock',250],['rolle',300],['fuss',350],['luege',400],['maske',450],['waage',600],['krug',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'deutsch'})),
  ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
- ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t})),
+ ...[['magd',250],['bauer',300],['theater',450],['detektiv',700],['kaiser',1000],['richter',1500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'deutsch'})),
+ ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:p?'chemie':undefined})),
+ ...[['Krug-Kenner',250],['Zitat-Profi',300],['Auftritt-Ass',350],['Stilmittel-Sammler',400],['Blankvers-Boss',450],['Ironie-Insider',500],['Szenen-Analyst',550],['Adam-Entlarver',600],['Perücken-Finder',700],['Kleist-Kenner',800],['Gerichtsrat',900],['Dorfrichter',1200],['Lustspiel-Legende',1500],['Deutsch-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'deutsch'})),
  ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
 function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; if(S.nameOk===undefined) S.nameOk=S.name; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
@@ -2031,7 +2036,7 @@ function viewShop(){
   <header><h1>Shop</h1><p class="muted" style="margin:.3em 0 0">Münzen gibt es für jede richtige Antwort: 5 im Training, Check und Probeklausur, 10 für Puzzles und Zuordnen. Im Battle 5 pro richtiger Antwort, dazu 60 für einen Sieg. Die guten Sachen muss man sich verdienen.</p></header>
   <section class="card"><div class="row" style="justify-content:space-between"><div class="row"><span class="av-big">${AVATAR[S.eq.avatar]}</span><div><b ${nameStyle(S.eq.color)}>${S.name||'Noch kein Name'}</b><div class="muted" style="font-size:.88rem">${S.eq.title}</div></div></div></div></section>
   <section class="card"><div class="row" id="sh-tabs">${Object.keys(tabs).map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===shopTab}">${tabs[k]}</button>`).join('')}</div><div class="shop" id="sh-grid"></div></section>`;
-  const draw=()=>{ $('#sh-grid').innerHTML=SHOP.filter(i=>i.kind===shopTab).map(i=>{ const own=S.owned[i.id], eq=S.eq[i.kind]===i.key;
+  const draw=()=>{ $('#sh-grid').innerHTML=SHOP.filter(i=>i.kind===shopTab&&(!i.fach||i.fach===FACH.id||(S.owned[i.id]&&i.price>0))).sort((a,b)=>(b.fach===FACH.id)-(a.fach===FACH.id)).map(i=>{ const own=S.owned[i.id], eq=S.eq[i.kind]===i.key;
     const act= i.kind==='emote' ? (own?'<span class="muted">Im Battle dabei</span>':`<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`)
       : own ? (eq?'<span class="okmsg" style="padding:4px 10px">Ausgerüstet</span>':`<button class="btn small" type="button" data-eq="${i.id}">Ausrüsten</button>`) : `<button class="btn small primary" type="button" data-buy="${i.id}">🪙 ${i.price}</button>`;
     const lab= i.kind==='color' ? `<span class="stitle"><span ${nameStyle(i.key)}>${S.name||'Dein Name'}</span></span><span class="muted" style="font-size:.8rem">${i.label}</span>` : `<span class="${i.kind==='title'?'stitle':'semoji'}">${i.label}</span>`;
@@ -2085,7 +2090,7 @@ function bRemember(list){
   const stem=c=>'s:'+String(c.q).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,90)+'|'+String(c.svg||'').length;
   S.bSeen=(S.bSeen||[]).concat(list.map(stem)).slice(-60); save(true);
 }
-const helloMsg=()=>({type:'hello',id:S.pid,name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true});
+const helloMsg=()=>({type:'hello',id:S.pid,name:S.name,avatar:S.eq.avatar,title:S.eq.title,color:S.eq.color,ready:true,fach:FACH.id});
 function bSend(m){ if(B.ws&&B.ws.readyState===1) B.ws.send(JSON.stringify(m)); }
 function bConnect(then){
   if(banActive()){ B.phase='lobby'; B.msg=banText(); drawBattle(); return; }
@@ -2748,7 +2753,7 @@ function switchFach(id){
     const nxt=S.fachData[id]||{}; FACH_KEYS.forEach(k=>{ delete S[k]; }); Object.assign(S,JSON.parse(JSON.stringify(FACH_DEF)),JSON.parse(JSON.stringify(nxt)));
   }
   S.fach=id; S.fachChosen=true; save();
-  applyFachData(id); botLoad();
+  applyFachData(id); botLoad(); try{ bSend(helloMsg()); }catch(e){}
   deck=null; CUR_DECK='std'; exam=null; tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
   location.hash='#start'; route();
 }

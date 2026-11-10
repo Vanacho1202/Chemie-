@@ -40,7 +40,7 @@ const LIMIT_MS = 20000;            // Zeit pro Frage
 const READY_MS = 5 * 60 * 1000;    // spätestens nach 5 Minuten geht es weiter
 const START_MS = 3500;             // Countdown vor der ersten Frage
 const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungsabbruch frei
-const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail']);
+const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock']);
 
 const rooms = new Map();     // code -> room
 const waitingBy = new Map();  // Schnellsuche: Fach -> wartender Spieler (Chemie und Deutsch getrennt)
@@ -535,11 +535,13 @@ function endMatch(room) {
 // Leicht: oft falsch und langsam, Mittel: solide, Schwer: fast immer richtig und schnell
 const BOT_LEVEL = { easy: { p: 0.45, min: 7000, max: 15000, label: 'leicht' }, medium: { p: 0.72, min: 4000, max: 10000, label: 'mittel' }, hard: { p: 0.92, min: 1800, max: 5500, label: 'schwer' } };
 const BOT_NAMES = ['Methan-Max', 'Ethan-Emma', 'Propan-Paul', 'Butan-Bella', 'Pentan-Pia', 'Hexan-Hugo', 'Heptan-Hanna', 'Octan-Otto'];
+const BOT_NAMES_DE = ['Krug-Kalle', 'Richter-Rudi', 'Blankvers-Bea', 'Perücken-Paul', 'Zitat-Zoe', 'Akt-Anton', 'Kleist-Klara', 'Szenen-Sam'];
 const BOT_AVATARS = ['robot', 'alien', 'owl', 'penguin', 'fox', 'panda'];
 function makeBot(room, level) {
   const L = BOT_LEVEL[level] ? level : 'medium';
   const used = new Set(room.players.filter(Boolean).map(p => p.name));
-  const name = (BOT_NAMES.find(n => !used.has('🤖 ' + n)) || 'Bot');
+  const de = room.players.some(p => p && !p.isBot && p.fach === 'deutsch');
+  const name = ((de ? BOT_NAMES_DE : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
   return { isBot: true, level: L, name: '🤖 ' + name, avatar: BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)], title: 'Bot (' + BOT_LEVEL[L].label + ')', color: 'std', readyState: 0, token: crypto.randomBytes(12).toString('hex'), send() {}, terminate() {} };
 }
 function botsAnswer(room) {
@@ -734,7 +736,7 @@ wss.on('connection', ws => {
     switch (m.type) {
       case 'hello':
         ws.named = !!clean(m.name, 16).trim(); ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
-        ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true;
+        ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true; if (m.fach === 'deutsch' || m.fach === 'chemie') ws.fach = m.fach;
         if (/^[a-f0-9]{16,32}$/.test(m.id || '') && banOf(m.id)) {
           const b = banOf(m.id); send(ws, { type: 'banned', until: new Date(b.until).toISOString(), reason: b.reason });
           setTimeout(() => { try { ws.close(); } catch {} }, 200); break;
