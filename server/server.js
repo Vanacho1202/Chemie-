@@ -40,7 +40,7 @@ const LIMIT_MS = 20000;            // Zeit pro Frage
 const READY_MS = 5 * 60 * 1000;    // spätestens nach 5 Minuten geht es weiter
 const START_MS = 3500;             // Countdown vor der ersten Frage
 const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungsabbruch frei
-const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock']);
+const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock','urne','saeule','flagge','barrikade','zug','zeitung','brief','eiche','kartoffel','schwerter']);
 
 const rooms = new Map();     // code -> room
 const waitingBy = new Map();  // Schnellsuche: Fach -> wartender Spieler (Chemie und Deutsch getrennt)
@@ -273,7 +273,32 @@ So antwortest du:
 - Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter; mehr, wenn der Schüler es will.
 - Formatierung nur so: **fett** für Fachbegriffe und Aufzählungen mit "- " am Zeilenanfang. Keine Tabellen, keine Überschriften.
 - Bei Fragen ohne Bezug zum Fach antworte kurz und lenke freundlich zurück zum Lernen.`;
-const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : SYSTEM;
+const SYSTEM_GE = `Du bist "Alki", ein freundlicher, kluger Geschichts-Nachhilfelehrer in einer Lern-App.
+Der Schüler (Oberstufe, Waldorfschule) schreibt am Montag eine Geschichtsklausur: Deutschland 1815–1848/49, vom Wiener Kongress über den Vormärz bis zur Frankfurter Nationalversammlung und dem Scheitern der Revolution. Typisch sind Quellen- und Karikaturanalysen und Urteilsaufgaben.
+
+Gesicherte Fakten (nutze genau diese, erfinde nichts):
+- Wiener Kongress Sept. 1814–Juni 1815, Lenker Metternich; Talleyrand, Hardenberg, Zar Alexander I., Castlereagh. Prinzipien: Restauration, Legitimität, Solidarität, Gleichgewicht der Mächte (je nach Lehrwerk auch Souveränität/Kompensation). Preußen erhält Rheinland, Westfalen, Nordsachsen, Posen; Österreich Lombardo-Venetien, gibt Belgien ab; Russland Kongresspolen. Kongressakte 9.6.1815. Heilige Allianz 26.9.1815 (Russland, Österreich, Preußen; GB nicht). Quadrupelallianz 20.11.1815.
+- Deutscher Bund: Bundesakte 8.6.1815; Staatenbund (39 Mitglieder, je nach Zählweise 41, darunter vier freie Städte); einziges Organ Bundesversammlung/Bundestag in Frankfurt unter österreichischem Vorsitz; Art. 13 landständische Verfassungen (Süddeutschland 1818/19, Preußen und Österreich nicht); Wiener Schlussakte 15.5.1820 mit monarchischem Prinzip (Art. 57). Dualismus Österreich–Preußen.
+- Urburschenschaft Jena 12.6.1815 (Ehre, Freiheit, Vaterland; Schwarz-Rot-Gold meist auf Lützower Freikorps zurückgeführt). Wartburgfest 18.10.1817 (300 Jahre Reformation, Völkerschlacht; Bücherverbrennung). Kotzebue-Mord durch Karl Ludwig Sand, Mannheim 23.3.1819. Karlsbader Beschlüsse 20.9.1819: Universitätsgesetz (Aufsicht, Burschenschaftsverbot), Pressegesetz (Vorzensur unter 20 Bogen), Untersuchungsgesetz (Zentraluntersuchungskommission Mainz); Demagogenverfolgung; galten bis 1848. Karikatur „Der Denker-Club“ (um 1819/20, Maulkörbe).
+- Julirevolution 1830; Hambacher Fest 27.5.1832 (20.000–30.000, Siebenpfeiffer, Wirth: Einheit, Volkssouveränität, Pressefreiheit, Polen); Frankfurter Wachensturm 3.4.1833; Junges Deutschland 1835 verboten; Göttinger Sieben 1837; Rheinkrise 1840 („Die Wacht am Rhein“); „Lied der Deutschen“ 26.8.1841 Helgoland. Vormärz vs. Biedermeier. Konservative, Liberale (konstitutionelle Monarchie, Verfassung, Grundrechte, Reform), Demokraten (Volkssouveränität, Republik), Nationalbewegung, Frühsozialisten/Marx.
+- Zollverein 1.1.1834 unter Preußen ohne Österreich; Friedrich List; Eisenbahn Nürnberg–Fürth 7.12.1835; Pauperismus; Weberaufstand Schlesien 4.–6.6.1844 (11 Tote); Hungerkrise 1845–47, Kartoffelrevolution Berlin April 1847.
+- 1848: Februarrevolution Paris 22.–24.2.; Kommunistisches Manifest Ende Februar; Mannheimer Versammlung 27.2. (Märzforderungen: Volksbewaffnung, Pressefreiheit, Schwurgerichte, deutsches Parlament); Märzministerien; Zensur aufgehoben, Schwarz-Rot-Gold Bundesfarben; Heidelberger Versammlung 5.3.; Wien 13.3. Sturz Metternichs; Berlin 18./19.3. Barrikaden (ca. 250–300 Tote, Quellen schwanken), „An meine lieben Berliner!“, 21.3. Umritt „Preußen geht fortan in Deutschland auf“; Vorparlament 31.3.–3.4. (Wahlen beschlossen, Heckers Republik-Antrag scheitert); Hecker-Aufstand April (Kandern); Wahlen April/Mai: selbstständige volljährige Männer, meist indirekt.
+- Paulskirche ab 18.5.1848, Präsident Heinrich von Gagern (ab Dez. 1848 Eduard Simson); anfangs ca. 590 Abgeordnete, „Professorenparlament“. Fraktionen rechts→links: Café Milani, Casino (größte), Württemberger Hof, Westendhall, Deutscher Hof (Blum), Donnersberg. Reichsverweser Erzherzog Johann 29.6.1848 (Zentralgewalt ohne Heer, Verwaltung, Steuern). Waffenstillstand von Malmö 26.8.1848, Zustimmung 16.9., Septemberunruhen 18.9. (Lichnowsky, Auerswald ermordet). Grundrechte beschlossen 21.12., verkündet 27.12.1848 (u. a. Gleichheit, Adel als Stand aufgehoben, Meinungs-, Presse-, Religions-, Versammlungsfreiheit, Todesstrafe abgeschafft, Wissenschaft frei). Groß- vs. kleindeutsch. Reichsverfassung 28.3.1849: Bundesstaat, konstitutionelle Erbmonarchie, Kaiser mit aufschiebendem Veto, Reichstag aus Volkshaus und Staatenhaus, Reichsgericht; Wahlrecht unbescholtene Männer ab 25; Erbkaisertum 267:263; Kaiserwahl Friedrich Wilhelm IV. 290 Ja, 248 Enthaltungen.
+- Gegenrevolution: Wien Oktober 1848, Robert Blum erschossen 9.11.1848; Berlin Wrangel 10.11., oktroyierte Verfassung 5.12.1848, Dreiklassenwahlrecht 1849; Österreich oktroyierte Verfassung März 1849. Ablehnung der Krone 3.4.1849 (offiziell: fehlende Zustimmung der Fürsten), endgültig 28.4.1849. Brief an Bunsen 13.12.1848 (privat): „Die Krone ist erstlich keine Krone“, „Reif aus Dreck und Letten“, „Ludergeruch der Revolution“ – nicht am 3.4.1849 gesagt. „Hundehalsband“ ist nicht sicher belegt. 28 Staaten erkennen die Verfassung an (14.4.1849). Reichsverfassungskampagne (Dresden, Pfalz, Baden), Rumpfparlament Stuttgart 6.–18.6.1849, Kapitulation Rastatt 23.7.1849, Emigration (Forty-Eighters).
+- Gründe des Scheiterns: Einheit und Freiheit zugleich, keine eigene Macht, Spaltung Liberale/Demokraten, nationale Frage, Gegenrevolution, Ablehnung der Krone, Außenpolitik. Nachwirkung: Grundrechte als Vorbild für Weimarer Verfassung und Grundgesetz, Schwarz-Rot-Gold, Parlamentarismus.
+- Methode: Quellenanalyse (Einleitung mit Gattung, Autor, Adressat, Datum, Anlass, Thema – Inhalt – Analyse – Kontext – Sach- und Werturteil); Karikaturanalyse (formale Angaben – Beschreibung – Deutung der Symbole – Kontext und Absicht – Beurteilung). Operatoren AFB I–III.
+
+So antwortest du:
+- Verstehe Umgangssprache und Tippfehler, beantworte die gemeinte Frage direkt.
+- Erst die Antwort in einem Satz, dann knapp erklären, mit Datum und Zusammenhang (Ursache → Folge).
+- Schickt der Schüler einen eigenen Text, gib ehrliches, konkretes Feedback und zeig, wie es besser geht.
+- Wo Quellen unterschiedliche Zahlen nennen, sag das. Erfinde keine Zitate.
+- Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter.
+- Formatierung nur **fett** und Aufzählungen mit "- ". Keine Tabellen, keine Überschriften.
+- Bei Fragen ohne Bezug zum Fach kurz antworten und zum Lernen zurücklenken.`;
+const FACH_IDS = ['chemie', 'deutsch', 'geschichte'];
+const fachIn = f => FACH_IDS.includes(f) ? f : 'chemie';
+const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : fach === 'geschichte' ? SYSTEM_GE : SYSTEM;
 const rate = new Map(); // IP -> [Zeitstempel]
 function limited(ip, max = 20) {
   const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
@@ -336,7 +361,7 @@ async function geminiCards(topic, fach) {
   const prompt = `Ein Schüler bittet dich in einer Lern-App: "${topic}"
 Erstelle dazu Karteikarten. ${want ? 'Genau ' + want + ' Karten.' : 'So viele, wie das Thema sinnvoll hergibt: meist 8 bis 16 (bei einer Reihe eine Karte pro Glied).'}
 
-Kontext: ${fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
+Kontext: ${fach === 'geschichte' ? 'Oberstufe, Geschichtsklausur Deutschland 1815–1848/49. Nutze diese Fakten:\n' + SYSTEM_GE.split('So antwortest du:')[0] : fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
 
 Gute Karten:
 - Erst verstehen, was genau gewünscht ist (Thema, Umfang, Art), auch bei Tippfehlern oder Umgangssprache.
@@ -345,7 +370,7 @@ Gute Karten:
 - Rückseite: die Antwort, knapp und vollständig, zum Auswendiglernen (höchstens 240 Zeichen), gern mit Beispiel.
 - Jede Karte deckt etwas anderes ab, keine Wiederholungen, keine trivialen Füllkarten.
 - Fachlich korrekt; prüfe jede Karte, bevor du sie ausgibst. Nichts erfinden.
-- ${fach === 'deutsch' ? 'Zitate nur, wenn sicher belegt; keine erfundenen Versnummern.' : 'Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.'} Deutsch mit ä, ö, ü und ß.`;
+- ${fach !== 'chemie' ? 'Zitate nur, wenn sicher belegt; keine erfundenen Versnummern.' : 'Formeln mit Unicode-Tiefstellung, z. B. C₆H₁₄, CH₃–CH₂–CH₃.'} Deutsch mit ä, ö, ü und ß.`;
   const schema = { type: 'ARRAY', items: { type: 'OBJECT', properties: { front: { type: 'STRING' }, back: { type: 'STRING' } }, required: ['front', 'back'] } };
   const call = async (model, smart, withSchema) => {
     const generationConfig = { temperature: 0.4, maxOutputTokens: smart ? 8000 : 3000, responseMimeType: 'application/json' };
@@ -441,7 +466,7 @@ const server = http.createServer((req, res) => {
       const topic = String(m.topic || '').replace(/[<>"]/g, '').slice(0, 200).trim();
       if (!topic) return json(400, { error: 'Kein Thema angegeben.' });
       const t0 = Date.now();
-      try { const cards = await geminiCards(topic, m.fach === 'deutsch' ? 'deutsch' : 'chemie'); console.log('Karteikarten:', cards.length, 'in', Date.now() - t0, 'ms'); json(cards.length ? 200 : 502, cards.length ? { cards } : { error: 'Keine Karten erhalten.' }); }
+      try { const cards = await geminiCards(topic, fachIn(m.fach)); console.log('Karteikarten:', cards.length, 'in', Date.now() - t0, 'ms'); json(cards.length ? 200 : 502, cards.length ? { cards } : { error: 'Keine Karten erhalten.' }); }
       catch (e) { console.log('Karteikarten-Fehler:', e.message); json(502, { error: 'ai_failed' }); }
     });
     return;
@@ -460,7 +485,7 @@ const server = http.createServer((req, res) => {
         await geminiStream(m.messages, t => {
           if (!started) { started = true; res.writeHead(200, { ...CORS, 'Content-Type': 'text/plain; charset=utf-8', 'X-Accel-Buffering': 'no' }); console.log('Alki: erste Wörter nach', Date.now() - t0, 'ms'); }
           res.write(t);
-        }, m.fach === 'deutsch' ? 'deutsch' : 'chemie');
+        }, fachIn(m.fach));
         console.log('Alki: fertig nach', Date.now() - t0, 'ms');
         if (!started) return json(200, { answer: 'Dazu fällt mir gerade nichts ein. Frag es nochmal anders.' });
         res.end();
@@ -480,8 +505,8 @@ const both = (room, fn) => room.players.forEach((p, i) => p && send(p, fn(i)));
 const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p.color });
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
 const allReady = room => room.players.every(p => p && p.canReady);
-const fachOf = p => (p && p.fach === 'deutsch') ? 'deutsch' : 'chemie';
-const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK' };
+const fachOf = p => fachIn(p && p.fach);
+const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK', geschichte: 'Geschichte' };
 const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, fach: fachOf(p), status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
 
 function newCode() {
@@ -537,13 +562,14 @@ function endMatch(room) {
 // Leicht: oft falsch und langsam, Mittel: solide, Schwer: fast immer richtig und schnell
 const BOT_LEVEL = { easy: { p: 0.45, min: 7000, max: 15000, label: 'leicht' }, medium: { p: 0.72, min: 4000, max: 10000, label: 'mittel' }, hard: { p: 0.92, min: 1800, max: 5500, label: 'schwer' } };
 const BOT_NAMES = ['Methan-Max', 'Ethan-Emma', 'Propan-Paul', 'Butan-Bella', 'Pentan-Pia', 'Hexan-Hugo', 'Heptan-Hanna', 'Octan-Otto'];
+const BOT_NAMES_GE = ['Metternich-Max', 'Gagern-Greta', 'Hecker-Hans', 'Blum-Berta', 'Paulskirchen-Paul', 'Zollverein-Zoe', 'Barrikaden-Ben', 'Vormärz-Vera'];
 const BOT_NAMES_DE = ['Krug-Kalle', 'Richter-Rudi', 'Blankvers-Bea', 'Perücken-Paul', 'Zitat-Zoe', 'Akt-Anton', 'Kleist-Klara', 'Szenen-Sam'];
 const BOT_AVATARS = ['robot', 'alien', 'owl', 'penguin', 'fox', 'panda'];
 function makeBot(room, level) {
   const L = BOT_LEVEL[level] ? level : 'medium';
   const used = new Set(room.players.filter(Boolean).map(p => p.name));
-  const de = room.players.some(p => p && !p.isBot && p.fach === 'deutsch');
-  const name = ((de ? BOT_NAMES_DE : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
+  const rf = room.fach || fachOf(room.players.find(p => p && !p.isBot));
+  const name = ((rf === 'deutsch' ? BOT_NAMES_DE : rf === 'geschichte' ? BOT_NAMES_GE : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
   return { isBot: true, level: L, name: '🤖 ' + name, avatar: BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)], title: 'Bot (' + BOT_LEVEL[L].label + ')', color: 'std', readyState: 0, token: crypto.randomBytes(12).toString('hex'), send() {}, terminate() {} };
 }
 function botsAnswer(room) {
@@ -738,7 +764,7 @@ wss.on('connection', ws => {
     switch (m.type) {
       case 'hello':
         ws.named = !!clean(m.name, 16).trim(); ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
-        ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true; if (m.fach === 'deutsch' || m.fach === 'chemie') ws.fach = m.fach;
+        ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true; if (FACH_IDS.includes(m.fach)) ws.fach = m.fach;
         if (/^[a-f0-9]{16,32}$/.test(m.id || '') && banOf(m.id)) {
           const b = banOf(m.id); send(ws, { type: 'banned', until: new Date(b.until).toISOString(), reason: b.reason });
           setTimeout(() => { try { ws.close(); } catch {} }, 200); break;
@@ -782,7 +808,7 @@ wss.on('connection', ws => {
       }
       case 'quick':
         leave(ws);
-        { const f = m.fach === 'deutsch' ? 'deutsch' : 'chemie'; ws.fach = f; const w = waitingBy.get(f);
+        { const f = fachIn(m.fach); ws.fach = f; const w = waitingBy.get(f);
           if (w && w !== ws && w.readyState === 1) {
             const code = newCode(); const r = { code, players: [w, ws] }; rooms.set(code, r); waitingBy.delete(f); startMatch(r);
           } else { waitingBy.set(f, ws); send(ws, { type: 'searching' }); } }

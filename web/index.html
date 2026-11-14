@@ -247,6 +247,8 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .name-msg.bad{color:#e5534b; font-weight:700}
 .name-msg.ok{color:#3fb950}
 .name-msg:empty{display:none}
+.ge-tl{list-style:none;padding:0;margin:.4em 0;display:flex;flex-direction:column;gap:6px}
+.ge-tl li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .fach-card{display:flex;gap:14px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border:2px solid var(--line)}
 .fach-card[aria-pressed="true"]{border-color:var(--accent)}
 .fach-emo{font-size:2.4rem;line-height:1}
@@ -1673,6 +1675,420 @@ W.de_analyse=root=>{
   root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Bringe die Bausteine einer Szenenanalyse in die richtige Reihenfolge.</p>`; root.appendChild(box);
 };
 
+/* ================= Fach Geschichte: Deutschland 1815–1849 ================= */
+const GE={};
+GE.EV=[
+ ['1814/15',1814.9,'Wiener Kongress',1],
+ ['8.6.1815',1815.43,'Deutsche Bundesakte: Gründung des Deutschen Bundes',1],
+ ['9.6.1815',1815.44,'Wiener Kongressakte (Schlussakte des Kongresses)',1],
+ ['12.6.1815',1815.45,'Gründung der Urburschenschaft in Jena',2],
+ ['26.9.1815',1815.73,'Heilige Allianz (Russland, Österreich, Preußen)',1],
+ ['18.10.1817',1817.8,'Wartburgfest mit Bücherverbrennung',2],
+ ['23.3.1819',1819.22,'Karl Ludwig Sand ermordet Kotzebue',2],
+ ['20.9.1819',1819.72,'Karlsbader Beschlüsse vom Bundestag angenommen',2],
+ ['15.5.1820',1820.37,'Wiener Schlussakte (monarchisches Prinzip)',1],
+ ['27.–29.7.1830',1830.57,'Julirevolution in Paris',3],
+ ['27.5.1832',1832.4,'Hambacher Fest',3],
+ ['3.4.1833',1833.25,'Frankfurter Wachensturm',3],
+ ['1.1.1834',1834.0,'Deutscher Zollverein tritt in Kraft (ohne Österreich)',4],
+ ['7.12.1835',1835.93,'Erste deutsche Eisenbahn Nürnberg–Fürth',4],
+ ['18.11.1837',1837.88,'Protest der Göttinger Sieben',3],
+ ['1840',1840.6,'Rheinkrise, „Die Wacht am Rhein“',3],
+ ['26.8.1841',1841.65,'„Lied der Deutschen“ von Hoffmann von Fallersleben',3],
+ ['4.–6.6.1844',1844.43,'Schlesischer Weberaufstand',4],
+ ['1845–1847',1846,'Kartoffelfäule, Missernten, Hungerkrise',4],
+ ['22.–24.2.1848',1848.14,'Februarrevolution in Paris',5],
+ ['27.2.1848',1848.16,'Mannheimer Volksversammlung: Märzforderungen',5],
+ ['13.3.1848',1848.2,'Aufstand in Wien, Sturz Metternichs',5],
+ ['18./19.3.1848',1848.21,'Barrikadenkämpfe in Berlin',5],
+ ['31.3.–3.4.1848',1848.25,'Vorparlament in Frankfurt',5],
+ ['April 1848',1848.29,'Hecker-Aufstand in Baden',5],
+ ['18.5.1848',1848.38,'Eröffnung der Nationalversammlung in der Paulskirche',6],
+ ['29.6.1848',1848.49,'Erzherzog Johann wird Reichsverweser',6],
+ ['26.8.1848',1848.65,'Waffenstillstand von Malmö',6],
+ ['18.9.1848',1848.71,'Septemberunruhen in Frankfurt',6],
+ ['9.11.1848',1848.86,'Robert Blum in Wien erschossen',7],
+ ['5.12.1848',1848.93,'Oktroyierte preußische Verfassung',7],
+ ['27.12.1848',1848.99,'Grundrechte des deutschen Volkes verkündet',6],
+ ['28.3.1849',1849.24,'Reichsverfassung, Friedrich Wilhelm IV. zum Kaiser gewählt',6],
+ ['3.4.1849',1849.26,'Friedrich Wilhelm IV. lehnt die Kaiserkrone ab',7],
+ ['6.–18.6.1849',1849.45,'Rumpfparlament in Stuttgart',7],
+ ['23.7.1849',1849.56,'Kapitulation der Festung Rastatt: Ende der Revolution',7]];
+GE.PER=[
+ {k:'metternich',name:'Metternich',av:'🎩',life:'1773–1859',role:'österreichischer Staatskanzler, Architekt der Restauration',more:'Lenkte den Wiener Kongress, setzte die Karlsbader Beschlüsse durch („System Metternich“). Am 13.3.1848 gestürzt, Flucht nach England.',t:1},
+ {k:'fw4',name:'Friedrich Wilhelm IV.',av:'👑',life:'1795–1861',role:'König von Preußen ab 1840',more:'Glaubte an das Gottesgnadentum. 1848: „An meine lieben Berliner!“, Umritt mit Schwarz-Rot-Gold am 21.3. Oktroyierte Verfassung 5.12.1848. Lehnte am 3.4.1849 die Kaiserkrone ab, endgültig am 28.4.1849.',t:7},
+ {k:'gagern',name:'Heinrich von Gagern',av:'🏛️',life:'1799–1880',role:'erster Präsident der Nationalversammlung',more:'Hessischer Liberaler, Fraktion Casino, kleindeutsch. Ab Dezember 1848 Reichsministerpräsident. „Kühner Griff“: Wahl Erzherzog Johanns zum Reichsverweser.',t:6},
+ {k:'simson',name:'Eduard Simson',av:'⚖️',life:'1810–1899',role:'Präsident der Nationalversammlung ab Dezember 1848',more:'Leitete die Kaiserdeputation nach Berlin. Später erster Präsident des Reichstags (1871) und des Reichsgerichts.',t:6},
+ {k:'blum',name:'Robert Blum',av:'📰',life:'1807–1848',role:'Leipziger Demokrat, Führer der Fraktion Deutscher Hof',more:'Vizepräsident des Vorparlaments. Am 9.11.1848 in Wien trotz Immunität als Abgeordneter standrechtlich erschossen: Märtyrer der Demokraten.',t:7},
+ {k:'hecker',name:'Friedrich Hecker',av:'🪖',life:'1811–1881',role:'badischer Radikaldemokrat',more:'Forderte im Vorparlament die Republik. Hecker-Aufstand April 1848 (Niederlage bei Kandern). Emigrierte in die USA.',t:5},
+ {k:'struve',name:'Gustav Struve',av:'✊',life:'1805–1870',role:'Mannheimer Demokrat und Publizist',more:'Mannheimer Volksversammlung (Märzforderungen), Struve-Putsch in Lörrach September 1848, später in die USA emigriert.',t:5},
+ {k:'johann',name:'Erzherzog Johann',av:'🤝',life:'1782–1859',role:'Reichsverweser 1848/49',more:'Habsburger, galt als volksnah. Am 29.6.1848 von der Nationalversammlung zum Reichsverweser gewählt; die Zentralgewalt hatte aber kein Heer und keine Verwaltung.',t:6},
+ {k:'hvf',name:'Hoffmann von Fallersleben',av:'🎶',life:'1798–1874',role:'Dichter des „Lieds der Deutschen“',more:'Schrieb das Lied am 26.8.1841 auf Helgoland; die 3. Strophe ist heute Nationalhymne. 1842 als Professor entlassen.',t:3},
+ {k:'siebenpfeiffer',name:'Philipp Jakob Siebenpfeiffer',av:'📣',life:'1789–1845',role:'Initiator und Hauptredner des Hambacher Festes',more:'Pfälzischer Journalist. Forderte 1832 ein freies, einiges Deutschland und Volkssouveränität.',t:3},
+ {k:'wirth',name:'Johann Georg August Wirth',av:'🗞️',life:'1798–1848',role:'Journalist, Mitorganisator des Hambacher Festes',more:'Gab die „Deutsche Tribüne“ heraus, gründete mit Siebenpfeiffer den Preß- und Vaterlandsverein.',t:3},
+ {k:'list',name:'Friedrich List',av:'🚂',life:'1789–1846',role:'Ökonom, Vorkämpfer für Zollverein und Eisenbahn',more:'Warb für ein deutsches Eisenbahnnetz und eine Zollunion; Mitinitiator der Strecke Leipzig–Dresden.',t:4},
+ {k:'jahn',name:'Friedrich Ludwig Jahn',av:'🤸',life:'1778–1852',role:'„Turnvater“, Nationalbewegung',more:'Gründete die Turnbewegung, Mitinitiator des Lützower Freikorps. 1819 im Zuge der Demagogenverfolgung verhaftet.',t:2},
+ {k:'arndt',name:'Ernst Moritz Arndt',av:'✒️',life:'1769–1860',role:'Publizist der Befreiungskriege',more:'„Was ist des Deutschen Vaterland?“ Opfer der Demagogenverfolgung (Professur suspendiert), 1848 Abgeordneter der Paulskirche.',t:2},
+ {k:'sand',name:'Karl Ludwig Sand',av:'🗡️',life:'1795–1820',role:'Burschenschafter, ermordete Kotzebue',more:'Erstach am 23.3.1819 in Mannheim den Schriftsteller August von Kotzebue. Metternich nahm den Mord als Anlass für die Karlsbader Beschlüsse.',t:2},
+ {k:'marx',name:'Karl Marx',av:'📕',life:'1818–1883',role:'Mitverfasser des Kommunistischen Manifests',more:'Mit Friedrich Engels: „Manifest der Kommunistischen Partei“, Ende Februar 1848 in London. 1848/49 „Neue Rheinische Zeitung“ in Köln.',t:5}];
+GE.FRA=[
+ ['Café Milani','Rechte (konservativ)','Rechte der Fürsten und Einzelstaaten sichern'],
+ ['Casino','Rechtes Zentrum (rechtsliberal)','konstitutionelle Erbmonarchie, Bundesstaat; größte Fraktion (Gagern, Simson)'],
+ ['Württemberger Hof','Linkes Zentrum (linksliberal)','parlamentarische Monarchie, mehr Rechte für das Parlament'],
+ ['Westendhall','Gemäßigte Linke','Volkssouveränität, Brücke zu den Liberalen'],
+ ['Deutscher Hof','Linke (Demokraten)','demokratisch-republikanisch (Robert Blum)'],
+ ['Donnersberg','Äußerste Linke','radikaldemokratische Republik']];
+GE.RICHT=[
+ {k:'kons',name:'Konservative',av:'👑',z:'Monarchie von Gottes Gnaden, ständische Ordnung, Legitimität; gegen Volkssouveränität und Revolution.',w:'Adel, Militär, hohe Beamte, Kirche',b:'Metternich, Friedrich Wilhelm IV.'},
+ {k:'lib',name:'Liberale',av:'📜',z:'Konstitutionelle Monarchie mit Verfassung, Grundrechten, Gewaltenteilung, Parlament (oft mit Zensuswahlrecht), Rechtsstaat, Gewerbefreiheit. Reform statt Revolution.',w:'Besitz- und Bildungsbürgertum',b:'Heinrich von Gagern, Casino'},
+ {k:'dem',name:'Demokraten (Radikale)',av:'✊',z:'Volkssouveränität, Republik, allgemeines und gleiches Wahlrecht für Männer, Blick auf soziale Fragen; notfalls Revolution.',w:'Kleinbürger, Handwerker, Studenten',b:'Hecker, Struve, Robert Blum'},
+ {k:'nat',name:'Nationalbewegung',av:'🇩🇪',z:'Ein deutscher Nationalstaat statt vieler Einzelstaaten. Bis 1848 eng mit dem Liberalismus verbunden: „Einheit und Freiheit“.',w:'Studenten, Turner, Bürger',b:'Burschenschaften, Hambacher Fest'},
+ {k:'soz',name:'Frühsozialisten / Kommunisten',av:'⚒️',z:'Lösung der sozialen Frage, Gleichheit; Kommunisten wollten das Privateigentum an Produktionsmitteln abschaffen.',w:'Arbeiter, Handwerksgesellen',b:'Karl Marx, Friedrich Engels'}];
+GE.URS=[
+ ['Restauration und Karlsbader Beschlüsse unterdrücken Presse und Universitäten','politisch'],
+ ['Preußen und Österreich haben vor 1848 keine Verfassung','politisch'],
+ ['Wunsch nach einem deutschen Nationalstaat','politisch'],
+ ['Pauperismus: Massenarmut durch Bevölkerungswachstum','sozial'],
+ ['Weberaufstand in Schlesien 1844','sozial'],
+ ['Kartoffelfäule und Missernten 1845–47, Hungerkrise','wirtschaftlich'],
+ ['Handels- und Gewerbekrise 1847','wirtschaftlich'],
+ ['Februarrevolution in Paris 1848','Auslöser']];
+GE.GRUENDE=[
+ ['Doppelaufgabe Einheit und Freiheit','Nationalstaat und Verfassung sollten gleichzeitig entstehen. Das kostete Zeit, in der sich die alten Mächte erholten.'],
+ ['Keine eigene Macht','Die Zentralgewalt hatte kein Heer, keine Verwaltung, keine Steuern. Malmö und die Septemberunruhen zeigten die Abhängigkeit von Preußen und Österreich.'],
+ ['Spaltung der Bewegung','Liberale (Reform, konstitutionelle Monarchie) und Demokraten (Republik) arbeiteten gegeneinander; Bürgertum und Unterschichten trennten sich.'],
+ ['Nationale Frage','Groß- oder kleindeutsch? Der Vielvölkerstaat Österreich passte nicht in einen deutschen Nationalstaat; Konflikte um Schleswig, Posen, Böhmen.'],
+ ['Gegenrevolution','Armee und Verwaltung blieben in der Hand der Fürsten. Wien (Oktober 1848) und Berlin (November 1848) gewannen die Macht zurück.'],
+ ['Ablehnung der Krone','Friedrich Wilhelm IV. lehnte die Kaiserkrone aus Gottesgnadentum und Rücksicht auf die Fürsten ab; die großen Staaten folgten.'],
+ ['Außenpolitik','Russland und Großbritannien wollten kein starkes geeintes Deutschland.']];
+GE.ZIT=[
+ ['In allen Bundesstaaten wird eine Landständische Verfassung stattfinden.','Deutsche Bundesakte, Art. 13 (1815)'],
+ ['Wie lange möchte uns das Denken wohl noch erlaubt bleiben?','Karikatur „Der Denker-Club“ (um 1819/20)'],
+ ['Es lebe das freie, das einige Deutschland!','Siebenpfeiffer, Hambacher Fest (1832)'],
+ ['Unbedingte Pressefreiheit','Mannheimer Petition (27.2.1848)'],
+ ['Preußen geht fortan in Deutschland auf.','Friedrich Wilhelm IV. (21.3.1848)'],
+ ['Wir sollen schaffen eine Verfassung für Deutschland, für das gesamte Reich.','Heinrich von Gagern (19.5.1848)'],
+ ['Vor dem Gesetz gilt kein Unterschied der Stände. Der Adel als Stand ist aufgehoben.','Grundrechte, § 137 (1848/49)'],
+ ['Die Wissenschaft und Lehre ist frei.','Grundrechte, § 152 (1848/49)'],
+ ['Die Krone ist erstlich keine Krone.','Friedrich Wilhelm IV. an Bunsen (13.12.1848)'],
+ ['Wähler ist jeder unbescholtene Deutsche, welcher das fünfundzwanzigste Lebensjahr zurückgelegt hat.','Reichswahlgesetz, § 1 (1849)']];
+GE.STEPS_Q=['Einleitung: Quellengattung, Autor, Adressat, Datum, Anlass, Thema','Inhalt zusammenfassen, Kernaussagen herausarbeiten','Analyse: Argumentation, Sprache, Absicht und Standpunkt','Historischen Kontext einordnen (vorher/nachher)','Beurteilung: Sachurteil und Werturteil'];
+GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Personen, Gegenstände, Texte, Bildaufbau','Deutung der Symbole','Historischer Kontext und Absicht des Zeichners','Beurteilung: Überzeugt die Kritik?'];
+
+(function buildGE(){
+ const EV=GE.EV, PER=GE.PER, FRA=GE.FRA, RICHT=GE.RICHT, ZIT=GE.ZIT;
+ const opts4=(right,pool)=>{ const o=[right]; shuffle(pool.filter(x=>x!==right)).forEach(x=>{ if(o.length<4&&!o.includes(x)) o.push(x); }); return o; };
+ const evOf=t=>EV.filter(e=>e[3]===t);
+ const tl=t=>`<ul class="ge-tl">${evOf(t).map(e=>`<li><b>${e[0]}</b> ${e[2]}</li>`).join('')}</ul>`;
+ GE.TOPICS=[
+ {id:1,title:'Wiener Kongress und Deutscher Bund',short:'Restauration, Legitimität, Staatenbund',
+  goals:['Ziele, Prinzipien und Ergebnisse des Wiener Kongresses erklären','Aufbau und Charakter des Deutschen Bundes beschreiben','Heilige Allianz und Wiener Schlussakte einordnen'],
+  html:`<p>Nach dem Sieg über Napoleon ordneten die Großmächte Europa auf dem <b>Wiener Kongress</b> (September 1814 bis Juni 1815) neu. Gastgeber und Lenker war der österreichische Staatskanzler <b>Metternich</b>. Dabei waren u. a. Talleyrand (Frankreich), Hardenberg (Preußen), Zar Alexander I. (Russland) und Castlereagh (Großbritannien).</p>
+  <h3>Prinzipien</h3><ul><li><b>Restauration:</b> Wiederherstellung der Ordnung vor 1789</li><li><b>Legitimität:</b> Herrschaft der angestammten Fürstenhäuser, Gottesgnadentum</li><li><b>Solidarität:</b> Fürsten halten gegen Revolutionen zusammen</li><li><b>Gleichgewicht der Mächte:</b> keine Großmacht soll Europa beherrschen</li></ul>
+  <p class="hint">Je nach Schulbuch werden drei bis fünf Prinzipien genannt (manchmal noch „Souveränität“ oder „Kompensation“).</p>
+  <h3>Ergebnisse</h3><ul><li><b>Preußen</b> bekommt Rheinland und Westfalen, den Norden Sachsens und Posen: Es wird zur „Wacht am Rhein“.</li><li><b>Österreich</b> gibt Belgien ab und erhält Lombardo-Venetien: Schwerpunkt nach Süden und Osten (Vielvölkerstaat).</li><li><b>Russland</b> erhält Kongresspolen; <b>Frankreich</b> wird auf die Grenzen von 1790 zurückgeführt.</li><li>Das Heilige Römische Reich wird <b>nicht</b> wiederhergestellt.</li></ul>
+  <h3>Der Deutsche Bund (8.6.1815)</h3><p>Gegründet durch die <b>Deutsche Bundesakte</b>. Ein <b>Staatenbund</b> souveräner Fürsten und vier freier Städte (39 Mitglieder, je nach Zählweise auch 41), <b>kein Bundesstaat</b>. Einziges Organ: die <b>Bundesversammlung (Bundestag) in Frankfurt</b>, ein Kongress von Gesandten unter <b>österreichischem Vorsitz</b>. Es gab kein gemeinsames Oberhaupt, keine Regierung, kein Parlament.</p>
+  <p><b>Art. 13:</b> „In allen Bundesstaaten wird eine Landständische Verfassung stattfinden.“ Weil eine Frist fehlte, bekamen vor allem süddeutsche Staaten Verfassungen (Bayern, Baden 1818, Württemberg 1819), <b>Preußen und Österreich nicht</b>.</p>
+  <p><b>Wiener Schlussakte (1820):</b> monarchisches Prinzip (Art. 57) – alle Staatsgewalt bleibt beim Fürsten.</p>
+  <h3>Heilige Allianz (26.9.1815)</h3><p>Bündnis von <b>Russland, Österreich und Preußen</b> auf Initiative des Zaren: christliche Monarchen gemeinsam gegen Revolutionen. Großbritannien trat nicht bei.</p>
+  <div class="merk"><span class="merk-label">Dualismus</span>Österreich (Vorsitz, politische Führung) und Preußen (wirtschaftlicher Aufstieg) konkurrieren um die Vorherrschaft in Deutschland.</div>`,
+  widget:'ge_wien'},
+ {id:2,title:'Nationalbewegung und Unterdrückung',short:'Burschenschaft, Wartburgfest, Karlsbader Beschlüsse',
+  goals:['Ziele der frühen Nationalbewegung erklären','Wartburgfest und Kotzebue-Mord einordnen','Inhalte und Folgen der Karlsbader Beschlüsse nennen'],
+  html:`<p>Viele junge Männer hatten in den <b>Befreiungskriegen</b> gegen Napoleon gekämpft und hofften auf einen deutschen Nationalstaat mit Verfassung. Der Deutsche Bund enttäuschte sie.</p>
+  <h3>Burschenschaften</h3><p>Am <b>12.6.1815</b> gründeten Studenten in <b>Jena</b> die Urburschenschaft. Wahlspruch: „Ehre, Freiheit, Vaterland“. Die Farben <b>Schwarz-Rot-Gold</b> werden meist auf die Uniform des <b>Lützower Freikorps</b> zurückgeführt (schwarzer Rock, rote Aufschläge, goldene Knöpfe).</p>
+  <h3>Wartburgfest (18.10.1817)</h3><p>Anlass: 300 Jahre Reformation und 4. Jahrestag der Völkerschlacht bei Leipzig. Über 500 Studenten forderten Einheit und Verfassung. Am Rand verbrannten radikale Teilnehmer Bücher (u. a. von Kotzebue) und Symbole der Fürstenherrschaft. Dabei zeigten sich auch Franzosenhass und Judenfeindschaft.</p>
+  <h3>Mord an Kotzebue (23.3.1819)</h3><p>Der Burschenschafter <b>Karl Ludwig Sand</b> erstach in <b>Mannheim</b> den Schriftsteller August von Kotzebue, der als russischer Spitzel galt. Für Metternich der willkommene Anlass zum Durchgreifen.</p>
+  <h3>Karlsbader Beschlüsse (20.9.1819)</h3><ul><li><b>Universitätsgesetz:</b> staatliche Aufseher an jeder Uni, Entlassung „gefährlicher“ Professoren, <b>Verbot der Burschenschaften</b></li><li><b>Pressegesetz:</b> <b>Vorzensur</b> für Zeitungen und alle Schriften unter 20 Bogen (320 Seiten)</li><li><b>Untersuchungsgesetz:</b> Zentraluntersuchungskommission in <b>Mainz</b> gegen „revolutionäre Umtriebe“</li></ul>
+  <p>Folge: <b>Demagogenverfolgung</b> (z. B. Jahn verhaftet, Arndt suspendiert). Die Beschlüsse galten bis 1848.</p>
+  <div class="merk"><span class="merk-label">Karikatur „Der Denker-Club“</span>Männer mit Maulkörben am Tisch: „Wie lange möchte uns das Denken wohl noch erlaubt bleiben?“ – Kritik an Zensur und Unterdrückung durch die Karlsbader Beschlüsse.</div>`,
+  widget:'ge_zeit2'},
+ {id:3,title:'Vormärz: Hambach bis Rheinkrise',short:'1830–1847, politische Richtungen, Biedermeier',
+  goals:['Ereignisse des Vormärz in die richtige Reihenfolge bringen','Ziele und Bedeutung des Hambacher Festes erklären','Konservative, Liberale und Demokraten unterscheiden'],
+  html:`<p><b>Vormärz</b> nennt man die Zeit vor der Märzrevolution 1848, in der sich die Opposition politisierte. <b>Biedermeier</b> beschreibt dieselbe Zeit von der anderen Seite: Rückzug des Bürgertums ins Private (Familie, Hausmusik, Gemütlichkeit) als Reaktion auf Zensur.</p>
+  <h3>Julirevolution 1830</h3><p>In Paris wird Karl X. gestürzt, der „Bürgerkönig“ Louis-Philippe kommt an die Macht. In Deutschland folgen Unruhen und neue Verfassungen (z. B. Sachsen, Kurhessen, Hannover), die liberale Presse lebt auf.</p>
+  <h3>Hambacher Fest (27.5.1832)</h3><p>Rund <b>20.000–30.000 Menschen</b> auf dem Hambacher Schloss in der Pfalz – die größte politische Massenveranstaltung vor 1848. Organisiert von <b>Siebenpfeiffer</b> und <b>Wirth</b>. Forderungen: nationale Einheit, Volkssouveränität, Pressefreiheit, Solidarität mit Polen und Frankreich. <b>Schwarz-Rot-Gold</b> wird zum Massensymbol. Folge: Verhaftungen und schärfere Unterdrückung.</p>
+  <h3>Weitere Stationen</h3><ul><li><b>Frankfurter Wachensturm (3.4.1833):</b> Studenten wollen eine Revolution auslösen, scheitern nach einer Stunde.</li><li><b>Junges Deutschland (1835):</b> Schriften von Heine, Gutzkow u. a. verboten.</li><li><b>Göttinger Sieben (1837):</b> Sieben Professoren (u. a. die Brüder Grimm) protestieren gegen die Aufhebung der Verfassung in Hannover und werden entlassen.</li><li><b>Rheinkrise (1840):</b> Frankreich fordert den Rhein als Grenze; nationale Lieder wie „Die Wacht am Rhein“.</li><li><b>„Lied der Deutschen“ (1841):</b> Hoffmann von Fallersleben auf Helgoland; 3. Strophe heute Nationalhymne.</li></ul>
+  <p>Tippe unten auf eine politische Richtung, um ihre Ziele zu sehen.</p>`,
+  widget:'ge_richt'},
+ {id:4,title:'Wirtschaft und soziale Frage',short:'Zollverein, Eisenbahn, Pauperismus, Hungerkrise',
+  goals:['Bedeutung des Zollvereins erklären','Pauperismus und Weberaufstand beschreiben','Ursachen der Revolution ordnen (politisch, sozial, wirtschaftlich, Auslöser)'],
+  html:`<h3>Deutscher Zollverein (1.1.1834)</h3><p>Zollunion unter <b>preußischer Führung</b>, anfangs 18 Staaten, <b>ohne Österreich</b>. Keine Zölle mehr innerhalb, gemeinsamer Außenzoll. Wirtschaftlich ein großer Schritt, politisch ein Vorläufer der <b>kleindeutschen</b> Einigung unter Preußen. Vordenker: der Ökonom <b>Friedrich List</b>.</p>
+  <h3>Industrialisierung</h3><p>Erste deutsche Eisenbahn: <b>Nürnberg–Fürth, 7.12.1835</b> (Lok „Adler“). Die Eisenbahn wurde zum Motor der Industrialisierung (Kohle, Eisen, Maschinenbau).</p>
+  <h3>Pauperismus</h3><p>Massenarmut vor der Industrialisierung: Die Bevölkerung wuchs schneller als die Arbeitsplätze, das Handwerk war überfüllt, Heimweber konnten mit englischer Maschinenware nicht mithalten.</p>
+  <h3>Schlesischer Weberaufstand (4.–6.6.1844)</h3><p>Weber in Peterswaldau und Langenbielau stürmen das Haus eines Unternehmers. Preußisches Militär schießt, 11 Tote. Verarbeitet von Heine („Die schlesischen Weber“) und später Gerhart Hauptmann („Die Weber“).</p>
+  <h3>Hungerkrise 1845–1847</h3><p>Kartoffelfäule und Missernten treiben die Preise hoch; Hungerunruhen wie die Berliner <b>„Kartoffelrevolution“</b> (April 1847), dazu eine Gewerbekrise 1847.</p>
+  <div class="merk"><span class="merk-label">Ursachen der Revolution</span><b>langfristig:</b> politisch (Unterdrückung, keine Verfassung, keine Einheit), sozial (Pauperismus), wirtschaftlich (Hungerkrise) · <b>Auslöser:</b> Februarrevolution in Paris 1848</div>`,
+  widget:'ge_urs'},
+ {id:5,title:'Märzrevolution 1848',short:'Märzforderungen, Wien, Berlin, Vorparlament',
+  goals:['Den Ablauf der Märzrevolution wiedergeben','Märzforderungen nennen','Vorparlament und Hecker-Aufstand einordnen'],
+  html:`<p>Die <b>Februarrevolution in Paris</b> (22.–24.2.1848), bei der König Louis-Philippe gestürzt wurde, war der Funke.</p>
+  <h3>Märzforderungen</h3><p>Mannheimer Volksversammlung am <b>27.2.1848</b> (Struve):</p><ol><li>Volksbewaffnung mit freier Wahl der Offiziere</li><li>unbedingte Pressefreiheit</li><li>Schwurgerichte nach englischem Vorbild</li><li>sofortige Herstellung eines deutschen Parlaments</li></ol>
+  <p>Viele Fürsten gaben nach und beriefen liberale <b>„Märzministerien“</b>. Der Bundestag hob die Zensur auf und erklärte <b>Schwarz-Rot-Gold</b> zu Bundesfarben.</p>
+  <h3>Wien und Berlin</h3><ul><li><b>13.3.1848:</b> Aufstand in Wien, <b>Metternich</b> tritt zurück und flieht nach England.</li><li><b>18./19.3.1848:</b> <b>Barrikadenkämpfe in Berlin</b> mit etwa 250–300 Toten („Märzgefallene“). Der König lässt die Truppen abziehen („An meine lieben Berliner!“) und muss sich vor den Toten verneigen.</li><li><b>21.3.1848:</b> Umritt Friedrich Wilhelms IV. mit schwarz-rot-goldener Armbinde: „Preußen geht fortan in Deutschland auf.“</li></ul>
+  <h3>Weg zum Parlament</h3><ul><li><b>Heidelberger Versammlung (5.3.):</b> 51 Liberale beschließen ein Vorparlament.</li><li><b>Vorparlament (31.3.–3.4.1848)</b> in Frankfurt: Die liberale Mehrheit setzt Wahlen zu einer Nationalversammlung durch; Heckers Antrag auf eine Republik scheitert.</li><li><b>Hecker-Aufstand (April 1848):</b> Hecker ruft in Baden die Republik aus und wird bei Kandern geschlagen. Folge: Spaltung von Liberalen und Demokraten.</li><li><b>Wahlen April/Mai 1848:</b> allgemein und gleich für „selbstständige“ volljährige Männer, meist über Wahlmänner. Frauen durften nicht wählen.</li></ul>`,
+  widget:'ge_zeit5'},
+ {id:6,title:'Paulskirche und Reichsverfassung',short:'Nationalversammlung, Grundrechte, Kaiserwahl',
+  goals:['Zusammensetzung und Fraktionen der Nationalversammlung beschreiben','Grundrechte und Reichsverfassung erklären','Groß- und kleindeutsche Lösung vergleichen'],
+  html:`<h3>Die Nationalversammlung</h3><p>Ab <b>18.5.1848</b> tagte in der <b>Frankfurter Paulskirche</b> das erste gesamtdeutsche Parlament. Präsident: <b>Heinrich von Gagern</b> (ab Dezember 1848 Eduard Simson). Anfangs rund 590 Abgeordnete, vor allem Akademiker, Beamte, Juristen, Professoren: ein <b>„Professorenparlament“</b>. Arbeiter, Handwerker und Bauern waren kaum vertreten.</p>
+  <p>Die Abgeordneten schlossen sich zu <b>Fraktionen</b> zusammen, benannt nach ihren Tagungslokalen – Vorläufer der Parteien. Größte Fraktion: das <b>Casino</b>.</p>
+  <h3>Zentralgewalt</h3><p>Am <b>29.6.1848</b> wählte die Versammlung <b>Erzherzog Johann</b> zum Reichsverweser („kühner Griff“ Gagerns). Problem: Die Zentralgewalt hatte <b>kein Heer, keine Verwaltung, keine Steuern</b>.</p>
+  <h3>Schleswig-Holstein und Malmö</h3><p>Preußen schloss auf Druck Großbritanniens und Russlands eigenmächtig den <b>Waffenstillstand von Malmö (26.8.1848)</b> mit Dänemark. Die Nationalversammlung stimmte nach Streit zu. Darauf folgten die <b>Septemberunruhen</b> in Frankfurt (zwei konservative Abgeordnete ermordet), die nur preußische und österreichische Truppen beendeten: Das Parlament war <b>machtlos</b>.</p>
+  <h3>Grundrechte (21./27.12.1848)</h3><p>Gleichheit vor dem Gesetz, Abschaffung der Standesvorrechte (Adel als Stand aufgehoben), Freiheit der Person, Meinungs-, Presse-, Religions-, Versammlungsfreiheit, Abschaffung der Todesstrafe, Freiheit von Wissenschaft und Lehre.</p>
+  <h3>Groß- oder kleindeutsch?</h3><ul><li><b>Großdeutsch:</b> mit den deutschen Gebieten Österreichs. Problem: Österreich hätte seinen Vielvölkerstaat teilen müssen – lehnte es ab.</li><li><b>Kleindeutsch:</b> ohne Österreich, unter preußischer Führung. Setzte sich in der Verfassung durch.</li></ul>
+  <h3>Reichsverfassung (28.3.1849)</h3><ul><li><b>Bundesstaat</b> als <b>konstitutionelle Erbmonarchie</b> mit einem „Kaiser der Deutschen“ (nur aufschiebendes Veto)</li><li><b>Reichstag</b> aus <b>Volkshaus</b> (gewählt) und <b>Staatenhaus</b> (Vertreter der Länder), dazu ein <b>Reichsgericht</b></li><li>Wahlrecht: jeder unbescholtene Mann ab 25 Jahren</li><li>Erbkaisertum knapp mit <b>267 : 263</b> beschlossen; Kaiserwahl: <b>Friedrich Wilhelm IV.</b> (290 Ja, 248 Enthaltungen)</li></ul>`,
+  widget:'ge_fra'},
+ {id:7,title:'Scheitern, Bilanz und Quellenanalyse',short:'Gegenrevolution, Ablehnung der Krone, Rastatt',
+  goals:['Den Verlauf der Gegenrevolution beschreiben','Gründe des Scheiterns gewichten und beurteilen','Quellen und Karikaturen analysieren'],
+  html:`<h3>Gegenrevolution</h3><ul><li><b>Wien, Oktober 1848:</b> Aufstand niedergeschlagen; <b>Robert Blum</b> wird am <b>9.11.1848</b> trotz Immunität erschossen.</li><li><b>Berlin, November 1848:</b> General Wrangel marschiert ein, die preußische Nationalversammlung wird aufgelöst. <b>5.12.1848:</b> oktroyierte (vom König verordnete) Verfassung; 1849 folgt das <b>Dreiklassenwahlrecht</b>.</li><li><b>Österreich, März 1849:</b> oktroyierte Gesamtstaatsverfassung – die großdeutsche Lösung ist erledigt.</li></ul>
+  <h3>Ablehnung der Kaiserkrone</h3><p>Am <b>3.4.1849</b> lehnte Friedrich Wilhelm IV. gegenüber der Kaiserdeputation ab, offiziell mit Hinweis auf die fehlende Zustimmung der Fürsten. Endgültig am <b>28.4.1849</b>. Seine wahre Meinung steht in einem <b>privaten Brief an Bunsen (13.12.1848)</b>: Die Krone sei „keine Krone“, ein „Reif aus Dreck und Letten“ mit dem „Ludergeruch der Revolution“. Er berief sich auf das <b>Gottesgnadentum</b> – eine Krone könnten nur Fürsten vergeben, nicht das Volk.</p>
+  <p class="hint">Fallstrick: Diese Zitate stammen aus dem Brief vom 13.12.1848, nicht aus der Antwort vom 3.4.1849.</p>
+  <h3>Ende</h3><p>28 Staaten erkannten die Verfassung an, die großen (Preußen, Österreich, Bayern, Sachsen, Hannover) nicht. Die <b>Reichsverfassungskampagne</b> (Aufstände in Dresden, Pfalz, Baden) wurde von preußischen Truppen niedergeschlagen. Das <b>Rumpfparlament</b> in Stuttgart wurde am 18.6.1849 aufgelöst. Mit der <b>Kapitulation von Rastatt (23.7.1849)</b> endete die Revolution. Viele Revolutionäre wanderten in die USA aus.</p>
+  <h3>Bilanz</h3><p><b>Kurzfristig gescheitert:</b> keine Einheit, Verfassung nie in Kraft. <b>Langfristig folgenreich:</b> Grundrechte als Vorbild für Weimarer Verfassung (1919) und Grundgesetz (1949), erste gesamtdeutsche Wahlen, Fraktionen als Vorläufer der Parteien, Schwarz-Rot-Gold als Nationalfarben.</p>
+  <h3>Quellenanalyse</h3><ol>${GE.STEPS_Q.map(x=>`<li>${x}</li>`).join('')}</ol>
+  <h3>Karikaturanalyse</h3><ol>${GE.STEPS_K.map(x=>`<li>${x}</li>`).join('')}</ol>
+  <div class="merk"><span class="merk-label">Urteil</span><b>Sachurteil:</b> Wie glaubwürdig und aussagekräftig ist die Quelle (privat oder öffentlich, Standpunkt)? · <b>Werturteil:</b> Wie bewertest du das aus heutiger Sicht, mit Begründung?</div>`,
+  widget:'ge_gruende'}];
+
+ GE.QUESTIONS=[
+ {t:1,q:'Wer leitete den Wiener Kongress?',o:['Metternich','Napoleon','Friedrich Wilhelm IV.','Bismarck'],a:0,e:'Der österreichische Staatskanzler Metternich war Gastgeber und Lenker.'},
+ {t:1,q:'Was bedeutet „Legitimität“?',o:['Herrschaftsanspruch der angestammten Fürstenhäuser','Herrschaft des Volkes','Gleichgewicht der Mächte','Rückkehr zu Napoleon'],a:0,e:'Grundlage ist das Gottesgnadentum.'},
+ {t:1,q:'Was war der Deutsche Bund?',o:['ein Staatenbund souveräner Staaten','ein Bundesstaat mit Kaiser','ein Nationalstaat','eine Republik'],a:0,e:'Lockerer Zusammenschluss, keine gemeinsame Regierung.'},
+ {t:1,q:'Wo tagte die Bundesversammlung?',o:['in Frankfurt am Main','in Berlin','in Wien','in Weimar'],a:0,e:'Unter österreichischem Vorsitz.'},
+ {t:1,q:'Welche Staaten gründeten die Heilige Allianz?',o:['Russland, Österreich, Preußen','Großbritannien, Frankreich, Preußen','Österreich, Bayern, Sachsen','Russland, Frankreich, Spanien'],a:0,e:'Großbritannien trat nicht bei.'},
+ {t:1,q:'Was versprach Art. 13 der Bundesakte?',o:['landständische Verfassungen in allen Bundesstaaten','einen deutschen Kaiser','Pressefreiheit','ein gesamtdeutsches Parlament'],a:0,e:'Ohne Frist – Preußen und Österreich bekamen bis 1848 keine.'},
+ {t:2,q:'Wo wurde 1815 die Urburschenschaft gegründet?',o:['in Jena','in Berlin','in Wien','in Heidelberg'],a:0,e:'Wahlspruch: Ehre, Freiheit, Vaterland.'},
+ {t:2,q:'Was war der Anlass des Wartburgfestes 1817?',o:['300 Jahre Reformation und Jahrestag der Völkerschlacht','Gründung des Zollvereins','Tod Napoleons','Ermordung Kotzebues'],a:0,e:'18.10.1817.'},
+ {t:2,q:'Wer ermordete 1819 August von Kotzebue?',o:['Karl Ludwig Sand','Friedrich Hecker','Robert Blum','Friedrich Ludwig Jahn'],a:0,e:'Ein Burschenschafter, in Mannheim.'},
+ {t:2,q:'Was regelte das Pressegesetz der Karlsbader Beschlüsse?',o:['Vorzensur für Zeitungen und kurze Schriften','Pressefreiheit für alle','Verbot aller Bücher','Zeitungen nur auf Französisch'],a:0,e:'Schriften unter 20 Bogen brauchten vorab eine Genehmigung.'},
+ {t:2,q:'Wo saß die Zentraluntersuchungskommission?',o:['in Mainz','in Karlsbad','in Frankfurt','in Wien'],a:0,e:'Sie verfolgte „revolutionäre Umtriebe“.'},
+ {t:2,q:'Worauf führt man die Farben Schwarz-Rot-Gold meist zurück?',o:['auf die Uniform des Lützower Freikorps','auf die Flagge Österreichs','auf Napoleons Garde','auf die Farben Preußens'],a:0,e:'Schwarzer Rock, rote Aufschläge, goldene Knöpfe.'},
+ {t:3,q:'Was war das Hambacher Fest 1832?',o:['die größte politische Massenveranstaltung vor 1848','ein Studentenfest auf der Wartburg','eine Fürstenversammlung','eine Krönungsfeier'],a:0,e:'20.000–30.000 Menschen forderten Einheit und Freiheit.'},
+ {t:3,q:'Wer organisierte das Hambacher Fest?',o:['Siebenpfeiffer und Wirth','Hecker und Struve','Marx und Engels','Gagern und Simson'],a:0,e:'Pfälzische Journalisten.'},
+ {t:3,q:'Was bedeutet „Biedermeier“?',o:['Rückzug des Bürgertums ins Private','eine Revolution','ein Zollgesetz','eine Partei'],a:0,e:'Gegenstück zum politischen Vormärz.'},
+ {t:3,q:'Wogegen protestierten die Göttinger Sieben?',o:['gegen die Aufhebung der Verfassung in Hannover','gegen den Zollverein','gegen die Eisenbahn','gegen Napoleon'],a:0,e:'Sie wurden entlassen, darunter die Brüder Grimm.'},
+ {t:3,q:'Was wollten die Liberalen?',o:['konstitutionelle Monarchie mit Verfassung und Grundrechten','eine Republik um jeden Preis','die alte Fürstenherrschaft','die Abschaffung des Eigentums'],a:0,e:'Reform statt Revolution.'},
+ {t:3,q:'Was wollten die Demokraten?',o:['Volkssouveränität und Republik','Gottesgnadentum','ständische Ordnung','Zensuswahlrecht'],a:0,e:'Notfalls mit Revolution (Hecker, Struve).'},
+ {t:3,q:'Wann entstand das „Lied der Deutschen“?',o:['1841','1815','1848','1871'],a:0,e:'Hoffmann von Fallersleben auf Helgoland.'},
+ {t:4,q:'Welcher große Staat gehörte NICHT zum Zollverein?',o:['Österreich','Preußen','Bayern','Württemberg'],a:0,e:'Der Zollverein stand unter preußischer Führung.'},
+ {t:4,q:'Was bedeutet Pauperismus?',o:['Massenarmut vor der Industrialisierung','Reichtum durch Handel','Auswanderung nach Amerika','Fabrikarbeit'],a:0,e:'Bevölkerung wuchs schneller als die Arbeitsplätze.'},
+ {t:4,q:'Wo fuhr 1835 die erste deutsche Eisenbahn?',o:['Nürnberg–Fürth','Berlin–Potsdam','Leipzig–Dresden','Köln–Bonn'],a:0,e:'Mit der Lok „Adler“.'},
+ {t:4,q:'Was geschah 1844 in Schlesien?',o:['Weberaufstand','Hambacher Fest','Wartburgfest','Bauernkrieg'],a:0,e:'Militär schoss, 11 Tote.'},
+ {t:4,q:'Was war der Auslöser der Revolution 1848?',o:['die Februarrevolution in Paris','der Weberaufstand','das Hambacher Fest','die Rheinkrise'],a:0,e:'Langfristige Ursachen waren Unterdrückung, Armut und Hungerkrise.'},
+ {t:4,q:'Warum gilt der Zollverein als politisch wichtig?',o:['Vorläufer einer kleindeutschen Einigung unter Preußen','Er machte Österreich zur Führungsmacht','Er schaffte die Fürsten ab','Er führte die Pressefreiheit ein'],a:0,e:'Wirtschaftliche Einheit vor der politischen.'},
+ {t:5,q:'Was gehörte zu den Märzforderungen?',o:['Pressefreiheit, Schwurgerichte, Volksbewaffnung, Parlament','Abschaffung der Kirche','Rückkehr Napoleons','Zollfreiheit mit England'],a:0,e:'Mannheim, 27.2.1848.'},
+ {t:5,q:'Was passierte am 13.3.1848 in Wien?',o:['Metternich wurde gestürzt','Die Paulskirche öffnete','Robert Blum wurde erschossen','Der Kaiser dankte ab'],a:0,e:'Er floh nach England.'},
+ {t:5,q:'Was geschah am 18./19.3.1848 in Berlin?',o:['Barrikadenkämpfe mit rund 250–300 Toten','Krönung eines Kaisers','Eröffnung des Zollvereins','Wahl der Nationalversammlung'],a:0,e:'Die „Märzgefallenen“.'},
+ {t:5,q:'Was beschloss das Vorparlament?',o:['Wahlen zu einer Nationalversammlung','die Ausrufung der Republik','die Krönung Friedrich Wilhelms IV.','den Waffenstillstand von Malmö'],a:0,e:'Heckers Antrag auf Republik scheiterte.'},
+ {t:5,q:'Wer durfte 1848 die Nationalversammlung wählen?',o:['volljährige selbstständige Männer','alle Bürger, auch Frauen','nur Adlige','nur Steuerzahler der ersten Klasse'],a:0,e:'Meist indirekt über Wahlmänner.'},
+ {t:5,q:'Was waren die Märzministerien?',o:['liberale Regierungen, die Fürsten 1848 beriefen','Ministerien der Revolutionäre','Behörden Metternichs','Ministerien der Paulskirche'],a:0,e:'Zugeständnis an die Revolution.'},
+ {t:6,q:'Wann trat die Nationalversammlung zum ersten Mal in der Paulskirche zusammen?',o:['18.5.1848','18.3.1848','28.3.1849','1.1.1834'],a:0,e:'Präsident: Heinrich von Gagern.'},
+ {t:6,q:'Warum nennt man die Nationalversammlung „Professorenparlament“?',o:['Akademiker und Beamte dominierten','Nur Professoren durften wählen','Sie tagte in einer Universität','Professoren waren verboten'],a:0,e:'Arbeiter und Bauern waren kaum vertreten.'},
+ {t:6,q:'Welche Fraktion war die größte?',o:['Casino','Donnersberg','Café Milani','Deutscher Hof'],a:0,e:'Rechtes Zentrum, Gagern und Simson.'},
+ {t:6,q:'Wer wurde Reichsverweser?',o:['Erzherzog Johann','Friedrich Wilhelm IV.','Robert Blum','Metternich'],a:0,e:'Am 29.6.1848.'},
+ {t:6,q:'Was zeigte der Waffenstillstand von Malmö?',o:['die Machtlosigkeit der Nationalversammlung','die Stärke des Reichsheeres','den Sieg der Demokraten','die Einigkeit mit Österreich'],a:0,e:'Preußen handelte eigenmächtig.'},
+ {t:6,q:'Was bedeutet „kleindeutsche Lösung“?',o:['Nationalstaat ohne Österreich unter Preußens Führung','Nationalstaat mit Österreich','nur Norddeutschland','nur Süddeutschland'],a:0,e:'Setzte sich in der Reichsverfassung durch.'},
+ {t:6,q:'Welche Staatsform sah die Reichsverfassung vor?',o:['konstitutionelle Erbmonarchie als Bundesstaat','Republik','absolute Monarchie','Staatenbund'],a:0,e:'Mit einem „Kaiser der Deutschen“.'},
+ {t:6,q:'Aus welchen Häusern bestand der Reichstag?',o:['Volkshaus und Staatenhaus','Oberhaus und Unterhaus','Senat und Kammer','Bundesrat und Bundestag'],a:0,e:'Volkshaus gewählt, Staatenhaus von den Ländern.'},
+ {t:7,q:'Wann lehnte Friedrich Wilhelm IV. die Kaiserkrone gegenüber der Deputation ab?',o:['3.4.1849','18.3.1848','28.3.1849','23.7.1849'],a:0,e:'Endgültig am 28.4.1849.'},
+ {t:7,q:'Woher stammt das Zitat „Reif aus Dreck und Letten“?',o:['aus einem privaten Brief an Bunsen (13.12.1848)','aus der Rede vom 3.4.1849','aus der Reichsverfassung','von Robert Blum'],a:0,e:'Typischer Fallstrick.'},
+ {t:7,q:'Was geschah mit Robert Blum?',o:['Er wurde 1848 in Wien erschossen','Er wurde Kaiser','Er wanderte nach Amerika aus','Er wurde Reichsverweser'],a:0,e:'Trotz Immunität als Abgeordneter.'},
+ {t:7,q:'Was bedeutet „oktroyierte Verfassung“?',o:['vom Herrscher verordnete Verfassung','vom Volk beschlossene Verfassung','abgelehnte Verfassung','Verfassung eines anderen Landes'],a:0,e:'Preußen 5.12.1848.'},
+ {t:7,q:'Womit endete die Revolution?',o:['Kapitulation der Festung Rastatt 1849','Krönung in Frankfurt','Hambacher Fest','Sturz Metternichs'],a:0,e:'23.7.1849.'},
+ {t:7,q:'Warum lehnte Friedrich Wilhelm IV. die Krone ab?',o:['Gottesgnadentum: Nur Fürsten könnten sie vergeben','Er wollte eine Republik','Er war zu alt','Österreich hatte sie schon angenommen'],a:0,e:'Er sah sie als Produkt der Revolution.'},
+ {t:7,q:'Was wirkte bis heute nach?',o:['Die Grundrechte als Vorbild für das Grundgesetz','Das Dreiklassenwahlrecht','Die Karlsbader Beschlüsse','Der Deutsche Bund'],a:0,e:'Auch Schwarz-Rot-Gold.'},
+ {t:7,q:'Was gehört in die Einleitung einer Quellenanalyse?',o:['Quellengattung, Autor, Adressat, Datum, Anlass, Thema','das Werturteil','nur ein Zitat','die Inhaltsangabe des Schulbuchs'],a:0,e:'Danach Inhalt, Analyse, Kontext, Urteil.'}];
+
+ GE.TF=[
+ [1,'Der Deutsche Bund war ein Bundesstaat mit gemeinsamer Regierung.',0,'Ein Staatenbund ohne gemeinsame Regierung.'],
+ [1,'Großbritannien war Mitglied der Heiligen Allianz.',0,'Russland, Österreich, Preußen; Großbritannien nicht.'],
+ [1,'Die Bundesversammlung tagte in Frankfurt unter österreichischem Vorsitz.',1,'Ein Kongress von Gesandten.'],
+ [1,'Das Heilige Römische Reich wurde 1815 wiederhergestellt.',0,'Stattdessen entstand der Deutsche Bund.'],
+ [1,'Preußen bekam 1815 das Rheinland.',1,'Und Westfalen; dadurch „Wacht am Rhein“.'],
+ [2,'Der Mord an Kotzebue fand auf der Wartburg statt.',0,'In Mannheim, 1819.'],
+ [2,'Die Karlsbader Beschlüsse verboten die Burschenschaften.',1,'Universitätsgesetz.'],
+ [2,'Die Karlsbader Beschlüsse galten bis 1848.',1,'Am 2.4.1848 aufgehoben.'],
+ [2,'Das Wartburgfest fand 1817 statt.',1,'18.10.1817.'],
+ [3,'Das Hambacher Fest war die größte politische Massenveranstaltung vor 1848.',1,'20.000–30.000 Teilnehmer.'],
+ [3,'Liberale wollten die Republik um jeden Preis.',0,'Sie wollten eine konstitutionelle Monarchie; die Republik forderten die Demokraten.'],
+ [3,'Die Brüder Grimm gehörten zu den Göttinger Sieben.',1,'Sie wurden 1837 entlassen.'],
+ [3,'Die 3. Strophe des „Lieds der Deutschen“ ist heute Nationalhymne.',1,'Gedichtet 1841.'],
+ [4,'Österreich war Mitglied des Zollvereins.',0,'Der Zollverein entstand ohne Österreich.'],
+ [4,'Die erste deutsche Eisenbahn fuhr 1835 zwischen Nürnberg und Fürth.',1,'Lok „Adler“.'],
+ [4,'Der Weberaufstand fand 1844 in Schlesien statt.',1,'Peterswaldau und Langenbielau.'],
+ [4,'Die Hungerkrise 1845–47 war der direkte Auslöser der Revolution.',0,'Eine langfristige Ursache; Auslöser war die Februarrevolution in Paris.'],
+ [5,'Metternich wurde im März 1848 gestürzt.',1,'13.3.1848 in Wien.'],
+ [5,'1848 durften auch Frauen wählen.',0,'Nur Männer.'],
+ [5,'Das Vorparlament rief die Republik aus.',0,'Es beschloss Wahlen zur Nationalversammlung.'],
+ [5,'Friedrich Wilhelm IV. ritt 1848 mit schwarz-rot-goldener Armbinde durch Berlin.',1,'Am 21.3.1848.'],
+ [6,'Das Casino war die größte Fraktion der Paulskirche.',1,'Rechtes Zentrum.'],
+ [6,'Der Donnersberg war die konservative Rechte.',0,'Die äußerste Linke.'],
+ [6,'Die Zentralgewalt hatte ein eigenes Heer.',0,'Kein Heer, keine Verwaltung, keine Steuern.'],
+ [6,'Die Grundrechte schafften den Adel als Stand ab.',1,'§ 137.'],
+ [6,'Die Reichsverfassung setzte die großdeutsche Lösung durch.',0,'Die kleindeutsche, ohne Österreich.'],
+ [6,'Das Erbkaisertum wurde nur knapp mit 267 zu 263 Stimmen beschlossen.',1,'27.3.1849.'],
+ [7,'Friedrich Wilhelm IV. sagte am 3.4.1849 öffentlich „Ludergeruch der Revolution“.',0,'Das steht im privaten Brief an Bunsen vom 13.12.1848.'],
+ [7,'Robert Blum wurde 1848 in Wien erschossen.',1,'9.11.1848.'],
+ [7,'Die Reichsverfassung trat 1849 in Kraft.',0,'Sie trat nie in Kraft.'],
+ [7,'Die Revolution endete mit der Kapitulation von Rastatt.',1,'23.7.1849.'],
+ [7,'In der Karikaturanalyse beschreibt man zuerst das Bild, bevor man deutet.',1,'Beschreiben → Deuten → Urteilen.']];
+
+ GE.CARDS=[
+ ['Restauration','Wiederherstellung der politischen Ordnung vor der Französischen Revolution (vor 1789).'],
+ ['Legitimität','Herrschaftsanspruch der angestammten Fürstenhäuser, begründet mit dem Gottesgnadentum.'],
+ ['Solidarität (1815)','Fürsten halten gemeinsam gegen Revolutionen zusammen.'],
+ ['Gleichgewicht der Mächte','Keine Großmacht soll Europa beherrschen.'],
+ ['Deutscher Bund','1815–1866, Staatenbund souveräner Fürsten und freier Städte (39, je nach Zählweise 41); Organ: Bundesversammlung in Frankfurt.'],
+ ['Staatenbund','Zusammenschluss souveräner Staaten ohne gemeinsame Regierung – Gegenteil: Bundesstaat.'],
+ ['Heilige Allianz','1815: Russland, Österreich, Preußen gegen Revolutionen; Großbritannien nicht dabei.'],
+ ['Wiener Schlussakte','1820: monarchisches Prinzip – alle Staatsgewalt bleibt beim Fürsten.'],
+ ['Dualismus','Konkurrenz von Österreich und Preußen um die Führung in Deutschland.'],
+ ['Burschenschaft','Studentische Vereinigung, 1815 in Jena gegründet; Ehre, Freiheit, Vaterland; Schwarz-Rot-Gold.'],
+ ['Wartburgfest','18.10.1817: Studenten feiern Reformation und Völkerschlacht, fordern Einheit; Bücherverbrennung.'],
+ ['Karlsbader Beschlüsse','1819: Universitätsaufsicht, Verbot der Burschenschaften, Pressezensur, Untersuchungskommission in Mainz.'],
+ ['Demagogenverfolgung','Verfolgung liberaler und nationaler Oppositioneller nach 1819 (z. B. Jahn, Arndt).'],
+ ['Zensur','Staatliche Kontrolle von Zeitungen und Büchern vor dem Druck (Vorzensur).'],
+ ['Vormärz','Politisch aktive Zeit vor der Märzrevolution, ca. 1815/1830–1848.'],
+ ['Biedermeier','Rückzug des Bürgertums ins Private als Reaktion auf die Unterdrückung.'],
+ ['Hambacher Fest','27.5.1832: rund 20.000–30.000 Menschen fordern Einheit, Freiheit, Volkssouveränität.'],
+ ['Volkssouveränität','Alle Staatsgewalt geht vom Volk aus – Gegenteil zum Gottesgnadentum.'],
+ ['Liberalismus','Freiheit des Einzelnen: Verfassung, Grundrechte, Parlament, Rechtsstaat, konstitutionelle Monarchie.'],
+ ['Konstitutionelle Monarchie','Monarchie, in der der Herrscher an eine Verfassung gebunden ist.'],
+ ['Göttinger Sieben','1837: sieben Professoren protestieren gegen die Aufhebung der Verfassung in Hannover und werden entlassen.'],
+ ['Zollverein','1834: Zollunion unter Preußen, ohne Österreich; Vorläufer der kleindeutschen Einigung.'],
+ ['Pauperismus','Massenarmut vor der Industrialisierung durch Bevölkerungswachstum und Mangel an Arbeit.'],
+ ['Weberaufstand','1844 in Schlesien: Weber stürmen ein Unternehmerhaus, Militär schießt, 11 Tote.'],
+ ['Märzforderungen','Pressefreiheit, Schwurgerichte, Volksbewaffnung, deutsches Parlament (Mannheim 1848).'],
+ ['Märzministerien','Liberale Regierungen, die Fürsten im März 1848 beriefen.'],
+ ['Märzgefallene','Rund 250–300 Tote der Berliner Barrikadenkämpfe am 18./19.3.1848.'],
+ ['Vorparlament','31.3.–3.4.1848 in Frankfurt: beschließt Wahlen zur Nationalversammlung.'],
+ ['Paulskirche','Tagungsort der Nationalversammlung in Frankfurt ab 18.5.1848.'],
+ ['Fraktion','Zusammenschluss gleichgesinnter Abgeordneter, 1848 nach Gasthäusern benannt.'],
+ ['Reichsverweser','Provisorisches Staatsoberhaupt: Erzherzog Johann, gewählt 29.6.1848.'],
+ ['Grundrechte des deutschen Volkes','21./27.12.1848: Gleichheit, Meinungs-, Presse-, Versammlungsfreiheit, Abschaffung der Standesvorrechte.'],
+ ['Großdeutsche Lösung','Nationalstaat mit den deutschen Gebieten Österreichs.'],
+ ['Kleindeutsche Lösung','Nationalstaat ohne Österreich, unter preußischer Führung.'],
+ ['Reichsverfassung','28.3.1849: Bundesstaat, Erbkaiser, Reichstag (Volks- und Staatenhaus), Grundrechte; nie in Kraft.'],
+ ['Oktroyierte Verfassung','Vom Herrscher einseitig erlassene Verfassung (Preußen 5.12.1848).'],
+ ['Dreiklassenwahlrecht','Preußen ab 1849: Wähler nach Steuerleistung in drei Klassen, öffentliche Wahl.'],
+ ['Gegenrevolution','Rückeroberung der Macht durch die Fürsten 1848/49 mit Militär (Wien, Berlin, Rastatt).'],
+ ['Rumpfparlament','Rest der Nationalversammlung, 6.–18.6.1849 in Stuttgart, dann aufgelöst.'],
+ ['Sachurteil / Werturteil','Sachurteil: Bewertung aus der Zeit und Quellenlage. Werturteil: begründete Bewertung aus heutiger Sicht.']];
+
+ GE.TASKS=[
+ {t:4,q:'<b>Erläutere</b> die Ursachen der Revolution von 1848.',sol:()=>`<ul><li><b>Politisch:</b> Restauration und Karlsbader Beschlüsse (Zensur, Verfolgung), keine Verfassungen in Preußen und Österreich, unerfüllter Wunsch nach einem Nationalstaat.</li><li><b>Sozial:</b> Pauperismus, Weberaufstand 1844.</li><li><b>Wirtschaftlich:</b> Kartoffelfäule und Missernten 1845–47, Hungerkrise, Gewerbekrise 1847.</li><li><b>Auslöser:</b> Februarrevolution in Paris 1848.</li></ul><p class="muted">Tipp: nach langfristigen Ursachen und kurzfristigem Anlass gliedern.</p>`},
+ {t:1,q:'<b>Beschreibe</b> die Prinzipien des Wiener Kongresses und ihre Folgen für Deutschland.',sol:()=>`<p><b>Restauration</b> (alte Ordnung vor 1789), <b>Legitimität</b> (angestammte Fürsten, Gottesgnadentum), <b>Solidarität</b> (gemeinsam gegen Revolutionen), <b>Gleichgewicht der Mächte</b>. Für Deutschland: kein Nationalstaat, sondern der <b>Deutsche Bund</b> als Staatenbund souveräner Fürsten mit der Bundesversammlung in Frankfurt unter österreichischem Vorsitz. Die Hoffnungen der Nationalbewegung auf Einheit und Verfassung wurden enttäuscht.</p>`},
+ {t:2,q:'<b>Erkläre</b> Anlass, Inhalte und Folgen der Karlsbader Beschlüsse.',sol:()=>`<p><b>Anlass:</b> Mord an Kotzebue durch den Burschenschafter Sand (1819). <b>Inhalte:</b> Universitätsaufsicht und Verbot der Burschenschaften, Vorzensur der Presse, Zentraluntersuchungskommission in Mainz. <b>Folgen:</b> Demagogenverfolgung, Unterdrückung der Nationalbewegung, Rückzug ins Private (Biedermeier); sie galten bis 1848.</p>`},
+ {t:6,q:'<b>Vergleiche</b> die großdeutsche und die kleindeutsche Lösung.',sol:()=>`<p><b>Großdeutsch:</b> mit den deutschen Gebieten Österreichs; Tradition des alten Reichs, Rückhalt bei Katholiken und Süddeutschen. Problem: Österreich hätte seinen Vielvölkerstaat teilen müssen, lehnte ab (Gesamtstaatsverfassung März 1849). <b>Kleindeutsch:</b> ohne Österreich, unter Preußen; realistische Machtbasis, Zollverein als Vorstufe. Die Reichsverfassung 1849 wählte die kleindeutsche Lösung; umgesetzt wurde sie erst 1871 „von oben“.</p>`},
+ {t:7,q:'<b>Analysiere</b> den Brief Friedrich Wilhelms IV. an Bunsen vom 13.12.1848 (Kernaussagen kennst du).',sol:()=>`<p><b>Einleitung:</b> privater Brief des preußischen Königs an seinen Vertrauten Bunsen, 13.12.1848, vor der Kaiserwahl. <b>Inhalt:</b> Die angebotene Krone sei „keine Krone“, ein „Reif aus Dreck und Letten“ mit dem „Ludergeruch der Revolution“; nur Fürsten könnten die Krone vergeben. <b>Analyse:</b> abwertende Metaphern, Standpunkt des Gottesgnadentums gegen Volkssouveränität. <b>Kontext:</b> erklärt die Ablehnung vom 3.4.1849. <b>Sachurteil:</b> Als Privatbrief zeigt er die offene Meinung des Königs, die öffentliche Begründung war diplomatischer.</p>`},
+ {t:7,q:'<b>Erörtere</b>, ob die Revolution 1848/49 gescheitert ist.',sol:()=>`<p><b>Gescheitert:</b> kein Nationalstaat, Reichsverfassung nie in Kraft, Gegenrevolution siegt (Wien, Berlin, Rastatt), Repression und Auswanderung. <b>Nicht gescheitert:</b> Grundrechte als Vorbild für Weimarer Verfassung und Grundgesetz, erste gesamtdeutsche Wahlen, Fraktionen als Vorläufer der Parteien, Preußen erhält eine (oktroyierte) Verfassung, Schwarz-Rot-Gold. <b>Urteil:</b> kurzfristig gescheitert, langfristig folgenreich.</p>`},
+ {t:7,q:'<b>Beurteile</b> die wichtigsten Gründe für das Scheitern der Revolution.',sol:()=>`<ul>${GE.GRUENDE.map(g=>`<li><b>${g[0]}:</b> ${g[1]}</li>`).join('')}</ul><p class="muted">Für die Note: nicht nur aufzählen, sondern gewichten, z. B. „Entscheidend waren die fehlenden Machtmittel und die Gegenrevolution, weil …“</p>`},
+ {t:2,q:'<b>Analysiere</b> die Karikatur „Der Denker-Club“ (um 1819/20).',sol:()=>`<p><b>Beschreibung:</b> Männer mit Maulkörben sitzen um einen Tisch; an der Wand Regeln („Schweigen ist das erste Gesetz dieser gelehrten Gesellschaft“), auf der Tafel die Frage „Wie lange möchte uns das Denken wohl noch erlaubt bleiben?“. <b>Deutung:</b> Maulkorb = Zensur, die Denker = Intellektuelle, die schweigen müssen. <b>Kontext:</b> Karlsbader Beschlüsse 1819. <b>Absicht:</b> Kritik an Unterdrückung der Meinungsfreiheit und an der Selbstzensur. <b>Urteil:</b> treffende, bissige Kritik; Zeichner anonym – wegen der Zensur.</p>`}];
+
+ GE.ORDERS=[
+ {t:7,title:'Bringe die Schritte einer Quellenanalyse in die richtige Reihenfolge.',parts:GE.STEPS_Q.slice()},
+ {t:7,title:'Bringe die Schritte einer Karikaturanalyse in die richtige Reihenfolge.',parts:GE.STEPS_K.slice()},
+ {t:2,title:'Ordne die Ereignisse 1815–1820 zeitlich.',parts:['Deutsche Bundesakte','Gründung der Urburschenschaft in Jena','Wartburgfest','Ermordung Kotzebues','Karlsbader Beschlüsse','Wiener Schlussakte']},
+ {t:3,title:'Ordne die Ereignisse des Vormärz zeitlich.',parts:['Julirevolution in Paris','Hambacher Fest','Frankfurter Wachensturm','Protest der Göttinger Sieben','Rheinkrise','„Lied der Deutschen“']},
+ {t:5,title:'Ordne die Ereignisse der Märzrevolution 1848.',parts:['Februarrevolution in Paris','Mannheimer Volksversammlung (Märzforderungen)','Sturz Metternichs in Wien','Barrikadenkämpfe in Berlin','Vorparlament','Eröffnung der Paulskirche']},
+ {t:7,title:'Ordne die Ereignisse von der Paulskirche bis zum Ende.',parts:['Erzherzog Johann wird Reichsverweser','Waffenstillstand von Malmö','Robert Blum erschossen','Grundrechte verkündet','Reichsverfassung und Kaiserwahl','Ablehnung der Kaiserkrone','Kapitulation von Rastatt']},
+ {t:6,title:'Ordne die Fraktionen von rechts nach links.',parts:FRA.map(f=>f[0])}];
+
+ const yearOf=e=>String(e[0]).match(/18\d\d/)[0];
+ GE.GEN={
+ 1:[()=>{ const e=pick(evOf(1).concat(evOf(2))); return {t:1,q:'Wann war das? '+e[2],o:opts4(e[0],EV.map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; },
+    ()=>{ const c=pick(GE.CARDS.slice(0,9)); return {t:1,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],GE.CARDS.slice(0,14).map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; }],
+ 2:[()=>{ const e=pick(evOf(2)); return {t:2,q:'In welchem Jahr? '+e[2],o:opts4(yearOf(e),['1815','1817','1819','1820','1832','1834','1848']),a:0,e:e[0]+'.'}; },
+    ()=>{ const p=pick(PER.filter(x=>x.t<=2)); return {t:2,q:'Wer war '+p.name+'?',o:opts4(p.role,PER.map(x=>x.role)),a:0,e:p.name+' ('+p.life+'): '+p.more}; }],
+ 3:[()=>{ const r=pick(RICHT); return {t:3,q:'Welche politische Richtung? '+r.z,o:opts4(r.name,RICHT.map(x=>x.name)),a:0,e:r.name+': z. B. '+r.b+'.'}; },
+    ()=>{ const e=pick(evOf(3)); return {t:3,q:'Wann war das? '+e[2],o:opts4(e[0],EV.filter(x=>x[1]>1825&&x[1]<1848).map(x=>x[0])),a:0,e:e[0]+'.'}; },
+    ()=>{ const z=pick(ZIT); return {t:3,q:'Woher stammt das Zitat? „'+z[0]+'“',o:opts4(z[1],ZIT.map(x=>x[1])),a:0,e:z[1]+'.'}; }],
+ 4:[()=>{ const u=pick(GE.URS); return {t:4,q:'Welche Art von Ursache der Revolution ist das? '+u[0],o:['politisch','sozial','wirtschaftlich','Auslöser'],a:['politisch','sozial','wirtschaftlich','Auslöser'].indexOf(u[1]),e:'Gehört zu: '+u[1]+'.'}; },
+    ()=>{ const e=pick(evOf(4)); return {t:4,q:'Wann war das? '+e[2],o:opts4(e[0],EV.map(x=>x[0])),a:0,e:e[0]+'.'}; }],
+ 5:[()=>{ const e=pick(evOf(5)); return {t:5,q:'Wann war das? '+e[2],o:opts4(e[0],EV.filter(x=>x[1]>=1848&&x[1]<1849).map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; },
+    ()=>{ const p=pick(PER); return {t:5,q:'Wer wird so beschrieben: '+p.role+'?',o:opts4(p.name,PER.map(x=>x.name)),a:0,e:p.name+' ('+p.life+'): '+p.more}; }],
+ 6:[()=>{ const f=pick(FRA); return {t:6,q:'Wo stand die Fraktion „'+f[0]+'“?',o:opts4(f[1],FRA.map(x=>x[1])),a:0,e:f[0]+': '+f[1]+' – '+f[2]+'.'}; },
+    ()=>{ const c=pick(GE.CARDS.slice(27,35)); return {t:6,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],GE.CARDS.slice(24,40).map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; }],
+ 7:[()=>{ const a=shuffle(EV.slice()).slice(0,2).sort((x,y)=>x[1]-y[1]); if(a[0][1]===a[1][1]) return GE.GEN[7][1](); const q=Math.random()<.5; return {t:7,q:'Was war '+(q?'früher':'später')+'?',o:q?[a[0][2],a[1][2]]:[a[1][2],a[0][2]],a:0,e:a[0][0]+': '+a[0][2]+' · '+a[1][0]+': '+a[1][2]+'.'}; },
+    ()=>{ const g=pick(GE.GRUENDE); return {t:7,q:'Welcher Grund des Scheiterns wird beschrieben? '+g[1],o:opts4(g[0],GE.GRUENDE.map(x=>x[0])),a:0,e:g[0]+'.'}; },
+    ()=>{ const i=Math.floor(Math.random()*(GE.STEPS_Q.length-1)); return {t:7,q:'Was folgt in der Quellenanalyse auf: „'+GE.STEPS_Q[i]+'“?',o:opts4(GE.STEPS_Q[i+1],GE.STEPS_Q),a:0,e:GE.STEPS_Q.join(' → ')+'.'}; }]};
+ for(const t in GE.GEN) GE.GEN[t]=GE.GEN[t].map(f=>()=>Object.assign(f(),{gen:true}));
+
+ GE.MATCH_KINDS={
+  daten:{label:'Daten',topic:5,make:()=>{ const seen=new Set(), out=[]; shuffle(EV).forEach(e=>{ if(out.length<5&&!seen.has(e[0])){ seen.add(e[0]); out.push({k:e[0],a:e[0],b:`<span style="font-size:.82rem;line-height:1.3">${e[2]}</span>`,t:e[3]}); } }); return out; }},
+  personen:{label:'Personen',topic:5,make:()=>shuffle(PER).slice(0,5).map(p=>({k:p.k,a:p.name,b:`<span style="font-size:.82rem;line-height:1.3">${p.role}</span>`,t:p.t}))},
+  fraktionen:{label:'Fraktionen',topic:6,make:()=>shuffle(FRA).slice(0,5).map(f=>({k:f[0],a:f[0],b:`<span style="font-size:.82rem;line-height:1.3">${f[1]}</span>`,t:6}))},
+  zitate:{label:'Zitate',topic:3,make:()=>shuffle(ZIT).slice(0,5).map(z=>({k:z[1],a:`<span style="font-size:.8rem">${z[1]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">„${z[0]}“</span>`,t:3}))},
+  begriffe:{label:'Begriffe',topic:1,make:()=>shuffle(GE.CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.82rem;line-height:1.3">${c[1]}</span>`,t:1}))}};
+
+ const YT='yt:';
+ GE.VIDEOS={
+ 1:[['YouTube','Wiener Kongress einfach erklärt',YT+'Wiener Kongress 1815 einfach erklärt'],['YouTube','Deutscher Bund 1815',YT+'Deutscher Bund 1815 Staatenbund erklärt']],
+ 2:[['YouTube','Wartburgfest und Karlsbader Beschlüsse',YT+'Wartburgfest Karlsbader Beschlüsse erklärt']],
+ 3:[['YouTube','Vormärz und Hambacher Fest',YT+'Vormärz Hambacher Fest 1832 erklärt'],['YouTube','Liberalismus Konservatismus 19. Jahrhundert',YT+'Liberalismus Konservatismus Demokraten 19. Jahrhundert erklärt']],
+ 4:[['YouTube','Zollverein und Pauperismus',YT+'Deutscher Zollverein Pauperismus Weberaufstand erklärt']],
+ 5:[['YouTube','Märzrevolution 1848',YT+'Märzrevolution 1848 Deutschland einfach erklärt']],
+ 6:[['YouTube','Frankfurter Nationalversammlung',YT+'Frankfurter Nationalversammlung Paulskirche einfach erklärt'],['YouTube','Paulskirchenverfassung',YT+'Paulskirchenverfassung 1849 erklärt']],
+ 7:[['YouTube','Scheitern der Revolution 1848/49',YT+'Scheitern der Revolution 1848 49 Gründe'],['YouTube','Karikaturanalyse',YT+'Karikaturanalyse Geschichte Aufbau']]};
+
+ GE.PLAN=[
+ {when:'Sa 14.11.',sub:'Block 1 · 60 Min',topics:[1,2],extra:''},
+ {when:'Sa 14.11.',sub:'Block 2 · 60 Min',topics:[3,4],extra:''},
+ {when:'So 15.11.',sub:'Block 1 · 60 Min',topics:[5,6],extra:''},
+ {when:'So 15.11.',sub:'Block 2 · 60 Min',topics:[7],extra:'<a class="pill" href="#aufgaben">Aufgaben schriftlich</a>'},
+ {when:'So 15.11.',sub:'abends · 45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Mo 16.11.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
+ GE.BOT_SUGGEST=['Erstell mir Karteikarten zu den Karlsbader Beschlüssen','Warum ist die Revolution gescheitert?','Was ist der Unterschied zwischen Liberalen und Demokraten?','Erklär mir groß- und kleindeutsch'];
+ GE.SPICK=[
+  ['Wiener Kongress und Deutscher Bund',['Wiener Kongress 1814/15, Metternich; Restauration, Legitimität, Solidarität, Gleichgewicht','Deutscher Bund 8.6.1815: Staatenbund (39 bzw. 41), Bundesversammlung Frankfurt, österreichischer Vorsitz','Art. 13: landständische Verfassungen – Preußen, Österreich keine','Heilige Allianz 1815: Russland, Österreich, Preußen · Wiener Schlussakte 1820: monarchisches Prinzip']],
+  ['Nationalbewegung 1815–1830',['Urburschenschaft Jena 1815, Schwarz-Rot-Gold (Lützower)','Wartburgfest 18.10.1817','Kotzebue-Mord durch Sand, Mannheim 1819','Karlsbader Beschlüsse 20.9.1819: Uni-Aufsicht, Burschenschaftsverbot, Zensur, Kommission Mainz → Demagogenverfolgung']],
+  ['Vormärz',['Julirevolution Paris 1830','Hambacher Fest 27.5.1832 (Siebenpfeiffer, Wirth): Einheit, Volkssouveränität','Wachensturm 1833 · Junges Deutschland 1835 · Göttinger Sieben 1837 · Rheinkrise 1840 · Lied der Deutschen 1841','Konservative / Liberale (konstitutionelle Monarchie) / Demokraten (Republik) · Biedermeier']],
+  ['Wirtschaft und Soziales',['Zollverein 1.1.1834 unter Preußen, ohne Österreich','Eisenbahn Nürnberg–Fürth 1835','Pauperismus · Weberaufstand 1844 · Hungerkrise 1845–47','Ursachen: politisch, sozial, wirtschaftlich; Auslöser Februarrevolution Paris']],
+  ['Märzrevolution 1848',['Märzforderungen 27.2. (Pressefreiheit, Schwurgerichte, Volksbewaffnung, Parlament)','13.3. Metternich gestürzt · 18./19.3. Barrikaden Berlin (ca. 250–300 Tote) · 21.3. „Preußen geht fortan in Deutschland auf“','Vorparlament 31.3.–3.4. → Wahlen · Hecker-Aufstand April']],
+  ['Paulskirche',['ab 18.5.1848, Präsident Gagern; „Professorenparlament“','Fraktionen rechts → links: Café Milani, Casino (größte), Württemberger Hof, Westendhall, Deutscher Hof, Donnersberg','Reichsverweser Erzherzog Johann 29.6. · Malmö 26.8. → Machtlosigkeit','Grundrechte 27.12.1848 · kleindeutsch · Reichsverfassung 28.3.1849: Erbkaiser, Volks- und Staatenhaus']],
+  ['Scheitern und Bilanz',['Blum erschossen 9.11.1848 · Preußen oktroyiert Verfassung 5.12.1848','Ablehnung der Krone 3.4.1849 (Brief an Bunsen 13.12.1848: „Reif aus Dreck und Letten“)','Rumpfparlament Stuttgart · Rastatt 23.7.1849','Gründe: Einheit + Freiheit, keine Macht, Spaltung, nationale Frage, Gegenrevolution','Nachwirkung: Grundrechte → Weimar, Grundgesetz; Schwarz-Rot-Gold']]];
+})();
+
+/* Widgets fürs Fach Geschichte */
+W.ge_wien=root=>{
+  const rows=[['Zeit','September 1814 – Juni 1815'],['Gastgeber','Metternich (Österreich)'],['Prinzipien','Restauration, Legitimität, Solidarität, Gleichgewicht'],['Deutscher Bund','8.6.1815, Staatenbund, 39 (bzw. 41) Mitglieder'],['Organ','Bundesversammlung in Frankfurt, österr. Vorsitz'],['Art. 13','landständische Verfassungen'],['Heilige Allianz','26.9.1815: Russland, Österreich, Preußen'],['Wiener Schlussakte','1820: monarchisches Prinzip']];
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Steckbrief. Tippe auf eine Zeile, um sie zu verdecken und dich selbst abzufragen.</p><div class="tbl"><table>${rows.map(r=>`<tr><th style="width:34%">${r[0]}</th><td class="de-hide" style="cursor:pointer">${r[1]}</td></tr>`).join('')}</table></div>`;
+  root.addEventListener('click',e=>{ const td=e.target.closest('.de-hide'); if(td) td.style.filter=td.style.filter?'':'blur(6px)'; });
+};
+function geTimeline(root,filter,title){
+  const evs=GE.EV.filter(filter);
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">${title} Tippe auf ein Datum, um das Ereignis aufzudecken.</p><ul class="ge-tl">${evs.map((e,i)=>`<li><button class="chip" type="button" data-i="${i}">${e[0]}</button> <span class="ge-ev" style="filter:blur(6px);cursor:pointer" data-i="${i}">${e[2]}</span></li>`).join('')}</ul><button class="btn small" type="button" id="ge-all">Alle aufdecken / verdecken</button>`;
+  root.addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(b){ const s=root.querySelector(`.ge-ev[data-i="${b.dataset.i}"]`); s.style.filter=s.style.filter?'':'blur(6px)'; }
+    if(e.target.id==='ge-all'){ const all=[...root.querySelectorAll('.ge-ev')], hide=all.some(x=>!x.style.filter); all.forEach(x=>x.style.filter=hide?'blur(6px)':''); } });
+}
+W.ge_zeit2=root=>geTimeline(root,e=>e[1]<1830,'Zeitstrahl 1814–1820.');
+W.ge_zeit5=root=>geTimeline(root,e=>e[1]>=1848&&e[1]<1848.4,'Zeitstrahl März bis Mai 1848.');
+W.ge_richt=root=>{
+  root.innerHTML=`<div class="row" id="ge-r">${GE.RICHT.map(r=>`<button class="chip" type="button" data-k="${r.k}">${r.av} ${r.name}</button>`).join('')}</div><div id="ge-r-out" class="expl" style="margin-top:10px">Tippe auf eine Richtung.</div>`;
+  root.querySelector('#ge-r').addEventListener('click',e=>{ const b=e.target.closest('[data-k]'); if(!b) return; const r=GE.RICHT.find(x=>x.k===b.dataset.k);
+    root.querySelectorAll('#ge-r .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    root.querySelector('#ge-r-out').innerHTML=`<b>${r.av} ${r.name}</b><br><b>Ziele:</b> ${r.z}<br><b>Wer:</b> ${r.w}<br><b>Beispiele:</b> ${r.b}`; });
+};
+W.ge_urs=root=>{
+  const cats=['politisch','sozial','wirtschaftlich','Auslöser']; let list=shuffle(GE.URS.slice()), i=0, ok=0;
+  const draw=()=>{ if(i>=list.length){ root.innerHTML=`<div class="expl"><b>${ok} von ${list.length}</b> richtig zugeordnet.</div><button class="btn small" type="button" id="ge-u-r" style="margin-top:8px">Nochmal</button>`; root.querySelector('#ge-u-r').onclick=()=>{ list=shuffle(GE.URS.slice()); i=0; ok=0; draw(); }; return; }
+    const u=list[i]; root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Ursache ${i+1} von ${list.length}: Welche Art ist das?</p><p style="font-size:1.02rem"><b>${u[0]}</b></p><div class="opts" id="ge-u">${cats.map(c=>`<button class="opt" type="button">${c}</button>`).join('')}</div><div id="ge-u-out"></div>`;
+    root.querySelector('#ge-u').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; const r=b.textContent===u[1]; if(r) ok++;
+      root.querySelectorAll('#ge-u .opt').forEach(x=>{ x.disabled=true; if(x.textContent===u[1]) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      root.querySelector('#ge-u-out').innerHTML=`<button class="btn small" type="button" id="ge-u-n" style="margin-top:8px">Weiter</button>`; root.querySelector('#ge-u-n').onclick=()=>{ i++; draw(); }; }); };
+  draw();
+};
+W.ge_fra=root=>{
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Sitzordnung der Paulskirche von rechts (konservativ) nach links (radikal). Tippe auf eine Fraktion.</p><div class="row" id="ge-f">${GE.FRA.map((f,i)=>`<button class="chip" type="button" data-i="${i}">${f[0]}</button>`).join('')}</div><div id="ge-f-out" class="expl" style="margin-top:10px">Wähle eine Fraktion.</div>`;
+  root.querySelector('#ge-f').addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(!b) return; const f=GE.FRA[b.dataset.i];
+    root.querySelectorAll('#ge-f .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    root.querySelector('#ge-f-out').innerHTML=`<b>${f[0]}</b> · ${f[1]}<br>${f[2]}`; });
+};
+W.ge_gruende=root=>{
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Gründe des Scheiterns: erst selbst überlegen, dann aufdecken.</p>${GE.GRUENDE.map((g,i)=>`<details class="card" style="margin:6px 0;padding:10px 12px"><summary style="cursor:pointer;font-weight:700">${i+1}. ${g[0]}</summary><p style="margin:.5em 0 0">${g[1]}</p></details>`).join('')}<p class="muted" style="font-size:.85rem">In der Klausur gewichten: Welche Gründe waren entscheidend, und warum?</p>`;
+  const box=renderOrder(GE.ORDERS[0],()=>{}); const h=document.createElement('p'); h.className='muted'; h.style.cssText='font-size:.9rem;margin-top:14px'; h.textContent='Und jetzt: Schritte der Quellenanalyse ordnen.'; root.appendChild(h); root.appendChild(box);
+};
+
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
 const PLAN=[
  {when:'So 8.11.',sub:'heute Abend · 60 Min',topics:[1,7,2],extra:''},
@@ -1813,7 +2229,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.2';
+const APP_VERSION='5.3';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2008,19 +2424,24 @@ document.addEventListener('click',e=>{
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
  heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌',
+ urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',
  buch:'📚',feder:'🪶',maske:'🎭',krug:'🏺',waage:'⚖️',rolle:'📜',luege:'🤥',wein:'🍷',katze:'🐈',fuss:'🦶',lupe:'🔍',schock:'😱'};
 const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
  owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅',
- richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭'};
+ richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭',
+ professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇'};
 const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
 const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
  ...[['fire',0],['wave',0],['gg',0],['laugh',120],['eyes',120],['clap',150],['think',150],['sweat',150],['heart',180],['cool',200],['cry',200],['sleep',200],['popcorn',220],['muscle',250],['salute',250],['angry',250],['snail',280],['nerd',300],['party',300],['flask',350],['star',350],['ghost',400],['brain',400],['mind',450],['cold',450],['bolt',450],['hundred',500],['clown',500],['skull',600],['devil',600],['rocket',650],['atom',700],['alembic',750],['trophy',900],['crown',1000],['goat',1500]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:['flask','atom','alembic','brain'].includes(id)?'chemie':undefined})),
  ...[['buch',120],['feder',150],['katze',180],['wein',200],['lupe',220],['schock',250],['rolle',300],['fuss',350],['luege',400],['maske',450],['waage',600],['krug',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'deutsch'})),
+ ...[['kartoffel',120],['zeitung',150],['brief',180],['eiche',200],['zug',250],['barrikade',300],['urne',350],['schwerter',450],['saeule',600],['flagge',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'geschichte'})),
  ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
  ...[['magd',250],['bauer',300],['theater',450],['detektiv',700],['kaiser',1000],['richter',1500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'deutsch'})),
+ ...[['arbeiter',250],['student',300],['reiter',500],['soldat',700],['professor',1000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'geschichte'})),
  ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:p?'chemie':undefined})),
  ...[['Krug-Kenner',250],['Zitat-Profi',300],['Auftritt-Ass',350],['Stilmittel-Sammler',400],['Blankvers-Boss',450],['Ironie-Insider',500],['Szenen-Analyst',550],['Adam-Entlarver',600],['Perücken-Finder',700],['Kleist-Kenner',800],['Gerichtsrat',900],['Dorfrichter',1200],['Lustspiel-Legende',1500],['Deutsch-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'deutsch'})),
+ ...[['Burschenschafter',250],['Wartburg-Wanderer',300],['Hambach-Held',350],['Vormärz-Veteran',400],['Zollvereins-Profi',450],['Barrikadenkämpfer',500],['Märzrevolutionär',550],['Paulskirchen-Abgeordneter',650],['Grundrechte-Retter',750],['Metternich-Bezwinger',900],['Reichsverweser',1200],['Kaiser der Herzen',1500],['Geschichts-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'geschichte'})),
  ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
 function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; if(S.nameOk===undefined) S.nameOk=S.name; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
@@ -2528,7 +2949,7 @@ function initBot(){ drawChat();
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
-  if(FACH.id==='deutsch'){ app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+DE.SPICK.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<7?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
+  if(FACH.id!=='chemie'){ const SP=(FACH.id==='deutsch'?DE:GE).SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<7?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
   const T=TOPICS;
   app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
@@ -2728,7 +3149,14 @@ const FACHER={
   examIntro:'15 Fragen aus allen 7 Themen: Entstehung, Aufbau, Figuren, Handlung, Motive und Szenenanalyse. Ein Teil wird jedes Mal neu zusammengestellt. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
   examTips:'<li>Einleitung immer mit <b>TATZT</b> und einer <b>Deutungshypothese</b>.</li><li>Vor der Analyse die Szene <b>einordnen</b>: Was geschah vorher, was folgt?</li><li><b>Nur im Hauptteil zitieren</b>, immer mit Versangabe.</li><li>Bei Kleist immer fragen: <b>Wer weiß was?</b> (dramatische Ironie, Beiseitesprechen)</li><li>Regieanweisungen und Redeanteile nicht vergessen.</li>',
   ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Fasse zusammen</b>: Inhalt knapp, im Präsens, ohne Zitate</li><li><b>Ordne ein</b>: Was geschieht vorher, was nachher?</li><li><b>Charakterisiere</b>: Eigenschaften mit Textbelegen</li><li><b>Analysiere / Untersuche</b>: Gespräch, Sprache und dramatische Gestaltung mit Zitaten deuten</li><li><b>Erläutere</b>: mit Beispielen und Belegen erklären</li>',
-  trMatch:t=>({3:pick(['figuren','zitate']),4:'auftritte',5:'auftritte',6:'stil',7:'begriffe'})[t]||null}};
+  trMatch:t=>({3:pick(['figuren','zitate']),4:'auftritte',5:'auftritte',6:'stil',7:'begriffe'})[t]||null},
+ geschichte:{id:'geschichte',name:'Geschichte',emoji:'🏛️',sub:'1815–1848/49 · Klausur Mo 16.11.',eyebrow:'Geschichte · Freie Waldorfschule',title:'Vom Wiener Kongress zur Paulskirche',exam:'2026-11-16T09:50:00+01:00',examLabel:'Mo 16.11.26, 9:50',
+  planIntro:'So schaffst du alle 7 Themen bis Montag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir Restauration, Vormärz und die Revolution 1848/49 und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was waren die Karlsbader Beschlüsse?',matchLink:'Zuordnen-Spiel: Daten, Personen, Fraktionen, Zitate, Begriffe',spickWhen:'Montag früh',
+  examIntro:'15 Fragen aus allen 7 Themen: Wiener Kongress, Nationalbewegung, Vormärz, Wirtschaft, Märzrevolution, Paulskirche und Scheitern. Ein Teil wird jedes Mal neu zusammengestellt. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
+  examTips:'<li>Daten sicher: <b>1815</b> Bund, <b>1817</b> Wartburg, <b>1819</b> Karlsbad, <b>1832</b> Hambach, <b>1834</b> Zollverein, <b>März 1848</b> Revolution, <b>18.5.1848</b> Paulskirche, <b>28.3.1849</b> Verfassung, <b>3.4.1849</b> Ablehnung.</li><li>Ursachen gliedern: <b>politisch, sozial, wirtschaftlich, Auslöser</b>.</li><li>Quellen: <b>Autor, Adressat, Datum, Anlass</b> nennen, dann Inhalt, Analyse, Kontext, Urteil.</li><li>Beim Urteil <b>gewichten</b>, nicht nur aufzählen.</li><li>Fallstrick: „Reif aus Dreck und Letten“ steht im <b>Brief an Bunsen (13.12.1848)</b>.</li>',
+  ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erkläre / Erläutere</b>: Ursachen und Zusammenhänge mit Beispielen deutlich machen</li><li><b>Ordne ein</b>: in den historischen Zusammenhang stellen</li><li><b>Analysiere</b>: Quelle oder Karikatur nach Kriterien untersuchen</li><li><b>Beurteile</b>: Sachurteil mit Begründung · <b>Bewerte</b>: Werturteil aus heutiger Sicht · <b>Erörtere</b>: Pro und Contra, dann Urteil</li>',
+  trMatch:t=>({1:'begriffe',2:'daten',3:'zitate',5:pick(['daten','personen']),6:'fraktionen',7:'personen'})[t]||null}};
 let FACH=FACHER[S.fach]||FACHER.chemie;
 // Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
 const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
@@ -2738,7 +3166,7 @@ function replaceArr(a,b){ a.splice(0,a.length,...b); }
 function replaceObj(o,b){ Object.keys(o).forEach(k=>delete o[k]); Object.assign(o,b); }
 function applyFachData(id){
   if(!CHEM_SNAP) CHEM_SNAP={TOPICS:TOPICS.slice(),QUESTIONS:QUESTIONS.slice(),TF:TF.slice(),CARDS:CARDS.slice(),TASKS:TASKS.slice(),ORDERS:ORDERS.slice(),GEN:Object.assign({},GEN),MATCH_KINDS:Object.assign({},MATCH_KINDS),VIDEOS:Object.assign({},VIDEOS),PLAN:PLAN.slice(),BOT_SUGGEST:BOT_SUGGEST.slice()};
-  const D=id==='deutsch'?DE:CHEM_SNAP;
+  const D=id==='deutsch'?DE:id==='geschichte'?GE:CHEM_SNAP;
   ['TOPICS','QUESTIONS','TF','CARDS','TASKS','ORDERS','PLAN','BOT_SUGGEST'].forEach(k=>replaceArr({TOPICS,QUESTIONS,TF,CARDS,TASKS,ORDERS,PLAN,BOT_SUGGEST}[k],D[k]));
   replaceObj(GEN,D.GEN); replaceObj(MATCH_KINDS,D.MATCH_KINDS); replaceObj(VIDEOS,D.VIDEOS);
   FACH=FACHER[id]; EXAM.setTime(new Date(FACH.exam).getTime());

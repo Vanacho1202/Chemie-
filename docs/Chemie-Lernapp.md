@@ -60,6 +60,7 @@ Werte stehen nur bei Render, nie im Repo oder hier.
 ## Fächer (ab Version 5.0)
 - Beim ersten Start Fachauswahl, oben auf der Startseite „Fach wechseln“
 - **Chemie**: Alkane (Klausur 10.11.2026)
+- **Geschichte**: Deutschland 1815–1848/49 (Klausur Mo 16.11.2026, 9:50); Wiener Kongress, Nationalbewegung, Vormärz, Wirtschaft, Märzrevolution, Paulskirche, Scheitern + Quellen-/Karikaturanalyse; Zeitstrahl, Fraktionen, politische Richtungen; Server-Prompt `SYSTEM_GE`
 - **Deutsch GK**: Kleist, „Der zerbrochne Krug“ + Szenenanalyse (Klausur Do 12.11.2026, 8:00); 7 Themen, Fragenpool, Generatoren (Figuren, Zitate, Auftritte, Stilmittel, Aufbau), Karteikarten, Aufgaben mit Musterlösung, Spickzettel
 - Fortschritt (Themen, Training, Fehlerheft, Probeklausuren, Karten, Stapel) pro Fach gespeichert; Münzen, Shop, Freunde, Name gelten für alle
 - Schnellsuche im Battle nur gegen Spieler im selben Fach; Alki und Karteikarten-KI kennen das gewählte Fach
