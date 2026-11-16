@@ -1675,7 +1675,7 @@ W.de_analyse=root=>{
   root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Bringe die Bausteine einer Szenenanalyse in die richtige Reihenfolge.</p>`; root.appendChild(box);
 };
 
-/* ================= Fach Geschichte: Deutschland 1815–1849 ================= */
+/* ================= Fach Geschichte: Deutschland 1815–1871 ================= */
 const GE={};
 GE.EV=[
  ['1814/15',1814.9,'Wiener Kongress',1],
@@ -1713,7 +1713,54 @@ GE.EV=[
  ['28.3.1849',1849.24,'Reichsverfassung, Friedrich Wilhelm IV. zum Kaiser gewählt',6],
  ['3.4.1849',1849.26,'Friedrich Wilhelm IV. lehnt die Kaiserkrone ab',7],
  ['6.–18.6.1849',1849.45,'Rumpfparlament in Stuttgart',7],
- ['23.7.1849',1849.56,'Kapitulation der Festung Rastatt: Ende der Revolution',7]];
+ ['23.7.1849',1849.56,'Kapitulation der Festung Rastatt: Ende der Revolution',7],
+ ['26.5.1849',1849.4,'Dreikönigsbündnis Preußen, Sachsen, Hannover (Unionspolitik)',8],
+ ['20.3.–29.4.1850',1850.22,'Erfurter Unionsparlament',8],
+ ['29.11.1850',1850.91,'Olmützer Punktation: Preußen gibt die Union auf',8],
+ ['23.8.1851',1851.64,'Bundesreaktionsbeschluss, Grundrechte für ungültig erklärt',8],
+ ['19.2.1853',1853.13,'Preußisch-österreichischer Handelsvertrag',8],
+ ['Okt. 1858',1858.78,'Prinz Wilhelm wird Regent: „Neue Ära“',8],
+ ['24.6.1859',1859.48,'Österreich verliert bei Solferino (Italienischer Krieg)',8],
+ ['15./16.9.1859',1859.7,'Gründung des Deutschen Nationalvereins',8],
+ ['2.8.1862',1862.58,'Preußisch-französischer Handelsvertrag unterzeichnet',8],
+ ['Okt. 1862',1862.79,'Gründung des großdeutschen Reformvereins',8],
+ ['1860',1860.1,'Roon legt die Heeresreform vor',9],
+ ['6.6.1861',1861.43,'Gründung der Deutschen Fortschrittspartei',9],
+ ['Sept. 1862',1862.72,'Bismarck wird Ministerpräsident (auf Betreiben Roons)',9],
+ ['30.9.1862',1862.745,'„Eisen und Blut“-Rede in der Budgetkommission',9],
+ ['3.9.1866',1866.67,'Indemnitätsvorlage angenommen (230 zu 75)',9],
+ ['1867',1867.05,'Gründung der Nationalliberalen Partei',9],
+ ['18.11.1863',1863.88,'Dänische Novemberverfassung bindet Schleswig an Dänemark',10],
+ ['1.2.1864',1864.08,'Preußen und Österreich überschreiten die Eider: Kriegsbeginn',10],
+ ['18.4.1864',1864.3,'Erstürmung der Düppeler Schanzen',10],
+ ['30.10.1864',1864.83,'Frieden von Wien: Dänemark tritt Schleswig, Holstein, Lauenburg ab',10],
+ ['14.8.1865',1865.62,'Gasteiner Konvention: Schleswig an Preußen, Holstein an Österreich',10],
+ ['8.4.1866',1866.27,'Geheimbündnis Preußen–Italien',11],
+ ['9.4.1866',1866.275,'Preußischer Bundesreformantrag: Parlament aus allgemeinen Wahlen',11],
+ ['14.6.1866',1866.45,'Bundesbeschluss gegen Preußen (9 zu 6): Beginn des Deutschen Krieges',11],
+ ['3.7.1866',1866.5,'Schlacht bei Königgrätz',11],
+ ['26.7.1866',1866.57,'Vorfrieden von Nikolsburg',11],
+ ['23.8.1866',1866.64,'Frieden von Prag, Auflösung des Deutschen Bundes',11],
+ ['20.9.1866',1866.72,'Annexion von Hannover, Kurhessen, Nassau und Frankfurt',11],
+ ['12.2.1867',1867.12,'Wahl des Konstituierenden Reichstags',11],
+ ['11.5.1867',1867.36,'Londoner Vertrag beendet die Luxemburgkrise',11],
+ ['1.7.1867',1867.5,'Verfassung des Norddeutschen Bundes tritt in Kraft',11],
+ ['Feb./März 1868',1868.15,'Wahlen zum Zollparlament: Preußengegner siegen im Süden',11],
+ ['12.7.1870',1870.53,'Leopold von Hohenzollern verzichtet auf den spanischen Thron',12],
+ ['13.7.1870',1870.532,'Emser Depesche',12],
+ ['19.7.1870',1870.55,'Französische Kriegserklärung',12],
+ ['1./2.9.1870',1870.67,'Sedan: Kapitulation, Napoleon III. gefangen',12],
+ ['4.9.1870',1870.68,'Ausrufung der Dritten Republik in Paris',12],
+ ['28.1.1871',1871.075,'Kapitulation von Paris, Waffenstillstand',12],
+ ['18.3.–28.5.1871',1871.21,'Pariser Kommune',12],
+ ['10.5.1871',1871.36,'Frieden von Frankfurt: Elsass-Lothringen, 5 Mrd. Francs',12],
+ ['15./23./25.11.1870',1870.88,'Novemberverträge mit Baden/Hessen, Bayern, Württemberg',13],
+ ['30.11.1870',1870.92,'Kaiserbrief Ludwigs II.',13],
+ ['9.12.1870',1870.94,'Reichstag beschließt „Deutsches Reich“ und „Deutscher Kaiser“',13],
+ ['18.1.1871',1871.05,'Kaiserproklamation im Spiegelsaal von Versailles',13],
+ ['16.4.1871',1871.29,'Reichsverfassung beschlossen (in Kraft 4.5.1871)',13],
+ ['1877',1877,'Werners Gemälde, erste Fassung (Berliner Schloss)',13],
+ ['1885',1885,'Werners Friedrichsruher Fassung: Bismarck in Weiß',13]];
 GE.PER=[
  {k:'metternich',name:'Metternich',av:'🎩',life:'1773–1859',role:'österreichischer Staatskanzler, Architekt der Restauration',more:'Lenkte den Wiener Kongress, setzte die Karlsbader Beschlüsse durch („System Metternich“). Am 13.3.1848 gestürzt, Flucht nach England.',t:1},
  {k:'fw4',name:'Friedrich Wilhelm IV.',av:'👑',life:'1795–1861',role:'König von Preußen ab 1840',more:'Glaubte an das Gottesgnadentum. 1848: „An meine lieben Berliner!“, Umritt mit Schwarz-Rot-Gold am 21.3. Oktroyierte Verfassung 5.12.1848. Lehnte am 3.4.1849 die Kaiserkrone ab, endgültig am 28.4.1849.',t:7},
@@ -1730,7 +1777,23 @@ GE.PER=[
  {k:'jahn',name:'Friedrich Ludwig Jahn',av:'🤸',life:'1778–1852',role:'„Turnvater“, Nationalbewegung',more:'Gründete die Turnbewegung, Mitinitiator des Lützower Freikorps. 1819 im Zuge der Demagogenverfolgung verhaftet.',t:2},
  {k:'arndt',name:'Ernst Moritz Arndt',av:'✒️',life:'1769–1860',role:'Publizist der Befreiungskriege',more:'„Was ist des Deutschen Vaterland?“ Opfer der Demagogenverfolgung (Professur suspendiert), 1848 Abgeordneter der Paulskirche.',t:2},
  {k:'sand',name:'Karl Ludwig Sand',av:'🗡️',life:'1795–1820',role:'Burschenschafter, ermordete Kotzebue',more:'Erstach am 23.3.1819 in Mannheim den Schriftsteller August von Kotzebue. Metternich nahm den Mord als Anlass für die Karlsbader Beschlüsse.',t:2},
- {k:'marx',name:'Karl Marx',av:'📕',life:'1818–1883',role:'Mitverfasser des Kommunistischen Manifests',more:'Mit Friedrich Engels: „Manifest der Kommunistischen Partei“, Ende Februar 1848 in London. 1848/49 „Neue Rheinische Zeitung“ in Köln.',t:5}];
+ {k:'marx',name:'Karl Marx',av:'📕',life:'1818–1883',role:'Mitverfasser des Kommunistischen Manifests',more:'Mit Friedrich Engels: „Manifest der Kommunistischen Partei“, Ende Februar 1848 in London. 1848/49 „Neue Rheinische Zeitung“ in Köln.',t:5},
+ {k:'bismarck',name:'Otto von Bismarck',av:'🎖️',life:'1815–1898',role:'preußischer Ministerpräsident ab 1862, Reichskanzler 1871–1890',more:'Junker aus Schönhausen. 1851 Bundestagsgesandter in Frankfurt, 1859 St. Petersburg, 1862 Paris. Ab September 1862 Ministerpräsident, 1867 Bundeskanzler, 1871 Reichskanzler; 1890 von Wilhelm II. entlassen. Architekt der „Revolution von oben“.',t:9},
+ {k:'wilhelm1',name:'Wilhelm I.',av:'🤴',life:'1797–1888',role:'König von Preußen ab 1861, Deutscher Kaiser ab 1871',more:'1848 als „Kartätschenprinz“ verhasst. Ab 1858 Regent („Neue Ära“), wollte vor allem die Heeresreform. Erwog 1862 die Abdankung, berief dann Bismarck. Am 18.1.1871 in Versailles zum Kaiser proklamiert.',t:13},
+ {k:'roon',name:'Albrecht von Roon',av:'⚙️',life:'1803–1879',role:'preußischer Kriegsminister 1859–1873',more:'Plante die Heeresreform (1860), holte Bismarck 1862 nach Berlin. Fehlte am 18.1.1871 in Versailles, wurde aber in Werners Fassung von 1885 eingefügt.',t:9},
+ {k:'moltke',name:'Helmuth von Moltke',av:'🗺️',life:'1800–1891',role:'Chef des preußischen Generalstabs ab 1857',more:'Siegte 1864, 1866 (Königgrätz) und 1870 (Sedan). Nutzte Eisenbahn und Telegraf: „getrennt marschieren, vereint schlagen“.',t:11},
+ {k:'napoleon3',name:'Napoleon III.',av:'🇫🇷',life:'1808–1873',role:'Kaiser der Franzosen 1852–1870',more:'Kämpfte 1859 gegen Österreich, vermittelte 1866, wollte 1867 Luxemburg kaufen. Erklärte am 19.7.1870 den Krieg und geriet bei Sedan in Gefangenschaft.',t:12},
+ {k:'franzjoseph',name:'Franz Joseph I.',av:'🦅',life:'1830–1916',role:'Kaiser von Österreich ab 1848',more:'Verlor 1859 (Solferino) und 1866 (Königgrätz). 1867 Ausgleich mit Ungarn: Doppelmonarchie Österreich-Ungarn.',t:11},
+ {k:'ludwig2',name:'Ludwig II. von Bayern',av:'🏰',life:'1845–1886',role:'König von Bayern ab 1864, unterzeichnete den Kaiserbrief',more:'1866 Kriegsgegner Preußens. Unterschrieb am 30.11.1870 den von Bismarck entworfenen Kaiserbrief und erhielt geheime Zahlungen aus dem Welfenfonds.',t:13},
+ {k:'leopold',name:'Leopold von Hohenzollern-Sigmaringen',av:'🇪🇸',life:'1835–1905',role:'spanischer Thronkandidat 1870',more:'Aus der katholischen Nebenlinie der Hohenzollern, von Bismarck unterstützt. Verzichtete am 12.7.1870; Frankreich verlangte trotzdem eine Garantie für alle Zukunft.',t:12},
+ {k:'friedrich3',name:'Friedrich III.',av:'🎗️',life:'1831–1888',role:'preußischer Kronprinz, liberal gesinnt; 1888 99 Tage Kaiser',more:'Armeeführer 1866 und 1870, Mitinitiator der ersten Fassung von Werners Gemälde (1877).',t:13},
+ {k:'christian9',name:'Christian IX.',av:'🇩🇰',life:'1818–1906',role:'König von Dänemark ab 1863',more:'Unterzeichnete die Novemberverfassung (18.11.1863) und verlor 1864 Schleswig, Holstein und Lauenburg.',t:10},
+ {k:'werner',name:'Anton von Werner',av:'🎨',life:'1843–1915',role:'Historienmaler, Augenzeuge der Kaiserproklamation',more:'Malte „Die Proklamierung des Deutschen Kaiserreiches“ in Fassungen von 1877, 1882 und 1885 (dazu 1880 ein Holzstich).',t:13},
+ {k:'bennigsen',name:'Rudolf von Bennigsen',av:'📋',life:'1824–1902',role:'Vorsitzender des Nationalvereins, später Führer der Nationalliberalen',more:'Hannoverscher Liberaler, kleindeutsch. Nach 1866 Stütze Bismarcks: Einheit vor Freiheit.',t:8},
+ {k:'rochau',name:'August Ludwig von Rochau',av:'📘',life:'1810–1873',role:'Publizist, prägte den Begriff „Realpolitik“',more:'„Grundsätze der Realpolitik“ (1853): Das Gesetz der Stärke beherrscht die Politik. Gemeint als Machtstrategie des Bürgertums.',t:9},
+ {k:'virchow',name:'Rudolf Virchow',av:'🔬',life:'1821–1902',role:'Arzt, Abgeordneter der Fortschrittspartei',more:'Einer der Gründer der Fortschrittspartei (1861) und Gegner Bismarcks im Verfassungskonflikt.',t:9},
+ {k:'benedetti',name:'Vincent Benedetti',av:'🕴️',life:'1817–1900',role:'französischer Botschafter, sprach Wilhelm I. in Ems an',more:'Verlangte am 13.7.1870 die Garantie, dass die Hohenzollern nie wieder kandidieren. Bismarcks gekürzte Depesche ließ das wie eine schroffe Abweisung wirken.',t:12},
+ {k:'manteuffel',name:'Otto von Manteuffel',av:'📝',life:'1805–1882',role:'preußischer Minister, unterzeichnete die Olmützer Punktation',more:'Gab 1850 die preußische Unionspolitik auf – die „Schmach von Olmütz“.',t:8}];
 GE.FRA=[
  ['Café Milani','Rechte (konservativ)','Rechte der Fürsten und Einzelstaaten sichern'],
  ['Casino','Rechtes Zentrum (rechtsliberal)','konstitutionelle Erbmonarchie, Bundesstaat; größte Fraktion (Gagern, Simson)'],
@@ -1771,14 +1834,73 @@ GE.ZIT=[
  ['Vor dem Gesetz gilt kein Unterschied der Stände. Der Adel als Stand ist aufgehoben.','Grundrechte, § 137 (1848/49)'],
  ['Die Wissenschaft und Lehre ist frei.','Grundrechte, § 152 (1848/49)'],
  ['Die Krone ist erstlich keine Krone.','Friedrich Wilhelm IV. an Bunsen (13.12.1848)'],
- ['Wähler ist jeder unbescholtene Deutsche, welcher das fünfundzwanzigste Lebensjahr zurückgelegt hat.','Reichswahlgesetz, § 1 (1849)']];
+ ['Wähler ist jeder unbescholtene Deutsche, welcher das fünfundzwanzigste Lebensjahr zurückgelegt hat.','Reichswahlgesetz, § 1 (1849)'],
+ ['Nicht durch Reden und Majoritätsbeschlüsse werden die großen Fragen der Zeit entschieden … sondern durch Eisen und Blut.','Bismarck, Budgetkommission (30.9.1862)',9],
+ ['Nicht auf Preußens Liberalismus sieht Deutschland, sondern auf seine Macht.','Bismarck, Budgetkommission (30.9.1862)',9],
+ ['… daß das Gesetz der Stärke über das Staatsleben eine ähnliche Herrschaft ausübt wie das Gesetz der Schwere über die Körperwelt.','Rochau, Grundsätze der Realpolitik (1853)',9],
+ ['Seine Majestät der König hat es darauf abgelehnt, den französischen Botschafter nochmals zu empfangen.','Emser Depesche, Bismarcks Pressefassung (13.7.1870)',12],
+ ['Das Präsidium des Bundes steht dem Könige von Preußen zu, welcher den Namen Deutscher Kaiser führt.','Reichsverfassung, Art. 11 (1871)',13],
+ ['… allzeit Mehrer des Deutschen Reichs zu sein, nicht an kriegerischen Eroberungen, sondern an den Gütern und Gaben des Friedens.','Kaiserproklamation (18.1.1871)',13],
+ ['Veränderungen der Verfassung … gelten als abgelehnt, wenn sie im Bundesrathe 14 Stimmen gegen sich haben.','Reichsverfassung, Art. 78 (1871)',13],
+ ['Sechs Millionen Gulden würden ihm sehr angenehm sein.','Gesandter Werthern über Ludwig II. an Bismarck (19.11.1870)',13],
+ ['Akt der Verfassungsbrechung in Gesetzesform','Historiker Ernst Rudolf Huber über das Indemnitätsgesetz',14]];
+GE.VERTR=[
+ ['Olmützer Punktation (1850)','Preußen verzichtet auf die Erfurter Union',8],
+ ['Bundesreaktionsbeschluss (1851)','liberale Verfassungen werden zurückgenommen',8],
+ ['Londoner Protokoll (1852)','garantiert den dänischen Gesamtstaat',10],
+ ['Frieden von Wien (1864)','Dänemark tritt Schleswig, Holstein und Lauenburg ab',10],
+ ['Gasteiner Konvention (1865)','Schleswig von Preußen, Holstein von Österreich verwaltet',10],
+ ['Vorfrieden von Nikolsburg (1866)','schneller, milder Frieden mit Österreich',11],
+ ['Frieden von Prag (1866)','Deutscher Bund aufgelöst, Österreich scheidet aus',11],
+ ['Schutz- und Trutzbündnisse (1866)','geheime Militärbündnisse Preußens mit den Südstaaten',11],
+ ['Londoner Vertrag (1867)','Luxemburg wird dauerhaft neutral',11],
+ ['Novemberverträge (1870)','die Südstaaten treten dem Bund bei',13],
+ ['Frieden von Frankfurt (1871)','Elsass-Lothringen und 5 Milliarden Francs an Deutschland',12]];
+GE.VGL=[
+ ['Legitimation','Volkssouveränität (Nationalversammlung)','Fürstenbund (Novemberverträge)'],
+ ['Gebiet','kleindeutsch, nachdem die großdeutsche Lösung gescheitert war','kleindeutsch, dazu das Reichsland Elsass-Lothringen'],
+ ['Staatsoberhaupt','Erbkaiser mit nur aufschiebendem Veto','Deutscher Kaiser = König von Preußen, starke Stellung'],
+ ['Regierung','Minister dem Reichstag verantwortlich','Reichskanzler nur dem Kaiser verantwortlich'],
+ ['Parlament','Volkshaus und Staatenhaus','Reichstag und Bundesrat der Fürsten mit preußischem Veto'],
+ ['Grundrechte','umfassender Grundrechtekatalog','kein Grundrechtekatalog'],
+ ['Verfassungsgericht','Reichsgericht vorgesehen','kein Verfassungsgericht'],
+ ['Militär','unter Kontrolle der Verfassung','Kommandogewalt des Kaisers'],
+ ['Ergebnis','Einheit durch Freiheit – gescheitert','Einheit ohne volle Freiheit – verwirklicht']];
+GE.RVO=[
+ ['Legitime Dynastien wurden abgesetzt (Hannover, Kurhessen, Nassau).','dafür'],
+ ['Der Deutsche Bund wurde gewaltsam aufgelöst.','dafür'],
+ ['Das allgemeine Männerwahlrecht wurde von oben eingeführt.','dafür'],
+ ['Regierung und Armee ergriffen die Initiative, nicht das Volk.','dafür'],
+ ['Ziel war die Erhaltung der monarchisch-militärischen Ordnung.','dafür'],
+ ['Nationalbewegung, Vereine und Zollverein drängten schon lange vorher zur Einheit.','dagegen'],
+ ['Die Nationalliberalen wirkten aktiv an der Reichsgründung mit.','dagegen'],
+ ['Es gab echte Modernisierung, z. B. Rechts- und Wirtschaftseinheit.','dagegen']];
+GE.EMS_ORIG='„Graf Benedetti fing mich auf der Promenade ab, um auf zuletzt sehr zudringliche Art von mir zu verlangen, ich sollte ihn autorisieren, sofort zu telegraphieren, daß ich für alle Zukunft mich verpflichtete, niemals wieder meine Zustimmung zu geben, wenn die Hohenzollern auf ihre Kandidatur zurückkämen. Ich wies ihn, zuletzt etwas ernst, zurück […]“ Der König beschloss, Benedetti „nicht mehr zu empfangen, sondern ihn nur durch einen Adjutanten sagen zu lassen: daß Seine Majestät jetzt vom Fürsten die Bestätigung der Nachricht erhalten, die Benedetti aus Paris schon gehabt, und dem Botschafter nichts weiter zu sagen habe.“ „Seine Majestät stellt Eurer Exzellenz anheim, ob nicht die neue Forderung Benedettis und ihre Zurückweisung sogleich sowohl unseren Gesandten als in der Presse mitgeteilt werden sollte?“';
+GE.EMS_PRESSE='„Nachdem die Nachrichten von der Entsagung des Erbprinzen von Hohenzollern der Kaiserlich Französischen Regierung von der Königlich Spanischen amtlich mitgeteilt worden sind, hat der französische Botschafter in Ems an Seine Majestät den König noch die Forderung gestellt, ihn zu autorisieren, daß er nach Paris telegraphiere, daß Seine Majestät der König sich für alle Zukunft verpflichte, niemals wieder seine Zustimmung zu geben, wenn die Hohenzollern auf ihre Kandidatur wieder zurückkommen sollten. Seine Majestät der König hat es darauf abgelehnt, den französischen Botschafter nochmals zu empfangen, und demselben durch den Adjutanten vom Dienst sagen lassen, daß Seine Majestät dem Botschafter nichts weiter mitzuteilen habe.“';
+GE.EMS_AEND=['Der höfliche Ton und der Hinweis, dass der König nur auf eine Bestätigung wartete, fallen weg.','Dass Benedetti die Nachricht aus Paris schon hatte, wird gestrichen.','Aus einem Gesprächsablauf wird eine schroffe Abweisung: „nichts weiter mitzuteilen“.','Der Text geht an Presse und Gesandtschaften – das verletzt den diplomatischen Ehrenkodex.','Gefälscht wird nichts: gekürzt und zugespitzt, mit Erlaubnis des Königs („stellt … anheim“).'];
+GE.EMS_SATZ=[
+ ['Graf Benedetti fing mich auf der Promenade ab …','Abekens Original'],
+ ['Ich wies ihn, zuletzt etwas ernst, zurück …','Abekens Original'],
+ ['… daß Seine Majestät jetzt vom Fürsten die Bestätigung der Nachricht erhalten, die Benedetti aus Paris schon gehabt …','Abekens Original'],
+ ['Seine Majestät stellt Eurer Exzellenz anheim, ob nicht die neue Forderung … mitgeteilt werden sollte?','Abekens Original'],
+ ['Nachdem die Nachrichten von der Entsagung des Erbprinzen von Hohenzollern … amtlich mitgeteilt worden sind …','Bismarcks Pressefassung'],
+ ['Seine Majestät der König hat es darauf abgelehnt, den französischen Botschafter nochmals zu empfangen …','Bismarcks Pressefassung'],
+ ['… durch den Adjutanten vom Dienst sagen lassen, daß Seine Majestät dem Botschafter nichts weiter mitzuteilen habe.','Bismarcks Pressefassung']];
+GE.WERNER=[
+ ['1877 · Schlossfassung','Geschenk der Fürsten zu Wilhelms 80. Geburtstag; ziemlich dokumentarisch, Bismarck im blauen Rock, Wilhelm als Erster unter Gleichen','im Zweiten Weltkrieg verloren'],
+ ['1880 · Holzstich','neue Komposition, Bismarck erstmals im weißen Kürassierrock (den er in Versailles nicht trug)','als Druck erhalten'],
+ ['1882 · Zeughausfassung','für die Ruhmeshalle im Berliner Zeughaus; Bismarck in Weiß im Mittelpunkt, das Militär rückt nach vorn','im Zweiten Weltkrieg zerstört'],
+ ['1885 · Friedrichsruher Fassung','Geschenk zu Bismarcks 70. Geburtstag; Pour le Mérite (erst 1884 verliehen), Roon eingefügt, Figuren gealtert','einzige erhaltene Fassung (Bismarck-Museum Friedrichsruh)']];
 GE.STEPS_Q=['Einleitung: Quellengattung, Autor, Adressat, Datum, Anlass, Thema','Inhalt zusammenfassen, Kernaussagen herausarbeiten','Analyse: Argumentation, Sprache, Absicht und Standpunkt','Historischen Kontext einordnen (vorher/nachher)','Beurteilung: Sachurteil und Werturteil'];
 GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Personen, Gegenstände, Texte, Bildaufbau','Deutung der Symbole','Historischer Kontext und Absicht des Zeichners','Beurteilung: Überzeugt die Kritik?'];
 
 (function buildGE(){
- const EV=GE.EV, PER=GE.PER, FRA=GE.FRA, RICHT=GE.RICHT, ZIT=GE.ZIT;
+ // EV, PER, ZIT: nur 1815–1849 (Themen 1–7); EVA, PERA, ZITA: alles bis 1871
+ const EVA=GE.EV, PERA=GE.PER, ZITA=GE.ZIT, FRA=GE.FRA, RICHT=GE.RICHT;
+ const EV=EVA.filter(e=>e[3]<=7), PER=PERA.filter(p=>p.t<=7), ZIT=ZITA.filter(z=>!z[2]);
+ const EV71=EVA.filter(e=>e[3]>=8), PER71=PERA.filter(p=>p.t>=8), ZIT71=ZITA.filter(z=>z[2]);
  const opts4=(right,pool)=>{ const o=[right]; shuffle(pool.filter(x=>x!==right)).forEach(x=>{ if(o.length<4&&!o.includes(x)) o.push(x); }); return o; };
- const evOf=t=>EV.filter(e=>e[3]===t);
+ const evOf=t=>EVA.filter(e=>e[3]===t);
  const tl=t=>`<ul class="ge-tl">${evOf(t).map(e=>`<li><b>${e[0]}</b> ${e[2]}</li>`).join('')}</ul>`;
  GE.TOPICS=[
  {id:1,title:'Wiener Kongress und Deutscher Bund',short:'Restauration, Legitimität, Staatenbund',
@@ -1848,7 +1970,67 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
   <h3>Quellenanalyse</h3><ol>${GE.STEPS_Q.map(x=>`<li>${x}</li>`).join('')}</ol>
   <h3>Karikaturanalyse</h3><ol>${GE.STEPS_K.map(x=>`<li>${x}</li>`).join('')}</ol>
   <div class="merk"><span class="merk-label">Urteil</span><b>Sachurteil:</b> Wie glaubwürdig und aussagekräftig ist die Quelle (privat oder öffentlich, Standpunkt)? · <b>Werturteil:</b> Wie bewertest du das aus heutiger Sicht, mit Begründung?</div>`,
-  widget:'ge_gruende'}];
+  widget:'ge_gruende'},
+ {id:8,title:'Reaktionszeit und Dualismus 1849–1862',short:'Olmütz, Zollverein, Neue Ära, Nationalverein',
+  goals:['Preußens Unionspolitik und Olmütz erklären','Den Zollverein als Machtmittel im Dualismus einordnen','Neue Ära, Italienischen Krieg und Nationalverein verbinden'],
+  html:`<p>Nach 1849 war die Nationalbewegung geschlagen. Preußen versuchte zunächst selbst, einen kleindeutschen Bund „von oben“ zu schaffen.</p>
+  <h3>Preußische Unionspolitik</h3><ul><li><b>Dreikönigsbündnis (26.5.1849):</b> Preußen, Sachsen, Hannover; Berater Joseph Maria von Radowitz.</li><li><b>Erfurter Unionsparlament (20.3.–29.4.1850):</b> sollte eine kleindeutsche Verfassung unter Preußen beschließen. Die Demokraten boykottierten die Wahl, Sachsen und Hannover sprangen ab.</li><li><b>Herbstkrise 1850:</b> Streit um Kurhessen, preußische und bayerische Truppen stehen sich bei Bronnzell gegenüber; Russland stellt sich hinter Österreich.</li><li><b>Olmützer Punktation (29.11.1850):</b> Preußen (Minister Otto von Manteuffel) gibt die Union auf und demobilisiert – die <b>„Schmach von Olmütz“</b>.</li></ul>
+  <h3>Reaktionszeit</h3><p>Der Deutsche Bund wurde 1851 wiederhergestellt. Der <b>Bundesreaktionsbeschluss (23.8.1851)</b> zwang die Einzelstaaten, liberale Verfassungsbestimmungen zu ändern; am selben Tag wurden die <b>Grundrechte der Paulskirche</b> für ungültig erklärt. Ab 1851 war <b>Bismarck</b> preußischer Gesandter am Bundestag in Frankfurt. Er arbeitete konservativ mit Österreich zusammen, trat aber jedem Vorrang Österreichs entgegen.</p>
+  <h3>Wirtschaft als Machtmittel</h3><p>Österreich wollte mit dem <b>Bruck-Plan</b> (1849/50) eine Zollunion aller deutschen Staaten mit Österreich; erreicht wurde nur der <b>Handelsvertrag vom 19.2.1853</b>. Der <b>preußisch-französische Handelsvertrag</b> (unterzeichnet 2.8.1862) senkte die Zölle so stark, dass das schutzzöllnerische Österreich nicht mehr beitreten konnte. Wirtschaftlich war die kleindeutsche Lösung damit schon vor 1866 vorentschieden.</p>
+  <h3>Neue Ära und Italien</h3><ul><li><b>Oktober 1858:</b> Prinz Wilhelm wird Regent für den kranken Friedrich Wilhelm IV. und beruft ein gemäßigt liberales Ministerium: <b>„Neue Ära“</b>.</li><li><b>Italienischer Krieg 1859:</b> Sardinien-Piemont und Frankreich (Napoleon III.) besiegen Österreich bei <b>Solferino (24.6.1859)</b>. Piemont wird Vorbild einer Einigung durch einen starken Kernstaat; Preußens Mobilmachung zeigt Schwächen des Heeres – Anstoß zur Heeresreform.</li><li><b>Deutscher Nationalverein (15./16.9.1859, Frankfurt):</b> Vorsitz Rudolf von Bennigsen, kleindeutsch-liberal; je nach Quelle rund 21.000–30.000 Mitglieder.</li><li><b>Deutscher Reformverein (Oktober 1862):</b> das großdeutsch-föderalistische Gegenstück, stark in Süddeutschland und unter Katholiken. 1863 boykottiert Preußen Österreichs Frankfurter Fürstentag.</li></ul>
+  <div class="merk"><span class="merk-label">Dualismus</span>Österreich will den alten Bund unter Wiener Führung, Preußen Gleichrang – und baut seinen Vorsprung über den Zollverein aus.</div>`,
+  widget:'ge_zeit8'},
+ {id:9,title:'Verfassungskonflikt und Bismarck',short:'Heeresreform, Eisen und Blut, Lückentheorie, Indemnität',
+  goals:['Ursache und Kern des Verfassungskonflikts erklären','Die „Eisen und Blut“-Rede und die Lückentheorie analysieren','Indemnität und Spaltung der Liberalen beurteilen'],
+  html:`<h3>Heeresreform</h3><p>Kriegsminister <b>Albrecht von Roon</b> legte 1860 die Reform vor: größeres stehendes Heer, <b>drei statt zwei Jahre</b> Dienstzeit, die bürgerlich geprägte <b>Landwehr</b> wird zurückgedrängt. Das Abgeordnetenhaus bewilligte 1860 und 1861 nur Provisorien. Im Kern ging es nicht ums Geld, sondern um die Frage: <b>Wer kontrolliert das Heer – König oder Parlament?</b></p>
+  <h3>Vom Heeres- zum Verfassungskonflikt</h3><p>Die <b>Deutsche Fortschrittspartei</b> (gegründet 6.6.1861, erste deutsche Programmpartei; u. a. Virchow, Mommsen, Schulze-Delitzsch) gewann die Wahlen im Dezember 1861 und auch nach der Auflösung des Hauses 1862. Im September 1862 strich das Abgeordnetenhaus die Mittel. Wilhelm I. erwog die Abdankung.</p>
+  <h3>Bismarck wird Ministerpräsident</h3><p>Nach einem Gespräch in Babelsberg am 22.9.1862 wurde <b>Otto von Bismarck</b> auf Betreiben Roons Ministerpräsident (das genaue Datum schwankt in den Quellen zwischen dem 22. und 24.9.; endgültig und zugleich Außenminister ab 8.10.1862). Er versprach, die Reform notfalls auch ohne Haushalt durchzusetzen.</p>
+  <h3>„Eisen und Blut“ (30.9.1862)</h3><p>Rede vor der <b>Budgetkommission</b> des Abgeordnetenhauses, nur im Protokoll in indirekter Rede überliefert: „Nicht auf Preußens Liberalismus sieht Deutschland, sondern auf seine Macht“ … „Nicht durch Reden und Majoritätsbeschlüsse werden die großen Fragen der Zeit entschieden – das ist der große Fehler von 1848 und 1849 gewesen – sondern durch Eisen und Blut.“ Eigentlich wollte Bismarck die Liberalen gewinnen; gewirkt hat die Rede als Provokation. Virchow protestierte, der „Kladderadatsch“ verspottete sie.</p>
+  <p class="hint">Fallstrick: Original ist „Eisen und Blut“. „Blut und Eisen“ ist die spätere, populäre Umkehrung.</p>
+  <h3>Lückentheorie</h3><p>Nach Art. 62 der preußischen Verfassung von 1850 brauchte ein Gesetz König, Herrenhaus und Abgeordnetenhaus; nach Art. 99 wurde der Haushalt jährlich per Gesetz festgestellt. Bismarck: Einigen sich die drei nicht, hat die Verfassung eine <b>„Lücke“</b>, und der König als Souverän darf weiterregieren. Ab 1863 regierte er <b>ohne genehmigten Haushalt</b> – ein Verfassungsbruch in juristischer Verkleidung.</p>
+  <h3>Indemnität und Spaltung der Liberalen</h3><p>Am Tag von Königgrätz (3.7.1866) wurde neu gewählt, die Fortschrittspartei verlor mehr als die Hälfte ihrer Sitze. Bismarck bat um nachträgliche Straffreiheit (<b>Indemnität</b>) für die Jahre ab 1862, ohne Unrecht zuzugeben. Das Abgeordnetenhaus stimmte am <b>3.9.1866 mit 230 zu 75</b> zu. Die Mehrheit der Liberalen stellte nun <b>Einheit vor Freiheit</b> und gründete die <b>Nationalliberale Partei</b> (Bennigsen, Lasker, Miquel) – Bismarcks Stütze bis 1878.</p>
+  <div class="merk"><span class="merk-label">Realpolitik</span>Begriff von <b>August Ludwig von Rochau</b> (1853), nicht von Bismarck: Politik richtet sich nach Machtverhältnissen. Bismarcks Methoden: Kriege isolieren und begrenzen, den Gegner zum Angreifer machen, Besiegte schonen, das allgemeine Wahlrecht taktisch nutzen.</div>`,
+  widget:'ge_bismarck'},
+ {id:10,title:'Deutsch-Dänischer Krieg 1864',short:'Schleswig-Holstein, Düppel, Gastein',
+  goals:['Die Schleswig-Holstein-Frage erklären','Ablauf und Ergebnis des Krieges 1864 nennen','Bismarcks Vorgehen und die Gasteiner Konvention beurteilen'],
+  html:`<h3>Ausgangslage</h3><p><b>Schleswig</b> war dänisches Lehen und <b>nicht</b> im Deutschen Bund, <b>Holstein</b> und <b>Lauenburg</b> gehörten zum Bund. Alle drei regierte der dänische König in Personalunion. Die Nationalbewegung forderte nach dem Ripener Vertrag von 1460 ein „up ewig ungedeelt“. Das <b>Londoner Protokoll (1852)</b> garantierte den dänischen Gesamtstaat, verbot aber die Einverleibung Schleswigs.</p>
+  <h3>Auslöser</h3><p>Der neue König <b>Christian IX.</b> unterzeichnete die <b>Novemberverfassung (18.11.1863)</b>: eine gemeinsame Verfassung für Dänemark und Schleswig – ein Bruch des Londoner Protokolls. Der Bund antwortete mit einer Bundesexekution in Holstein (Dezember 1863, sächsische und hannoversche Truppen).</p>
+  <h3>Krieg</h3><ul><li><b>16.1.1864:</b> 48-Stunden-Ultimatum Preußens und Österreichs</li><li><b>1.2.1864:</b> Überschreiten der Eider, Oberbefehl beim 80-jährigen Feldmarschall Wrangel</li><li><b>18.4.1864:</b> Erstürmung der <b>Düppeler Schanzen</b></li><li>Londoner Konferenz (April bis Juni) ohne Ergebnis, danach Eroberung Alsens</li><li><b>30.10.1864: Frieden von Wien</b> – Dänemark tritt Schleswig, Holstein und Lauenburg an Preußen und Österreich ab</li></ul>
+  <h3>Bismarcks Kalkül</h3><p>Er führte den Krieg <b>nicht im Namen des Bundes</b>, sondern gemeinsam mit Österreich und <b>auf Grundlage des Londoner Protokolls</b>. So mussten die anderen Großmächte nicht eingreifen. Den Herzog von Augustenburg, den die Nationalbewegung als Landesherrn wollte, überging er.</p>
+  <h3>Gasteiner Konvention (14.8.1865)</h3><p>Preußen verwaltet Schleswig, Österreich Holstein, Lauenburg kommt an Preußen. Die gemeinsame Herrschaft war von Anfang an ein <b>Konfliktherd</b> – und wurde zum Anlass für 1866.</p>`,
+  widget:'ge_zeit10'},
+ {id:11,title:'Deutscher Krieg 1866 und Norddeutscher Bund',short:'Königgrätz, Prager Frieden, Annexionen, Bund 1867',
+  goals:['Anlass, Verlauf und Ergebnis des Krieges 1866 erklären','Bismarcks milden Frieden begründen','Aufbau des Norddeutschen Bundes und die Lage bis 1870 beschreiben'],
+  html:`<h3>Vorbereitung</h3><ul><li><b>8.4.1866:</b> auf drei Monate befristetes Geheimbündnis mit <b>Italien</b> (gegen die Bundesakte)</li><li><b>9.4.1866:</b> preußischer <b>Bundesreformantrag</b>: ein Nationalparlament aus direkten Wahlen und allgemeinem Stimmrecht – das Wahlrecht als Waffe gegen Österreich und die Mittelstaaten</li><li>Juni: Österreich bringt die Holstein-Frage vor den Bund, Preußen marschiert in Holstein ein</li><li><b>14.6.1866:</b> Bundesbeschluss zur Mobilmachung gegen Preußen (9 zu 6); Preußen erklärt den Bund für erloschen</li></ul>
+  <h3>Krieg</h3><p>Auf Österreichs Seite standen u. a. Sachsen, Hannover, Bayern, Württemberg, Baden, Hessen-Darmstadt, Kurhessen und Nassau, auf Preußens Seite Italien und die meisten norddeutschen Kleinstaaten. Förmliche Kriegserklärungen gab es nicht. Generalstabschef <b>Moltke</b> nutzte Eisenbahn, Telegraf und das Zündnadelgewehr („getrennt marschieren, vereint schlagen“). Entscheidung: <b>Königgrätz, 3.7.1866</b>.</p>
+  <h3>Frieden und Neuordnung</h3><ul><li><b>Vorfrieden von Nikolsburg (26.7.)</b> und <b>Frieden von Prag (23.8.1866)</b>: Österreich verliert nur Venetien (an Italien), stimmt aber der <b>Auflösung des Deutschen Bundes</b> und einer Neuordnung ohne Österreich zu. Preußen bekommt freie Hand nördlich der <b>Mainlinie</b>.</li><li><b>Bismarcks Mäßigung:</b> Gegen König und Militär setzte er einen schnellen, milden Frieden ohne Einzug in Wien durch – Frankreich sollte nicht eingreifen, Österreich als späterer Partner erhalten bleiben.</li><li><b>Annexionen (20.9.1866):</b> Königreich Hannover, Kurhessen, Nassau, Frankfurt sowie Schleswig und Holstein; Preußens Ost- und Westteile sind verbunden. Aus dem Vermögen des Welfenhauses entsteht der <b>Welfenfonds</b>.</li><li><b>Schutz- und Trutzbündnisse</b> (August 1866) mit den Südstaaten: Im Krieg unterstehen ihre Truppen dem preußischen König.</li><li>Folge in Österreich: <b>Ausgleich 1867</b>, Doppelmonarchie Österreich-Ungarn.</li></ul>
+  <h3>Norddeutscher Bund (1867)</h3><p>Wahl des Konstituierenden Reichstags am <b>12.2.1867</b> (allgemein, gleich, direkt, Männer ab 25), Verfassung angenommen am <b>16.4.1867 (230 zu 53)</b>, in Kraft am <b>1.7.1867</b>. Ein <b>Bundesstaat</b> unter Preußen – das Modell für 1871.</p>
+  <h3>Bis 1870</h3><ul><li><b>Luxemburgkrise 1867:</b> Napoleon III. will Luxemburg vom niederländischen König kaufen; der <b>Londoner Vertrag (11.5.1867)</b> macht es dauerhaft neutral. Die deutsch-französische Entfremdung wächst.</li><li><b>Zollparlament (1868–1870):</b> Bei den Wahlen 1868 siegen in Bayern und Württemberg die Preußengegner. Die wirtschaftliche Einigung reicht nicht – erst ein Krieg bindet den Süden.</li></ul>`,
+  widget:'ge_ndb'},
+ {id:12,title:'Krieg 1870/71 und Emser Depesche',short:'Thronkandidatur, Ems, Sedan, Frieden von Frankfurt',
+  goals:['Die spanische Thronkandidatur und die Emser Depesche erklären','Beide Fassungen der Depesche vergleichen','Verlauf und Folgen des Krieges nennen'],
+  html:`<h3>Spanische Thronkandidatur</h3><p>Nach dem Sturz Isabellas II. (1868) suchte Spanien einen König. Bismarck unterstützte <b>Leopold von Hohenzollern-Sigmaringen</b>. Frankreich fürchtete eine Umklammerung. Leopold verzichtete am <b>12.7.1870</b>, Frankreich verlangte zusätzlich eine Garantie „für alle Zukunft“.</p>
+  <h3>Emser Depesche (13.7.1870)</h3><p>Botschafter <b>Benedetti</b> sprach König Wilhelm in Bad Ems auf der Kurpromenade an. Geheimrat <b>Heinrich Abeken</b> telegrafierte den Bericht an Bismarck nach Berlin. Bismarck <b>kürzte</b> ihn beim Abendessen mit Roon und Moltke und gab ihn an Presse und Gesandtschaften. Aus einem höflichen Gesprächsablauf wurde eine schroffe Abweisung. Den Vergleich beider Fassungen findest du unten.</p>
+  <p class="hint">Gefälscht hat Bismarck nichts: Er hat <b>gekürzt und zugespitzt</b>, und der König hatte ihm die Veröffentlichung ausdrücklich freigestellt.</p>
+  <h3>Krieg</h3><ul><li><b>19.7.1870:</b> Frankreich erklärt den Krieg und steht in Europa als Angreifer da. Die Südstaaten erkennen den Bündnisfall an (im bayerischen Landtag scheitert ein Neutralitätsantrag 89 zu 58).</li><li>August: Wörth, Spichern, Mars-la-Tour, Gravelotte; Metz wird eingeschlossen</li><li><b>1./2.9.1870: Sedan</b> – Kapitulation, <b>Napoleon III.</b> gerät in Gefangenschaft</li><li><b>4.9.1870:</b> Dritte Republik in Paris, die „Regierung der nationalen Verteidigung“ kämpft weiter</li><li>ab 18./19.9.1870 Belagerung von Paris; <b>28.1.1871</b> Kapitulation und Waffenstillstand</li><li>Vorfrieden von Versailles 26.2.1871; <b>Pariser Kommune</b> 18.3.–28.5.1871</li><li><b>10.5.1871: Frieden von Frankfurt</b> – Elsass und Teile Lothringens, <b>5 Milliarden Francs</b> Kriegsentschädigung</li></ul>
+  <div class="merk"><span class="merk-label">Folge</span>Die Annexion von Elsass-Lothringen war für Frankreich eine tiefe Demütigung: Revanchismus und „Erbfeindschaft“ bis 1914. Wer sie vorantrieb, ist umstritten – am sichersten: auf Druck von Militär und Öffentlichkeit, von Bismarck mitgetragen.</div>`,
+  widget:'ge_ems'},
+ {id:13,title:'Reichsgründung und Reichsverfassung 1871',short:'Novemberverträge, Kaiserbrief, Versailles, Verfassung, Werner',
+  goals:['Den Weg zur Reichsgründung beschreiben','Die Reichsverfassung von 1871 erklären','Werners Gemälde als Quelle analysieren'],
+  html:`<h3>Weg zum Reich</h3><ul><li><b>Novemberverträge 1870:</b> 15.11. Baden und Hessen, 23.11. Bayern, 25.11. Württemberg treten dem Bund bei.</li><li><b>Reservatrechte</b> für Bayern: eigenes Heer im Frieden, Post und Telegrafie, Eisenbahn, Bier- und Branntweinsteuer, eigene Gesandtschaften; Sonderrechte auch für Württemberg.</li><li><b>Kaiserbrief (30.11.1870):</b> Ludwig II. bittet Wilhelm I., die Kaiserwürde anzunehmen. Den Entwurf schrieb Bismarck. So erschien das Reich als <b>Fürstenbund</b> – ein Angebot des Parlaments wie 1849 wurde bewusst vermieden. Ludwig erhielt 1871–1886 geheime Zahlungen aus dem <b>Welfenfonds</b> (insgesamt rund 5 Millionen Mark); ob das Geld Bedingung war, ist nicht sicher.</li><li><b>9.12.1870:</b> Der Reichstag beschließt die Namen „Deutsches Reich“ und „Deutscher Kaiser“. Eine Deputation unter <b>Eduard Simson</b> reist nach Versailles – derselbe Simson, der 1849 Friedrich Wilhelm IV. die Krone angeboten hatte.</li><li>Die bayerische Abgeordnetenkammer stimmte erst am 21.1.1871 zu, also nach der Proklamation.</li></ul>
+  <h3>Kaiserproklamation (18.1.1871)</h3><p>Im <b>Spiegelsaal von Versailles</b> – eine Demütigung Frankreichs – am 170. Jahrestag der Krönung des ersten preußischen Königs (1701). Anwesend waren <b>Fürsten und Militärs, keine Parlamentarier</b>. Bismarck verlas die Proklamation, Großherzog Friedrich I. von Baden brachte das Hoch auf „Kaiser Wilhelm“ aus und umging so den <b>Titelstreit</b>: Wilhelm wollte „Kaiser von Deutschland“ werden, Bismarck setzte „<b>Deutscher Kaiser</b>“ durch.</p>
+  <h3>Reichsverfassung (16.4.1871, in Kraft 4.5.1871)</h3><ul><li><b>Bundesstaat</b> aus 25 Staaten (22 Monarchien, 3 freie Städte) und dem <b>Reichsland Elsass-Lothringen</b></li><li><b>Kaiser</b> = König von Preußen (Art. 11): Oberbefehl, ernennt den Kanzler, vertritt das Reich nach außen</li><li><b>Reichskanzler:</b> nur dem Kaiser verantwortlich, kein Misstrauensvotum; meist zugleich preußischer Ministerpräsident</li><li><b>Bundesrat:</b> Vertretung der Fürsten, 58 Stimmen, Preußen 17; 14 Stimmen reichen gegen eine Verfassungsänderung (Art. 78) – <b>preußisches Veto</b></li><li><b>Reichstag:</b> allgemeines, gleiches, geheimes und direktes Wahlrecht für Männer ab 25 (1871: 382 Abgeordnete); Gesetze und Haushalt nur mit dem Bundesrat, kein Einfluss auf die Regierung</li><li><b>Kein Grundrechtekatalog</b>, kein Verfassungsgericht; in Preußen gilt weiter das Dreiklassenwahlrecht. Preußen hat rund 65 % der Fläche und 62 % der Bevölkerung.</li></ul>
+  <h3>Werners Gemälde</h3><p><b>Anton von Werner</b> war Augenzeuge. Es gibt Fassungen von <b>1877</b> (Berliner Schloss, ziemlich dokumentarisch, Bismarck im blauen Rock), <b>1882</b> (Zeughaus) und <b>1885</b> (Friedrichsruh, Geschenk zu Bismarcks 70. Geburtstag). In der Fassung von 1885 steht Bismarck <b>in weißer Uniform</b> im Mittelpunkt, trägt den erst 1884 verliehenen Pour le Mérite, und <b>Roon</b> ist eingefügt, obwohl er gar nicht dabei war. Nur diese Fassung ist erhalten.</p>
+  <p class="hint">Fallstrick: 1880 entstand nur ein Holzstich, keine Gemäldefassung. Das Bild ist eine Quelle für das Geschichtsbild von 1885, nicht für den Ablauf am 18.1.1871.</p>`,
+  widget:'ge_rv'},
+ {id:14,title:'Bewertung: 1849 und 1871 im Vergleich',short:'Revolution von oben, Einheit ohne Freiheit, Quellenkritik',
+  goals:['Die Deutung „Revolution von oben“ beurteilen','Die Verfassungen von 1849 und 1871 vergleichen','Quellen zur Reichsgründung kritisch einordnen'],
+  html:`<h3>„Revolution von oben“</h3><p>Die Einheit wurde von Regierung und Armee „gemacht“, nicht vom Volk erkämpft. Bismarck nutzte <b>revolutionäre Mittel</b> – Absetzung legitimer Dynastien, Auflösung des Bundes, allgemeines Wahlrecht – für <b>konservative Ziele</b>: die Macht der preußischen Monarchie und des Militärs. Dagegen spricht: Nationalbewegung, Vereine und Zollverein hatten lange vorgearbeitet, und die Liberalen wirkten mit.</p>
+  <h3>Einheit ohne Freiheit?</h3><p>1848/49 wollte man <b>Einheit durch Freiheit</b> (Volkssouveränität, Grundrechte, verantwortliche Regierung). 1871 kam die <b>Einheit ohne volle Freiheit</b>: keine parlamentarische Regierung, keine Grundrechte, ein Heer außerhalb parlamentarischer Kontrolle. Modern waren dagegen das allgemeine Männerwahlrecht (fortschrittlicher als in Großbritannien damals), die Rechts- und Wirtschaftseinheit (Handelsgesetzbuch, Mark, Reichsgericht 1879) und der Föderalismus.</p>
+  <h3>Langfristige Folgen</h3><ul><li><b>Militarismus:</b> Gründung im Krieg, Proklamation im Feldlager – das Militär genoss höchstes Ansehen.</li><li><b>„Erbfeindschaft“ mit Frankreich:</b> Versailles, Elsass-Lothringen, Kriegsentschädigung. 1919 musste Deutschland den Friedensvertrag bewusst im selben Saal unterschreiben.</li><li><b>Sonderweg-Debatte:</b> Historiker wie Hans-Ulrich Wehler sahen eine Weichenstellung zum Obrigkeitsstaat; Kritiker wie Nipperdey, Blackbourn und Eley verweisen auf Modernität, offene Entwicklung und europäische Parallelen. Ein abgewogenes Urteil ist besser als eine einseitige These.</li></ul>
+  <h3>Quellenkritik</h3><ul><li><b>„Eisen und Blut“:</b> nur Protokoll in indirekter Rede, kein Stenogramm; Zuspitzung teils durch die Presse</li><li><b>Emser Depesche:</b> gekürzt, nicht gefälscht; der Wechsel des Adressaten (vom Kanzler zur Öffentlichkeit) änderte die Funktion</li><li><b>Kaiserproklamation:</b> legitimiert das Reich durch die Fürsten; die Friedensformel steht im Gegensatz zu Krieg und Annexion</li><li><b>Kaiserbrief:</b> eigentlicher Verfasser Bismarck, Unterzeichner Ludwig II., Geld im Hintergrund</li><li><b>Bismarcks „Gedanken und Erinnerungen“:</b> nach der Entlassung 1890 diktiert, erschienen ab 1898 – Rechtfertigungsschrift mit Selbststilisierung</li><li><b>Werner-Gemälde:</b> die späteren Fassungen stilisieren nachträglich (Bismarck-Mythos)</li><li><b>Karikaturen:</b> prüfen, ob aus der Konfliktzeit (oft kritisch, z. B. „Kladderadatsch“ 1862) oder nach 1866 (oft verherrlichend)</li></ul>
+  <p>Unten: Vergleich der Verfassungen von 1849 und 1871 und ein Sortierspiel zur „Revolution von oben“.</p>`,
+  widget:'ge_vgl'}];
 
  GE.QUESTIONS=[
  {t:1,q:'Wer leitete den Wiener Kongress?',o:['Metternich','Napoleon','Friedrich Wilhelm IV.','Bismarck'],a:0,e:'Der österreichische Staatskanzler Metternich war Gastgeber und Lenker.'},
@@ -1897,7 +2079,53 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  {t:7,q:'Womit endete die Revolution?',o:['Kapitulation der Festung Rastatt 1849','Krönung in Frankfurt','Hambacher Fest','Sturz Metternichs'],a:0,e:'23.7.1849.'},
  {t:7,q:'Warum lehnte Friedrich Wilhelm IV. die Krone ab?',o:['Gottesgnadentum: Nur Fürsten könnten sie vergeben','Er wollte eine Republik','Er war zu alt','Österreich hatte sie schon angenommen'],a:0,e:'Er sah sie als Produkt der Revolution.'},
  {t:7,q:'Was wirkte bis heute nach?',o:['Die Grundrechte als Vorbild für das Grundgesetz','Das Dreiklassenwahlrecht','Die Karlsbader Beschlüsse','Der Deutsche Bund'],a:0,e:'Auch Schwarz-Rot-Gold.'},
- {t:7,q:'Was gehört in die Einleitung einer Quellenanalyse?',o:['Quellengattung, Autor, Adressat, Datum, Anlass, Thema','das Werturteil','nur ein Zitat','die Inhaltsangabe des Schulbuchs'],a:0,e:'Danach Inhalt, Analyse, Kontext, Urteil.'}];
+ {t:7,q:'Was gehört in die Einleitung einer Quellenanalyse?',o:['Quellengattung, Autor, Adressat, Datum, Anlass, Thema','das Werturteil','nur ein Zitat','die Inhaltsangabe des Schulbuchs'],a:0,e:'Danach Inhalt, Analyse, Kontext, Urteil.'},
+ {t:8,q:'Was regelte die Olmützer Punktation (1850)?',o:['Preußen gab seine Unionspläne auf','Österreich trat aus dem Bund aus','Preußen bekam Schleswig','der Zollverein wurde gegründet'],a:0,e:'29.11.1850, die „Schmach von Olmütz“.'},
+ {t:8,q:'Was geschah am 23.8.1851?',o:['Bundesreaktionsbeschluss, Grundrechte für ungültig erklärt','Gründung des Nationalvereins','Kaiserproklamation','Schlacht bei Königgrätz'],a:0,e:'Liberale Verfassungen wurden zurückgenommen.'},
+ {t:8,q:'Warum war der preußisch-französische Handelsvertrag von 1862 politisch wichtig?',o:['Er machte Österreichs Beitritt zum Zollverein praktisch unmöglich','Er beendete den Krieg 1870/71','Er gab Frankreich Luxemburg','Er schaffte den Zollverein ab'],a:0,e:'Niedrige Zölle passten nicht zum schutzzöllnerischen Österreich.'},
+ {t:8,q:'Was war die „Neue Ära“ ab 1858?',o:['gemäßigt liberale Regierung unter Prinzregent Wilhelm','Bismarcks Regieren ohne Haushalt','die Reaktionszeit','die Zeit nach der Reichsgründung'],a:0,e:'Sie ermutigte die Nationalbewegung.'},
+ {t:8,q:'Welches Ziel hatte der Deutsche Nationalverein (1859)?',o:['kleindeutscher Nationalstaat unter preußischer Führung','großdeutsche Lösung mit Österreich','Rückkehr zum alten Bund','Abschaffung aller Fürsten'],a:0,e:'Vorsitz Rudolf von Bennigsen.'},
+ {t:8,q:'Warum wirkte der Italienische Krieg 1859 auf Deutschland?',o:['Piemont wurde Vorbild einer Einigung durch einen starken Kernstaat','Italien trat dem Deutschen Bund bei','Preußen eroberte Venetien','Österreich gewann die Lombardei'],a:0,e:'Dazu zeigte Preußens Mobilmachung Schwächen des Heeres.'},
+ {t:9,q:'Worum ging es im preußischen Verfassungskonflikt im Kern?',o:['wer das Heer kontrolliert: König oder Parlament','um die Kaiserkrone','um Schleswig-Holstein','um das Frauenwahlrecht'],a:0,e:'Ausgelöst durch Roons Heeresreform.'},
+ {t:9,q:'Was sah Roons Heeresreform vor?',o:['größeres Heer, drei Jahre Dienstzeit, weniger Landwehr','Abschaffung der Wehrpflicht','ein Bundesheer unter dem Bundestag','eine reine Freiwilligenarmee'],a:0,e:'1860 vorgelegt.'},
+ {t:9,q:'Wo hielt Bismarck die „Eisen und Blut“-Rede?',o:['vor der Budgetkommission des Abgeordnetenhauses','in der Paulskirche','im Spiegelsaal von Versailles','im Reichstag 1871'],a:0,e:'30.9.1862, nur als Protokoll überliefert.'},
+ {t:9,q:'Was besagt die Lückentheorie?',o:['Einigen sich König und Parlament nicht, darf der König weiterregieren','Die Verfassung gilt nur, wo sie Lücken hat','Der Bundestag füllt Gesetzeslücken','Bei Streit entscheidet eine Volksabstimmung'],a:0,e:'So regierte Bismarck ab 1863 ohne genehmigten Haushalt.'},
+ {t:9,q:'Was bedeutete die Indemnitätsvorlage 1866?',o:['nachträgliche Straffreiheit für das Regieren ohne Haushalt','eine Kriegsentschädigung Österreichs','die Annexion Hannovers','ein neues Wahlrecht'],a:0,e:'3.9.1866 mit 230 zu 75 angenommen.'},
+ {t:9,q:'Welche Partei entstand aus der Spaltung der Liberalen 1866/67?',o:['Nationalliberale Partei','Zentrum','Sozialdemokratische Partei','Deutsche Fortschrittspartei'],a:0,e:'Einheit vor Freiheit – Bismarcks Stütze bis 1878.'},
+ {t:9,q:'Wer prägte den Begriff „Realpolitik“?',o:['August Ludwig von Rochau','Otto von Bismarck','Metternich','Karl Marx'],a:0,e:'„Grundsätze der Realpolitik“, 1853.'},
+ {t:10,q:'Was löste den Deutsch-Dänischen Krieg aus?',o:['die dänische Novemberverfassung 1863','die Emser Depesche','die Olmützer Punktation','der Weberaufstand'],a:0,e:'Sie band Schleswig an Dänemark – ein Bruch des Londoner Protokolls.'},
+ {t:10,q:'Welches Herzogtum gehörte NICHT zum Deutschen Bund?',o:['Schleswig','Holstein','Lauenburg','alle drei gehörten dazu'],a:0,e:'Schleswig war dänisches Lehen.'},
+ {t:10,q:'Wer kämpfte 1864 gegen Dänemark?',o:['Preußen und Österreich','Preußen allein','Frankreich und Preußen','der Norddeutsche Bund'],a:0,e:'Nicht im Namen des Bundes.'},
+ {t:10,q:'Welche Schlacht entschied den Krieg 1864?',o:['Erstürmung der Düppeler Schanzen','Königgrätz','Sedan','Solferino'],a:0,e:'18.4.1864.'},
+ {t:10,q:'Was regelte die Gasteiner Konvention 1865?',o:['Preußen verwaltet Schleswig, Österreich Holstein','Dänemark bekommt Holstein zurück','Schleswig wird unabhängig','Der Bund wird aufgelöst'],a:0,e:'Ein Konfliktherd, der zu 1866 führte.'},
+ {t:10,q:'Warum griffen die anderen Großmächte 1864 nicht ein?',o:['Preußen und Österreich beriefen sich auf das Londoner Protokoll','Sie waren mit Preußen verbündet','Dänemark bat nicht um Hilfe','Sie führten selbst Krieg gegeneinander'],a:0,e:'Bismarck isolierte den Konflikt.'},
+ {t:11,q:'Welche Schlacht entschied den Krieg 1866?',o:['Königgrätz','Sedan','Düppel','Gravelotte'],a:0,e:'3.7.1866.'},
+ {t:11,q:'Was beschloss der Frieden von Prag 1866?',o:['Auflösung des Deutschen Bundes, Neuordnung ohne Österreich','Österreich wird Teil Preußens','Kaiserkrone für Wilhelm I.','Abtretung Elsass-Lothringens'],a:0,e:'23.8.1866; freie Hand für Preußen nördlich des Mains.'},
+ {t:11,q:'Was forderte Preußens Bundesreformantrag vom 9.4.1866?',o:['ein Nationalparlament aus allgemeinen, direkten Wahlen','die Rückkehr Metternichs','ein Bündnis mit Frankreich','das Dreiklassenwahlrecht für alle Staaten'],a:0,e:'Das Wahlrecht als Waffe gegen Österreich und die Mittelstaaten.'},
+ {t:11,q:'Welche Staaten annektierte Preußen 1866?',o:['Hannover, Kurhessen, Nassau, Frankfurt','Bayern, Württemberg, Baden','Sachsen und Österreich','Dänemark und Luxemburg'],a:0,e:'Dazu Schleswig und Holstein.'},
+ {t:11,q:'Warum setzte Bismarck 1866 einen milden Frieden durch?',o:['Frankreich sollte nicht eingreifen, Österreich Partner bleiben','Preußens Armee war geschlagen','Der König verlangte es','Italien bestand darauf'],a:0,e:'Gegen den Willen von König und Militär.'},
+ {t:11,q:'Wer war Bundeskanzler des Norddeutschen Bundes?',o:['Bismarck','Roon','Moltke','Bennigsen'],a:0,e:'Einziger verantwortlicher Minister, dem Parlament nicht verantwortlich.'},
+ {t:11,q:'Was bewirkte die Luxemburgkrise 1867?',o:['Luxemburg wurde neutral, Deutschland und Frankreich entfremdeten sich','Luxemburg wurde preußisch','Frankreich kaufte Luxemburg','Der Krieg 1870 begann'],a:0,e:'Londoner Vertrag 11.5.1867.'},
+ {t:12,q:'Wer war 1870 Kandidat für den spanischen Thron?',o:['Leopold von Hohenzollern-Sigmaringen','Ludwig II.','Kronprinz Friedrich','Napoleon III.'],a:0,e:'Verzicht am 12.7.1870.'},
+ {t:12,q:'Was tat Bismarck mit der Emser Depesche?',o:['Er kürzte und verschärfte sie und gab sie an die Presse','Er fälschte die Unterschrift des Königs','Er hielt sie geheim','Er schickte sie nur nach Wien'],a:0,e:'Gekürzt, nicht gefälscht.'},
+ {t:12,q:'Wer erklärte 1870 den Krieg?',o:['Frankreich','Preußen','der Norddeutsche Bund','Bayern'],a:0,e:'19.7.1870 – genau das wollte Bismarck.'},
+ {t:12,q:'Was geschah bei Sedan?',o:['Kapitulation der französischen Armee, Napoleon III. gefangen','Kaiserproklamation','Gründung der Kommune','Friedensschluss'],a:0,e:'1./2.9.1870.'},
+ {t:12,q:'Was musste Frankreich im Frieden von Frankfurt abgeben?',o:['Elsass und Teile Lothringens, dazu 5 Mrd. Francs','Paris','Korsika','alle Kolonien'],a:0,e:'10.5.1871.'},
+ {t:12,q:'Warum kämpften die Südstaaten 1870 an Preußens Seite?',o:['Frankreich galt als Angreifer, die Schutz- und Trutzbündnisse griffen','Sie waren schon im Norddeutschen Bund','Österreich befahl es','Sie waren annektiert worden'],a:0,e:'Bismarcks Kalkül mit der Emser Depesche ging auf.'},
+ {t:13,q:'Wann und wo wurde das Kaiserreich proklamiert?',o:['18.1.1871, Spiegelsaal von Versailles','18.1.1871, Paulskirche','16.4.1871, Berlin','1.7.1867, Berlin'],a:0,e:'170 Jahre nach der Krönung des ersten preußischen Königs.'},
+ {t:13,q:'Wer war bei der Kaiserproklamation NICHT vertreten?',o:['Parlamentarier','Fürsten','Militärs','Bismarck'],a:0,e:'Das Reich erschien als Werk von Fürsten und Armee.'},
+ {t:13,q:'Welchen Titel erhielt Wilhelm I.?',o:['Deutscher Kaiser','Kaiser von Deutschland','Kaiser der Deutschen','Reichsverweser'],a:0,e:'Bismarck setzte ihn mit Rücksicht auf die Fürsten durch.'},
+ {t:13,q:'Wem war der Reichskanzler verantwortlich?',o:['nur dem Kaiser','dem Reichstag','dem Bundesrat','dem Volk'],a:0,e:'Kein Misstrauensvotum.'},
+ {t:13,q:'Wie viele der 58 Stimmen im Bundesrat hatte Preußen?',o:['17','14','29','6'],a:0,e:'14 genügten gegen eine Verfassungsänderung.'},
+ {t:13,q:'Was fehlte in der Reichsverfassung 1871?',o:['ein Grundrechtekatalog','ein Parlament','ein Staatsoberhaupt','ein Wahlrecht'],a:0,e:'Anders als 1849.'},
+ {t:13,q:'Wer entwarf den Kaiserbrief Ludwigs II.?',o:['Bismarck','Ludwig II. allein','Wilhelm I.','Eduard Simson'],a:0,e:'Ludwig unterschrieb am 30.11.1870.'},
+ {t:13,q:'Welche Fassung von Werners Gemälde ist erhalten?',o:['die Friedrichsruher Fassung von 1885','die Schlossfassung von 1877','die Zeughausfassung von 1882','keine'],a:0,e:'Bismarck-Museum Friedrichsruh.'},
+ {t:14,q:'Was meint „Revolution von oben“?',o:['Einigung durch Regierung und Armee mit revolutionären Mitteln für konservative Ziele','ein Aufstand des Adels gegen den König','die Märzrevolution 1848','eine Revolution in Süddeutschland'],a:0,e:'Deutung der Reichsgründung.'},
+ {t:14,q:'Wie wurde das Reich 1871 legitimiert?',o:['durch einen Fürstenbund (Novemberverträge)','durch Volkssouveränität','durch eine Volksabstimmung','durch den Papst'],a:0,e:'1849 dagegen durch die Nationalversammlung.'},
+ {t:14,q:'Was war 1871 moderner als in vielen Staaten Europas?',o:['das allgemeine Männerwahlrecht zum Reichstag','die parlamentarische Regierung','der Grundrechtekatalog','das Frauenwahlrecht'],a:0,e:'Fortschrittlicher als in Großbritannien damals.'},
+ {t:14,q:'Was gilt für Bismarcks „Gedanken und Erinnerungen“?',o:['Rechtfertigungsschrift nach der Entlassung, mit Selbststilisierung','neutrales Tagebuch von 1870','amtliches Protokoll','Werk eines Gegners Bismarcks'],a:0,e:'Diktiert nach 1890.'},
+ {t:14,q:'Was zeigen die späteren Fassungen von Werners Gemälde vor allem?',o:['den wachsenden Bismarck-Mythos','den genauen Ablauf am 18.1.1871','die Rolle des Parlaments','die Sicht Frankreichs'],a:0,e:'Bismarck in Weiß, Roon eingefügt.'},
+ {t:14,q:'Welches Ziel von 1848/49 wurde 1871 NICHT erreicht?',o:['eine dem Parlament verantwortliche Regierung','ein kleindeutscher Nationalstaat','ein gewählter Reichstag','ein Kaiser an der Spitze'],a:0,e:'Einheit ja, Freiheit nur teilweise.'}];
 
  GE.TF=[
  [1,'Der Deutsche Bund war ein Bundesstaat mit gemeinsamer Regierung.',0,'Ein Staatenbund ohne gemeinsame Regierung.'],
@@ -1931,7 +2159,35 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  [7,'Robert Blum wurde 1848 in Wien erschossen.',1,'9.11.1848.'],
  [7,'Die Reichsverfassung trat 1849 in Kraft.',0,'Sie trat nie in Kraft.'],
  [7,'Die Revolution endete mit der Kapitulation von Rastatt.',1,'23.7.1849.'],
- [7,'In der Karikaturanalyse beschreibt man zuerst das Bild, bevor man deutet.',1,'Beschreiben → Deuten → Urteilen.']];
+ [7,'In der Karikaturanalyse beschreibt man zuerst das Bild, bevor man deutet.',1,'Beschreiben → Deuten → Urteilen.'],
+ [8,'Die Olmützer Punktation war ein Erfolg Preußens.',0,'Preußen musste nachgeben – die „Schmach von Olmütz“.'],
+ [8,'1851 wurden die Grundrechte der Paulskirche für ungültig erklärt.',1,'Bundesreaktionsbeschluss, 23.8.1851.'],
+ [8,'Der Deutsche Nationalverein war großdeutsch.',0,'Kleindeutsch-liberal; großdeutsch war der Reformverein.'],
+ [8,'Österreich trat in den 1850er-Jahren dem Zollverein bei.',0,'Nur ein Handelsvertrag (1853); ab 1862 war ein Beitritt praktisch unmöglich.'],
+ [9,'Bismarck sagte wörtlich „Blut und Eisen“.',0,'Überliefert ist „Eisen und Blut“, nur in indirekter Rede.'],
+ [9,'Der Begriff „Realpolitik“ stammt von Rochau.',1,'1853.'],
+ [9,'Ab 1863 regierte Bismarck ohne genehmigten Haushalt.',1,'Begründet mit der Lückentheorie.'],
+ [9,'Die Indemnitätsvorlage wurde 1866 abgelehnt.',0,'Angenommen am 3.9.1866 mit 230 zu 75.'],
+ [9,'Die Fortschrittspartei unterstützte Roons Heeresreform.',0,'Sie war ihre Hauptgegnerin.'],
+ [10,'Schleswig gehörte zum Deutschen Bund.',0,'Nur Holstein und Lauenburg.'],
+ [10,'1864 kämpften Preußen und Österreich gemeinsam gegen Dänemark.',1,'Auf Grundlage des Londoner Protokolls.'],
+ [10,'Nach der Gasteiner Konvention verwaltete Österreich Holstein.',1,'Preußen verwaltete Schleswig.'],
+ [11,'Österreich verlor 1866 große Gebiete an Preußen.',0,'Nur Venetien, und das an Italien.'],
+ [11,'Der Deutsche Bund wurde 1866 aufgelöst.',1,'Frieden von Prag, 23.8.1866.'],
+ [11,'Bayern gehörte zum Norddeutschen Bund.',0,'Die Südstaaten blieben draußen, aber mit Schutz- und Trutzbündnissen.'],
+ [11,'Der Reichstag des Norddeutschen Bundes wurde nach allgemeinem Männerwahlrecht gewählt.',1,'Männer ab 25.'],
+ [12,'Bismarck fälschte die Emser Depesche.',0,'Er kürzte und spitzte zu; gefälscht hat er nichts.'],
+ [12,'Frankreich erklärte am 19.7.1870 den Krieg.',1,'Damit stand es als Angreifer da.'],
+ [12,'Nach Sedan war der Krieg sofort zu Ende.',0,'Die Dritte Republik kämpfte bis Januar 1871 weiter.'],
+ [12,'Im Frieden von Frankfurt musste Frankreich 5 Milliarden Francs zahlen.',1,'10.5.1871.'],
+ [13,'Bei der Kaiserproklamation waren Abgeordnete als Teilnehmer vertreten.',0,'Fürsten und Militärs, keine Parlamentarier.'],
+ [13,'Wilhelm I. wurde „Kaiser von Deutschland“.',0,'„Deutscher Kaiser“ – Bismarck setzte den Titel durch.'],
+ [13,'Die Reichsverfassung von 1871 enthielt keinen Grundrechtekatalog.',1,'Anders als 1849.'],
+ [13,'Der Reichstag konnte den Reichskanzler stürzen.',0,'Nur der Kaiser ernannte und entließ ihn.'],
+ [13,'Werners Gemälde gibt es in Fassungen von 1877, 1882 und 1885.',1,'1880 entstand nur ein Holzstich.'],
+ [14,'Die Reichsgründung 1871 beruhte auf Volkssouveränität.',0,'Auf einem Fürstenbund.'],
+ [14,'Das allgemeine Männerwahlrecht 1871 war ein modernes Element.',1,'Fortschrittlicher als in Großbritannien damals.'],
+ [14,'Die Sonderweg-These ist unter Historikern unumstritten.',0,'Umstritten, z. B. Wehler gegen Nipperdey.']];
 
  GE.CARDS=[
  ['Restauration','Wiederherstellung der politischen Ordnung vor der Französischen Revolution (vor 1789).'],
@@ -1973,7 +2229,47 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  ['Dreiklassenwahlrecht','Preußen ab 1849: Wähler nach Steuerleistung in drei Klassen, öffentliche Wahl.'],
  ['Gegenrevolution','Rückeroberung der Macht durch die Fürsten 1848/49 mit Militär (Wien, Berlin, Rastatt).'],
  ['Rumpfparlament','Rest der Nationalversammlung, 6.–18.6.1849 in Stuttgart, dann aufgelöst.'],
- ['Sachurteil / Werturteil','Sachurteil: Bewertung aus der Zeit und Quellenlage. Werturteil: begründete Bewertung aus heutiger Sicht.']];
+ ['Sachurteil / Werturteil','Sachurteil: Bewertung aus der Zeit und Quellenlage. Werturteil: begründete Bewertung aus heutiger Sicht.'],
+ ['Erfurter Union','Preußischer Plan 1849/50 für einen kleindeutschen Bundesstaat „von oben“; scheiterte in Olmütz.',8],
+ ['Olmützer Punktation','29.11.1850: Preußen gibt auf Druck Österreichs und Russlands die Unionspläne auf („Schmach von Olmütz“).',8],
+ ['Reaktionszeit','1849–1858: Rücknahme liberaler Verfassungen, Bundesreaktionsbeschluss 1851, Grundrechte aufgehoben.',8],
+ ['Neue Ära','Ab 1858: Prinzregent Wilhelm beruft ein gemäßigt liberales Ministerium.',8],
+ ['Deutscher Nationalverein','1859 in Frankfurt gegründet, Vorsitz Bennigsen: kleindeutsch-liberal, Einheit unter Preußen.',8],
+ ['Deutscher Reformverein','1862: großdeutsch-föderalistisch, stark in Süddeutschland und unter Katholiken.',8],
+ ['Heeresreform','Roons Plan 1860: größeres Heer, drei Jahre Dienstzeit, Landwehr zurückgedrängt.',9],
+ ['Verfassungskonflikt','1862–1866: Streit zwischen König und Abgeordnetenhaus um die Heeresreform – wer kontrolliert das Heer?',9],
+ ['Deutsche Fortschrittspartei','1861 gegründet, erste deutsche Programmpartei; liberale Mehrheit gegen die Heeresreform.',9],
+ ['Lückentheorie','Bismarck: Einigen sich König und Parlament nicht, hat die Verfassung eine Lücke, die der König füllt.',9],
+ ['Indemnität','Nachträgliche Straffreiheit: 1866 billigt das Abgeordnetenhaus Bismarcks Regieren ohne Haushalt (230:75).',9],
+ ['Nationalliberale Partei','1866/67 von der Fortschrittspartei abgespalten: Einheit vor Freiheit, Stütze Bismarcks.',9],
+ ['Realpolitik','Begriff von Rochau (1853): Politik nach Machtverhältnissen statt nach Idealen.',9],
+ ['Londoner Protokoll','1852: garantiert den dänischen Gesamtstaat, verbietet aber die Einverleibung Schleswigs.',10],
+ ['Novemberverfassung','18.11.1863: gemeinsame Verfassung Dänemarks und Schleswigs – Bruch des Londoner Protokolls.',10],
+ ['Düppeler Schanzen','18.4.1864: preußischer Sturm auf die dänische Stellung, entscheidende Schlacht des Krieges.',10],
+ ['Gasteiner Konvention','14.8.1865: Preußen verwaltet Schleswig, Österreich Holstein – ein Konfliktherd.',10],
+ ['Königgrätz','3.7.1866: entscheidender preußischer Sieg über Österreich (Moltke).',11],
+ ['Frieden von Prag','23.8.1866: Deutscher Bund aufgelöst, Neuordnung ohne Österreich, Mainlinie.',11],
+ ['Mainlinie','Grenze ab 1866: nördlich der Norddeutsche Bund unter Preußen, südlich die selbstständigen Südstaaten.',11],
+ ['Norddeutscher Bund','1867–1870: Bundesstaat nördlich des Mains unter Preußen; Bundesrat, Reichstag, Bundeskanzler Bismarck.',11],
+ ['Schutz- und Trutzbündnisse','1866: geheime Militärbündnisse Preußens mit den süddeutschen Staaten.',11],
+ ['Zollparlament','1868–1870: Norddeutscher Reichstag plus süddeutsche Abgeordnete; im Süden siegten die Preußengegner.',11],
+ ['Luxemburgkrise','1867: Napoleon III. will Luxemburg kaufen; der Londoner Vertrag macht es neutral.',11],
+ ['Spanische Thronkandidatur','1870: Leopold von Hohenzollern-Sigmaringen soll König Spaniens werden; Frankreich fürchtet Umklammerung.',12],
+ ['Emser Depesche','13.7.1870: von Bismarck gekürzter Bericht aus Ems; Frankreich erklärt am 19.7. den Krieg.',12],
+ ['Sedan','1./2.9.1870: Kapitulation der französischen Armee, Napoleon III. gefangen.',12],
+ ['Elsass-Lothringen','1871 annektiert, Reichsland direkt unter dem Reich; Ursache des französischen Revanchismus.',12],
+ ['Novemberverträge','15./23./25.11.1870: Baden, Hessen, Bayern und Württemberg treten dem Bund bei.',13],
+ ['Reservatrechte','Sonderrechte Bayerns (z. B. eigenes Heer im Frieden, Post, Bahn, Biersteuer) und Württembergs.',13],
+ ['Kaiserbrief','30.11.1870: Ludwig II. bittet Wilhelm I., Kaiser zu werden; den Entwurf schrieb Bismarck.',13],
+ ['Welfenfonds','Beschlagnahmtes Vermögen des Hauses Hannover; daraus geheime Zahlungen an Ludwig II. (rund 5 Mio. Mark).',13],
+ ['Kaiserproklamation','18.1.1871 im Spiegelsaal von Versailles: Fürsten und Militärs, keine Parlamentarier.',13],
+ ['Deutscher Kaiser','Titel des Königs von Preußen als Präsident des Bundes (Art. 11), nicht „Kaiser von Deutschland“.',13],
+ ['Bundesrat (1871)','Vertretung der Fürsten, 58 Stimmen, Preußen 17; 14 Stimmen genügen gegen Verfassungsänderungen.',13],
+ ['Reichstag (1871)','Allgemein, gleich, geheim, direkt von Männern ab 25 gewählt; Gesetze und Haushalt, kein Einfluss auf die Regierung.',13],
+ ['Reichskanzler','Vom Kaiser ernannt und entlassen, nur ihm verantwortlich; meist auch preußischer Ministerpräsident.',13],
+ ['Revolution von oben','Deutung der Reichsgründung: revolutionäre Mittel (Annexionen, allgemeines Wahlrecht) für konservative Ziele.',14],
+ ['Einheit ohne Freiheit','Bilanz 1871: Nationalstaat erreicht, aber ohne Grundrechte und parlamentarische Regierung.',14],
+ ['Sonderweg-These','Deutung (z. B. Wehler): Reichsgründung von oben als Weichenstellung zum Obrigkeitsstaat; umstritten.',14]];
 
  GE.TASKS=[
  {t:4,q:'<b>Erläutere</b> die Ursachen der Revolution von 1848.',sol:()=>`<ul><li><b>Politisch:</b> Restauration und Karlsbader Beschlüsse (Zensur, Verfolgung), keine Verfassungen in Preußen und Österreich, unerfüllter Wunsch nach einem Nationalstaat.</li><li><b>Sozial:</b> Pauperismus, Weberaufstand 1844.</li><li><b>Wirtschaftlich:</b> Kartoffelfäule und Missernten 1845–47, Hungerkrise, Gewerbekrise 1847.</li><li><b>Auslöser:</b> Februarrevolution in Paris 1848.</li></ul><p class="muted">Tipp: nach langfristigen Ursachen und kurzfristigem Anlass gliedern.</p>`},
@@ -1983,7 +2279,15 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  {t:7,q:'<b>Analysiere</b> den Brief Friedrich Wilhelms IV. an Bunsen vom 13.12.1848 (Kernaussagen kennst du).',sol:()=>`<p><b>Einleitung:</b> privater Brief des preußischen Königs an seinen Vertrauten Bunsen, 13.12.1848, vor der Kaiserwahl. <b>Inhalt:</b> Die angebotene Krone sei „keine Krone“, ein „Reif aus Dreck und Letten“ mit dem „Ludergeruch der Revolution“; nur Fürsten könnten die Krone vergeben. <b>Analyse:</b> abwertende Metaphern, Standpunkt des Gottesgnadentums gegen Volkssouveränität. <b>Kontext:</b> erklärt die Ablehnung vom 3.4.1849. <b>Sachurteil:</b> Als Privatbrief zeigt er die offene Meinung des Königs, die öffentliche Begründung war diplomatischer.</p>`},
  {t:7,q:'<b>Erörtere</b>, ob die Revolution 1848/49 gescheitert ist.',sol:()=>`<p><b>Gescheitert:</b> kein Nationalstaat, Reichsverfassung nie in Kraft, Gegenrevolution siegt (Wien, Berlin, Rastatt), Repression und Auswanderung. <b>Nicht gescheitert:</b> Grundrechte als Vorbild für Weimarer Verfassung und Grundgesetz, erste gesamtdeutsche Wahlen, Fraktionen als Vorläufer der Parteien, Preußen erhält eine (oktroyierte) Verfassung, Schwarz-Rot-Gold. <b>Urteil:</b> kurzfristig gescheitert, langfristig folgenreich.</p>`},
  {t:7,q:'<b>Beurteile</b> die wichtigsten Gründe für das Scheitern der Revolution.',sol:()=>`<ul>${GE.GRUENDE.map(g=>`<li><b>${g[0]}:</b> ${g[1]}</li>`).join('')}</ul><p class="muted">Für die Note: nicht nur aufzählen, sondern gewichten, z. B. „Entscheidend waren die fehlenden Machtmittel und die Gegenrevolution, weil …“</p>`},
- {t:2,q:'<b>Analysiere</b> die Karikatur „Der Denker-Club“ (um 1819/20).',sol:()=>`<p><b>Beschreibung:</b> Männer mit Maulkörben sitzen um einen Tisch; an der Wand Regeln („Schweigen ist das erste Gesetz dieser gelehrten Gesellschaft“), auf der Tafel die Frage „Wie lange möchte uns das Denken wohl noch erlaubt bleiben?“. <b>Deutung:</b> Maulkorb = Zensur, die Denker = Intellektuelle, die schweigen müssen. <b>Kontext:</b> Karlsbader Beschlüsse 1819. <b>Absicht:</b> Kritik an Unterdrückung der Meinungsfreiheit und an der Selbstzensur. <b>Urteil:</b> treffende, bissige Kritik; Zeichner anonym – wegen der Zensur.</p>`}];
+ {t:2,q:'<b>Analysiere</b> die Karikatur „Der Denker-Club“ (um 1819/20).',sol:()=>`<p><b>Beschreibung:</b> Männer mit Maulkörben sitzen um einen Tisch; an der Wand Regeln („Schweigen ist das erste Gesetz dieser gelehrten Gesellschaft“), auf der Tafel die Frage „Wie lange möchte uns das Denken wohl noch erlaubt bleiben?“. <b>Deutung:</b> Maulkorb = Zensur, die Denker = Intellektuelle, die schweigen müssen. <b>Kontext:</b> Karlsbader Beschlüsse 1819. <b>Absicht:</b> Kritik an Unterdrückung der Meinungsfreiheit und an der Selbstzensur. <b>Urteil:</b> treffende, bissige Kritik; Zeichner anonym – wegen der Zensur.</p>`},
+ {t:9,q:'<b>Analysiere</b> Bismarcks „Eisen und Blut“-Rede vom 30.9.1862 und <b>ordne</b> sie in den Verfassungskonflikt <b>ein</b>.',sol:()=>`<p><b>Einleitung:</b> Rede des neuen Ministerpräsidenten Bismarck vor der Budgetkommission des preußischen Abgeordnetenhauses, 30.9.1862; überliefert nur als Protokoll in indirekter Rede und in Presseberichten. Anlass: Das Abgeordnetenhaus hatte die Mittel für die Heeresreform gestrichen. <b>Inhalt:</b> Deutschland achte nicht auf Preußens Liberalismus, sondern auf seine Macht; Preußen müsse seine Kraft für den günstigen Augenblick sammeln; die großen Fragen würden nicht durch Reden und Mehrheitsbeschlüsse entschieden – „der große Fehler von 1848 und 1849“ –, sondern durch „Eisen und Blut“. <b>Analyse:</b> Abwertung des Parlaments, Machtpolitik statt Liberalismus; zugleich Werben um die nationale Bewegung. <b>Kontext:</b> Heeresreform, Lückentheorie, Regieren ohne Haushalt ab 1863. <b>Urteil:</b> eine Absage an den Parlamentarismus und Ankündigung der Machtpolitik, die sich 1864–1871 bestätigte. Quellenkritisch: kein Wortprotokoll, die Zuspitzung entstand teils durch die Presse.</p>`},
+ {t:9,q:'<b>Erkläre</b> den preußischen Verfassungskonflikt und seine Lösung.',sol:()=>`<p><b>Ursache:</b> Roons Heeresreform (1860: größeres Heer, drei Jahre Dienst, weniger Landwehr). Die liberale Mehrheit (Fortschrittspartei, 1861) verweigerte die Mittel. <b>Kern:</b> Wer kontrolliert das Heer – König oder Parlament? <b>Eskalation:</b> Bismarck wird im September 1862 Ministerpräsident, „Eisen und Blut“-Rede, ab 1863 Regieren ohne Haushalt mit der <b>Lückentheorie</b> (Art. 62 und 99 der preußischen Verfassung). <b>Lösung:</b> Nach dem Sieg von Königgrätz bittet Bismarck um <b>Indemnität</b>; das Abgeordnetenhaus stimmt am 3.9.1866 mit 230 zu 75 zu. <b>Folge:</b> Spaltung der Liberalen, Gründung der Nationalliberalen – Einheit vor Freiheit. Der Grundsatzstreit wurde nie zugunsten des Parlaments entschieden.</p>`},
+ {t:11,q:'<b>Erläutere</b> die Bedeutung der drei Einigungskriege für die Reichsgründung.',sol:()=>`<ul><li><b>1864 gegen Dänemark:</b> zusammen mit Österreich, gestützt auf das Londoner Protokoll; Ergebnis: Schleswig, Holstein, Lauenburg unter gemeinsamer Verwaltung (Gastein 1865) – ein bewusst angelegter Konfliktherd.</li><li><b>1866 gegen Österreich:</b> Entscheidung des Dualismus bei Königgrätz; Prager Frieden: Auflösung des Bundes, Österreich draußen, Annexionen, Norddeutscher Bund 1867 als Bundesstaat unter Preußen, Schutz- und Trutzbündnisse mit dem Süden.</li><li><b>1870/71 gegen Frankreich:</b> Emser Depesche macht Frankreich zum Angreifer; der Krieg bindet die Südstaaten (Novemberverträge); Kaiserproklamation in Versailles.</li></ul><p><b>Fazit:</b> Jeder Krieg war diplomatisch isoliert und begrenzt; die Einheit entstand Schritt für Schritt „von oben“ – mit dem Krieg als Mittel der Politik.</p>`},
+ {t:12,q:'<b>Vergleiche</b> Abekens Bericht und Bismarcks Pressefassung der Emser Depesche und <b>beurteile</b> Bismarcks Verantwortung für den Krieg.',sol:()=>`<ul>${GE.EMS_AEND.map(x=>`<li>${x}</li>`).join('')}</ul><p><b>Funktion:</b> Frankreich sollte in die Rolle des Angreifers gedrängt werden, damit die Südstaaten den Bündnisfall anerkennen und die Großmächte neutral bleiben. <b>Abwägung:</b> Frankreich stellte eine überzogene Forderung und stand innenpolitisch unter Druck; Bismarck nahm den Krieg aber bewusst in Kauf. <b>Urteil:</b> geteilte Verantwortung – Bismarck hat den Krieg gezielt herbeigeführt, Frankreich hat ihn erklärt.</p>`},
+ {t:13,q:'<b>Analysiere</b> Anton von Werners Gemälde „Die Proklamierung des Deutschen Kaiserreiches“ (Friedrichsruher Fassung 1885).',sol:()=>`<p><b>Einleitung:</b> Historiengemälde von Anton von Werner, Augenzeuge in Versailles; Fassung von 1885, Geschenk der preußischen Königsfamilie zu Bismarcks 70. Geburtstag. <b>Beschreibung:</b> auf dem Podium Wilhelm I., Kronprinz Friedrich Wilhelm, Großherzog Friedrich I. von Baden (bringt das Hoch aus) und weitere Fürsten; unten in der Mitte Bismarck in weißer Uniform mit der Urkunde, daneben Moltke und Roon; Offiziere mit erhobenen Säbeln und Helmen, Fahnen, Spiegelsaal. <b>Bildsprache:</b> Die Perspektive führt auf Bismarck; Militär dominiert, Bürger und Parlamentarier fehlen. Weiße Uniform, Pour le Mérite (erst 1884) und Roon (fehlte 1871) sind nachträglich. <b>Vergleich 1877:</b> blauer Rock, Wilhelm als Erster unter Gleichen, eher dokumentarisch. <b>Urteil:</b> Quelle für das Geschichtsbild von 1885 (Bismarck-Mythos), nicht für den Ablauf am 18.1.1871; sie zeigt eine Reichsgründung „von oben“ durch Fürsten und Armee.</p>`},
+ {t:14,q:'<b>Beurteile</b>, ob die Reichsgründung eine „Revolution von oben“ war.',sol:()=>`<p><b>Dafür:</b> ${GE.RVO.filter(x=>x[1]==='dafür').map(x=>x[0]).join(' ')}</p><p><b>Dagegen:</b> ${GE.RVO.filter(x=>x[1]==='dagegen').map(x=>x[0]).join(' ')}</p><p><b>Urteil:</b> Als Beschreibung der Methode trifft der Begriff zu; er übersieht aber, dass die Gesellschaft schon lange zur Einheit drängte. Gewichten, nicht nur aufzählen.</p>`},
+ {t:14,q:'<b>Vergleiche</b> die Paulskirchenverfassung (1849) mit der Reichsverfassung (1871).',sol:()=>`<div class="tbl"><table><tr><th>Kriterium</th><th>1849</th><th>1871</th></tr>${GE.VGL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div><p class="muted">Gemeinsam: kleindeutsch, Kaiser, allgemeines Männerwahlrecht. Für die Note: Vergleichskriterien vorher nennen und am Ende ein Fazit ziehen.</p>`},
+ {t:14,q:'<b>Analysiere</b> eine Karikatur zu Bismarck (Vorgehen).',sol:()=>`<ol>${GE.STEPS_K.map(x=>`<li>${x}</li>`).join('')}</ol><p><b>Typische Symbole:</b> Pickelhaube, Säbel, Eisen und Blut, Zwangsjacke oder Knebel für das Parlament, Bismarck als Riese, Dompteur oder Schmied. <b>Zeitschrift:</b> z. B. „Kladderadatsch“, der die „Eisen und Blut“-Rede am 12.10.1862 verspottete. <b>Wichtig:</b> Entstand die Karikatur in der Konfliktzeit (meist kritisch) oder nach 1866 (oft verherrlichend)?</p>`}];
 
  GE.ORDERS=[
  {t:7,title:'Bringe die Schritte einer Quellenanalyse in die richtige Reihenfolge.',parts:GE.STEPS_Q.slice()},
@@ -1992,7 +2296,13 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  {t:3,title:'Ordne die Ereignisse des Vormärz zeitlich.',parts:['Julirevolution in Paris','Hambacher Fest','Frankfurter Wachensturm','Protest der Göttinger Sieben','Rheinkrise','„Lied der Deutschen“']},
  {t:5,title:'Ordne die Ereignisse der Märzrevolution 1848.',parts:['Februarrevolution in Paris','Mannheimer Volksversammlung (Märzforderungen)','Sturz Metternichs in Wien','Barrikadenkämpfe in Berlin','Vorparlament','Eröffnung der Paulskirche']},
  {t:7,title:'Ordne die Ereignisse von der Paulskirche bis zum Ende.',parts:['Erzherzog Johann wird Reichsverweser','Waffenstillstand von Malmö','Robert Blum erschossen','Grundrechte verkündet','Reichsverfassung und Kaiserwahl','Ablehnung der Kaiserkrone','Kapitulation von Rastatt']},
- {t:6,title:'Ordne die Fraktionen von rechts nach links.',parts:FRA.map(f=>f[0])}];
+ {t:6,title:'Ordne die Fraktionen von rechts nach links.',parts:FRA.map(f=>f[0])},
+ {t:8,title:'Ordne die Ereignisse 1849–1862.',parts:['Dreikönigsbündnis','Erfurter Unionsparlament','Olmützer Punktation','Bundesreaktionsbeschluss','Neue Ära','Gründung des Nationalvereins','Bismarck wird Ministerpräsident']},
+ {t:9,title:'Ordne den Verfassungskonflikt.',parts:['Roon legt die Heeresreform vor','Gründung der Fortschrittspartei','Bismarck wird Ministerpräsident','„Eisen und Blut“-Rede','Regieren ohne Haushalt (Lückentheorie)','Schlacht bei Königgrätz','Indemnitätsvorlage angenommen','Gründung der Nationalliberalen']},
+ {t:11,title:'Ordne die Einigungskriege und ihre Folgen.',parts:['Dänische Novemberverfassung','Erstürmung der Düppeler Schanzen','Gasteiner Konvention','Königgrätz','Frieden von Prag','Norddeutscher Bund tritt in Kraft','Emser Depesche','Sedan','Kaiserproklamation']},
+ {t:12,title:'Ordne die Ereignisse 1870/71.',parts:['Verzicht Leopolds','Emser Depesche','Französische Kriegserklärung','Sedan','Dritte Republik','Novemberverträge','Kaiserproklamation','Kapitulation von Paris','Frieden von Frankfurt']},
+ {t:13,title:'Ordne die Schritte zur Reichsgründung.',parts:['Novemberverträge','Kaiserbrief Ludwigs II.','Reichstag beschließt „Deutsches Reich“','Kaiserproklamation in Versailles','Reichsverfassung beschlossen','Frieden von Frankfurt']},
+ {t:13,title:'Ordne die Fassungen von Werners Kaiserproklamation.',parts:GE.WERNER.map(w=>w[0])}];
 
  const yearOf=e=>String(e[0]).match(/18\d\d/)[0];
  GE.GEN={
@@ -2011,7 +2321,26 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
     ()=>{ const c=pick(GE.CARDS.slice(27,35)); return {t:6,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],GE.CARDS.slice(24,40).map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; }],
  7:[()=>{ const a=shuffle(EV.slice()).slice(0,2).sort((x,y)=>x[1]-y[1]); if(a[0][1]===a[1][1]) return GE.GEN[7][1](); const q=Math.random()<.5; return {t:7,q:'Was war '+(q?'früher':'später')+'?',o:q?[a[0][2],a[1][2]]:[a[1][2],a[0][2]],a:0,e:a[0][0]+': '+a[0][2]+' · '+a[1][0]+': '+a[1][2]+'.'}; },
     ()=>{ const g=pick(GE.GRUENDE); return {t:7,q:'Welcher Grund des Scheiterns wird beschrieben? '+g[1],o:opts4(g[0],GE.GRUENDE.map(x=>x[0])),a:0,e:g[0]+'.'}; },
-    ()=>{ const i=Math.floor(Math.random()*(GE.STEPS_Q.length-1)); return {t:7,q:'Was folgt in der Quellenanalyse auf: „'+GE.STEPS_Q[i]+'“?',o:opts4(GE.STEPS_Q[i+1],GE.STEPS_Q),a:0,e:GE.STEPS_Q.join(' → ')+'.'}; }]};
+    ()=>{ const i=Math.floor(Math.random()*(GE.STEPS_Q.length-1)); return {t:7,q:'Was folgt in der Quellenanalyse auf: „'+GE.STEPS_Q[i]+'“?',o:opts4(GE.STEPS_Q[i+1],GE.STEPS_Q),a:0,e:GE.STEPS_Q.join(' → ')+'.'}; }],
+ 8:[()=>dateQ(8),()=>vtrQ(8),()=>cardQ71(8)],
+ 9:[()=>{ const z=pick(ZIT71.filter(x=>x[2]===9||x[2]===14)); return {t:9,q:'Woher stammt das? „'+z[0]+'“',o:opts4(z[1],ZIT71.map(x=>x[1])),a:0,e:z[1]+'.'}; },
+    ()=>cardQ71(9),
+    ()=>{ const p=pick(PER71); return {t:9,q:'Wer war '+p.name+'?',o:opts4(p.role,PER71.map(x=>x.role)),a:0,e:p.name+' ('+p.life+'): '+p.more}; }],
+ 10:[()=>dateQ(10),()=>vtrQ(10),()=>cardQ71(10)],
+ 11:[()=>dateQ(11),()=>vtrQ(11),()=>cardQ71(11),
+    ()=>{ const p=pick(PER71); return {t:11,q:'Wer wird so beschrieben: '+p.role+'?',o:opts4(p.name,PER71.map(x=>x.name)),a:0,e:p.name+' ('+p.life+'): '+p.more}; }],
+ 12:[()=>dateQ(12),()=>cardQ71(12),
+    ()=>{ const s=pick(GE.EMS_SATZ), o=['Abekens Original','Bismarcks Pressefassung']; return {t:12,q:'Emser Depesche: Aus welcher Fassung stammt der Satz? „'+s[0]+'“',o,a:o.indexOf(s[1]),e:'Aus '+s[1]+'. Bismarck strich den höflichen Ablauf und spitzte auf die Abweisung zu.'}; }],
+ 13:[()=>dateQ(13),()=>cardQ71(13),
+    ()=>{ const w=pick(GE.WERNER); return {t:13,q:'Welche Fassung von Werners Kaiserproklamation? '+w[1],o:opts4(w[0],GE.WERNER.map(x=>x[0])),a:0,e:w[0]+': '+w[2]+'.'}; },
+    ()=>{ const z=pick(ZIT71.filter(x=>x[2]===13)); return {t:13,q:'Woher stammt das? „'+z[0]+'“',o:opts4(z[1],ZIT71.map(x=>x[1])),a:0,e:z[1]+'.'}; }],
+ 14:[()=>vglQ(),()=>cardQ71(14),
+    ()=>{ const x=pick(GE.RVO); return {t:14,q:'Spricht das für oder gegen die Deutung „Revolution von oben“? '+x[0],o:['dafür','dagegen'],a:x[1]==='dafür'?0:1,e:'Ein Argument '+x[1]+'. Im Urteil beide Seiten gewichten.'}; },
+    ()=>{ const a=shuffle(EV71.slice()).slice(0,2).sort((x,y)=>x[1]-y[1]); if(a[0][1]===a[1][1]) return vglQ(); const q=Math.random()<.5; return {t:14,q:'Was war '+(q?'früher':'später')+'?',o:q?[a[0][2],a[1][2]]:[a[1][2],a[0][2]],a:0,e:a[0][0]+': '+a[0][2]+' · '+a[1][0]+': '+a[1][2]+'.'}; }]};
+ function dateQ(t){ const e=pick(evOf(t)); return {t,q:'Wann war das? '+e[2],o:opts4(e[0],EV71.map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; }
+ function vtrQ(t){ const v=pick(GE.VERTR.filter(x=>x[2]===t)); return {t,q:'Was regelte: '+v[0]+'?',o:opts4(v[1],GE.VERTR.map(x=>x[1])),a:0,e:v[0]+': '+v[1]+'.'}; }
+ function cardQ71(t){ const c=pick(GE.CARDS.filter(x=>x[2]===t)); return {t,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],GE.CARDS.filter(x=>x[2]).map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; }
+ function vglQ(){ const r=pick(GE.VGL), y=Math.random()<.5?0:1; return {t:14,q:'1849 oder 1871? '+r[0]+': '+r[1+y],o:['Paulskirchenverfassung 1849','Reichsverfassung 1871'],a:y,e:r[0]+' – 1849: '+r[1]+' · 1871: '+r[2]+'.'}; }
  for(const t in GE.GEN) GE.GEN[t]=GE.GEN[t].map(f=>()=>Object.assign(f(),{gen:true}));
 
  GE.MATCH_KINDS={
@@ -2019,7 +2348,11 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
   personen:{label:'Personen',topic:5,make:()=>shuffle(PER).slice(0,5).map(p=>({k:p.k,a:p.name,b:`<span style="font-size:.82rem;line-height:1.3">${p.role}</span>`,t:p.t}))},
   fraktionen:{label:'Fraktionen',topic:6,make:()=>shuffle(FRA).slice(0,5).map(f=>({k:f[0],a:f[0],b:`<span style="font-size:.82rem;line-height:1.3">${f[1]}</span>`,t:6}))},
   zitate:{label:'Zitate',topic:3,make:()=>shuffle(ZIT).slice(0,5).map(z=>({k:z[1],a:`<span style="font-size:.8rem">${z[1]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">„${z[0]}“</span>`,t:3}))},
-  begriffe:{label:'Begriffe',topic:1,make:()=>shuffle(GE.CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.82rem;line-height:1.3">${c[1]}</span>`,t:1}))}};
+  begriffe:{label:'Begriffe',topic:1,make:()=>shuffle(GE.CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.82rem;line-height:1.3">${c[1]}</span>`,t:c[2]||1}))},
+  daten71:{label:'Daten 1849–1871',topic:12,make:()=>{ const seen=new Set(), out=[]; shuffle(EV71).forEach(e=>{ if(out.length<5&&!seen.has(e[0])){ seen.add(e[0]); out.push({k:e[0],a:e[0],b:`<span style="font-size:.82rem;line-height:1.3">${e[2]}</span>`,t:e[3]}); } }); return out; }},
+  personen71:{label:'Personen 1849–1871',topic:13,make:()=>shuffle(PER71).slice(0,5).map(p=>({k:p.k,a:p.name,b:`<span style="font-size:.82rem;line-height:1.3">${p.role}</span>`,t:p.t}))},
+  vertraege:{label:'Verträge',topic:11,make:()=>shuffle(GE.VERTR).slice(0,5).map(v=>({k:v[0],a:`<span style="font-size:.82rem">${v[0]}</span>`,b:`<span style="font-size:.82rem;line-height:1.3">${v[1]}</span>`,t:v[2]}))},
+  zitate71:{label:'Zitate 1850–1871',topic:9,make:()=>shuffle(ZIT71).slice(0,5).map(z=>({k:z[0],a:`<span style="font-size:.8rem">${z[1]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">„${z[0]}“</span>`,t:z[2]}))}};
 
  const YT='yt:';
  GE.VIDEOS={
@@ -2029,16 +2362,29 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  4:[['YouTube','Zollverein und Pauperismus',YT+'Deutscher Zollverein Pauperismus Weberaufstand erklärt']],
  5:[['YouTube','Märzrevolution 1848',YT+'Märzrevolution 1848 Deutschland einfach erklärt']],
  6:[['YouTube','Frankfurter Nationalversammlung',YT+'Frankfurter Nationalversammlung Paulskirche einfach erklärt'],['YouTube','Paulskirchenverfassung',YT+'Paulskirchenverfassung 1849 erklärt']],
- 7:[['YouTube','Scheitern der Revolution 1848/49',YT+'Scheitern der Revolution 1848 49 Gründe'],['YouTube','Karikaturanalyse',YT+'Karikaturanalyse Geschichte Aufbau']]};
+ 7:[['YouTube','Scheitern der Revolution 1848/49',YT+'Scheitern der Revolution 1848 49 Gründe'],['YouTube','Karikaturanalyse',YT+'Karikaturanalyse Geschichte Aufbau']],
+ 8:[['YouTube','Olmützer Punktation und Reaktionszeit',YT+'Olmützer Punktation Reaktionszeit 1850 erklärt'],['YouTube','Deutscher Dualismus',YT+'Deutscher Dualismus Preußen Österreich 1850 1866 erklärt']],
+ 9:[['YouTube','Preußischer Verfassungskonflikt',YT+'Preußischer Verfassungskonflikt Heeresreform Lückentheorie erklärt'],['YouTube','Bismarck Eisen und Blut',YT+'Bismarck Eisen und Blut Rede 1862 erklärt']],
+ 10:[['YouTube','Deutsch-Dänischer Krieg 1864',YT+'Deutsch-Dänischer Krieg 1864 einfach erklärt']],
+ 11:[['YouTube','Deutscher Krieg 1866',YT+'Deutscher Krieg 1866 Königgrätz einfach erklärt'],['YouTube','Norddeutscher Bund',YT+'Norddeutscher Bund 1867 erklärt']],
+ 12:[['YouTube','Emser Depesche',YT+'Emser Depesche 1870 einfach erklärt'],['YouTube','Deutsch-Französischer Krieg',YT+'Deutsch-Französischer Krieg 1870 71 erklärt']],
+ 13:[['YouTube','Reichsgründung 1871',YT+'Reichsgründung 1871 Kaiserproklamation Versailles erklärt'],['YouTube','Reichsverfassung 1871',YT+'Reichsverfassung 1871 Aufbau erklärt']],
+ 14:[['YouTube','Revolution von oben',YT+'Reichsgründung Revolution von oben Bewertung'],['YouTube','Werner Gemälde Bildanalyse',YT+'Anton von Werner Kaiserproklamation Bildanalyse']]};
 
  GE.PLAN=[
- {when:'Sa 14.11.',sub:'Block 1 · 60 Min',topics:[1,2],extra:''},
- {when:'Sa 14.11.',sub:'Block 2 · 60 Min',topics:[3,4],extra:''},
- {when:'So 15.11.',sub:'Block 1 · 60 Min',topics:[5,6],extra:''},
- {when:'So 15.11.',sub:'Block 2 · 60 Min',topics:[7],extra:'<a class="pill" href="#aufgaben">Aufgaben schriftlich</a>'},
- {when:'So 15.11.',sub:'abends · 45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#karten">Karteikarten</a>'},
- {when:'Mo 16.11.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
- GE.BOT_SUGGEST=['Erstell mir Karteikarten zu den Karlsbader Beschlüssen','Warum ist die Revolution gescheitert?','Was ist der Unterschied zwischen Liberalen und Demokraten?','Erklär mir groß- und kleindeutsch'];
+ {when:'Di 17.11.',sub:'45 Min',topics:[8],extra:''},
+ {when:'Do 19.11.',sub:'45 Min',topics:[9],extra:''},
+ {when:'Sa 21.11.',sub:'60 Min',topics:[10,11],extra:''},
+ {when:'Di 24.11.',sub:'45 Min',topics:[12],extra:''},
+ {when:'Do 26.11.',sub:'45 Min',topics:[13],extra:''},
+ {when:'Sa 28.11.',sub:'60 Min',topics:[14],extra:'<a class="pill" href="#aufgaben">Aufgaben schriftlich</a>'},
+ {when:'So 29.11.',sub:'Wiederholung · 60 Min',topics:[1,2,3,4],extra:''},
+ {when:'Di 1.12.',sub:'Wiederholung · 60 Min',topics:[5,6,7],extra:''},
+ {when:'Do 3.12.',sub:'45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Sa 5.12.',sub:'90 Min',topics:[],extra:'<a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#aufgaben">Aufgaben schriftlich</a>'},
+ {when:'So 6.12.',sub:'abends · 30 Min',topics:[],extra:'<a class="pill" href="#klausur">Fehler wiederholen</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Mo 7.12.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
+ GE.BOT_SUGGEST=['Erklär mir die Emser Depesche','Was ist die Lückentheorie?','Vergleiche die Verfassungen von 1849 und 1871','Warum ist die Revolution 1848/49 gescheitert?'];
  GE.SPICK=[
   ['Wiener Kongress und Deutscher Bund',['Wiener Kongress 1814/15, Metternich; Restauration, Legitimität, Solidarität, Gleichgewicht','Deutscher Bund 8.6.1815: Staatenbund (39 bzw. 41), Bundesversammlung Frankfurt, österreichischer Vorsitz','Art. 13: landständische Verfassungen – Preußen, Österreich keine','Heilige Allianz 1815: Russland, Österreich, Preußen · Wiener Schlussakte 1820: monarchisches Prinzip']],
   ['Nationalbewegung 1815–1830',['Urburschenschaft Jena 1815, Schwarz-Rot-Gold (Lützower)','Wartburgfest 18.10.1817','Kotzebue-Mord durch Sand, Mannheim 1819','Karlsbader Beschlüsse 20.9.1819: Uni-Aufsicht, Burschenschaftsverbot, Zensur, Kommission Mainz → Demagogenverfolgung']],
@@ -2046,7 +2392,14 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
   ['Wirtschaft und Soziales',['Zollverein 1.1.1834 unter Preußen, ohne Österreich','Eisenbahn Nürnberg–Fürth 1835','Pauperismus · Weberaufstand 1844 · Hungerkrise 1845–47','Ursachen: politisch, sozial, wirtschaftlich; Auslöser Februarrevolution Paris']],
   ['Märzrevolution 1848',['Märzforderungen 27.2. (Pressefreiheit, Schwurgerichte, Volksbewaffnung, Parlament)','13.3. Metternich gestürzt · 18./19.3. Barrikaden Berlin (ca. 250–300 Tote) · 21.3. „Preußen geht fortan in Deutschland auf“','Vorparlament 31.3.–3.4. → Wahlen · Hecker-Aufstand April']],
   ['Paulskirche',['ab 18.5.1848, Präsident Gagern; „Professorenparlament“','Fraktionen rechts → links: Café Milani, Casino (größte), Württemberger Hof, Westendhall, Deutscher Hof, Donnersberg','Reichsverweser Erzherzog Johann 29.6. · Malmö 26.8. → Machtlosigkeit','Grundrechte 27.12.1848 · kleindeutsch · Reichsverfassung 28.3.1849: Erbkaiser, Volks- und Staatenhaus']],
-  ['Scheitern und Bilanz',['Blum erschossen 9.11.1848 · Preußen oktroyiert Verfassung 5.12.1848','Ablehnung der Krone 3.4.1849 (Brief an Bunsen 13.12.1848: „Reif aus Dreck und Letten“)','Rumpfparlament Stuttgart · Rastatt 23.7.1849','Gründe: Einheit + Freiheit, keine Macht, Spaltung, nationale Frage, Gegenrevolution','Nachwirkung: Grundrechte → Weimar, Grundgesetz; Schwarz-Rot-Gold']]];
+  ['Scheitern und Bilanz',['Blum erschossen 9.11.1848 · Preußen oktroyiert Verfassung 5.12.1848','Ablehnung der Krone 3.4.1849 (Brief an Bunsen 13.12.1848: „Reif aus Dreck und Letten“)','Rumpfparlament Stuttgart · Rastatt 23.7.1849','Gründe: Einheit + Freiheit, keine Macht, Spaltung, nationale Frage, Gegenrevolution','Nachwirkung: Grundrechte → Weimar, Grundgesetz; Schwarz-Rot-Gold']],
+  ['Reaktionszeit 1849–1862',['Dreikönigsbündnis 26.5.1849 · Erfurter Unionsparlament 1850','Olmützer Punktation 29.11.1850: Preußen gibt Union auf („Schmach“)','Bundesreaktionsbeschluss 23.8.1851, Grundrechte ungültig','Handelsvertrag 1853 · preußisch-französischer Vertrag 1862: Österreich ausgesperrt','Neue Ära 1858 · Solferino 1859 · Nationalverein 15./16.9.1859 (Bennigsen, kleindeutsch) · Reformverein 1862 (großdeutsch)']],
+  ['Verfassungskonflikt und Bismarck',['Roons Heeresreform 1860: größeres Heer, 3 Jahre, weniger Landwehr → Kern: wer kontrolliert das Heer?','Fortschrittspartei 6.6.1861','Bismarck Ministerpräsident Sept. 1862 (22.–24.9., Quellen schwanken)','„Eisen und Blut“ 30.9.1862, Budgetkommission, nur indirekte Rede (nicht „Blut und Eisen“)','Lückentheorie (Art. 62/99) → ab 1863 ohne Haushalt','Indemnität 3.9.1866 (230:75) → Nationalliberale: Einheit vor Freiheit · Realpolitik = Rochau 1853']],
+  ['Krieg 1864',['Schleswig nicht im Bund, Holstein und Lauenburg schon · Londoner Protokoll 1852','Novemberverfassung 18.11.1863 (Christian IX.)','1.2.1864 Kriegsbeginn · Düppel 18.4.1864','Frieden von Wien 30.10.1864 · Gastein 14.8.1865: Schleswig Preußen, Holstein Österreich']],
+  ['Krieg 1866 und Norddeutscher Bund',['Bündnis mit Italien 8.4. · Bundesreformantrag 9.4. (allgemeines Wahlrecht)','Bundesbeschluss 14.6.1866 (9:6) · Königgrätz 3.7.1866 (Moltke)','Nikolsburg 26.7. · Prag 23.8.1866: Bund aufgelöst, Österreich raus, Mainlinie · milder Frieden','Annexionen: Hannover, Kurhessen, Nassau, Frankfurt, Schleswig-Holstein · Schutz- und Trutzbündnisse','Norddeutscher Bund: Verfassung 16.4.1867 (230:53), in Kraft 1.7.1867 · Luxemburgkrise 1867 · Zollparlament 1868']],
+  ['Krieg 1870/71',['Leopold verzichtet 12.7.1870 · Emser Depesche 13.7. (gekürzt, nicht gefälscht)','Kriegserklärung Frankreichs 19.7.1870','Sedan 1./2.9. (Napoleon III. gefangen) · Dritte Republik 4.9.','Paris kapituliert 28.1.1871 · Kommune 18.3.–28.5.','Frieden von Frankfurt 10.5.1871: Elsass-Lothringen, 5 Mrd. Francs']],
+  ['Reichsgründung 1871',['Novemberverträge 15./23./25.11.1870 · Reservatrechte Bayern','Kaiserbrief 30.11.1870 (Entwurf Bismarck, Welfenfonds ca. 5 Mio. Mark)','Proklamation 18.1.1871 Spiegelsaal: Fürsten und Militär, „Deutscher Kaiser“','Verfassung 16.4.1871: 25 Staaten + Reichsland; Kanzler nur dem Kaiser verantwortlich','Bundesrat 58 Stimmen, Preußen 17, Veto ab 14 · Reichstag 382, Männer ab 25 · keine Grundrechte','Werner: 1877, 1882, 1885 (Holzstich 1880); 1885: Bismarck in Weiß, Roon eingefügt']],
+  ['Bewertung',['„Revolution von oben“: revolutionäre Mittel, konservative Ziele','1849 Einheit durch Freiheit (gescheitert) · 1871 Einheit ohne volle Freiheit','modern: Männerwahlrecht, Rechtseinheit · Belastung: Militarismus, Erbfeindschaft','Sonderweg-These umstritten (Wehler vs. Nipperdey)','Quellenkritik: Protokoll, Kürzung, Fürstenlegitimation, Rechtfertigungsschrift, Bildmythos']]];
 })();
 
 /* Widgets fürs Fach Geschichte */
@@ -2088,6 +2441,40 @@ W.ge_gruende=root=>{
   root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Gründe des Scheiterns: erst selbst überlegen, dann aufdecken.</p>${GE.GRUENDE.map((g,i)=>`<details class="card" style="margin:6px 0;padding:10px 12px"><summary style="cursor:pointer;font-weight:700">${i+1}. ${g[0]}</summary><p style="margin:.5em 0 0">${g[1]}</p></details>`).join('')}<p class="muted" style="font-size:.85rem">In der Klausur gewichten: Welche Gründe waren entscheidend, und warum?</p>`;
   const box=renderOrder(GE.ORDERS[0],()=>{}); const h=document.createElement('p'); h.className='muted'; h.style.cssText='font-size:.9rem;margin-top:14px'; h.textContent='Und jetzt: Schritte der Quellenanalyse ordnen.'; root.appendChild(h); root.appendChild(box);
 };
+function geSteck(root,rows,intro){
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">${intro||'Steckbrief.'} Tippe auf eine Zeile, um sie zu verdecken und dich selbst abzufragen.</p><div class="tbl"><table>${rows.map(r=>`<tr><th style="width:34%">${r[0]}</th><td class="de-hide" style="cursor:pointer">${r[1]}</td></tr>`).join('')}</table></div>`;
+  root.addEventListener('click',e=>{ const td=e.target.closest('.de-hide'); if(td) td.style.filter=td.style.filter?'':'blur(6px)'; });
+}
+function geSort(root,items,cats,ask){
+  let list=shuffle(items.slice()), i=0, ok=0;
+  const draw=()=>{ if(i>=list.length){ root.innerHTML=`<div class="expl"><b>${ok} von ${list.length}</b> richtig zugeordnet.</div><button class="btn small" type="button" data-again="1" style="margin-top:8px">Nochmal</button>`; root.querySelector('[data-again]').onclick=()=>{ list=shuffle(items.slice()); i=0; ok=0; draw(); }; return; }
+    const u=list[i]; root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">${i+1} von ${list.length}: ${ask}</p><p style="font-size:1.02rem"><b>${u[0]}</b></p><div class="opts">${cats.map(c=>`<button class="opt" type="button">${c}</button>`).join('')}</div><div class="ge-s-out"></div>`;
+    root.querySelector('.opts').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; if(b.textContent===u[1]) ok++;
+      root.querySelectorAll('.opts .opt').forEach(x=>{ x.disabled=true; if(x.textContent===u[1]) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      root.querySelector('.ge-s-out').innerHTML=`<button class="btn small" type="button" style="margin-top:8px">Weiter</button>`; root.querySelector('.ge-s-out button').onclick=()=>{ i++; draw(); }; }); };
+  draw();
+}
+W.ge_zeit8=root=>geTimeline(root,e=>e[3]===8,'Zeitstrahl 1849–1862.');
+W.ge_bismarck=root=>geSteck(root,[['Lebensdaten','1.4.1815 Schönhausen – 30.7.1898 Friedrichsruh'],['Herkunft','Junker, Jurastudium, Gutsherr; 1848 ultrakonservativ'],['1851','Gesandter am Bundestag in Frankfurt'],['1859 / 1862','Gesandter in St. Petersburg, dann in Paris'],['Sept. 1862','preußischer Ministerpräsident (ab 8.10. auch Außenminister)'],['30.9.1862','„Eisen und Blut“-Rede'],['1867','Bundeskanzler des Norddeutschen Bundes'],['1871–1890','Reichskanzler, 1890 von Wilhelm II. entlassen'],['Ziele','Macht Preußens, Monarchie sichern; Nationalbewegung als Mittel'],['Methoden','Kriege isolieren, Gegner zum Angreifer machen, Besiegte schonen, Wahlrecht taktisch nutzen']],'Steckbrief Bismarck.');
+W.ge_zeit10=root=>geTimeline(root,e=>e[3]===10,'Zeitstrahl 1863–1865.');
+W.ge_ndb=root=>{ geSteck(root,[['Bundespräsidium','König von Preußen: Oberbefehl, Kriegserklärung'],['Bundeskanzler','Bismarck, einziger verantwortlicher Minister, nicht dem Parlament verantwortlich'],['Bundesrat','43 Stimmen, davon Preußen 17'],['Reichstag','297 Abgeordnete; allgemein, gleich, geheim, direkt, Männer ab 25'],['Verfassung','angenommen 16.4.1867 (230:53), in Kraft 1.7.1867'],['Südstaaten','draußen, aber Schutz- und Trutzbündnisse und Zollparlament']],'Der Norddeutsche Bund 1867.');
+  const box=document.createElement('div'); box.style.marginTop='14px'; root.appendChild(box); geTimeline(box,e=>e[3]===11,'Zeitstrahl 1866–1868.'); };
+W.ge_ems=root=>{
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Die Emser Depesche im Vergleich (Wortlaut nach Bismarcks Gesammelten Werken).</p>
+  <details class="card" open style="margin:6px 0;padding:10px 12px"><summary style="cursor:pointer;font-weight:700">Abekens Bericht an Bismarck (Auszug)</summary><p style="margin:.5em 0 0;font-size:.92rem">${GE.EMS_ORIG}</p></details>
+  <details class="card" open style="margin:6px 0;padding:10px 12px"><summary style="cursor:pointer;font-weight:700">Bismarcks Pressefassung (vollständig)</summary><p style="margin:.5em 0 0;font-size:.92rem">${GE.EMS_PRESSE}</p></details>
+  <details class="card" style="margin:6px 0;padding:10px 12px"><summary style="cursor:pointer;font-weight:700">Was hat Bismarck verändert? (erst selbst überlegen)</summary><ul style="margin:.5em 0 0">${GE.EMS_AEND.map(x=>`<li>${x}</li>`).join('')}</ul></details>
+  <p class="muted" style="font-size:.9rem;margin-top:14px">Und jetzt: Aus welcher Fassung stammt der Satz?</p><div id="ge-ems-q"></div>`;
+  geSort(root.querySelector('#ge-ems-q'),GE.EMS_SATZ,['Abekens Original','Bismarcks Pressefassung'],'Aus welcher Fassung?');
+};
+W.ge_rv=root=>{ geSteck(root,[['Staatsform','Bundesstaat: 25 Staaten + Reichsland Elsass-Lothringen'],['Kaiser','König von Preußen (Art. 11): Oberbefehl, ernennt den Kanzler'],['Reichskanzler','nur dem Kaiser verantwortlich, kein Misstrauensvotum'],['Bundesrat','58 Stimmen, Preußen 17; 14 Stimmen = Veto gegen Verfassungsänderung'],['Reichstag','382 Abgeordnete (1871); allgemein, gleich, geheim, direkt, Männer ab 25'],['Rechte des Reichstags','Gesetze und Haushalt mit dem Bundesrat, kein Einfluss auf die Regierung'],['Grundrechte','keine · kein Verfassungsgericht']],'Reichsverfassung vom 16.4.1871.');
+  const h=document.createElement('div'); h.style.marginTop='14px'; h.innerHTML=`<p class="muted" style="font-size:.9rem">Fassungen von Werners „Proklamierung des Deutschen Kaiserreiches“:</p><div class="tbl"><table><tr><th>Fassung</th><th>Merkmale</th><th>Verbleib</th></tr>${GE.WERNER.map(w=>`<tr><th>${w[0]}</th><td>${w[1]}</td><td>${w[2]}</td></tr>`).join('')}</table></div>`; root.appendChild(h); };
+W.ge_vgl=root=>{
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Verfassungen im Vergleich. Tippe auf eine Zelle, um sie zu verdecken.</p><div class="tbl"><table><tr><th>Kriterium</th><th>1849</th><th>1871</th></tr>${GE.VGL.map(r=>`<tr><th>${r[0]}</th><td class="de-hide" style="cursor:pointer">${r[1]}</td><td class="de-hide" style="cursor:pointer">${r[2]}</td></tr>`).join('')}</table></div><button class="btn small" type="button" id="ge-v-all">Alles verdecken / aufdecken</button><p class="muted" style="font-size:.9rem;margin-top:14px">„Revolution von oben“: Spricht das Argument dafür oder dagegen?</p><div id="ge-v-s"></div>`;
+  root.querySelector('.tbl').addEventListener('click',e=>{ const td=e.target.closest('.de-hide'); if(td) td.style.filter=td.style.filter?'':'blur(6px)'; });
+  root.querySelector('#ge-v-all').onclick=()=>{ const all=[...root.querySelectorAll('.tbl .de-hide')], hide=all.some(x=>!x.style.filter); all.forEach(x=>x.style.filter=hide?'blur(6px)':''); };
+  geSort(root.querySelector('#ge-v-s'),GE.RVO,['dafür','dagegen'],'Dafür oder dagegen?');
+};
 
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
 const PLAN=[
@@ -2101,8 +2488,8 @@ function viewStart(){
   const done=TOPICS.filter(t=>S.done[t.id]).length;
   app.innerHTML=`<header class="hero"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><span class="eyebrow">${FACH.eyebrow}</span><a class="btn small" href="#fach" style="text-decoration:none;white-space:nowrap">${FACH.emoji} Fach wechseln</a></div><span class="eyebrow" style="display:block;opacity:.6;margin-top:2px">Version ${APP_VERSION}</span><h1>${FACH.title}</h1>
    <div class="cd-box"><div class="eyebrow">Noch bis zur Klausur · ${FACH.examLabel}</div><div class="cd" id="cd" aria-live="off"></div></div>
-   <div class="count"><div><div class="num">${done}/7</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
-   <div class="progress" aria-hidden="true"><span style="width:${done/7*100}%"></span></div>
+   <div class="count"><div><div class="num">${done}/${TOPICS.length}</div><div class="lbl">Themen gelernt</div></div><div><div class="num">${Object.keys(S.wrong||{}).length}</div><div class="lbl">Fragen im Fehlerheft</div></div></div>
+   <div class="progress" aria-hidden="true"><span style="width:${done/TOPICS.length*100}%"></span></div>
    <a class="btn primary" href="#training" style="text-decoration:none;text-align:center">Training starten: jedes Mal neue Aufgaben</a>
    <div class="row"><a class="btn" href="#battle" style="text-decoration:none;flex:1;text-align:center">⚔️ Battle gegen andere</a>${coinPill()}</div>
    <div class="row"><a class="btn small" href="#spick" style="text-decoration:none">Spickzettel</a><button class="btn small" type="button" id="theme-btn">Design: ${THEMES[S.theme]}</button></div></header>
@@ -2135,7 +2522,7 @@ function viewTopic(id){
   <section class="card"><div class="sec-label">Ausprobieren</div><div id="widget"></div></section>
   <section class="card"><div class="sec-label">Lernvideos</div><div class="vids">${videoHTML(id)}</div><p class="muted" style="font-size:.82rem;margin-bottom:0">Öffnet sich im Browser. Die Studyflix-Seiten haben Video und Text.</p></section>
   <section class="card"><div class="sec-label">Check · ${qs.length} Fragen</div><div class="qlist" id="check"></div><div id="check-res" style="margin-top:14px"></div></section>
-  <div class="pager">${id>1?`<a class="btn" href="#thema-${id-1}" style="text-decoration:none">← Thema ${id-1}</a>`:'<span></span>'}${id<7?`<a class="btn primary" href="#thema-${id+1}" style="text-decoration:none">Thema ${id+1} →</a>`:`<a class="btn primary" href="#klausur" style="text-decoration:none">Zur Probeklausur →</a>`}</div>`;
+  <div class="pager">${id>1?`<a class="btn" href="#thema-${id-1}" style="text-decoration:none">← Thema ${id-1}</a>`:'<span></span>'}${id<TOPICS.length?`<a class="btn primary" href="#thema-${id+1}" style="text-decoration:none">Thema ${id+1} →</a>`:`<a class="btn primary" href="#klausur" style="text-decoration:none">Zur Probeklausur →</a>`}</div>`;
   W[t.widget]($('#widget'));
   let n=0,r=0; const box=$('#check');
   qs.forEach(q=>box.appendChild(renderQuestion(q,ok=>{ n++; if(ok) r++;
@@ -2149,10 +2536,10 @@ function viewTopic(id){
 /* Endlos-Training: jede Runde neu, Schwächen kommen öfter dran */
 let tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
 function trWeights(){ const w={}; const wrong=S.wrong||{}; const st=S.trs||{};
-  for(let t=1;t<=7;t++){ const s=st[t]||{r:0,n:0}; const rate=s.n? s.r/s.n : 0.5;
+  for(const {id:t} of TOPICS){ const s=st[t]||{r:0,n:0}; const rate=s.n? s.r/s.n : 0.5;
     w[t]=1 + (S.done[t]?0:1) + 3*(1-rate) + QUESTIONS.filter(q=>q.t===t&&wrong[q.q]).length*0.7; }
   return w; }
-function trPickTopic(){ if(tr.topic) return tr.topic; const w=trWeights(); let sum=0; for(const t in w) sum+=w[t]; let x=Math.random()*sum; for(const t in w){ x-=w[t]; if(x<=0) return +t; } return 7; }
+function trPickTopic(){ if(tr.topic) return tr.topic; const w=trWeights(); let sum=0; for(const t in w) sum+=w[t]; let x=Math.random()*sum; for(const t in w){ x-=w[t]; if(x<=0) return +t; } return TOPICS[TOPICS.length-1].id; }
 function trNext(){ const t=trPickTopic(); const r=Math.random();
   if(r<0.12){ const os=ORDERS.filter(o=>o.t===t); if(os.length) return {order:pick(os)}; }
   if(r<0.20){ const mk=FACH.trMatch(t); if(mk&&MATCH_KINDS[mk]) return {match:mk}; }
@@ -2229,7 +2616,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.3';
+const APP_VERSION='5.4';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2424,24 +2811,24 @@ document.addEventListener('click',e=>{
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
  heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌',
- urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',
+ urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',depesche:'📨',spiegel:'🪞',helm:'🪖',
  buch:'📚',feder:'🪶',maske:'🎭',krug:'🏺',waage:'⚖️',rolle:'📜',luege:'🤥',wein:'🍷',katze:'🐈',fuss:'🦶',lupe:'🔍',schock:'😱'};
 const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
  owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅',
  richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭',
- professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇'};
+ professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇',kanzler:'🎖️'};
 const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
 const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
  ...[['fire',0],['wave',0],['gg',0],['laugh',120],['eyes',120],['clap',150],['think',150],['sweat',150],['heart',180],['cool',200],['cry',200],['sleep',200],['popcorn',220],['muscle',250],['salute',250],['angry',250],['snail',280],['nerd',300],['party',300],['flask',350],['star',350],['ghost',400],['brain',400],['mind',450],['cold',450],['bolt',450],['hundred',500],['clown',500],['skull',600],['devil',600],['rocket',650],['atom',700],['alembic',750],['trophy',900],['crown',1000],['goat',1500]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:['flask','atom','alembic','brain'].includes(id)?'chemie':undefined})),
  ...[['buch',120],['feder',150],['katze',180],['wein',200],['lupe',220],['schock',250],['rolle',300],['fuss',350],['luege',400],['maske',450],['waage',600],['krug',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'deutsch'})),
- ...[['kartoffel',120],['zeitung',150],['brief',180],['eiche',200],['zug',250],['barrikade',300],['urne',350],['schwerter',450],['saeule',600],['flagge',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'geschichte'})),
+ ...[['kartoffel',120],['zeitung',150],['brief',180],['eiche',200],['depesche',220],['zug',250],['barrikade',300],['helm',320],['urne',350],['schwerter',450],['spiegel',500],['saeule',600],['flagge',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'geschichte'})),
  ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
  ...[['magd',250],['bauer',300],['theater',450],['detektiv',700],['kaiser',1000],['richter',1500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'deutsch'})),
- ...[['arbeiter',250],['student',300],['reiter',500],['soldat',700],['professor',1000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'geschichte'})),
+ ...[['arbeiter',250],['student',300],['reiter',500],['soldat',700],['professor',1000],['kanzler',1200]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'geschichte'})),
  ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:p?'chemie':undefined})),
  ...[['Krug-Kenner',250],['Zitat-Profi',300],['Auftritt-Ass',350],['Stilmittel-Sammler',400],['Blankvers-Boss',450],['Ironie-Insider',500],['Szenen-Analyst',550],['Adam-Entlarver',600],['Perücken-Finder',700],['Kleist-Kenner',800],['Gerichtsrat',900],['Dorfrichter',1200],['Lustspiel-Legende',1500],['Deutsch-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'deutsch'})),
- ...[['Burschenschafter',250],['Wartburg-Wanderer',300],['Hambach-Held',350],['Vormärz-Veteran',400],['Zollvereins-Profi',450],['Barrikadenkämpfer',500],['Märzrevolutionär',550],['Paulskirchen-Abgeordneter',650],['Grundrechte-Retter',750],['Metternich-Bezwinger',900],['Reichsverweser',1200],['Kaiser der Herzen',1500],['Geschichts-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'geschichte'})),
+ ...[['Burschenschafter',250],['Wartburg-Wanderer',300],['Hambach-Held',350],['Vormärz-Veteran',400],['Zollvereins-Profi',450],['Barrikadenkämpfer',500],['Märzrevolutionär',550],['Paulskirchen-Abgeordneter',650],['Grundrechte-Retter',750],['Metternich-Bezwinger',900],['Reichsverweser',1200],['Depeschen-Kürzer',950],['Eiserner Kanzler',1300],['Kaiser der Herzen',1500],['Reichsgründer',2000],['Geschichts-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'geschichte'})),
  ...[['std',0],['orange',300],['blau',300],['gruen',300],['rot',400],['tuerkis',500],['lila',600],['pink',600],['gold',1500],['regenbogen',2500]].map(([k,p])=>({id:'c_'+k,kind:'color',key:k,price:p,label:NCOLOR[k][0]}))
 ];
 function initProfile(){ S.coins=S.coins??50; S.owned=S.owned||{}; SHOP.filter(i=>i.price===0).forEach(i=>S.owned[i.id]=1); S.eq=S.eq||{avatar:'scientist',title:'Neuling'}; S.eq.color=S.eq.color||'std'; S.name=S.name||''; if(S.nameOk===undefined) S.nameOk=S.name; S.bstats=S.bstats||{w:0,l:0,d:0}; S.friends=S.friends||{};
@@ -2484,7 +2871,8 @@ function battleQuestions(){
     const others=shuffle(CARDS.filter((_,j)=>j!==i).map(c=>c[0])).slice(0,3);
     const masked=def.replace(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),'…');
     return {key:'card:'+term, c:{t:7, q:'Welcher Begriff passt zu dieser Definition?<br><i>„'+masked+'“</i>', o:[term,...others], a:0, e:'<b>'+term+'</b>: '+def}}; };
-  for(const t of shuffle([1,2,3,4,5,6,7,1,2,3,4,5,6,7].slice(0,10))){
+  const tids=TOPICS.map(x=>x.id);
+  for(const t of shuffle(tids.concat(tids)).slice(0,10)){
     let q=null;
     for(let tries=0; tries<120 && !q; tries++){
       const strict=tries<80;            // erst streng (nichts aus den letzten Matches), dann lockerer
@@ -2707,7 +3095,7 @@ function drawBattle(){
       <div class="botrow"><span class="eyebrow">🤖 Gegen einen Bot</span><div class="row" style="flex-wrap:nowrap"><button class="btn" type="button" data-b="bot-easy" style="flex:1">Leicht</button><button class="btn" type="button" data-b="bot-medium" style="flex:1">Mittel</button><button class="btn" type="button" data-b="bot-hard" style="flex:1">Schwer</button></div></div>
       <div class="row" style="flex-wrap:nowrap"><input id="b-code" class="inp" inputmode="numeric" maxlength="4" placeholder="Code" style="flex:1;min-width:0"><button class="btn" type="button" data-b="join">Raum beitreten</button></div></section>
       <div id="b-social"></div><div id="b-admin"></div>
-      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen 7 Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg. Mit Bots gibt es die Hälfte.</li><li>Keiner da? Spiel gegen einen Bot oder füll dein Team mit Bots auf.</li></ul></section>`;
+      <section class="card"><div class="sec-label">So läuft ein Battle</div><ul style="margin:0"><li>10 Fragen aus allen ${TOPICS.length} Themen, beide bekommen dieselben.</li><li>20 Sekunden pro Frage. Richtig gibt 500 bis 1000 Punkte, je schneller, desto mehr.</li><li>Nach jeder Frage siehst du die Lösung. Weiter geht es erst, wenn ihr beide auf „Weiter“ tippt.</li><li>Schick deinem Gegner Emotes. Mehr gibt es im Shop.</li><li>Münzen: 5 pro richtiger Antwort, 60 für einen Sieg. Mit Bots gibt es die Hälfte.</li><li>Keiner da? Spiel gegen einen Bot oder füll dein Team mit Bots auf.</li></ul></section>`;
   } else {
     const opp=B.opp||{name:'Gegner'};
     const s0=B.scores[B.you], s1=B.scores[1-B.you];
@@ -2949,7 +3337,7 @@ function initBot(){ drawChat();
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
-  if(FACH.id!=='chemie'){ const SP=(FACH.id==='deutsch'?DE:GE).SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<7?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
+  if(FACH.id!=='chemie'){ const SP=(FACH.id==='deutsch'?DE:GE).SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<TOPICS.length?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
   const T=TOPICS;
   app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
@@ -2976,8 +3364,9 @@ function viewExam(){
     <p class="muted" style="font-size:.88rem;margin-bottom:0">${wrongQs().length?'Im Fehlerheft landet jede Frage, die du falsch beantwortet hast. Beantwortest du sie richtig, fliegt sie wieder raus.':'Dein Fehlerheft ist leer. Falsch beantwortete Fragen sammeln sich hier automatisch.'}</p></section>
     <section class="card"><h2>Tipps für die Klausur</h2><ul>${FACH.examTips||CHEM_TIPS}</ul></section>`;
     $('#ex-start').addEventListener('click',()=>{
-      const per=[1,2,3,4,5,6,7].map(t=>shuffle(QUESTIONS.filter(q=>q.t===t)));
-      let items=per.map(a=>a[0]).filter(Boolean).concat([1,2,3,4,5,6,7].map(genQ),FACH.id==='chemie'?[namingQuestion()]:[genQ(5)]);
+      const ids=TOPICS.map(t=>t.id), per=ids.map(t=>shuffle(QUESTIONS.filter(q=>q.t===t)));
+      let items=ids.length>7 ? per.map(a=>a[0]).filter(Boolean).concat(shuffle(ids).slice(0,7).map(genQ))
+        : per.map(a=>a[0]).filter(Boolean).concat(ids.map(genQ),FACH.id==='chemie'?[namingQuestion()]:[genQ(5)]);
       exam={items:shuffle(items),i:0,res:[]}; viewExam(); });
     const wb=$('#ex-wrong'); if(wb) wb.addEventListener('click',()=>{ exam={items:shuffle(wrongQs()),i:0,res:[],drill:true}; viewExam(); });
     return;
@@ -3150,13 +3539,13 @@ const FACHER={
   examTips:'<li>Einleitung immer mit <b>TATZT</b> und einer <b>Deutungshypothese</b>.</li><li>Vor der Analyse die Szene <b>einordnen</b>: Was geschah vorher, was folgt?</li><li><b>Nur im Hauptteil zitieren</b>, immer mit Versangabe.</li><li>Bei Kleist immer fragen: <b>Wer weiß was?</b> (dramatische Ironie, Beiseitesprechen)</li><li>Regieanweisungen und Redeanteile nicht vergessen.</li>',
   ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Fasse zusammen</b>: Inhalt knapp, im Präsens, ohne Zitate</li><li><b>Ordne ein</b>: Was geschieht vorher, was nachher?</li><li><b>Charakterisiere</b>: Eigenschaften mit Textbelegen</li><li><b>Analysiere / Untersuche</b>: Gespräch, Sprache und dramatische Gestaltung mit Zitaten deuten</li><li><b>Erläutere</b>: mit Beispielen und Belegen erklären</li>',
   trMatch:t=>({3:pick(['figuren','zitate']),4:'auftritte',5:'auftritte',6:'stil',7:'begriffe'})[t]||null},
- geschichte:{id:'geschichte',name:'Geschichte',emoji:'🏛️',sub:'1815–1848/49 · Klausur Mo 16.11.',eyebrow:'Geschichte · Freie Waldorfschule',title:'Vom Wiener Kongress zur Paulskirche',exam:'2026-11-16T09:50:00+01:00',examLabel:'Mo 16.11.26, 9:50',
-  planIntro:'So schaffst du alle 7 Themen bis Montag. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
-  botDesc:'Erklärt dir Restauration, Vormärz und die Revolution 1848/49 und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was waren die Karlsbader Beschlüsse?',matchLink:'Zuordnen-Spiel: Daten, Personen, Fraktionen, Zitate, Begriffe',spickWhen:'Montag früh',
-  examIntro:'15 Fragen aus allen 7 Themen: Wiener Kongress, Nationalbewegung, Vormärz, Wirtschaft, Märzrevolution, Paulskirche und Scheitern. Ein Teil wird jedes Mal neu zusammengestellt. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
-  examTips:'<li>Daten sicher: <b>1815</b> Bund, <b>1817</b> Wartburg, <b>1819</b> Karlsbad, <b>1832</b> Hambach, <b>1834</b> Zollverein, <b>März 1848</b> Revolution, <b>18.5.1848</b> Paulskirche, <b>28.3.1849</b> Verfassung, <b>3.4.1849</b> Ablehnung.</li><li>Ursachen gliedern: <b>politisch, sozial, wirtschaftlich, Auslöser</b>.</li><li>Quellen: <b>Autor, Adressat, Datum, Anlass</b> nennen, dann Inhalt, Analyse, Kontext, Urteil.</li><li>Beim Urteil <b>gewichten</b>, nicht nur aufzählen.</li><li>Fallstrick: „Reif aus Dreck und Letten“ steht im <b>Brief an Bunsen (13.12.1848)</b>.</li>',
-  ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erkläre / Erläutere</b>: Ursachen und Zusammenhänge mit Beispielen deutlich machen</li><li><b>Ordne ein</b>: in den historischen Zusammenhang stellen</li><li><b>Analysiere</b>: Quelle oder Karikatur nach Kriterien untersuchen</li><li><b>Beurteile</b>: Sachurteil mit Begründung · <b>Bewerte</b>: Werturteil aus heutiger Sicht · <b>Erörtere</b>: Pro und Contra, dann Urteil</li>',
-  trMatch:t=>({1:'begriffe',2:'daten',3:'zitate',5:pick(['daten','personen']),6:'fraktionen',7:'personen'})[t]||null}};
+ geschichte:{id:'geschichte',name:'Geschichte',emoji:'🏛️',sub:'1815–1871 · Klausur Mo 7.12.',eyebrow:'Geschichte · Freie Waldorfschule',title:'Vom Wiener Kongress zur Reichsgründung',exam:'2026-12-07T11:45:00+01:00',examLabel:'Mo 07.12.26, 11:45',
+  planIntro:'So schaffst du alle 14 Themen bis Montag, 7.12. Neu sind die Themen 8 bis 14 (1849–1871), danach wiederholst du 1815–1849. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir Vormärz, Revolution 1848/49, Bismarck, die Einigungskriege und die Reichsgründung und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was war die Emser Depesche?',matchLink:'Zuordnen-Spiel: Daten, Personen, Verträge, Fraktionen, Zitate, Begriffe',spickWhen:'Montag früh',
+  examIntro:'21 Fragen aus allen 14 Themen, von 1815 bis 1871: je eine Frage pro Thema und sieben zusätzliche, die jedes Mal neu erzeugt werden. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
+  examTips:'<li>Daten sicher: <b>1815</b> Bund, <b>1819</b> Karlsbad, <b>1832</b> Hambach, <b>1848/49</b> Revolution, <b>1850</b> Olmütz, <b>1862</b> Bismarck, <b>1864</b> Dänemark, <b>1866</b> Königgrätz, <b>1867</b> Norddeutscher Bund, <b>13.7.1870</b> Ems, <b>18.1.1871</b> Versailles, <b>16.4.1871</b> Verfassung.</li><li>Fallstricke: „<b>Eisen und Blut</b>“ (nicht „Blut und Eisen“), die Emser Depesche wurde <b>gekürzt, nicht gefälscht</b>, Werner-Fassungen <b>1877, 1882, 1885</b>, Titel „<b>Deutscher Kaiser</b>“.</li><li>Vergleich 1849/1871 nach Kriterien: Legitimation, Oberhaupt, Regierung, Parlament, Grundrechte, Militär.</li><li>Quellen: <b>Autor, Adressat, Datum, Anlass</b> nennen, dann Inhalt, Analyse, Kontext, Urteil – und Quellenkritik (Protokoll, Kürzung, spätere Fassung).</li><li>Beim Urteil <b>gewichten</b>, z. B. „Revolution von oben“: dafür und dagegen, dann begründetes Fazit.</li>',
+  ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erkläre / Erläutere</b>: Ursachen und Zusammenhänge mit Beispielen deutlich machen</li><li><b>Ordne ein</b>: in den historischen Zusammenhang stellen</li><li><b>Vergleiche</b>: Gemeinsamkeiten und Unterschiede nach Kriterien</li><li><b>Analysiere</b>: Quelle, Bild oder Karikatur nach Kriterien untersuchen</li><li><b>Beurteile</b>: Sachurteil mit Begründung · <b>Bewerte</b>: Werturteil aus heutiger Sicht · <b>Erörtere</b>: Pro und Contra, dann Urteil</li>',
+  trMatch:t=>({1:'begriffe',2:'daten',3:'zitate',5:pick(['daten','personen']),6:'fraktionen',7:'personen',8:'vertraege',9:'zitate71',10:'vertraege',11:pick(['vertraege','daten71']),12:'daten71',13:pick(['personen71','zitate71']),14:'begriffe'})[t]||null}};
 let FACH=FACHER[S.fach]||FACHER.chemie;
 // Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
 const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
