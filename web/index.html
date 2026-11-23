@@ -1761,6 +1761,15 @@ GE.EV=[
  ['16.4.1871',1871.29,'Reichsverfassung beschlossen (in Kraft 4.5.1871)',13],
  ['1877',1877,'Werners Gemälde, erste Fassung (Berliner Schloss)',13],
  ['1885',1885,'Werners Friedrichsruher Fassung: Bismarck in Weiß',13],
+ ['1709',1709,'England: Abraham Darby schmilzt Eisen mit Koks',15],
+ ['1712',1712,'England: Newcomens Dampfmaschine pumpt Wasser aus Bergwerken',15],
+ ['um 1764',1764,'England: Hargreaves’ Spinning Jenny',15],
+ ['1769',1769,'England: Watts Patent auf die verbesserte Dampfmaschine',15],
+ ['1771',1771,'England: Arkwrights Spinnfabrik in Cromford',15],
+ ['1785',1785,'England: Cartwrights mechanischer Webstuhl',15],
+ ['1825',1825,'England: erste öffentliche Eisenbahn Stockton–Darlington',15],
+ ['1830',1830,'England: Eisenbahn Liverpool–Manchester',15],
+ ['1833',1833,'England: Factory Act schränkt Kinderarbeit ein',15],
  ['1.1.1834',1834,'Deutscher Zollverein tritt in Kraft',15],
  ['7.12.1835',1835.93,'Erste deutsche Eisenbahn Nürnberg–Fürth („Adler“)',15],
  ['1839',1839.3,'Preußisches Regulativ: keine Fabrikarbeit unter 9 Jahren',15],
@@ -1915,6 +1924,10 @@ GE.EMS_SATZ=[
  ['Nachdem die Nachrichten von der Entsagung des Erbprinzen von Hohenzollern … amtlich mitgeteilt worden sind …','Bismarcks Pressefassung'],
  ['Seine Majestät der König hat es darauf abgelehnt, den französischen Botschafter nochmals zu empfangen …','Bismarcks Pressefassung'],
  ['… durch den Adjutanten vom Dienst sagen lassen, daß Seine Majestät dem Botschafter nichts weiter mitzuteilen habe.','Bismarcks Pressefassung']];
+GE.ENGL=[
+ ['Kapital aus Handel und Kolonien','England'],['Kohle und Eisenerz nah beieinander','England'],['politische Stabilität seit 1688, Eigentumsschutz','England'],['Agrarrevolution mit Einhegungen','England'],['keine Binnenzölle, Seehandel und Kanäle','England'],
+ ['Kleinstaaterei und viele Binnenzölle bis 1834','Deutschland'],['Zünfte bremsen bis zur Gewerbefreiheit','Deutschland'],['Technik und Fachleute werden aus England geholt','Deutschland'],['Durchbruch erst ab etwa 1850','Deutschland'],['Eisenbahn statt Textil als Leitsektor','Deutschland']];
+GE.ERF=[['Spinning Jenny','James Hargreaves (um 1764)'],['Water Frame','Richard Arkwright (1769)'],['verbesserte Dampfmaschine','James Watt (Patent 1769)'],['mechanischer Webstuhl','Edmund Cartwright (1785)'],['Dampfmaschine für Bergwerke','Thomas Newcomen (1712)'],['Lokomotive „Rocket“','George Stephenson (1829)'],['Koks im Hochofen','Abraham Darby (1709)'],['Spinning Mule','Samuel Crompton (1779)']];
 GE.ANTW=[
  ['Innere Mission (Wichern, 1848)','Kirchen'],['Gesellenvereine (Kolping)','Kirchen'],['Bischof Ketteler fordert gerechte Löhne','Kirchen'],
  ['Werkswohnungen und Betriebskrankenkasse bei Krupp','Unternehmer'],['Konsumanstalten für die Belegschaft','Unternehmer'],
@@ -2065,10 +2078,14 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
   <h3>Quellenkritik</h3><ul><li><b>„Eisen und Blut“:</b> nur Protokoll in indirekter Rede, kein Stenogramm; Zuspitzung teils durch die Presse</li><li><b>Emser Depesche:</b> gekürzt, nicht gefälscht; der Wechsel des Adressaten (vom Kanzler zur Öffentlichkeit) änderte die Funktion</li><li><b>Kaiserproklamation:</b> legitimiert das Reich durch die Fürsten; die Friedensformel steht im Gegensatz zu Krieg und Annexion</li><li><b>Kaiserbrief:</b> eigentlicher Verfasser Bismarck, Unterzeichner Ludwig II., Geld im Hintergrund</li><li><b>Bismarcks „Gedanken und Erinnerungen“:</b> nach der Entlassung 1890 diktiert, erschienen ab 1898 – Rechtfertigungsschrift mit Selbststilisierung</li><li><b>Werner-Gemälde:</b> die späteren Fassungen stilisieren nachträglich (Bismarck-Mythos)</li><li><b>Karikaturen:</b> prüfen, ob aus der Konfliktzeit (oft kritisch, z. B. „Kladderadatsch“ 1862) oder nach 1866 (oft verherrlichend)</li></ul>
   <p>Unten: Vergleich der Verfassungen von 1849 und 1871 und ein Sortierspiel zur „Revolution von oben“.</p>`,
   widget:'ge_vgl'},
- {id:15,title:'Industrialisierung in Deutschland',short:'Eisenbahn, Kohle und Stahl, soziale Frage, Antworten',
-  goals:['Voraussetzungen und Leitsektoren der Industrialisierung erklären','Folgen für Gesellschaft und Arbeiter beschreiben (soziale Frage)','Lösungsansätze von Kirche, Unternehmern, Arbeiterbewegung und Staat vergleichen'],
-  html:`<p>Deutschland war ein <b>Nachzügler</b>: Die Industrialisierung begann in England um 1760, in Deutschland erst nach 1830. Ab etwa 1850 kam der Durchbruch („Take-off“), nach 1871 die Hochindustrialisierung.</p>
-  <h3>Voraussetzungen</h3><ul><li><b>Bevölkerungswachstum</b> und frei werdende Arbeitskräfte durch die Bauernbefreiung (Preußen ab 1807)</li><li><b>Gewerbefreiheit</b> (Preußen 1810/11): Zünfte verlieren ihr Monopol</li><li><b>Deutscher Zollverein (1.1.1834)</b> unter preußischer Führung, ohne Österreich: ein großer Binnenmarkt</li><li><b>Rohstoffe:</b> Kohle und Erz an Ruhr, Saar und in Oberschlesien</li><li>Technik und Know-how aus England, Kapital von Banken und Aktiengesellschaften</li></ul>
+ {id:15,title:'Industrialisierung: England und Deutschland',short:'Ursprünge in England, Eisenbahn, soziale Frage, Antworten',
+  goals:['Erklären, warum die Industrialisierung in England begann','Voraussetzungen und Leitsektoren in Deutschland erklären','Folgen für Gesellschaft und Arbeiter beschreiben (soziale Frage)','Lösungsansätze von Kirche, Unternehmern, Arbeiterbewegung und Staat vergleichen'],
+  html:`<h3>Ursprünge in England</h3><p>Die Industrialisierung begann um <b>1760/1770 in England</b> – Mutterland der „Industriellen Revolution“. Gründe, warum gerade England:</p>
+  <ul><li><b>Agrarrevolution:</b> Einhegungen (Enclosures) und neue Anbaumethoden wie die Fruchtwechselwirtschaft – mehr Nahrung, und vom Land verdrängte Menschen wurden zu Arbeitskräften.</li><li><b>Bevölkerungswachstum:</b> mehr Arbeitskräfte und mehr Nachfrage.</li><li><b>Kapital</b> aus Handel und Kolonien (Weltreich, Seehandel), Banken; Baumwolle als Rohstoff aus den Kolonien.</li><li><b>Kohle und Eisenerz</b> oft nah beieinander; Insellage, Küsten, Flüsse und Kanäle als billige Transportwege.</li><li><b>Politische Stabilität:</b> seit der Glorious Revolution (1688) Parlament und Schutz des Eigentums, keine Binnenzölle, Patentschutz; ein Bürgertum mit Unternehmergeist.</li></ul>
+  <h3>Erfindungen und Leitsektor Textil</h3><ul><li><b>Textilindustrie</b> war der erste Leitsektor: <b>Spinning Jenny</b> (Hargreaves, um 1764), <b>Water Frame</b> (Arkwright, 1769), erste Spinnfabrik in <b>Cromford</b> (1771), <b>Spinning Mule</b> (Crompton, 1779), <b>mechanischer Webstuhl</b> (Cartwright, 1785).</li><li><b>Dampfmaschine:</b> Newcomen (1712) für Bergwerke, <b>James Watt</b> verbesserte sie entscheidend (Patent 1769) – Energie unabhängig von Wasser und Wind.</li><li><b>Eisen:</b> Koks statt Holzkohle (Darby, 1709), Puddelverfahren (Cort, 1784).</li><li><b>Eisenbahn:</b> Stockton–Darlington 1825, Liverpool–Manchester 1830 (George Stephenson, Lok „Rocket“).</li></ul>
+  <h3>Folgen in England</h3><p>Fabrikstädte wie <b>Manchester</b> wuchsen rasant; Elend der Arbeiter, Kinderarbeit. Maschinenstürmer (<b>Ludditen</b>, 1811–1816) zerstörten Maschinen. Der <b>Factory Act (1833)</b> schränkte die Kinderarbeit in Textilfabriken ein. England wurde zur „Werkstatt der Welt“.</p>
+  <h3>Deutschland als Nachzügler</h3><p>In Deutschland begann die Industrialisierung erst nach 1830 – gebremst durch Kleinstaaterei, Binnenzölle, Zünfte und wenig Kapital. Deutschland übernahm englische Technik (Maschinen, Lokomotiven, Fachleute). Ab etwa 1850 kam der Durchbruch („Take-off“), nach 1871 die Hochindustrialisierung.</p>
+  <h3>Voraussetzungen in Deutschland</h3><ul><li><b>Bevölkerungswachstum</b> und frei werdende Arbeitskräfte durch die Bauernbefreiung (Preußen ab 1807)</li><li><b>Gewerbefreiheit</b> (Preußen 1810/11): Zünfte verlieren ihr Monopol</li><li><b>Deutscher Zollverein (1.1.1834)</b> unter preußischer Führung, ohne Österreich: ein großer Binnenmarkt</li><li><b>Rohstoffe:</b> Kohle und Erz an Ruhr, Saar und in Oberschlesien</li><li>Technik und Know-how aus England, Kapital von Banken und Aktiengesellschaften</li></ul>
   <h3>Leitsektor Eisenbahn</h3><p><b>7.12.1835:</b> erste deutsche Eisenbahn Nürnberg–Fürth (Lokomotive „Adler“). <b>1839:</b> Leipzig–Dresden, die erste Fernstrecke, für die sich <b>Friedrich List</b> einsetzte. Die Eisenbahn brauchte Kohle, Eisen, Stahl und Maschinen – sie zog die Schwerindustrie mit (Kettenreaktion). <b>Borsig</b> (Berlin) baute 1841 seine erste Lokomotive, <b>Krupp</b> (Essen) lieferte Gussstahl. Das Ruhrgebiet wurde zum größten Industrierevier.</p>
   <h3>Hochindustrialisierung</h3><ul><li>Nach 1871: einheitliche Währung (Mark), Gesetze und Wirtschaftsraum; die französischen Milliarden lösten einen <b>Gründerboom</b> aus, 1873 folgte der <b>Gründerkrach</b>.</li><li><b>Zweite Industrielle Revolution:</b> Chemie (Bayer und Hoechst 1863, BASF 1865) und Elektrotechnik (Siemens & Halske 1847, dynamoelektrisches Prinzip 1866).</li><li>Um 1900 gehörte Deutschland neben den USA und Großbritannien zu den führenden Industriemächten.</li></ul>
   <h3>Folgen: die soziale Frage</h3><ul><li><b>Urbanisierung</b> und <b>Landflucht</b>: Städte und Industriereviere wachsen rasant.</li><li>Neue Klasse der <b>Industriearbeiter</b> (Proletariat): oft 12 Stunden und mehr am Tag, niedrige Löhne, Frauen- und <b>Kinderarbeit</b>, Wohnungsnot, keine Absicherung bei Krankheit, Unfall oder Alter.</li><li>Schon vorher Massenarmut (<b>Pauperismus</b>), z. B. Schlesischer Weberaufstand 1844.</li><li>Erster Schutz: das <b>Preußische Regulativ (1839)</b> verbot Fabrikarbeit für Kinder unter 9 Jahren.</li><li>Aufstieg von Unternehmern und Wirtschaftsbürgertum.</li></ul>
@@ -2169,6 +2186,12 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  {t:14,q:'Was war 1871 moderner als in vielen Staaten Europas?',o:['das allgemeine Männerwahlrecht zum Reichstag','die parlamentarische Regierung','der Grundrechtekatalog','das Frauenwahlrecht'],a:0,e:'Fortschrittlicher als in Großbritannien damals.'},
  {t:14,q:'Was gilt für Bismarcks „Gedanken und Erinnerungen“?',o:['Rechtfertigungsschrift nach der Entlassung, mit Selbststilisierung','neutrales Tagebuch von 1870','amtliches Protokoll','Werk eines Gegners Bismarcks'],a:0,e:'Diktiert nach 1890.'},
  {t:14,q:'Was zeigen die späteren Fassungen von Werners Gemälde vor allem?',o:['den wachsenden Bismarck-Mythos','den genauen Ablauf am 18.1.1871','die Rolle des Parlaments','die Sicht Frankreichs'],a:0,e:'Bismarck in Weiß, Roon eingefügt.'},
+ {t:15,q:'Wo begann die Industrialisierung?',o:['in England um 1760/1770','in Deutschland um 1835','in Frankreich nach 1789','in den USA um 1700'],a:0,e:'England gilt als Mutterland der Industriellen Revolution.'},
+ {t:15,q:'Welcher Grund erklärt NICHT, warum England zuerst industrialisierte?',o:['viele Binnenzölle und Kleinstaaterei','Kapital aus Handel und Kolonien','Kohle und Eisenerz nah beieinander','politische Stabilität und Eigentumsschutz'],a:0,e:'Binnenzölle und Kleinstaaterei bremsten gerade Deutschland.'},
+ {t:15,q:'Wer verbesserte die Dampfmaschine entscheidend?',o:['James Watt','Richard Arkwright','George Stephenson','Edmund Cartwright'],a:0,e:'Patent 1769.'},
+ {t:15,q:'Welche Branche war in England der erste Leitsektor?',o:['Textilindustrie','Chemie','Elektrotechnik','Autobau'],a:0,e:'Spinning Jenny, Water Frame, mechanischer Webstuhl.'},
+ {t:15,q:'Was war die Agrarrevolution in England?',o:['Einhegungen und neue Anbaumethoden: mehr Nahrung, freigesetzte Arbeitskräfte','die Abschaffung der Landwirtschaft','ein Bauernaufstand 1848','die Einführung von Traktoren'],a:0,e:'Enclosures und Fruchtwechselwirtschaft.'},
+ {t:15,q:'Warum war Deutschland ein Nachzügler?',o:['Kleinstaaterei, Binnenzölle, Zünfte und wenig Kapital','keine Kohle','Verbot von Maschinen durch den Kaiser','zu wenig Einwohner'],a:0,e:'Erst Zollverein und Gewerbefreiheit änderten das.'},
  {t:15,q:'Welche Strecke war die erste deutsche Eisenbahn (1835)?',o:['Nürnberg–Fürth','Leipzig–Dresden','Berlin–Potsdam','Köln–Bonn'],a:0,e:'7.12.1835, Lokomotive „Adler“.'},
  {t:15,q:'Warum gilt die Eisenbahn als Leitsektor?',o:['Sie brauchte Kohle, Eisen und Maschinen und zog so die Schwerindustrie mit','Sie war das erste Fabrikprodukt','Sie ersetzte die Landwirtschaft','Sie wurde nur vom Staat gebaut'],a:0,e:'Kettenreaktion: Bergbau, Eisen- und Stahlindustrie, Maschinenbau.'},
  {t:15,q:'Was war die „soziale Frage“?',o:['die Not der Arbeiter: lange Arbeitszeiten, Armut, Kinderarbeit, keine Absicherung','die Frage nach der Kaiserkrone','der Streit zwischen Katholiken und Protestanten','die Frage nach der Grenze zu Frankreich'],a:0,e:'Folge der Industrialisierung und Verstädterung.'},
@@ -2240,6 +2263,9 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  [14,'Das allgemeine Männerwahlrecht 1871 war ein modernes Element.',1,'Fortschrittlicher als in Großbritannien damals.'],
  [14,'Die Sonderweg-These ist unter Historikern unumstritten.',0,'Umstritten, z. B. Wehler gegen Nipperdey.'],
  [15,'Deutschland begann früher mit der Industrialisierung als England.',0,'Deutschland war ein Nachzügler, England begann um 1760.'],
+ [15,'Die erste öffentliche Eisenbahn fuhr in England.',1,'Stockton–Darlington 1825.'],
+ [15,'Die Spinning Jenny gehört zur Elektrotechnik.',0,'Eine Spinnmaschine der Textilindustrie (Hargreaves, um 1764).'],
+ [15,'Die Ludditen waren englische Maschinenstürmer.',1,'1811–1816.'],
  [15,'Der Zollverein trat 1834 in Kraft.',1,'1.1.1834, unter preußischer Führung, ohne Österreich.'],
  [15,'Das Kommunistische Manifest stammt von Lassalle.',0,'Von Marx und Engels (1848).'],
  [15,'Bismarck führte die Sozialversicherung ein und verbot gleichzeitig sozialdemokratische Organisationen.',1,'Sozialistengesetz 1878 – Sozialversicherung ab 1883.'],
@@ -2326,6 +2352,13 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  ['Revolution von oben','Deutung der Reichsgründung: revolutionäre Mittel (Annexionen, allgemeines Wahlrecht) für konservative Ziele.',14],
  ['Einheit ohne Freiheit','Bilanz 1871: Nationalstaat erreicht, aber ohne Grundrechte und parlamentarische Regierung.',14],
  ['Sonderweg-These','Deutung (z. B. Wehler): Reichsgründung von oben als Weichenstellung zum Obrigkeitsstaat; umstritten.',14],
+ ['Industrielle Revolution','Beginn um 1760/1770 in England: Maschinen, Fabriken und Dampfkraft verändern Wirtschaft und Gesellschaft.',15],
+ ['Agrarrevolution','England 18. Jh.: Einhegungen (Enclosures) und Fruchtwechsel – mehr Nahrung, freigesetzte Arbeitskräfte.',15],
+ ['Dampfmaschine','Von Newcomen (1712) erfunden, von James Watt (Patent 1769) entscheidend verbessert.',15],
+ ['Spinning Jenny','Spinnmaschine von Hargreaves (um 1764), Beginn der Mechanisierung der Textilindustrie.',15],
+ ['Cromford','1771: Arkwrights Spinnfabrik mit Wasserkraft – gilt als erste moderne Fabrik.',15],
+ ['Ludditen','Englische Maschinenstürmer (1811–1816), die Maschinen als Ursache ihrer Not zerstörten.',15],
+ ['Nachzügler','Deutschland industrialisierte später als England – gebremst durch Kleinstaaterei, Zölle und Zünfte.',15],
  ['Industrialisierung','Übergang zur Massenproduktion in Fabriken mit Maschinen; in Deutschland ab etwa 1830/1850.',15],
  ['Leitsektor','Branche, die andere mitzieht – in Deutschland die Eisenbahn (Kohle, Eisen, Maschinenbau).',15],
  ['Zollverein','1.1.1834: Zollunion deutscher Staaten unter Preußen, ohne Österreich – Binnenmarkt.',15],
@@ -2373,6 +2406,7 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  {t:12,title:'Ordne die Ereignisse 1870/71.',parts:['Verzicht Leopolds','Emser Depesche','Französische Kriegserklärung','Sedan','Dritte Republik','Novemberverträge','Kaiserproklamation','Kapitulation von Paris','Frieden von Frankfurt']},
  {t:13,title:'Ordne die Schritte zur Reichsgründung.',parts:['Novemberverträge','Kaiserbrief Ludwigs II.','Reichstag beschließt „Deutsches Reich“','Kaiserproklamation in Versailles','Reichsverfassung beschlossen','Frieden von Frankfurt']},
  {t:13,title:'Ordne die Fassungen von Werners Kaiserproklamation.',parts:GE.WERNER.map(w=>w[0])},
+ {t:15,title:'Ordne die Erfindungen in England.',parts:['Koks im Hochofen (Darby)','Newcomens Dampfmaschine','Spinning Jenny','Watts Dampfmaschinen-Patent','Spinnfabrik Cromford','Mechanischer Webstuhl','Stockton–Darlington','Liverpool–Manchester']},
  {t:15,title:'Ordne die Industrialisierung.',parts:['Zollverein tritt in Kraft','Eisenbahn Nürnberg–Fürth','Schlesischer Weberaufstand','Kommunistisches Manifest','Gründung des ADAV','Gründerkrach','Sozialistengesetz','Krankenversicherung','Invaliditäts- und Altersversicherung']}];
 
  const yearOf=e=>String(e[0]).match(/18\d\d/)[0];
@@ -2409,6 +2443,8 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
     ()=>{ const x=pick(GE.RVO); return {t:14,q:'Spricht das für oder gegen die Deutung „Revolution von oben“? '+x[0],o:['dafür','dagegen'],a:x[1]==='dafür'?0:1,e:'Ein Argument '+x[1]+'. Im Urteil beide Seiten gewichten.'}; },
     ()=>{ const a=shuffle(EV71.slice()).slice(0,2).sort((x,y)=>x[1]-y[1]); if(a[0][1]===a[1][1]) return vglQ(); const q=Math.random()<.5; return {t:14,q:'Was war '+(q?'früher':'später')+'?',o:q?[a[0][2],a[1][2]]:[a[1][2],a[0][2]],a:0,e:a[0][0]+': '+a[0][2]+' · '+a[1][0]+': '+a[1][2]+'.'}; }]};
  GE.GEN[15]=[()=>dateQ(15),()=>cardQ71(15),
+   ()=>{ const x=pick(GE.ERF); return {t:15,q:'Wer steht hinter dieser Erfindung? '+x[0],o:opts4(x[1],GE.ERF.map(y=>y[1])),a:0,e:x[0]+': '+x[1]+'.'}; },
+   ()=>{ const x=pick(GE.ENGL); return {t:15,q:'Passt das eher zu England oder zu Deutschland? '+x[0],o:['England','Deutschland'],a:x[1]==='England'?0:1,e:x[0]+' – '+x[1]+'.'}; },
    ()=>{ const x=pick(GE.ANTW); return {t:15,q:'Wer gab diese Antwort auf die soziale Frage? '+x[0],o:['Kirchen','Unternehmer','Arbeiterbewegung','Staat'],a:['Kirchen','Unternehmer','Arbeiterbewegung','Staat'].indexOf(x[1]),e:x[0]+': '+x[1]+'.'}; },
    ()=>{ const P=PERA.filter(p=>p.t===15), p=pick(P); return {t:15,q:'Wer war '+p.name+'?',o:opts4(p.role,P.map(x=>x.role)),a:0,e:p.name+' ('+p.life+'): '+p.more}; }];
  function dateQ(t){ const e=pick(evOf(t)); return {t,q:'Wann war das? '+e[2],o:opts4(e[0],EV71.map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; }
@@ -2443,7 +2479,7 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
  11:[['YouTube','Deutscher Krieg 1866',YT+'Deutscher Krieg 1866 Königgrätz einfach erklärt'],['YouTube','Norddeutscher Bund',YT+'Norddeutscher Bund 1867 erklärt']],
  12:[['YouTube','Emser Depesche',YT+'Emser Depesche 1870 einfach erklärt'],['YouTube','Deutsch-Französischer Krieg',YT+'Deutsch-Französischer Krieg 1870 71 erklärt']],
  13:[['YouTube','Reichsgründung 1871',YT+'Reichsgründung 1871 Kaiserproklamation Versailles erklärt'],['YouTube','Reichsverfassung 1871',YT+'Reichsverfassung 1871 Aufbau erklärt']],
- 15:[['YouTube','Industrialisierung in Deutschland',YT+'Industrialisierung Deutschland einfach erklärt'],['YouTube','Soziale Frage und Lösungsansätze',YT+'Soziale Frage Industrialisierung Lösungsansätze erklärt']],
+ 15:[['YouTube','Industrielle Revolution in England',YT+'Industrielle Revolution England Ursachen einfach erklärt'],['YouTube','Industrialisierung in Deutschland',YT+'Industrialisierung Deutschland einfach erklärt'],['YouTube','Soziale Frage und Lösungsansätze',YT+'Soziale Frage Industrialisierung Lösungsansätze erklärt']],
  14:[['YouTube','Revolution von oben',YT+'Reichsgründung Revolution von oben Bewertung'],['YouTube','Werner Gemälde Bildanalyse',YT+'Anton von Werner Kaiserproklamation Bildanalyse']]};
 
  GE.PLAN=[
@@ -2474,7 +2510,7 @@ GE.STEPS_K=['Formale Angaben: Titel, Zeichner, Datum, Ort','Beschreibung: Person
   ['Krieg 1870/71',['Leopold verzichtet 12.7.1870 · Emser Depesche 13.7. (gekürzt, nicht gefälscht)','Kriegserklärung Frankreichs 19.7.1870','Sedan 1./2.9. (Napoleon III. gefangen) · Dritte Republik 4.9.','Paris kapituliert 28.1.1871 · Kommune 18.3.–28.5.','Frieden von Frankfurt 10.5.1871: Elsass-Lothringen, 5 Mrd. Francs']],
   ['Reichsgründung 1871',['Novemberverträge 15./23./25.11.1870 · Reservatrechte Bayern','Kaiserbrief 30.11.1870 (Entwurf Bismarck, Welfenfonds ca. 5 Mio. Mark)','Proklamation 18.1.1871 Spiegelsaal: Fürsten und Militär, „Deutscher Kaiser“','Verfassung 16.4.1871: 25 Staaten + Reichsland; Kanzler nur dem Kaiser verantwortlich','Bundesrat 58 Stimmen, Preußen 17, Veto ab 14 · Reichstag 382, Männer ab 25 · keine Grundrechte','Werner: 1877, 1882, 1885 (Holzstich 1880); 1885: Bismarck in Weiß, Roon eingefügt']],
   ['Bewertung',['„Revolution von oben“: revolutionäre Mittel, konservative Ziele','1849 Einheit durch Freiheit (gescheitert) · 1871 Einheit ohne volle Freiheit','modern: Männerwahlrecht, Rechtseinheit · Belastung: Militarismus, Erbfeindschaft','Sonderweg-These umstritten (Wehler vs. Nipperdey)','Quellenkritik: Protokoll, Kürzung, Fürstenlegitimation, Rechtfertigungsschrift, Bildmythos']],
-  ['Industrialisierung',['Nachzügler: England ab ca. 1760, Deutschland ab 1830/1850 · Zollverein 1.1.1834','Eisenbahn = Leitsektor: Nürnberg–Fürth 7.12.1835, Leipzig–Dresden 1839 (List) → Kohle, Eisen, Maschinen (Borsig, Krupp)','Gründerboom nach 1871, Gründerkrach 1873 · 2. Industrielle Revolution: Chemie (Bayer, Hoechst 1863, BASF 1865), Elektro (Siemens)','Soziale Frage: Proletariat, 12+ Stunden, Kinderarbeit (Regulativ 1839), Wohnungsnot, Urbanisierung','Kirchen: Wichern 1848, Kolping, Ketteler · Unternehmer: Krupp (Fürsorge + Kontrolle)','Arbeiterbewegung: Manifest 1848, ADAV 1863, SDAP 1869, Gotha 1875','Staat: Sozialistengesetz 1878 + Kranken- 1883, Unfall- 1884, Altersversicherung 1889']]];
+  ['Industrialisierung',['England ab ca. 1760/70: Agrarrevolution, Bevölkerung, Kapital aus Handel/Kolonien, Kohle + Erz, Stabilität seit 1688','England: Textil als Leitsektor (Spinning Jenny ~1764, Water Frame 1769, Cromford 1771, Webstuhl 1785) · Watt 1769 · Bahn 1825/1830 · Ludditen, Factory Act 1833','Deutschland Nachzügler (Kleinstaaterei, Zölle, Zünfte), ab 1830/1850 · Zollverein 1.1.1834','Eisenbahn = Leitsektor: Nürnberg–Fürth 7.12.1835, Leipzig–Dresden 1839 (List) → Kohle, Eisen, Maschinen (Borsig, Krupp)','Gründerboom nach 1871, Gründerkrach 1873 · 2. Industrielle Revolution: Chemie (Bayer, Hoechst 1863, BASF 1865), Elektro (Siemens)','Soziale Frage: Proletariat, 12+ Stunden, Kinderarbeit (Regulativ 1839), Wohnungsnot, Urbanisierung','Kirchen: Wichern 1848, Kolping, Ketteler · Unternehmer: Krupp (Fürsorge + Kontrolle)','Arbeiterbewegung: Manifest 1848, ADAV 1863, SDAP 1869, Gotha 1875','Staat: Sozialistengesetz 1878 + Kranken- 1883, Unfall- 1884, Altersversicherung 1889']]];
  // Klausur 7.12.: nur die Themen ab 8 (1849–1871) plus Industrialisierung; intern als 1–8 nummeriert.
  // Die Inhalte 1815–1849 bleiben oben erhalten und lassen sich mit GE_OFF=0 wieder einschalten.
  const GE_OFF=7, keep=t=>t>GE_OFF, sh=t=>t>GE_OFF?t-GE_OFF:t;
@@ -2567,6 +2603,7 @@ W.ge_vgl=root=>{
 };
 W.ge_ind=root=>{ const t=document.createElement('div'); root.appendChild(t); geTimeline(t,e=>e[3]===15,'Zeitstrahl der Industrialisierung.');
   const h=document.createElement('div'); h.style.marginTop='14px'; h.innerHTML='<p class="muted" style="font-size:.9rem">Wer gab welche Antwort auf die soziale Frage?</p><div></div>'; root.appendChild(h);
+  const g=document.createElement('div'); g.style.marginTop='14px'; g.innerHTML='<p class="muted" style="font-size:.9rem">England oder Deutschland?</p><div></div>'; root.insertBefore(g,h); geSort(g.lastElementChild,GE.ENGL,['England','Deutschland'],'Passt das zu England oder zu Deutschland?');
   geSort(h.lastElementChild,GE.ANTW,['Kirchen','Unternehmer','Arbeiterbewegung','Staat'],'Kirchen, Unternehmer, Arbeiterbewegung oder Staat?'); };
 
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
@@ -2709,7 +2746,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.5';
+const APP_VERSION='5.6';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
