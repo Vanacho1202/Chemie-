@@ -40,7 +40,7 @@ const LIMIT_MS = 20000;            // Zeit pro Frage
 const READY_MS = 5 * 60 * 1000;    // spätestens nach 5 Minuten geht es weiter
 const START_MS = 3500;             // Countdown vor der ersten Frage
 const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungsabbruch frei
-const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock','urne','saeule','flagge','barrikade','zug','zeitung','brief','eiche','kartoffel','schwerter','depesche','spiegel','helm']);
+const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock','urne','saeule','flagge','barrikade','zug','zeitung','brief','eiche','kartoffel','schwerter','depesche','spiegel','helm','eu','euro','globus','mikro','koffer','pass','bruecke','taube']);
 
 const rooms = new Map();     // code -> room
 const waitingBy = new Map();  // Schnellsuche: Fach -> wartender Spieler (Chemie und Deutsch getrennt)
@@ -309,9 +309,31 @@ So antwortest du:
 - Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter.
 - Formatierung nur **fett** und Aufzählungen mit "- ". Keine Tabellen, keine Überschriften.
 - Bei Fragen ohne Bezug zum Fach kurz antworten und zum Lernen zurücklenken.`;
-const FACH_IDS = ['chemie', 'deutsch', 'geschichte'];
+const SYSTEM_PW = `Du bist "Alki", ein freundlicher, kluger Nachhilfelehrer für Politik und Wirtschaft (Powi) in einer Lern-App.
+Der Schüler (Oberstufe, Grundkurs, Waldorfschule) schreibt am Donnerstag, 3.12.2026, 10:00 eine Powi-Klausur Q1 zur EU-Integration. Aufbau: 1) „nenne“ die Organe (10–15 %), 2) „erläutere“ (35–40 %), 3) „beziehe begründet Stellung“ (50 %) mit Wahl zwischen Aufgabe A und B. Themen: Organe und Institutionen der EU, Geschichte (Vertiefung, Erweiterung), Integrationstheorien (Supranationalismus, Intergouvernementalismus), Motive und Leitbilder (bpb-Text „Motive und Leitbilder der europäischen Einigung“ von Otto Schmuck), Binnenmarkt mit vier Freiheiten, einheitliche Regeln (Regulierung, Verbraucherschutz), Lobbyismus. Europa politisch → Institutionen, wirtschaftlich → Binnenmarkt, kulturell.
+
+Gesicherte Fakten (nutze genau diese, erfinde nichts):
+- Motive (sechs): Friedenssicherung (Kant, Hugo, Briand, Stresemann; nach 1945; Churchill Zürich 19.9.1946; Schuman 9.5.1950, Versöhnung D–F, Kohle und Stahl); Wohlstand durch Binnenmarkt (27 Staaten, knapp 450 Mio. Menschen, Euro, ca. ein Drittel der Ausgaben für Regionalpolitik, Regionen unter 75 % des Durchschnitts); Wertegemeinschaft (Europarat 1949, Art. 2 EUV: Menschenwürde, Freiheit, Demokratie, Gleichheit, Rechtsstaatlichkeit, Menschenrechte inkl. Minderheiten; Grundrechtecharta, Konvent unter Roman Herzog 2000, verbindlich seit 2009; Klagen gegen Polen und Ungarn 2017–2020); Einfluss in Außen- und Sicherheitspolitik (EPZ 1970er, GASP, „Zivilmacht Europa“, AKP-Staaten); grenzüberschreitende Probleme (Tschernobyl, Sandoz 1986, Terror, Migration, Corona); gute Nachbarschaft („Europa von unten“, Erasmus+).
+- Leitbilder: föderalistisch (Bundesstaat) vs. intergouvernementalistisch (Staatenbund). Bundesstaat: Verfassung, gewählte EU-Regierung, Mehrheiten, eigene Steuern; v. a. Gründungsstaaten; Kritik Machtverlust der Staaten. Staatenbund: Regierungen entscheiden einstimmig, schwaches Parlament; Briten, Skandinavier, Österreich, viele MOE-Staaten; schwerfällig. Differenzierte Integration: Europa der zwei Geschwindigkeiten, Opting-out (Euro), variable Geometrie; Kritik komplizierte Strukturen, Solidarität. Republik Europa mit starken Regionen (Guérot, Menasse; Europa der drei Ebenen; Ausschuss der Regionen 329 Mitglieder, beratend; Subsidiarität Art. 5 EUV; Art. 1 EUV bürgernah; Art. 23 Abs. 6 GG). Binnenmarkt mit Festungscharakter / „Festung Europa“ als Gegenbild (nicht realistisch, nicht erstrebenswert), „Partner Europa“.
+- Verträge: EGKS 1951/52 (Hohe Behörde, supranational); EVG scheitert 1954; Römische Verträge 25.3.1957, in Kraft 1.1.1958 (EWG, Euratom); Direktwahl EP 1979; Schengen 1985; Einheitliche Europäische Akte 1986/87 (Binnenmarkt bis 1992); Maastricht 1992, in Kraft 1.11.1993 (EU, drei Säulen: EG, GASP, Inneres und Justiz; Währungsunion, Unionsbürgerschaft); Amsterdam 1997/1.5.1999 (Hoher Vertreter); Nizza 2001/1.2.2003; Verfassungsvertrag 2005 gescheitert (Referenden Frankreich, Niederlande); Lissabon 13.12.2007, in Kraft 1.12.2009 (Charta verbindlich, EP gleichberechtigt, doppelte Mehrheit, Präsident Europäischer Rat, Bürgerinitiative, Subsidiaritätskontrolle nationaler Parlamente, Austrittsrecht Art. 50, Säulenstruktur abgeschafft, einheitliche Rechtspersönlichkeit). Euro 1999/2002, 21 Länder seit Bulgarien 1.1.2026.
+- Erweiterung: 6 Gründer (B, D, F, I, L, NL); 1973 DK, IRL, UK; 1981 GR; 1986 E, P; 1995 A, FIN, S; 2004 zehn Staaten (EST, LV, LT, PL, CZ, SK, SLO, H, M, CY); 2007 BG, RO; 2013 HR; Brexit 31.1.2020 → 27. Kopenhagener Kriterien 1993 (politisch, wirtschaftlich, Acquis, plus Aufnahmefähigkeit der EU). Kandidaten u. a. Ukraine und Moldau (Status 2022), Westbalkan, Türkei (eingefroren), Georgien (gestoppt). Spannung Erweiterung vs. Vertiefung.
+- Organe: Europäischer Rat (Staats- und Regierungschefs, Präsident António Costa, Leitlinien, keine Gesetze, Konsens); Rat der EU/Ministerrat (Fachminister, Gesetzgeber mit EP, qualifizierte Mehrheit 55 % der Staaten und 65 % der Bevölkerung, Sperrminorität mind. 4 Staaten, einstimmig bei Außenpolitik, Steuern; Vorsitz halbjährlich, 2. Halbjahr 2026 Irland); Kommission (27 Mitglieder, Präsidentin Ursula von der Leyen, Initiativrecht, Exekutive, Hüterin der Verträge, vom EP gewählt, Misstrauensvotum mit 2/3); Europäisches Parlament (720 Abgeordnete 2024–2029, 6 bis 96 pro Staat, Deutschland 96, Direktwahl alle 5 Jahre, Präsidentin Roberta Metsola, Straßburg/Brüssel/Luxemburg, kein Initiativrecht); EuGH (Luxemburg, ein Richter pro Staat, Vorabentscheidung, Vertragsverletzungsverfahren, Vorrang des EU-Rechts). Dazu EZB und Rechnungshof. Nicht verwechseln mit Europarat (46 Staaten, Straßburg) und EGMR. Ordentliches Gesetzgebungsverfahren: Kommission schlägt vor, EP und Rat beschließen (Trilog). Verordnung gilt unmittelbar, Richtlinie wird umgesetzt. Demokratiedefizit-Debatte.
+- Integrationstheorien (Arbeitsblatt): Intergouvernementalismus „zwischen den Regierungen“: Machtzentrum nationale Regierungen (Europäischer Rat), einstimmig mit Veto, klassisches Völkerrecht, Ziel Staatenbund; Kernthese Staaten bleiben „Herren der Verträge“ und kooperieren zweckorientiert; Lissabon: GASP strikt einstimmig, Veto bei Steuern, Außenpolitik, Verteidigung; in zwischenstaatlichen Verträgen wie dem ESM schwache Parlamentsrechte. Supranationalismus „über den Nationen“: Machtzentrum gemeinsame Organe (Kommission, Parlament, EuGH), Mehrheitsbeschlüsse (qualifizierte Mehrheit), EU-Recht bricht nationales Recht, Ziel föderaler Bundesstaat / politische Union; Kernthese Souveränitätsabgabe und Eigendynamik (Spill-over); Lissabon: Säulenstruktur abgeschafft, einheitliche Rechtspersönlichkeit, Binnenmarkt und Justizpolitik fast vollständig supranationalisiert, doppelte Mehrheit, EP gleichberechtigter Gesetzgeber. Vertreter: Haas, Monnet (Neofunktionalismus); Hoffmann, Moravcsik. BVerfG 1993: „Staatenverbund“; Mehrebenensystem.
+- Binnenmarkt seit 1.1.1993: freier Waren-, Personen-, Dienstleistungs- und Kapitalverkehr; Harmonisierung und gegenseitige Anerkennung (Cassis de Dijon 1979); Verbraucherschutz: Roaming abgeschafft 2017, USB-C, DSGVO 2018, Fluggastrechte; Kritik Bürokratie (Gurkenverordnung 1988–2009).
+- Lobbyismus: Brüssel großes Lobbyzentrum (Schätzungen rund 25.000 Lobbyisten), überwiegend unternehmensorientiert, Fachleute liefern Fachwissen für die Kommission; Transparenzregister (2011, Pflicht für Treffen mit Kommissionsmitgliedern, seit 2021 mit Rat); Drehtür-Effekt; Katargate 2022. Pro: Expertise, Pluralismus; Contra: Ungleichgewicht, Intransparenz.
+
+So antwortest du:
+- Verstehe Umgangssprache und Tippfehler, beantworte die gemeinte Frage direkt.
+- Erst die Antwort in einem Satz, dann knapp erklären, mit Beispiel.
+- Bei Stellungnahmen: Pro und Contra mit Beispielen, Kriterien (Effizienz, Legitimation, Souveränität, Solidarität), dann ein gewichtetes Urteil; gib dem Schüler einen Aufbau vor statt nur fertiger Meinung.
+- Schickt der Schüler einen eigenen Text, gib ehrliches, konkretes Feedback.
+- Bei aktuellen Ämtern sag dazu, dass sich das ändern kann. Erfinde nichts.
+- Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter.
+- Formatierung nur **fett** und Aufzählungen mit "- ". Keine Tabellen, keine Überschriften.
+- Bei Fragen ohne Bezug zum Fach kurz antworten und zum Lernen zurücklenken.`;
+const FACH_IDS = ['chemie', 'deutsch', 'geschichte', 'powi'];
 const fachIn = f => FACH_IDS.includes(f) ? f : 'chemie';
-const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : fach === 'geschichte' ? SYSTEM_GE : SYSTEM;
+const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : fach === 'geschichte' ? SYSTEM_GE : fach === 'powi' ? SYSTEM_PW : SYSTEM;
 const rate = new Map(); // IP -> [Zeitstempel]
 function limited(ip, max = 20) {
   const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
@@ -374,7 +396,7 @@ async function geminiCards(topic, fach) {
   const prompt = `Ein Schüler bittet dich in einer Lern-App: "${topic}"
 Erstelle dazu Karteikarten. ${want ? 'Genau ' + want + ' Karten.' : 'So viele, wie das Thema sinnvoll hergibt: meist 8 bis 16 (bei einer Reihe eine Karte pro Glied).'}
 
-Kontext: ${fach === 'geschichte' ? 'Oberstufe, Geschichtsklausur Deutschland 1849–1871 (Bismarck, Einigungskriege, Reichsgründung) und Industrialisierung. Nutze diese Fakten:\n' + SYSTEM_GE.split('So antwortest du:')[0] : fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
+Kontext: ${fach === 'powi' ? 'Oberstufe, Powi-Grundkurs-Klausur zur EU-Integration. Nutze diese Fakten:\n' + SYSTEM_PW.split('So antwortest du:')[0] : fach === 'geschichte' ? 'Oberstufe, Geschichtsklausur Deutschland 1849–1871 (Bismarck, Einigungskriege, Reichsgründung) und Industrialisierung. Nutze diese Fakten:\n' + SYSTEM_GE.split('So antwortest du:')[0] : fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
 
 Gute Karten:
 - Erst verstehen, was genau gewünscht ist (Thema, Umfang, Art), auch bei Tippfehlern oder Umgangssprache.
@@ -519,7 +541,7 @@ const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
 const allReady = room => room.players.every(p => p && p.canReady);
 const fachOf = p => fachIn(p && p.fach);
-const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK', geschichte: 'Geschichte' };
+const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK', geschichte: 'Geschichte', powi: 'Powi GK' };
 const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, fach: fachOf(p), status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
 
 function newCode() {
@@ -576,13 +598,14 @@ function endMatch(room) {
 const BOT_LEVEL = { easy: { p: 0.45, min: 7000, max: 15000, label: 'leicht' }, medium: { p: 0.72, min: 4000, max: 10000, label: 'mittel' }, hard: { p: 0.92, min: 1800, max: 5500, label: 'schwer' } };
 const BOT_NAMES = ['Methan-Max', 'Ethan-Emma', 'Propan-Paul', 'Butan-Bella', 'Pentan-Pia', 'Hexan-Hugo', 'Heptan-Hanna', 'Octan-Otto'];
 const BOT_NAMES_GE = ['Metternich-Max', 'Gagern-Greta', 'Hecker-Hans', 'Blum-Berta', 'Paulskirchen-Paul', 'Zollverein-Zoe', 'Barrikaden-Ben', 'Vormärz-Vera', 'Bismarck-Bernd', 'Depeschen-Dora', 'Moltke-Moritz', 'Versailles-Vicky'];
+const BOT_NAMES_PW = ['Schuman-Sophie', 'Monnet-Moritz', 'Brüssel-Ben', 'Straßburg-Stella', 'Spill-over-Sven', 'Subsidiaritäts-Susi', 'Lobby-Lukas', 'Trilog-Tara'];
 const BOT_NAMES_DE = ['Krug-Kalle', 'Richter-Rudi', 'Blankvers-Bea', 'Perücken-Paul', 'Zitat-Zoe', 'Akt-Anton', 'Kleist-Klara', 'Szenen-Sam'];
 const BOT_AVATARS = ['robot', 'alien', 'owl', 'penguin', 'fox', 'panda'];
 function makeBot(room, level) {
   const L = BOT_LEVEL[level] ? level : 'medium';
   const used = new Set(room.players.filter(Boolean).map(p => p.name));
   const rf = room.fach || fachOf(room.players.find(p => p && !p.isBot));
-  const name = ((rf === 'deutsch' ? BOT_NAMES_DE : rf === 'geschichte' ? BOT_NAMES_GE : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
+  const name = ((rf === 'deutsch' ? BOT_NAMES_DE : rf === 'geschichte' ? BOT_NAMES_GE : rf === 'powi' ? BOT_NAMES_PW : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
   return { isBot: true, level: L, name: '🤖 ' + name, avatar: BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)], title: 'Bot (' + BOT_LEVEL[L].label + ')', color: 'std', readyState: 0, token: crypto.randomBytes(12).toString('hex'), send() {}, terminate() {} };
 }
 function botsAnswer(room) {

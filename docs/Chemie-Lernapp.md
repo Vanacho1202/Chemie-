@@ -61,6 +61,7 @@ Werte stehen nur bei Render, nie im Repo oder hier.
 - Beim ersten Start Fachauswahl, oben auf der Startseite „Fach wechseln“
 - **Chemie**: Alkane (Klausur 10.11.2026)
 - **Geschichte**: Klausur Mo 7.12.2026, 11:45; ab 5.5 nur noch 8 Themen: Reaktionszeit, Verfassungskonflikt/Bismarck, Krieg 1864, Krieg 1866/Norddeutscher Bund, Krieg 1870/71 mit Emser Depesche, Reichsgründung/Reichsverfassung mit Werner-Gemälde, Bewertung 1849 vs. 1871, Industrialisierung mit sozialer Frage. Die Inhalte 1815–1849 sind im Code noch vorhanden, aber ausgeblendet (`GE_OFF=7`); Server-Prompt `SYSTEM_GE`
+- **Powi GK**: EU-Integration Q1 (Klausur Do 3.12.2026, 10:00), 8 Themen: Motive, Geschichte/Vertiefung, Erweiterung, Organe, Integrationstheorien (inkl. Arbeitsblatt Intergouvernementalismus vs. Supranationalismus), Leitbilder, Binnenmarkt/4 Freiheiten/Regulierung, Lobbyismus; Modul `PW` (fach_powi.js), Server-Prompt `SYSTEM_PW`
 - **Deutsch GK**: Kleist, „Der zerbrochne Krug“ + Szenenanalyse (Klausur Do 12.11.2026, 8:00); 7 Themen, Fragenpool, Generatoren (Figuren, Zitate, Auftritte, Stilmittel, Aufbau), Karteikarten, Aufgaben mit Musterlösung, Spickzettel
 - Fortschritt (Themen, Training, Fehlerheft, Probeklausuren, Karten, Stapel) pro Fach gespeichert; Münzen, Shop, Freunde, Name gelten für alle
 - Schnellsuche im Battle nur gegen Spieler im selben Fach; Alki und Karteikarten-KI kennen das gewählte Fach

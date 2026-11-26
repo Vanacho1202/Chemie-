@@ -2605,6 +2605,435 @@ W.ge_ind=root=>{ const t=document.createElement('div'); root.appendChild(t); geT
   const h=document.createElement('div'); h.style.marginTop='14px'; h.innerHTML='<p class="muted" style="font-size:.9rem">Wer gab welche Antwort auf die soziale Frage?</p><div></div>'; root.appendChild(h);
   const g=document.createElement('div'); g.style.marginTop='14px'; g.innerHTML='<p class="muted" style="font-size:.9rem">England oder Deutschland?</p><div></div>'; root.insertBefore(g,h); geSort(g.lastElementChild,GE.ENGL,['England','Deutschland'],'Passt das zu England oder zu Deutschland?');
   geSort(h.lastElementChild,GE.ANTW,['Kirchen','Unternehmer','Arbeiterbewegung','Staat'],'Kirchen, Unternehmer, Arbeiterbewegung oder Staat?'); };
+/* ================= Fach Powi GK: EU-Integration (Q1) ================= */
+const PW={};
+PW.EV=[
+ ['19.9.1946',1946.7,'Churchills Zürcher Rede: „eine Art Vereinigte Staaten von Europa“',2],
+ ['5.5.1949',1949.35,'Gründung des Europarats (kein EU-Organ!)',2],
+ ['9.5.1950',1950.35,'Schuman-Erklärung: Vorschlag einer Gemeinschaft für Kohle und Stahl',2],
+ ['18.4.1951',1951.3,'Vertrag über die EGKS (Montanunion), in Kraft 1952',2],
+ ['1954',1954.6,'Europäische Verteidigungsgemeinschaft scheitert in der französischen Nationalversammlung',2],
+ ['25.3.1957',1957.23,'Römische Verträge: EWG und Euratom (in Kraft 1.1.1958)',2],
+ ['1973',1973,'Erste Erweiterung: Dänemark, Irland, Vereinigtes Königreich',3],
+ ['1979',1979.45,'Erste Direktwahl des Europäischen Parlaments',2],
+ ['1981',1981,'Griechenland tritt bei',3],
+ ['1985',1985.45,'Schengener Abkommen (Wegfall der Grenzkontrollen)',2],
+ ['1986',1986,'Spanien und Portugal treten bei',3],
+ ['1986/87',1986.5,'Einheitliche Europäische Akte: Ziel Binnenmarkt bis Ende 1992',2],
+ ['1.1.1993',1993,'Europäischer Binnenmarkt mit den vier Freiheiten',7],
+ ['1992/93',1993.8,'Vertrag von Maastricht: Gründung der EU (drei Säulen), Weg zum Euro',2],
+ ['1993',1993.5,'Kopenhagener Kriterien für Beitrittskandidaten',3],
+ ['1995',1995,'Österreich, Finnland und Schweden treten bei',3],
+ ['1997/99',1999.33,'Vertrag von Amsterdam: Hoher Vertreter für die Außenpolitik',2],
+ ['1.1.1999',1999.01,'Euro als Buchgeld, Bargeld ab 1.1.2002',2],
+ ['2001/03',2003.08,'Vertrag von Nizza: Reformen für die Osterweiterung',2],
+ ['1.5.2004',2004.33,'Osterweiterung: 10 Staaten, v. a. aus Mittel- und Osteuropa',3],
+ ['2005',2005.4,'Verfassungsvertrag scheitert an Referenden in Frankreich und den Niederlanden',2],
+ ['2007',2007,'Bulgarien und Rumänien treten bei',3],
+ ['2007/09',2009.92,'Vertrag von Lissabon (in Kraft 1.12.2009): Grundrechtecharta verbindlich',2],
+ ['2013',2013.5,'Kroatien tritt bei (28 Mitglieder)',3],
+ ['31.1.2020',2020.08,'Brexit: Das Vereinigte Königreich verlässt die EU (27 Mitglieder)',3],
+ ['2022',2022.47,'Ukraine und Moldau erhalten den Kandidatenstatus',3],
+ ['1.1.2026',2026,'Bulgarien führt den Euro ein (21 Euro-Länder)',2]];
+PW.ORG=[
+ {k:'er',name:'Europäischer Rat',av:'🧭',who:'Staats- und Regierungschefs der 27, dazu sein Präsident und die Kommissionspräsidentin',task:'legt die allgemeinen politischen Ziele und Leitlinien fest („Gipfel“), beschließt keine Gesetze',how:'meist im Konsens; mindestens viermal im Jahr; Präsident für 2,5 Jahre gewählt (einmal wiederwählbar)',seat:'Brüssel',now:'Präsident António Costa',typ:'intergouvernemental'},
+ {k:'rat',name:'Rat der EU (Ministerrat)',av:'🤝',who:'je ein Fachminister pro Mitgliedstaat, je nach Thema (z. B. Agrar-, Finanzminister)',task:'Gesetzgeber zusammen mit dem Parlament, Haushalt mit dem Parlament, koordiniert die Politik, Außenpolitik',how:'meist qualifizierte Mehrheit (55 % der Staaten, 65 % der Bevölkerung), einstimmig z. B. in Außenpolitik und Steuern; Vorsitz wechselt alle 6 Monate',seat:'Brüssel (teils Luxemburg)',now:'Vorsitz 2. Halbjahr 2026: Irland',typ:'intergouvernemental'},
+ {k:'kom',name:'Europäische Kommission',av:'🏢',who:'27 Kommissarinnen und Kommissare, eine Person pro Mitgliedstaat, aber dem Unionsinteresse verpflichtet',task:'Initiativrecht für Gesetze, führt Beschlüsse aus (Exekutive), „Hüterin der Verträge“, verhandelt Handelsabkommen',how:'Präsidentin vom Europäischen Rat vorgeschlagen und vom Parlament gewählt; Amtszeit 5 Jahre',seat:'Brüssel',now:'Präsidentin Ursula von der Leyen',typ:'supranational'},
+ {k:'ep',name:'Europäisches Parlament',av:'🗳️',who:'720 Abgeordnete, alle 5 Jahre direkt gewählt (seit 1979); 6 bis 96 pro Land, Deutschland 96',task:'Gesetzgeber zusammen mit dem Rat, Haushalt, wählt die Kommissionspräsidentin, kontrolliert die Kommission (Misstrauensvotum)',how:'Mehrheitsentscheidungen; Abgeordnete in Fraktionen nach politischer Richtung, nicht nach Ländern; kein eigenes Initiativrecht',seat:'Straßburg (Plenum), Brüssel, Luxemburg',now:'Präsidentin Roberta Metsola',typ:'supranational'},
+ {k:'eugh',name:'Gerichtshof der EU (EuGH)',av:'⚖️',who:'ein Richter pro Mitgliedstaat, dazu Generalanwälte; Amtszeit 6 Jahre',task:'sichert die einheitliche Auslegung des EU-Rechts: Vorabentscheidungen, Vertragsverletzungs- und Nichtigkeitsverfahren',how:'unabhängig; EU-Recht hat Vorrang vor nationalem Recht',seat:'Luxemburg',now:'',typ:'supranational'}];
+PW.MOT=[
+ ['Friedenssicherung','Nach zwei Weltkriegen Versöhnung, v. a. Deutschland–Frankreich; Kohle und Stahl gemeinsam kontrollieren (Schuman 1950).'],
+ ['Wohlstand durch den Binnenmarkt','27 Staaten, knapp 450 Mio. Menschen: billiger produzieren, keine Zölle und Grenzkontrollen, Euro ohne Wechselkursrisiko; Regionalförderung.'],
+ ['Wertegemeinschaft','Menschenwürde, Freiheit, Demokratie, Gleichheit, Rechtsstaatlichkeit, Menschenrechte (Art. 2 EUV); Grundrechtecharta seit 2009 verbindlich.'],
+ ['Einfluss in Außen- und Sicherheitspolitik','Einzelne Staaten sind auf der Weltbühne zu schwach; gemeinsam mehr Gewicht („Zivilmacht Europa“).'],
+ ['Grenzüberschreitende Probleme lösen','Umwelt, Klima, Terror, Migration, Pandemie lassen sich national nicht lösen (Tschernobyl, Sandoz 1986).'],
+ ['Gute Nachbarschaft','„Europa von unten“: Partnerschaften, Austausch wie Erasmus+, Sprachen lernen.']];
+PW.LB=[
+ ['Europäischer Bundesstaat','Föderalismus: eigene Verfassung, demokratisch gewählte EU-Regierung, Mehrheitsentscheidungen, klare Kompetenzen, eigene Steuern','effizient, demokratisch legitimiert','Machtverlust der Mitgliedstaaten','v. a. Gründungsstaaten wie Deutschland'],
+ ['Europäischer Staatenbund','Zusammenarbeit souveräner Regierungen, meist einstimmig im Rat und Europäischen Rat, schwaches Parlament','Nationalstaaten behalten das letzte Wort','schwerfällig, Blockaden, wenig Legitimation auf EU-Ebene','Großbritannien, Skandinavien, viele Staaten Mittel- und Osteuropas'],
+ ['Differenzierte Integration','Kerngruppe geht voran; Varianten: Europa der zwei Geschwindigkeiten, Opting-out, variable Geometrie','Fortschritt trotz zögernder Staaten','komplizierte Strukturen, Solidarität gefährdet','Beispiele: Euro, Schengen'],
+ ['Republik Europa mit starken Regionen','Bürger und Regionen statt Nationalstaaten; Europäischer Rat und Ministerrat abgeschafft (Guérot, Menasse)','Bürgernähe, Identität in überschaubaren Einheiten','utopisch, Staaten müssten Macht abgeben','Ausschuss der Regionen, Subsidiarität als Ansätze'],
+ ['Binnenmarkt mit Festungscharakter','Binnenmarkt erhalten, Außengrenzen stark kontrollieren, restriktive Asylpolitik, keine weiteren Integrationsschritte','sichert Wohlstand und Kontrolle','Abschottung, „Festung Europa“ widerspricht den Werten','v. a. mittel- und osteuropäische Staaten']];
+PW.VERTR=[
+ ['EGKS-Vertrag (1951)','gemeinsame Kontrolle von Kohle und Stahl – erste supranationale Gemeinschaft (Hohe Behörde)'],
+ ['Römische Verträge (1957)','Gründung von EWG und Euratom, Ziel gemeinsamer Markt'],
+ ['Einheitliche Europäische Akte (1986)','Ziel Binnenmarkt bis 1992, mehr Mehrheitsentscheidungen im Rat'],
+ ['Vertrag von Maastricht (1992)','Gründung der EU mit drei Säulen, Wirtschafts- und Währungsunion, Unionsbürgerschaft'],
+ ['Vertrag von Amsterdam (1997)','Hoher Vertreter für die Außen- und Sicherheitspolitik, mehr Rechte für das Parlament'],
+ ['Vertrag von Nizza (2001)','Stimmgewichte und Sitzverteilung für die Osterweiterung neu geregelt'],
+ ['Vertrag von Lissabon (2007)','Grundrechtecharta verbindlich, mehr Parlament, Europäische Bürgerinitiative, Subsidiaritätskontrolle, Austrittsrecht'],
+ ['Schengener Abkommen (1985)','Wegfall der Kontrollen an den Binnengrenzen']];
+PW.ERW=[
+ ['1952/58','Gründer: Belgien, Deutschland, Frankreich, Italien, Luxemburg, Niederlande'],
+ ['1973','Dänemark, Irland, Vereinigtes Königreich'],
+ ['1981','Griechenland'],
+ ['1986','Spanien, Portugal'],
+ ['1995','Österreich, Finnland, Schweden'],
+ ['2004','Estland, Lettland, Litauen, Polen, Tschechien, Slowakei, Slowenien, Ungarn, Malta, Zypern'],
+ ['2007','Bulgarien, Rumänien'],
+ ['2013','Kroatien'],
+ ['2020','Austritt des Vereinigten Königreichs (Brexit)']];
+PW.FREI=[
+ ['Freier Warenverkehr','keine Zölle und Mengenbeschränkungen im Binnenmarkt; gegenseitige Anerkennung von Produkten (Cassis-de-Dijon-Urteil 1979)'],
+ ['Personenfreizügigkeit','Unionsbürger dürfen überall in der EU leben, arbeiten, studieren; Schengen: keine Grenzkontrollen'],
+ ['Dienstleistungsfreiheit','Unternehmen dürfen ihre Dienste in allen EU-Staaten anbieten, z. B. Handwerker, Banken, Versicherungen'],
+ ['Freier Kapitalverkehr','Geld und Investitionen dürfen frei über Grenzen fließen, z. B. Konto, Kredit oder Aktien im EU-Ausland']];
+PW.FREI_BSP=[
+ ['Ein Weinhändler verkauft französischen Wein ohne Zoll in Deutschland.','Freier Warenverkehr'],
+ ['Eine Pflegerin aus Polen arbeitet in einem Krankenhaus in Hamburg.','Personenfreizügigkeit'],
+ ['Ein Student macht ein Erasmus-Semester in Madrid und bleibt dort.','Personenfreizügigkeit'],
+ ['Ein Dachdecker aus Österreich repariert ein Dach in Bayern.','Dienstleistungsfreiheit'],
+ ['Eine deutsche Versicherung bietet Verträge in Italien an.','Dienstleistungsfreiheit'],
+ ['Ein Unternehmer kauft Aktien einer niederländischen Firma.','Freier Kapitalverkehr'],
+ ['Eine Familie nimmt bei einer belgischen Bank einen Kredit auf.','Freier Kapitalverkehr'],
+ ['Ein in Frankreich zugelassenes Spielzeug darf auch in Deutschland verkauft werden.','Freier Warenverkehr']];
+PW.THEO=[
+ ['Mehrheitsentscheidungen im Rat','Supranationalismus'],
+ ['Die Kommission schlägt Gesetze vor und überwacht ihre Einhaltung.','Supranationalismus'],
+ ['Der EuGH setzt den Vorrang des EU-Rechts durch.','Supranationalismus'],
+ ['„Spill-over“: Integration in einem Bereich zieht weitere nach sich.','Supranationalismus'],
+ ['Der Binnenmarkt macht eine gemeinsame Währung sinnvoll.','Supranationalismus'],
+ ['Die Staaten bleiben die „Herren der Verträge“.','Intergouvernementalismus'],
+ ['In der Außen- und Sicherheitspolitik wird einstimmig entschieden.','Intergouvernementalismus'],
+ ['Regierungen verhandeln nach ihren nationalen Interessen.','Intergouvernementalismus'],
+ ['Der Europäische Rat gibt die Richtung vor.','Intergouvernementalismus'],
+ ['Jeder Staat kann wichtige Beschlüsse mit seinem Veto blockieren.','Intergouvernementalismus'],
+ ['Rechtsgrundlage ist klassisches Völkerrecht.','Intergouvernementalismus'],
+ ['Staaten kooperieren nur zweckorientiert.','Intergouvernementalismus'],
+ ['Der ESM-Rettungsschirm als zwischenstaatlicher Vertrag mit schwachen Parlamentsrechten','Intergouvernementalismus'],
+ ['Ziel ist ein föderaler Bundesstaat bzw. eine politische Union.','Supranationalismus'],
+ ['Das Parlament ist gleichberechtigter Gesetzgeber.','Supranationalismus'],
+ ['Die EU hat seit Lissabon eine einheitliche Rechtspersönlichkeit.','Supranationalismus'],
+ ['EU-Recht bricht nationales Recht.','Supranationalismus']];
+PW.ORG_SATZ=[
+ ['schlägt Gesetze vor (Initiativrecht)','Europäische Kommission'],['„Hüterin der Verträge“','Europäische Kommission'],['leitet Vertragsverletzungsverfahren ein','Europäische Kommission'],
+ ['wird alle 5 Jahre direkt von den Bürgern gewählt','Europäisches Parlament'],['wählt die Kommissionspräsidentin','Europäisches Parlament'],['kann der Kommission das Misstrauen aussprechen','Europäisches Parlament'],
+ ['Fachminister der 27 Staaten','Rat der EU (Ministerrat)'],['Vorsitz wechselt alle sechs Monate','Rat der EU (Ministerrat)'],['entscheidet oft mit doppelter Mehrheit (55 % / 65 %)','Rat der EU (Ministerrat)'],
+ ['Gipfel der Staats- und Regierungschefs','Europäischer Rat'],['legt Leitlinien fest, aber keine Gesetze','Europäischer Rat'],
+ ['sitzt in Luxemburg und legt EU-Recht verbindlich aus','Gerichtshof der EU (EuGH)'],['Vorabentscheidung auf Anfrage nationaler Gerichte','Gerichtshof der EU (EuGH)']];
+PW.SCHEMA=[
+ ['Machtzentrum','nationale Regierungen (Europäischer Rat)','gemeinsame EU-Organe (Kommission, Parlament)'],
+ ['Entscheidungen','einstimmig (Vetorecht bleibt)','Mehrheitsbeschlüsse (qualifizierte Mehrheit)'],
+ ['Rechtsebene','klassisches Völkerrecht','EU-Recht bricht nationales Recht'],
+ ['Ziel','Staatenbund','föderaler Bundesstaat / politische Union']];
+PW.LISSA=[
+ ['Kernthese','Staaten bleiben „Herren der Verträge“ und kooperieren nur zweckorientiert.','Staaten treten Souveränität ab; eine Eigendynamik führt zu immer engerer Verflechtung (Spill-over).'],
+ ['Schlüssel-Institution','Europäischer Rat (Staats- und Regierungschefs)','Europäische Kommission, Europäisches Parlament, EuGH'],
+ ['Architektur','GASP: weiterhin strikt einstimmig, keine echten supranationalen Gesetze','Säulenstruktur abgeschafft, EU mit einheitlicher Rechtspersönlichkeit; Binnenmarkt und Justizpolitik fast vollständig supranationalisiert'],
+ ['Entscheidungsreform','Veto bleibt in sensiblen Bereichen: Steuern, Außenpolitik, Verteidigung','„Doppelte Mehrheit“ im Ministerrat (55 % der Staaten, 65 % der Bevölkerung), um nationale Blockaden aufzuheben'],
+ ['Rolle des Parlaments','in rein zwischenstaatlichen Verträgen (z. B. ESM-Euro-Rettungsschirm) schwache Parlamentsrechte','EP wird gleichberechtigter Gesetzgeber (ordentliches Gesetzgebungsverfahren)']];
+PW.LOBBY=[
+ ['Lobbyisten liefern Fachwissen, das die Kommission für Gesetzesvorschläge braucht.','dafür'],
+ ['Verbände bringen die Interessen von Betroffenen in die Gesetzgebung ein.','dafür'],
+ ['Auch NGOs, Gewerkschaften und Verbraucherschützer machen Lobbyarbeit (Pluralismus).','dafür'],
+ ['Das Transparenzregister macht Lobbykontakte sichtbar.','dafür'],
+ ['Unternehmen haben viel mehr Geld und Personal als Verbraucher- oder Umweltverbände.','dagegen'],
+ ['Wechsel von Politikern in Lobbyjobs („Drehtür-Effekt“).','dagegen'],
+ ['Viele Kontakte bleiben intransparent; Bürger erfahren wenig davon.','dagegen'],
+ ['Gesetze können einseitig zugunsten einzelner Branchen ausfallen.','dagegen']];
+(function buildPW(){
+ const opts4=(right,pool)=>{ const o=[right]; shuffle(pool.filter(x=>x!==right)).forEach(x=>{ if(o.length<4&&!o.includes(x)) o.push(x); }); return o; };
+ const ORG=PW.ORG, EV=PW.EV;
+ PW.TOPICS=[
+ {id:1,title:'Motive der europäischen Einigung',short:'Frieden, Wohlstand, Werte, Einfluss',
+  goals:['Die sechs Motive nennen und mit Beispielen erläutern','Erklären, wie sich die Bedeutung der Motive gewandelt hat','Die Dimensionen politisch, wirtschaftlich, kulturell unterscheiden'],
+  html:`<p>Warum haben sich die Staaten Europas zusammengeschlossen? Der bpb-Text „Motive und Leitbilder der europäischen Einigung“ (Otto Schmuck) nennt <b>sechs Motivbündel</b>. Ihre Bedeutung war im Laufe der Zeit und von Land zu Land unterschiedlich groß.</p>
+  <h3>1. Friedenssicherung</h3><p>Die Idee ist alt (Kant, Victor Hugo, Briand, Stresemann), wirksam wurde sie erst nach dem <b>Zweiten Weltkrieg</b>: Übersteigerter Nationalismus galt als Kriegsursache. <b>Churchill</b> forderte 1946 in Zürich einen staatenübergreifenden Ansatz. <b>Robert Schuman</b> schlug am <b>9. Mai 1950</b> die Montanunion vor: Kohle und Stahl, die wichtigsten Rohstoffe für Rüstung, sollten gemeinsam kontrolliert werden – Hauptziel war die <b>deutsch-französische Versöhnung</b>, Sieger und Verlierer wurden gleichberechtigte Partner. Heute empfinden viele den Frieden als selbstverständlich, deshalb ist das Motiv in den Hintergrund getreten – seit dem russischen Angriff auf die Ukraine wird es wieder wichtiger.</p>
+  <h3>2. Wohlstand durch den Binnenmarkt</h3><p>Ein Markt mit 27 Staaten und knapp 450 Mio. Menschen: große Serien, billigere Produktion, keine Zölle, Grenzkontrollen oder unterschiedlichen Zulassungen; der <b>Euro</b> spart Umtauschkosten und Wechselkursrisiken. Die EU ist einer der größten Wirtschaftsräume und Handelsmächte der Welt. Etwa ein Drittel der EU-Ausgaben fließt in die <b>Regionalpolitik</b>, vor allem in Regionen unter 75 % des EU-Durchschnittseinkommens.</p>
+  <h3>3. Wertegemeinschaft</h3><p>Schon der <b>Europarat</b> (1949) sollte gemeinsame Werte schützen. <b>Art. 2 EUV</b>: Menschenwürde, Freiheit, Demokratie, Gleichheit, Rechtsstaatlichkeit, Menschenrechte einschließlich der Minderheitenrechte. Die <b>Grundrechtecharta</b> ist seit 2009 (Lissabon) verbindlich. Konflikte mit <b>Polen und Ungarn</b> (Justizreformen, Umgang mit NGOs und Asylsuchenden) führten zu Klagen der Kommission vor dem EuGH; EU-Gelder werden an Rechtsstaatlichkeit gebunden.</p>
+  <h3>4. Einfluss in der Außen- und Sicherheitspolitik</h3><p>Allein spielen die europäischen Staaten auf der Weltbühne kaum eine Rolle. Seit den 1970ern gab es die Europäische Politische Zusammenarbeit, seit Maastricht die <b>GASP</b> – meist einstimmig. In der Entwicklungszusammenarbeit (AKP-Staaten) gilt die EU als <b>„Zivilmacht Europa“</b>.</p>
+  <h3>5. Grenzüberschreitende Probleme</h3><p>Umwelt- und Klimaschutz, Terror, Drogen, Geldwäsche, Migration und Pandemien machen nicht an Grenzen halt (z. B. Tschernobyl und der Sandoz-Chemieunfall am Rhein, beide 1986).</p>
+  <h3>6. Gute Nachbarschaft</h3><p>„<b>Europa von unten</b>“: Städte- und Schulpartnerschaften, Austausch (Erasmus+), Sprachenlernen, offene Grenzen.</p>
+  <div class="merk"><span class="merk-label">Drei Dimensionen</span>Europa <b>politisch</b> → Institutionen · <b>wirtschaftlich</b> → Binnenmarkt · <b>kulturell</b> → Werte, Austausch, Identität. Sie hängen zusammen und verstärken sich.</div>`,
+  widget:'pw_mot'},
+ {id:2,title:'Geschichte und Vertiefung der EU',short:'Von der Montanunion bis Lissabon',
+  goals:['Die wichtigsten Verträge mit Jahr und Inhalt nennen','Vertiefung als Übertragung von immer mehr Zuständigkeiten erläutern','Rückschläge und Krisen einordnen'],
+  html:`<p><b>Vertiefung</b> heißt: Die EU bekommt mehr Zuständigkeiten, die Zusammenarbeit wird enger und verbindlicher (mehr Mehrheitsentscheidungen, mehr Rechte für das Parlament). <b>Erweiterung</b> heißt: mehr Mitglieder (nächstes Thema).</p>
+  <h3>Anfänge</h3><ul><li><b>1946:</b> Churchills Zürcher Rede · <b>1949:</b> Europarat (Straßburg, Menschenrechte, <b>kein EU-Organ</b>)</li><li><b>9.5.1950:</b> Schuman-Erklärung (heute „Europatag“), entworfen von Jean Monnet</li><li><b>1951/52: EGKS (Montanunion)</b> – Belgien, Deutschland, Frankreich, Italien, Luxemburg, Niederlande. Eine <b>Hohe Behörde</b> entschied über Kohle und Stahl: die erste <b>supranationale</b> Gemeinschaft.</li><li><b>1954:</b> Die Europäische Verteidigungsgemeinschaft scheitert in Frankreich – Rückschlag, danach Integration über die Wirtschaft.</li><li><b>1957/58: Römische Verträge</b> – EWG (gemeinsamer Markt, Zollunion bis 1968) und Euratom.</li></ul>
+  <h3>Ausbau</h3><ul><li><b>1979:</b> erste Direktwahl des Europäischen Parlaments</li><li><b>1985:</b> Schengener Abkommen (Wegfall der Binnengrenzkontrollen, umgesetzt ab 1995)</li><li><b>1986/87: Einheitliche Europäische Akte</b> – Ziel Binnenmarkt bis Ende 1992, mehr Mehrheitsentscheidungen</li><li><b>1992/93: Vertrag von Maastricht</b> – Gründung der <b>EU</b> mit drei Säulen: (1) Europäische Gemeinschaften, (2) GASP, (3) Inneres und Justiz; Unionsbürgerschaft, Weg zur Währungsunion, Subsidiaritätsprinzip, Ausschuss der Regionen</li><li><b>1997/99: Amsterdam</b> – Hoher Vertreter für die Außenpolitik, mehr Rechte für das Parlament</li><li><b>1999/2002:</b> Euro als Buchgeld, dann als Bargeld (heute 21 Länder, zuletzt Bulgarien 2026)</li><li><b>2001/03: Nizza</b> – Institutionen für die Osterweiterung angepasst</li></ul>
+  <h3>Verfassung und Lissabon</h3><p>Der <b>Verfassungsvertrag</b> scheiterte 2005 an Referenden in Frankreich und den Niederlanden. Fast alle Inhalte kamen in den <b>Vertrag von Lissabon (2007, in Kraft 1.12.2009)</b>: Grundrechtecharta verbindlich, das Parlament wird gleichberechtigter Gesetzgeber (ordentliches Gesetzgebungsverfahren), doppelte Mehrheit im Rat, ständiger Präsident des Europäischen Rates, Hoher Vertreter, <b>Europäische Bürgerinitiative</b>, Subsidiaritätskontrolle durch nationale Parlamente, Austrittsrecht (Art. 50 EUV), Säulenstruktur aufgehoben.</p>
+  <h3>Krisen</h3><p>Euro- und Staatsschuldenkrise (ab 2010), Flüchtlingskrise (2015), <b>Brexit</b> (Austritt am 31.1.2020), Corona-Pandemie mit gemeinsamem Wiederaufbaufonds, Russlands Krieg gegen die Ukraine (Sanktionen, Unterstützung).</p>
+  <div class="merk"><span class="merk-label">Faustregel</span>Jeder Vertrag hat <b>zwei Jahreszahlen</b>: Unterzeichnung und Inkrafttreten (z. B. Maastricht 1992/1993, Lissabon 2007/2009).</div>`,
+  widget:'pw_zeit2'},
+ {id:3,title:'Erweiterung der EU',short:'Von 6 auf 27 Mitglieder, Kopenhagener Kriterien',
+  goals:['Die Erweiterungsrunden nennen','Die Kopenhagener Kriterien erläutern','Chancen und Probleme von Erweiterung und Vertiefung abwägen'],
+  html:`<h3>Erweiterungsrunden</h3><p>Aus 6 Gründerstaaten wurden 28 Mitglieder; nach dem Brexit sind es <b>27</b>.</p>
+  <div class="tbl"><table>${PW.ERW.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('')}</table></div>
+  <h3>Kopenhagener Kriterien (1993)</h3><ul><li><b>Politisch:</b> stabile Institutionen, Demokratie, Rechtsstaatlichkeit, Menschenrechte, Schutz von Minderheiten</li><li><b>Wirtschaftlich:</b> funktionierende Marktwirtschaft, die dem Wettbewerb im Binnenmarkt standhält</li><li><b>Acquis communautaire:</b> das gesamte EU-Recht übernehmen und umsetzen</li><li>Dazu muss die <b>EU selbst aufnahmefähig</b> sein (Institutionen, Haushalt).</li></ul>
+  <h3>Ablauf</h3><p>Antrag → Kandidatenstatus (einstimmig im Rat) → Beitrittsverhandlungen in Kapiteln → Beitrittsvertrag: einstimmig im Rat, Zustimmung des Parlaments, Ratifizierung durch <b>alle</b> Mitgliedstaaten.</p>
+  <h3>Heute</h3><p>Kandidaten sind u. a. die <b>Ukraine</b> und <b>Moldau</b> (Status seit 2022), die Westbalkanstaaten (z. B. Montenegro, Serbien, Albanien, Nordmazedonien) sowie die Türkei (Verhandlungen faktisch eingefroren) und Georgien (Prozess derzeit gestoppt).</p>
+  <h3>Chancen und Probleme</h3><ul><li><b>Chancen:</b> Frieden und Stabilität ausdehnen (Osterweiterung nach dem Kalten Krieg), größerer Binnenmarkt, mehr Gewicht in der Welt, Demokratie stärken</li><li><b>Probleme:</b> Entscheidungen mit 27 und mehr Staaten werden schwerer (Einstimmigkeit), hohe Kosten (Agrar- und Regionalförderung), Wohlstandsgefälle, Angst vor Lohndruck und Migration, Streit um Rechtsstaatlichkeit (Polen, Ungarn)</li></ul>
+  <div class="merk"><span class="merk-label">Erweiterung vs. Vertiefung</span>Je mehr Mitglieder, desto schwerer die Vertiefung. Deshalb kamen vor großen Erweiterungen immer Reformverträge (Nizza vor 2004, Lissabon danach). Lösungen: mehr Mehrheitsentscheidungen oder <b>differenzierte Integration</b>.</div>`,
+  widget:'pw_erw'},
+ {id:4,title:'Organe der EU',short:'Europäischer Rat, Rat, Kommission, Parlament, EuGH',
+  goals:['Die fünf Organe nennen (10–15 % der Klausur!)','Zusammensetzung und Aufgaben erläutern','Das Gesetzgebungsverfahren und den Vorwurf des Demokratiedefizits erklären'],
+  html:`<p>Die EU hat sieben Organe (Art. 13 EUV). Für die Klausur zählen die <b>fünf wichtigsten</b>; dazu kommen die Europäische Zentralbank (Frankfurt) und der Rechnungshof (Luxemburg).</p>
+  <div class="tbl"><table><tr><th>Organ</th><th>Wer?</th><th>Aufgabe</th><th>Wie?</th></tr>${ORG.map(o=>`<tr><th>${o.av} ${o.name}<br><span class="muted" style="font-weight:400">${o.seat}${o.now?' · '+o.now:''}</span></th><td>${o.who}</td><td>${o.task}</td><td>${o.how}</td></tr>`).join('')}</table></div>
+  <h3>Verwechslungsgefahr</h3><ul><li><b>Europäischer Rat</b> (Gipfel, Leitlinien) ≠ <b>Rat der EU</b> (Minister, Gesetze) ≠ <b>Europarat</b> (eigene Organisation mit 46 Staaten in Straßburg, kein EU-Organ).</li><li><b>EuGH</b> (Luxemburg, EU-Recht) ≠ <b>Europäischer Gerichtshof für Menschenrechte</b> (Straßburg, Europarat).</li></ul>
+  <h3>Wie entsteht ein EU-Gesetz?</h3><p><b>Ordentliches Gesetzgebungsverfahren:</b> Die <b>Kommission</b> schlägt vor → <b>Parlament</b> und <b>Rat</b> beraten in bis zu drei Lesungen und müssen sich einigen, oft in informellen Verhandlungen („Trilog“) → Gesetz. Formen: <b>Verordnung</b> (gilt sofort und unmittelbar in allen Staaten), <b>Richtlinie</b> (Ziel verbindlich, Staaten setzen sie in eigenes Recht um).</p>
+  <h3>Qualifizierte Mehrheit im Rat</h3><p>Doppelte Mehrheit: mindestens <b>55 % der Staaten</b> (15 von 27), die zusammen <b>65 % der Bevölkerung</b> vertreten. Eine Sperrminorität braucht mindestens vier Staaten.</p>
+  <h3>Demokratiedefizit?</h3><ul><li><b>Kritik:</b> Die Kommission ist nicht direkt gewählt und hat das Initiativmonopol; das Parlament kann keine Gesetze vorschlagen; Wahlbeteiligung und Bekanntheit sind niedrig; Entscheidungen in Hinterzimmern (Trilog, Gipfel); Regierungen machen im Rat Gesetze, die sie zu Hause umsetzen.</li><li><b>Gegenargumente:</b> Parlament ist direkt gewählt und gleichberechtigter Gesetzgeber; Minister im Rat sind national demokratisch legitimiert; Kommission wird vom Parlament gewählt und kontrolliert; Bürgerinitiative, Subsidiaritätskontrolle.</li></ul>`,
+  widget:'pw_org'},
+ {id:5,title:'Integrationstheorien',short:'Supranationalismus und Intergouvernementalismus',
+  goals:['Beide Theorien erklären und unterscheiden','Organe und Politikfelder zuordnen','Mit den Theorien begründet Stellung nehmen'],
+  html:`<p>Integrationstheorien erklären, <b>warum und wie</b> die europäische Integration voranschreitet und wer sie steuert.</p>
+  <h3>Supranationalismus (Neofunktionalismus)</h3><ul><li><b>Supra</b> = über: Die Staaten übertragen Souveränität auf Institutionen <b>über</b> den Staaten.</li><li>Begründer: Ernst B. Haas (1958), Vordenker Jean Monnet („Methode Monnet“: kleine, konkrete Schritte).</li><li>Kernidee <b>Spill-over</b> (Überschwappen): Integration in einem Bereich erzeugt Druck, weitere Bereiche zu integrieren – z. B. Kohle und Stahl → gemeinsamer Markt → Binnenmarkt → Euro.</li><li>Wichtige Akteure: <b>Kommission, Parlament, EuGH</b>, dazu Interessengruppen und Unternehmen, die ihre Erwartungen auf Brüssel richten.</li><li>Entscheidungen mit <b>Mehrheit</b>, EU-Recht hat <b>Vorrang</b>.</li><li>Leitbild: eher der europäische <b>Bundesstaat</b>.</li></ul>
+  <h3>Intergouvernementalismus</h3><ul><li><b>Inter</b> = zwischen: Zusammenarbeit <b>zwischen</b> Regierungen souveräner Staaten.</li><li>Vertreter: Stanley Hoffmann (1960er), Andrew Moravcsik (liberaler Intergouvernementalismus, 1990er).</li><li>Die Staaten bleiben die <b>„Herren der Verträge“</b>; Integration gibt es nur, wenn sie den <b>nationalen Interessen</b> dient. Große Schritte sind Ergebnisse von Verhandlungen zwischen den großen Staaten.</li><li>Wichtige Akteure: <b>Europäischer Rat und Rat der EU</b>.</li><li>Entscheidungen meist <b>einstimmig</b>, jeder Staat hat ein Veto.</li><li>Leitbild: eher der <b>Staatenbund</b>.</li></ul>
+  <h3>Schematische Übersicht (Arbeitsblatt)</h3><div class="tbl"><table><tr><th></th><th>Intergouvernementalismus<br><span class="muted" style="font-weight:400">„zwischen den Regierungen“</span></th><th>Supranationalismus<br><span class="muted" style="font-weight:400">„über den Nationen“</span></th></tr>${PW.SCHEMA.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>
+  <h3>Vertrag von Lissabon (2009): beide Logiken</h3><div class="tbl"><table><tr><th>Merkmal</th><th>Intergouvernemental</th><th>Supranational</th></tr>${PW.LISSA.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>
+  <h3>In der Praxis</h3><p>Die EU ist eine <b>Mischung</b>: Binnenmarkt, Wettbewerb, Handel und Euro sind stark supranational; Außen- und Sicherheitspolitik, Steuern und Vertragsänderungen bleiben intergouvernemental. Das Bundesverfassungsgericht nannte die EU 1993 einen <b>„Staatenverbund“</b> – mehr als ein Staatenbund, weniger als ein Bundesstaat. Oft spricht man vom <b>Mehrebenensystem</b> (EU, Staaten, Regionen).</p>
+  <h3>Stärken und Schwächen</h3><ul><li><b>Supranationalismus</b> erklärt gut die schleichende Ausweitung der EU-Zuständigkeiten und die Rolle von Kommission und EuGH, aber schlecht Stillstand und Rückschläge (EVG 1954, Verfassung 2005, Brexit).</li><li><b>Intergouvernementalismus</b> erklärt gut Blockaden, Vetos und große Gipfelkompromisse, aber schlecht, warum Staaten Macht an Kommission und EuGH abgeben, die sie dann nicht mehr kontrollieren.</li></ul>`,
+  widget:'pw_theo'},
+ {id:6,title:'Leitbilder der europäischen Einigung',short:'Bundesstaat, Staatenbund, differenzierte Integration',
+  goals:['Die fünf Leitbilder mit Merkmalen, Vorteilen und Kritik erläutern','Zuordnen, wer welches Leitbild vertritt','Begründet Stellung zu einem Leitbild nehmen'],
+  html:`<p>Leitbilder beschreiben, <b>wie die EU am Ende aussehen soll</b>. Der Grundgegensatz: <b>föderalistisch</b> (Bundesstaat, Souveränität auf die EU übertragen) gegen <b>intergouvernementalistisch</b> (Staatenbund, Souveränität bleibt bei den Staaten). In reiner Form kommt keines vor, aber sie helfen, die erreichte <b>Integrationsdichte</b> zu bestimmen.</p>
+  <div class="tbl"><table><tr><th>Leitbild</th><th>Merkmale</th><th>Vorteil</th><th>Kritik</th></tr>${PW.LB.map(l=>`<tr><th>${l[0]}<br><span class="muted" style="font-weight:400">${l[4]}</span></th><td>${l[1]}</td><td>${l[2]}</td><td>${l[3]}</td></tr>`).join('')}</table></div>
+  <h3>Differenzierte Integration – drei Varianten</h3><ul><li><b>Europa der zwei Geschwindigkeiten:</b> gleiche Ziele für alle, aber unterschiedliches Tempo – eine Gruppe geht voran, die anderen folgen nach festgelegter Zeit oder bei erfüllten Kriterien.</li><li><b>Opting-out:</b> Einzelne Staaten klinken sich zeitweise oder dauerhaft aus (z. B. Dänemark beim Euro). Funktioniert, kann aber die Solidarität gefährden.</li><li><b>Variable Geometrie:</b> wechselnde Gruppen je nach Thema (z. B. alle beim Binnenmarkt, zehn bei der Forschung, acht bei der Verteidigung). Kritik: gefährdet die Solidarität und die demokratische Legitimation.</li></ul>
+  <h3>Europa der Regionen</h3><p>Seit Maastricht gibt es den <b>Ausschuss der Regionen</b> (329 Mitglieder, beratend) und das <b>Subsidiaritätsprinzip</b> (Art. 5 EUV): Die EU handelt nur, wenn ein Ziel auf Ebene der Staaten, Regionen oder Kommunen nicht ausreichend erreicht werden kann. Entscheidungen sollen möglichst bürgernah fallen (Art. 1 EUV). In Bereichen der Länder (Schule, Kultur, Rundfunk) vertritt ein Ländervertreter Deutschland im Rat (Art. 23 Abs. 6 GG).</p>
+  <h3>Gegenbild „Festung Europa“</h3><p>Starke Außengrenzen, Grenzkontrollen auch im Inneren, restriktive Asylpolitik – Europa als „Insel der Glückseligkeit“. Der Text hält es weder für realistisch noch für erstrebenswert; Gegenmodell: <b>„Partner Europa“</b>.</p>
+  <div class="merk"><span class="merk-label">Verbindung</span>Supranationalismus ↔ <b>Bundesstaat</b> · Intergouvernementalismus ↔ <b>Staatenbund</b> · Realität: <b>Staatenverbund</b> mit differenzierter Integration (Euro, Schengen).</div>`,
+  widget:'pw_lb'},
+ {id:7,title:'Binnenmarkt, vier Freiheiten und Regulierung',short:'Waren, Personen, Dienstleistungen, Kapital',
+  goals:['Die vier Freiheiten nennen und mit Beispielen erläutern','Erklären, warum ein Binnenmarkt einheitliche Regeln braucht','Regulierung und Verbraucherschutz beurteilen'],
+  html:`<p>Der <b>Europäische Binnenmarkt</b> besteht seit dem <b>1.1.1993</b> (vorbereitet durch die Einheitliche Europäische Akte 1986). Er umfasst die EU-Staaten, über den Europäischen Wirtschaftsraum auch Norwegen, Island und Liechtenstein.</p>
+  <h3>Die vier Freiheiten</h3><div class="tbl"><table>${PW.FREI.map(f=>`<tr><th>${f[0]}</th><td>${f[1]}</td></tr>`).join('')}</table></div>
+  <h3>Einheitliche Regeln und Normen</h3><p>Damit der Markt funktioniert, dürfen nationale Vorschriften den Handel nicht behindern. Zwei Wege:</p><ul><li><b>Harmonisierung:</b> gemeinsame Mindeststandards per Verordnung oder Richtlinie, z. B. CE-Kennzeichnung, Lebensmittel- und Spielzeugsicherheit.</li><li><b>Gegenseitige Anerkennung:</b> Was in einem EU-Land rechtmäßig verkauft wird, darf grundsätzlich überall verkauft werden (EuGH, <b>Cassis-de-Dijon</b>, 1979).</li></ul>
+  <h3>Regulierung und Verbraucherschutz – Beispiele</h3><ul><li>Abschaffung der Roaming-Gebühren im EU-Ausland (2017)</li><li>Einheitliches Ladekabel USB-C für Handys und viele Geräte</li><li>Datenschutz-Grundverordnung (DSGVO, seit 2018)</li><li>Fluggastrechte bei Verspätung, 14 Tage Widerrufsrecht im Onlinehandel</li><li>Kennzeichnung von Lebensmitteln und Allergenen, Grenzwerte für Schadstoffe</li><li>Wettbewerbsrecht: Kommission verhängt Strafen bei Kartellen und Marktmissbrauch</li></ul>
+  <h3>Kritik</h3><ul><li><b>Bürokratie und Überregulierung</b> (berühmtes Beispiel: die Gurkenkrümmungs-Verordnung, 1988–2009), hohe Kosten für kleine Firmen</li><li>Konkurrenz und Lohndruck für schwächere Anbieter und Regionen</li><li>„<b>Regulierung nach unten</b>“ (Wettbewerb um niedrige Standards) oder Einfluss von Lobbygruppen auf die Normen</li></ul>
+  <div class="merk"><span class="merk-label">Pro Binnenmarkt</span>Mehr Auswahl, niedrigere Preise, Freiheit zu reisen, zu arbeiten und zu studieren, gleiche Schutzstandards überall. Die EU setzt mit ihren Regeln oft weltweite Standards („Brüssel-Effekt“).</div>`,
+  widget:'pw_frei'},
+ {id:8,title:'Lobbyismus in der EU',short:'Interessenvertretung in Brüssel',
+  goals:['Erklären, was Lobbyismus ist und warum er in Brüssel so stark ist','Formen und Akteure unterscheiden','Begründet Stellung zum Lobbyismus nehmen'],
+  html:`<p><b>Lobbyismus</b> ist die gezielte Einflussnahme von Interessengruppen auf Politik und Gesetzgebung. Brüssel gilt neben Washington als größtes Lobbyzentrum der Welt; Schätzungen gehen von rund 25.000 Lobbyisten aus.</p>
+  <h3>Wer?</h3><ul><li><b>Unternehmen</b> und Wirtschaftsverbände (der größte Teil, oft mit viel Geld und Personal)</li><li>Gewerkschaften, Berufsverbände</li><li><b>NGOs</b>: Umwelt-, Verbraucher-, Menschenrechtsorganisationen</li><li>Beratungsfirmen und Anwaltskanzleien, Regionen und Städte</li></ul>
+  <h3>Warum ist Lobbyismus in der EU so wichtig?</h3><ul><li>Die <b>Kommission</b> hat das Initiativrecht, aber eine vergleichsweise kleine Verwaltung – sie braucht <b>Fachwissen</b> von Experten („Fachleute ↔ Fachgebiet“).</li><li>Binnenmarktregeln betreffen ganze Branchen in 27 Staaten – es geht um viel Geld.</li><li>Viele Ansprechpartner: Kommission, Abgeordnete, Ständige Vertretungen der Staaten.</li></ul>
+  <h3>Formen</h3><p>Gespräche mit Beamten und Abgeordneten, Stellungnahmen in Konsultationen, Studien und Positionspapiere, Veranstaltungen, Kampagnen in der Öffentlichkeit, Mitarbeit in Expertengruppen.</p>
+  <h3>Regeln</h3><p>Das <b>Transparenzregister</b> (seit 2011, seit 2021 gemeinsam von Parlament, Rat und Kommission): Ohne Eintrag gibt es z. B. keine Treffen mit Kommissionsmitgliedern. Verhaltensregeln für Abgeordnete, Karenzzeiten für ehemalige Kommissare. Der Korruptionsskandal „Katargate“ (2022) im Parlament zeigte die Grenzen.</p>
+  <h3>Bewertung</h3><ul><li><b>Pro:</b> Fachwissen für bessere Gesetze, Interessen der Betroffenen werden gehört, Pluralismus, Teil der Demokratie</li><li><b>Contra:</b> Ungleichgewicht – <b>unternehmensorientiert</b>, Wirtschaft hat mehr Mittel als Verbraucher- oder Umweltverbände; Intransparenz; „Drehtür-Effekt“ zwischen Politik und Lobby; verstärkt das Demokratiedefizit</li></ul>
+  <div class="merk"><span class="merk-label">Für die Stellungnahme</span>Lobbyismus ist nicht per se schlecht – entscheidend sind <b>Transparenz</b> und <b>Ausgewogenheit</b> der Interessen.</div>`,
+  widget:'pw_lobby'}];
+ PW.QUESTIONS=[
+ {t:1,q:'Welches Hauptmotiv hatte Robert Schuman 1950?',o:['Versöhnung zwischen Deutschland und Frankreich','Einführung des Euro','Aufnahme Großbritanniens','Gemeinsame Armee gegen die USA'],a:0,e:'Kohle und Stahl gemeinsam kontrollieren, damit Krieg unmöglich wird.'},
+ {t:1,q:'Warum gerade Kohle und Stahl?',o:['Sie waren die wichtigsten Rohstoffe für Rüstung und Krieg','Sie waren besonders billig','Frankreich hatte keine Kohle','Es gab sonst keine Industrie'],a:0,e:'Wer sie gemeinsam kontrolliert, kann nicht heimlich aufrüsten.'},
+ {t:1,q:'Wo stehen die Werte der EU?',o:['Art. 2 EUV','Art. 1 Grundgesetz','in der UN-Charta','im Schengener Abkommen'],a:0,e:'Menschenwürde, Freiheit, Demokratie, Gleichheit, Rechtsstaatlichkeit, Menschenrechte.'},
+ {t:1,q:'Warum ist das Motiv Friedenssicherung laut Text in den Hintergrund getreten?',o:['Frieden in der EU gilt vielen als selbstverständlich','Es gab nie Kriege in Europa','Die NATO hat es abgeschafft','Die EU hat keine Grenzen mehr'],a:0,e:'Mit dem Krieg gegen die Ukraine gewinnt es wieder an Gewicht.'},
+ {t:1,q:'Was bedeutet „Zivilmacht Europa“?',o:['Die EU wirkt v. a. mit Handel, Entwicklungshilfe und Partnerschaft statt mit Militär','Die EU hat eine eigene Armee','Nur Zivilisten dürfen ins Parlament','Die EU verzichtet auf Außenpolitik'],a:0,e:'Etwa in der Zusammenarbeit mit den AKP-Staaten.'},
+ {t:1,q:'Welches Motiv passt zu Erasmus+ und Städtepartnerschaften?',o:['Gute Nachbarschaft („Europa von unten“)','Friedenssicherung durch Kohle und Stahl','Einfluss in der Sicherheitspolitik','Binnenmarkt'],a:0,e:'Austausch und Kennenlernen.'},
+ {t:1,q:'Warum ist Umweltschutz ein Motiv für die Einigung?',o:['Umweltprobleme machen nicht an Grenzen halt','Nur die EU darf Umweltgesetze machen','Weil die EU keine Industrie hat','Wegen des Euro'],a:0,e:'Beispiele: Tschernobyl, Sandoz-Unfall am Rhein 1986.'},
+ {t:2,q:'Wann trat der Vertrag von Maastricht in Kraft?',o:['1993','1957','2009','1986'],a:0,e:'Unterzeichnet 1992, in Kraft 1.11.1993: Gründung der EU.'},
+ {t:2,q:'Was gründeten die Römischen Verträge 1957?',o:['EWG und Euratom','die EU','den Europarat','die NATO'],a:0,e:'In Kraft am 1.1.1958.'},
+ {t:2,q:'Was brachte der Vertrag von Lissabon?',o:['Grundrechtecharta verbindlich, mehr Rechte für das Parlament, Bürgerinitiative','die Gründung der Montanunion','den Euro als Bargeld','die erste Direktwahl des Parlaments'],a:0,e:'In Kraft am 1.12.2009.'},
+ {t:2,q:'Welche drei Säulen hatte die EU nach Maastricht?',o:['Europäische Gemeinschaften, GASP, Inneres und Justiz','Parlament, Rat, Kommission','Waren, Personen, Kapital','Euro, Schengen, NATO'],a:0,e:'Mit Lissabon wurde die Säulenstruktur aufgehoben.'},
+ {t:2,q:'Warum scheiterte der EU-Verfassungsvertrag?',o:['Referenden in Frankreich und den Niederlanden lehnten ihn 2005 ab','Deutschland stimmte dagegen','Der EuGH verbot ihn','Er wurde nie unterschrieben'],a:0,e:'Die Inhalte kamen größtenteils in den Vertrag von Lissabon.'},
+ {t:2,q:'Was bedeutet „Vertiefung“?',o:['Die EU erhält mehr Zuständigkeiten, die Zusammenarbeit wird enger','Die EU nimmt neue Mitglieder auf','Ein Staat tritt aus','Die EU senkt ihren Haushalt'],a:0,e:'Gegenbegriff: Erweiterung.'},
+ {t:2,q:'Seit wann wird das Europäische Parlament direkt gewählt?',o:['1979','1957','1993','2009'],a:0,e:'Alle fünf Jahre, zuletzt 2024.'},
+ {t:3,q:'Welche drei Kopenhagener Kriterien gibt es?',o:['politisch, wirtschaftlich, Übernahme des EU-Rechts','Größe, Lage, Religion','Euro, Schengen, NATO','Bevölkerung, Fläche, Sprache'],a:0,e:'Dazu muss die EU aufnahmefähig sein.'},
+ {t:3,q:'Wann war die große Osterweiterung mit zehn Staaten?',o:['2004','1995','2013','1986'],a:0,e:'U. a. Polen, Tschechien, Ungarn, die baltischen Staaten, Malta und Zypern.'},
+ {t:3,q:'Welches Land trat 2013 als letztes bei?',o:['Kroatien','Rumänien','Bulgarien','Serbien'],a:0,e:'Damit 28 Mitglieder, nach dem Brexit 27.'},
+ {t:3,q:'Wann trat das Vereinigte Königreich aus?',o:['31.1.2020','23.6.2016','1.1.2021','2019 nie'],a:0,e:'Das Referendum war 2016, der Austritt am 31.1.2020.'},
+ {t:3,q:'Wer muss einem Beitrittsvertrag zustimmen?',o:['Rat einstimmig, Parlament und alle Mitgliedstaaten','nur die Kommission','nur der EuGH','eine Mehrheit der EU-Bürger'],a:0,e:'Jeder Staat kann einen Beitritt blockieren.'},
+ {t:3,q:'Was ist das Spannungsfeld zwischen Erweiterung und Vertiefung?',o:['Mit mehr Mitgliedern wird es schwerer, sich auf engere Integration zu einigen','Erweiterung führt automatisch zur Vertiefung','Neue Mitglieder dürfen nicht abstimmen','Es gibt keinen Zusammenhang'],a:0,e:'Deshalb Reformverträge vor Erweiterungen.'},
+ {t:3,q:'Welche Länder traten 1995 bei?',o:['Österreich, Finnland, Schweden','Spanien, Portugal','Dänemark, Irland, Großbritannien','Bulgarien, Rumänien'],a:0,e:'Norweger lehnten den Beitritt im Referendum ab.'},
+ {t:4,q:'Welches Organ hat das Initiativrecht für EU-Gesetze?',o:['Europäische Kommission','Europäisches Parlament','Europäischer Rat','EuGH'],a:0,e:'Parlament und Rat können die Kommission nur auffordern.'},
+ {t:4,q:'Wer beschließt im ordentlichen Gesetzgebungsverfahren?',o:['Parlament und Rat der EU gemeinsam','nur die Kommission','der Europäische Rat','der EuGH'],a:0,e:'Beide sind gleichberechtigte Gesetzgeber.'},
+ {t:4,q:'Wer sitzt im Europäischen Rat?',o:['Staats- und Regierungschefs, sein Präsident und die Kommissionspräsidentin','Fachminister','720 Abgeordnete','27 Richter'],a:0,e:'Er legt die Leitlinien fest, keine Gesetze.'},
+ {t:4,q:'Wie viele Abgeordnete hat das Europäische Parlament (2024–2029)?',o:['720','96','630','27'],a:0,e:'Deutschland stellt mit 96 die meisten.'},
+ {t:4,q:'Was ist der Europarat?',o:['eine eigene Organisation für Menschenrechte, kein EU-Organ','ein anderer Name für den Europäischen Rat','der Rat der EU','das Parlament der Eurozone'],a:0,e:'Gegründet 1949, Sitz Straßburg, 46 Mitglieder.'},
+ {t:4,q:'Was ist eine qualifizierte Mehrheit im Rat?',o:['55 % der Staaten mit 65 % der Bevölkerung','einfache Mehrheit der Minister','zwei Drittel der Abgeordneten','Einstimmigkeit'],a:0,e:'Doppelte Mehrheit seit Lissabon (angewandt ab 2014).'},
+ {t:4,q:'Was ist der Unterschied zwischen Verordnung und Richtlinie?',o:['Verordnung gilt unmittelbar, Richtlinie muss in nationales Recht umgesetzt werden','Richtlinie gilt sofort, Verordnung nicht','Es gibt keinen Unterschied','Verordnungen macht nur der EuGH'],a:0,e:'Beispiel Verordnung: DSGVO.'},
+ {t:4,q:'Wo sitzt der EuGH?',o:['Luxemburg','Straßburg','Brüssel','Den Haag'],a:0,e:'Straßburg ist der Gerichtshof für Menschenrechte des Europarats.'},
+ {t:4,q:'Wer ist Präsidentin der Europäischen Kommission?',o:['Ursula von der Leyen','Roberta Metsola','Kaja Kallas','Christine Lagarde'],a:0,e:'Seit 2019, zweite Amtszeit seit Dezember 2024.'},
+ {t:5,q:'Was bedeutet „supranational“?',o:['über den Staaten: Staaten übertragen Souveränität auf gemeinsame Institutionen','zwischen den Regierungen','unterhalb der Staaten','nur wirtschaftlich'],a:0,e:'Beispiele: Kommission, EuGH, Mehrheitsentscheidungen.'},
+ {t:5,q:'Was meint „Spill-over“?',o:['Integration in einem Bereich zieht Integration in weiteren Bereichen nach sich','Ein Staat tritt aus','Lobbyisten beeinflussen Gesetze','Geld fließt in arme Regionen'],a:0,e:'Kernidee des Neofunktionalismus (Haas).'},
+ {t:5,q:'Welche Organe sind typisch intergouvernemental?',o:['Europäischer Rat und Rat der EU','Kommission und EuGH','Parlament und EuGH','EZB und Kommission'],a:0,e:'Dort sitzen Vertreter der Regierungen.'},
+ {t:5,q:'Welcher Politikbereich ist bis heute intergouvernemental geprägt?',o:['Gemeinsame Außen- und Sicherheitspolitik','Binnenmarkt','Wettbewerbspolitik','Währungspolitik der Eurozone'],a:0,e:'Entscheidungen meist einstimmig.'},
+ {t:5,q:'Wie nannte das Bundesverfassungsgericht die EU 1993?',o:['Staatenverbund','Bundesstaat','Staatenbund','Superstaat'],a:0,e:'Mehr als ein Staatenbund, weniger als ein Bundesstaat.'},
+ {t:5,q:'Was ist laut Arbeitsblatt die Schlüssel-Institution des Intergouvernementalismus?',o:['Europäischer Rat','Europäische Kommission','Europäisches Parlament','EuGH'],a:0,e:'Supranational: Kommission, Parlament, EuGH.'},
+ {t:5,q:'Welche Rechtsebene gehört zum Intergouvernementalismus?',o:['klassisches Völkerrecht','EU-Recht bricht nationales Recht','Grundgesetz','Kirchenrecht'],a:0,e:'Supranational: Vorrang des EU-Rechts.'},
+ {t:5,q:'Was wurde mit dem Vertrag von Lissabon supranationaler?',o:['Binnenmarkt und Justizpolitik, Säulenstruktur abgeschafft','die Außen- und Sicherheitspolitik','die Steuerpolitik','die Verteidigung'],a:0,e:'GASP, Steuern und Verteidigung blieben einstimmig.'},
+ {t:5,q:'Warum gilt der ESM als intergouvernemental?',o:['Er beruht auf einem zwischenstaatlichen Vertrag mit schwachen Parlamentsrechten','Die Kommission entscheidet allein','Er ist ein EU-Gesetz','Das EP hat ihn beschlossen'],a:0,e:'Euro-Rettungsschirm.'},
+ {t:5,q:'Was kann der Intergouvernementalismus gut erklären?',o:['Blockaden, Vetos und Gipfelkompromisse','die Macht des EuGH','die schleichende Ausweitung der Zuständigkeiten','den Euro als Folge des Binnenmarkts'],a:0,e:'Staaten verfolgen nationale Interessen.'},
+ {t:5,q:'Welcher Satz passt zum Intergouvernementalismus?',o:['Die Staaten sind die „Herren der Verträge“.','Die Kommission treibt die Integration voran.','EU-Recht bricht nationales Recht.','Integration erzeugt automatisch neue Integration.'],a:0,e:'Souveränität bleibt bei den Staaten.'},
+ {t:6,q:'Welches Leitbild bevorzugen vor allem die Gründungsstaaten?',o:['Europäischer Bundesstaat','Staatenbund','Festung Europa','Republik der Regionen'],a:0,e:'Aus deutscher Sicht naheliegend (Bund und Länder).'},
+ {t:6,q:'Was kennzeichnet den Staatenbund?',o:['Regierungen entscheiden meist einstimmig, Staaten behalten das letzte Wort','eine EU-Regierung mit Mehrheiten','starke Regionen statt Staaten','geschlossene Außengrenzen'],a:0,e:'Vor allem britische und skandinavische Stimmen.'},
+ {t:6,q:'Was ist „variable Geometrie“?',o:['Wechselnde Gruppen von Staaten arbeiten je nach Thema zusammen','gleiche Ziele mit unterschiedlichem Tempo','Austritt aus der EU','Verschiebung der Außengrenzen'],a:0,e:'Kritik: gefährdet Solidarität und Legitimation.'},
+ {t:6,q:'Was ist „Europa der zwei Geschwindigkeiten“?',o:['gleiche Ziele für alle, aber unterschiedliches Tempo','zwei getrennte EUs','zwei Währungen','zwei Parlamente'],a:0,e:'Eine Gruppe geht voran, die anderen folgen.'},
+ {t:6,q:'Was besagt das Subsidiaritätsprinzip?',o:['Die EU handelt nur, wenn die unteren Ebenen ein Ziel nicht ausreichend erreichen','Die EU darf alles regeln','Regionen dürfen EU-Gesetze aufheben','Nur einstimmige Beschlüsse sind gültig'],a:0,e:'Art. 5 EUV.'},
+ {t:6,q:'Welches Leitbild wird mit Ulrike Guérot verbunden?',o:['Republik Europa mit starken Regionen','Festung Europa','Staatenbund','Europa der zwei Geschwindigkeiten'],a:0,e:'Auch Robert Menasse.'},
+ {t:6,q:'Warum gilt der Euro als Beispiel für differenzierte Integration?',o:['Nicht alle EU-Staaten nutzen ihn (21 von 27)','Alle müssen ihn sofort einführen','Er gilt nur in Regionen','Er ist eine Idee des Europarats'],a:0,e:'Dänemark hat ein Opting-out.'},
+ {t:7,q:'Seit wann gibt es den Europäischen Binnenmarkt?',o:['1.1.1993','1.1.1958','1.1.2002','1.12.2009'],a:0,e:'Vorbereitet durch die Einheitliche Europäische Akte.'},
+ {t:7,q:'Welche ist KEINE der vier Freiheiten?',o:['Meinungsfreiheit','Warenverkehrsfreiheit','Dienstleistungsfreiheit','Kapitalverkehrsfreiheit'],a:0,e:'Die vierte ist die Personenfreizügigkeit.'},
+ {t:7,q:'Was besagt das Cassis-de-Dijon-Prinzip?',o:['Ein in einem EU-Land zugelassenes Produkt darf grundsätzlich überall verkauft werden','Alkohol ist in der EU verboten','Jedes Land legt eigene Normen fest','Produkte müssen in jedem Land neu geprüft werden'],a:0,e:'Gegenseitige Anerkennung, EuGH 1979.'},
+ {t:7,q:'Warum braucht ein Binnenmarkt einheitliche Regeln?',o:['Unterschiedliche nationale Vorschriften wären versteckte Handelshemmnisse','damit alle Produkte gleich aussehen','weil die Kommission es will','wegen der NATO'],a:0,e:'Harmonisierung oder gegenseitige Anerkennung.'},
+ {t:7,q:'Welches ist ein Beispiel für EU-Verbraucherschutz?',o:['Abschaffung der Roaming-Gebühren','Einführung der D-Mark','Wehrpflicht','Kirchensteuer'],a:0,e:'Dazu USB-C, DSGVO, Fluggastrechte.'},
+ {t:7,q:'Welche Kritik wird an EU-Regulierung oft geübt?',o:['zu viel Bürokratie und Kosten für kleine Unternehmen','zu wenig Gesetze','keine Verbraucherrechte','keine Kontrolle durch Gerichte'],a:0,e:'Gegenargument: gleiche Schutzstandards und Wettbewerb.'},
+ {t:8,q:'Was ist Lobbyismus?',o:['gezielte Einflussnahme von Interessengruppen auf Politik','Wahl der Abgeordneten','Arbeit des EuGH','Verwaltung der EU-Gebäude'],a:0,e:'Interessenvertretung.'},
+ {t:8,q:'Warum ist die Kommission besonders für Lobbyisten interessant?',o:['Sie hat das Initiativrecht und braucht Fachwissen','Sie wird direkt gewählt','Sie spricht Urteile','Sie hat keine Mitarbeiter'],a:0,e:'Kleine Verwaltung, viel Regelungsbedarf.'},
+ {t:8,q:'Was ist das Transparenzregister?',o:['ein Verzeichnis, in dem sich Interessenvertreter eintragen müssen','eine Liste aller EU-Gesetze','die Wählerliste der Europawahl','das Register des EuGH'],a:0,e:'Ohne Eintrag z. B. keine Treffen mit Kommissionsmitgliedern.'},
+ {t:8,q:'Was ist ein Hauptkritikpunkt am EU-Lobbyismus?',o:['Unternehmensinteressen haben ein Übergewicht','Es gibt zu wenige Lobbyisten','Lobbyisten sind gewählt','NGOs dürfen nicht teilnehmen'],a:0,e:'Ungleiche Mittel, Intransparenz.'},
+ {t:8,q:'Was meint der „Drehtür-Effekt“?',o:['Politiker wechseln in Lobbyjobs und umgekehrt','ständig wechselnde Ratspräsidentschaften','offene Grenzen','Wechsel von Richtern'],a:0,e:'Kontakte und Wissen werden zu Geld gemacht.'},
+ {t:8,q:'Welches Argument spricht FÜR Lobbyismus?',o:['Er liefert Fachwissen und bringt Interessen Betroffener ein','Er ist immer geheim','Nur Großkonzerne profitieren','Er ersetzt Wahlen'],a:0,e:'Pluralismus, bessere Gesetze – bei Transparenz.'}];
+ PW.TF=[
+ [1,'Die Idee der europäischen Einigung entstand erst nach 1945.',0,'Ältere Pläne gab es (Kant, Victor Hugo, Briand, Stresemann), wirksam wurde sie nach 1945.'],
+ [1,'Rund ein Drittel der EU-Ausgaben fließt in die Regionalpolitik.',1,'Vor allem in Regionen unter 75 % des EU-Durchschnitts.'],
+ [1,'Die Grundrechtecharta ist seit dem Vertrag von Lissabon rechtsverbindlich.',1,'Seit Dezember 2009.'],
+ [1,'Wirtschaftliche Motive spielten für die Einigung kaum eine Rolle.',0,'Der Binnenmarkt war und ist ein Hauptmotiv.'],
+ [2,'Die Montanunion war die erste supranationale Gemeinschaft.',1,'Mit der Hohen Behörde.'],
+ [2,'Der Vertrag von Maastricht gründete die Europäische Union.',1,'1992 unterzeichnet, 1993 in Kraft.'],
+ [2,'Die EU-Verfassung trat 2005 in Kraft.',0,'Sie scheiterte an Referenden; stattdessen Lissabon.'],
+ [2,'Der Euro wurde 2002 als Bargeld eingeführt.',1,'Buchgeld seit 1999.'],
+ [3,'Die EU hat heute 28 Mitglieder.',0,'Nach dem Brexit 27.'],
+ [3,'Für einen Beitritt müssen alle Mitgliedstaaten zustimmen.',1,'Jeder Staat hat faktisch ein Veto.'],
+ [3,'Die Kopenhagener Kriterien stammen von 1993.',1,'Politisch, wirtschaftlich, Acquis.'],
+ [3,'Spanien und Portugal traten 2004 bei.',0,'1986.'],
+ [4,'Der Europäische Rat beschließt EU-Gesetze.',0,'Er gibt Leitlinien vor; Gesetze beschließen Parlament und Rat der EU.'],
+ [4,'Das Europäische Parlament kann der Kommission das Misstrauen aussprechen.',1,'Mit Zweidrittelmehrheit.'],
+ [4,'Der Europarat ist ein Organ der EU.',0,'Eine eigene Organisation (1949).'],
+ [4,'Im Rat der EU wechselt der Vorsitz alle sechs Monate.',1,'2. Halbjahr 2026: Irland.'],
+ [4,'Das Parlament hat ein eigenes Initiativrecht für Gesetze.',0,'Das hat nur die Kommission.'],
+ [5,'Nach dem Supranationalismus behalten die Staaten immer das letzte Wort.',0,'Das ist Intergouvernementalismus.'],
+ [5,'In der Außen- und Sicherheitspolitik wird meist einstimmig entschieden.',1,'Intergouvernementaler Bereich.'],
+ [5,'Spill-over ist ein Begriff des Neofunktionalismus.',1,'Ernst B. Haas.'],
+ [5,'Die EU ist rein intergouvernemental organisiert.',0,'Mischung: supranationale und intergouvernementale Elemente.'],
+ [5,'Seit Lissabon wird auch in der GASP mit Mehrheit entschieden.',0,'Dort gilt weiterhin strikt Einstimmigkeit.'],
+ [5,'Mit Lissabon wurde das Parlament gleichberechtigter Gesetzgeber.',1,'Ordentliches Gesetzgebungsverfahren.'],
+ [6,'Das Bundesstaat-Modell sieht eine gewählte europäische Regierung vor.',1,'Z. B. vom Parlament gewählt.'],
+ [6,'Im Staatenbund-Modell ist das Europäische Parlament besonders stark.',0,'Es spielt nur eine untergeordnete Rolle.'],
+ [6,'Der Ausschuss der Regionen entscheidet über EU-Gesetze.',0,'Er wirkt nur beratend mit.'],
+ [6,'„Festung Europa“ gilt im Text als wünschenswertes Leitbild.',0,'Weder realistisch noch erstrebenswert.'],
+ [7,'Der Binnenmarkt umfasst vier Freiheiten.',1,'Waren, Personen, Dienstleistungen, Kapital.'],
+ [7,'Eine Richtlinie gilt sofort in allen Staaten, ohne Umsetzung.',0,'Das gilt für Verordnungen.'],
+ [7,'Die DSGVO ist ein Beispiel für EU-Regulierung.',1,'Datenschutz seit 2018.'],
+ [8,'Lobbyismus wird ausschließlich von Unternehmen betrieben.',0,'Auch NGOs, Gewerkschaften, Regionen.'],
+ [8,'Ohne Eintrag im Transparenzregister gibt es keine Treffen mit Kommissionsmitgliedern.',1,'Seit 2014 Pflicht für solche Treffen.'],
+ [8,'Lobbyismus ist in Demokratien grundsätzlich verboten.',0,'Interessenvertretung ist legitim; es geht um Transparenz.']];
+ PW.CARDS=[
+ ['Schuman-Erklärung','9.5.1950: Vorschlag, Kohle und Stahl gemeinsam zu verwalten – Versöhnung Deutschland–Frankreich.',1],
+ ['Zivilmacht Europa','Die EU wirkt v. a. mit Handel, Entwicklungshilfe und Diplomatie statt mit Militär.',1],
+ ['Wertegemeinschaft','Art. 2 EUV: Menschenwürde, Freiheit, Demokratie, Gleichheit, Rechtsstaatlichkeit, Menschenrechte.',1],
+ ['Europa von unten','Partnerschaften, Austausch (Erasmus+), Sprachenlernen – Einigung durch Bürgerkontakte.',1],
+ ['EGKS / Montanunion','1951/52: Gemeinschaft für Kohle und Stahl der sechs Gründerstaaten, erste supranationale Gemeinschaft.',2],
+ ['Römische Verträge','1957/58: Gründung von EWG und Euratom.',2],
+ ['Einheitliche Europäische Akte','1986/87: Ziel Binnenmarkt bis 1992, mehr Mehrheitsentscheidungen.',2],
+ ['Vertrag von Maastricht','1992/93: Gründung der EU (drei Säulen), Weg zum Euro, Unionsbürgerschaft.',2],
+ ['Vertrag von Lissabon','2007/09: Grundrechtecharta verbindlich, mehr Parlament, Bürgerinitiative, Austrittsrecht.',2],
+ ['Vertiefung','Die EU erhält mehr Zuständigkeiten, die Zusammenarbeit wird enger und verbindlicher.',2],
+ ['Erweiterung','Aufnahme neuer Mitgliedstaaten.',3],
+ ['Kopenhagener Kriterien','1993: politische, wirtschaftliche Kriterien und Übernahme des EU-Rechts (Acquis).',3],
+ ['Acquis communautaire','Der gesamte gemeinsame Rechtsbestand der EU, den Beitrittsländer übernehmen müssen.',3],
+ ['Osterweiterung','2004 (10 Staaten) und 2007 (Bulgarien, Rumänien).',3],
+ ['Brexit','Austritt des Vereinigten Königreichs am 31.1.2020 nach dem Referendum 2016.',3],
+ ['Europäischer Rat','Staats- und Regierungschefs: Leitlinien, keine Gesetze; Präsident António Costa.',4],
+ ['Rat der EU','Fachminister; Gesetzgeber mit dem Parlament; Vorsitz rotiert halbjährlich.',4],
+ ['Europäische Kommission','27 Mitglieder, Initiativrecht, Exekutive, Hüterin der Verträge; Präsidentin von der Leyen.',4],
+ ['Europäisches Parlament','720 direkt gewählte Abgeordnete; Gesetzgebung, Haushalt, Kontrolle der Kommission.',4],
+ ['EuGH','Gerichtshof der EU in Luxemburg: einheitliche Auslegung des EU-Rechts.',4],
+ ['Ordentliches Gesetzgebungsverfahren','Kommission schlägt vor, Parlament und Rat beschließen gleichberechtigt.',4],
+ ['Qualifizierte Mehrheit','Im Rat: 55 % der Staaten, die 65 % der Bevölkerung vertreten.',4],
+ ['Demokratiedefizit','Vorwurf: EU-Entscheidungen sind zu wenig demokratisch legitimiert und für Bürger schwer nachvollziehbar.',4],
+ ['Supranationalismus','Staaten übertragen Souveränität auf Institutionen über ihnen; Mehrheitsentscheidungen, Vorrang des EU-Rechts.',5],
+ ['Intergouvernementalismus','Zusammenarbeit souveräner Regierungen; Staaten bleiben „Herren der Verträge“, meist Einstimmigkeit.',5],
+ ['Spill-over','Integration in einem Bereich zieht weitere Integration nach sich (Neofunktionalismus, Haas).',5],
+ ['Doppelte Mehrheit','Seit Lissabon im Ministerrat: 55 % der Staaten und 65 % der Bevölkerung – soll nationale Blockaden aufheben.',5],
+ ['Herren der Verträge','Intergouvernementalismus: Die Staaten bestimmen über die Verträge und kooperieren nur zweckorientiert.',5],
+ ['Staatenverbund','Begriff des BVerfG (1993) für die EU: mehr als ein Staatenbund, weniger als ein Bundesstaat.',5],
+ ['Mehrebenensystem','Politik findet gleichzeitig auf EU-, Staats- und regionaler Ebene statt.',5],
+ ['Europäischer Bundesstaat','Leitbild: Verfassung, EU-Regierung, Mehrheiten; Kritik: Machtverlust der Staaten.',6],
+ ['Europäischer Staatenbund','Leitbild: souveräne Regierungen entscheiden einstimmig; Kritik: schwerfällig.',6],
+ ['Differenzierte Integration','Kerngruppe geht voran; zwei Geschwindigkeiten, Opting-out, variable Geometrie.',6],
+ ['Subsidiaritätsprinzip','Art. 5 EUV: Die EU handelt nur, wenn untere Ebenen ein Ziel nicht ausreichend erreichen.',6],
+ ['Festung Europa','Gegenbild: Abschottung, starke Außengrenzen, restriktive Asylpolitik.',6],
+ ['Binnenmarkt','Seit 1993: Raum ohne Binnengrenzen mit den vier Freiheiten.',7],
+ ['Vier Freiheiten','Freier Waren-, Personen-, Dienstleistungs- und Kapitalverkehr.',7],
+ ['Harmonisierung','Angleichung nationaler Vorschriften durch gemeinsame EU-Regeln.',7],
+ ['Cassis-de-Dijon','EuGH 1979: gegenseitige Anerkennung – im EU-Land erlaubte Produkte überall verkaufen.',7],
+ ['Verordnung / Richtlinie','Verordnung gilt unmittelbar; Richtlinie muss national umgesetzt werden.',7],
+ ['Lobbyismus','Gezielte Einflussnahme von Interessengruppen auf Politik und Gesetzgebung.',8],
+ ['Transparenzregister','EU-Verzeichnis der Interessenvertreter; Voraussetzung für Treffen mit der Kommission.',8],
+ ['Drehtür-Effekt','Wechsel zwischen Politik und Lobbyjobs.',8]];
+ PW.TASKS=[
+ {t:4,q:'<b>Nenne</b> die fünf wichtigsten Organe der EU.',sol:()=>`<ul>${ORG.map(o=>`<li><b>${o.name}</b> – ${o.task.split(',')[0]}</li>`).join('')}</ul><p class="muted">„Nennen“ = aufzählen, ohne Begründung (10–15 % der Klausur).</p>`},
+ {t:4,q:'<b>Erläutere</b> das Zusammenspiel der Organe bei der Gesetzgebung.',sol:()=>`<p>Die <b>Kommission</b> hat das Initiativrecht und legt einen Vorschlag vor (oft nach Konsultationen, auch mit Lobbygruppen). <b>Parlament</b> und <b>Rat der EU</b> beraten im ordentlichen Gesetzgebungsverfahren gleichberechtigt; meist einigen sie sich im Trilog mit der Kommission. Der Rat entscheidet meist mit qualifizierter Mehrheit (55 % der Staaten, 65 % der Bevölkerung). Der <b>Europäische Rat</b> gibt vorher die politische Richtung vor, beschließt aber selbst keine Gesetze. Der <b>EuGH</b> prüft später die Gültigkeit und Auslegung. So wirken supranationale (Kommission, Parlament, EuGH) und intergouvernementale Organe (Rat, Europäischer Rat) zusammen.</p>`},
+ {t:5,q:'<b>Erläutere</b> den Unterschied zwischen Supranationalismus und Intergouvernementalismus an Beispielen.',sol:()=>`<div class="tbl"><table><tr><th></th><th>Supranationalismus</th><th>Intergouvernementalismus</th></tr><tr><th>Grundidee</th><td>Souveränität wird auf Institutionen über den Staaten übertragen</td><td>Zusammenarbeit souveräner Regierungen</td></tr><tr><th>Motor</th><td>Spill-over, Kommission, EuGH, Interessengruppen</td><td>nationale Interessen, Verhandlungen der Regierungen</td></tr><tr><th>Entscheidung</th><td>Mehrheit, Vorrang des EU-Rechts</td><td>Einstimmigkeit, Veto</td></tr><tr><th>Organe</th><td>Kommission, Parlament, EuGH</td><td>Europäischer Rat, Rat der EU</td></tr><tr><th>Beispiel</th><td>Binnenmarkt, Euro, Wettbewerbsrecht</td><td>GASP, Steuern, Vertragsänderungen</td></tr><tr><th>Leitbild</th><td>Bundesstaat</td><td>Staatenbund</td></tr></table></div>`},
+ {t:5,q:'<b>Beziehe begründet Stellung</b>: Sollte die EU in der Außenpolitik auf Mehrheitsentscheidungen umstellen?',sol:()=>`<p><b>Einleitung:</b> Thema benennen, Bezug zu den Theorien (bisher intergouvernemental, Einstimmigkeit). <b>Pro (supranational):</b> schnellere, handlungsfähigere EU, kein Veto einzelner Staaten (z. B. Blockaden bei Sanktionen), mehr Gewicht in der Welt, Spill-over aus dem Binnenmarkt (Handel und Außenpolitik hängen zusammen). <b>Contra (intergouvernemental):</b> Außen- und Sicherheitspolitik ist Kern der Souveränität, kleine Staaten könnten überstimmt werden, Akzeptanz und Legitimation sinken, Gefahr der Spaltung. <b>Urteil:</b> eigene Position mit Gewichtung, z. B. Mehrheit für Sanktionen und Menschenrechtserklärungen, Einstimmigkeit bei Militäreinsätzen. Kriterien nennen: Effizienz, Legitimation, Souveränität, Solidarität.</p>`},
+ {t:6,q:'<b>Erläutere</b> zwei Leitbilder der europäischen Einigung und <b>beziehe begründet Stellung</b>, welches du für zukunftsfähig hältst.',sol:()=>`<p><b>Bundesstaat:</b> ${PW.LB[0][1]}. Vorteil: ${PW.LB[0][2]}. Kritik: ${PW.LB[0][3]}. <b>Staatenbund:</b> ${PW.LB[1][1]}. Vorteil: ${PW.LB[1][2]}. Kritik: ${PW.LB[1][3]}.</p><p><b>Stellungnahme:</b> Kriterien wählen (Handlungsfähigkeit, Demokratie, Akzeptanz, Vielfalt), beide Leitbilder daran messen, aktuelle Beispiele einbeziehen (Krieg in der Ukraine, Migration, Klima, Erweiterung um die Ukraine). Häufig gut begründbar: <b>differenzierte Integration</b> als realistischer Weg – mit der Gefahr komplizierter Strukturen.</p>`},
+ {t:3,q:'<b>Beziehe begründet Stellung</b>: Sollte die EU die Ukraine aufnehmen?',sol:()=>`<p><b>Pro:</b> Friedens- und Wertemotiv (Demokratie gegen Aggression stärken), geopolitischer Einfluss, großer Markt und Agrarland, Signal an Russland, Ukraine hat Kandidatenstatus seit 2022. <b>Contra:</b> Kopenhagener Kriterien (Rechtsstaat, Korruption) noch nicht erfüllt, Krieg und Sicherheitsfragen (Beistandsklausel), hohe Kosten (Agrar- und Kohäsionsmittel würden umverteilt), Entscheidungsfähigkeit einer EU mit über 30 Staaten (Erweiterung vs. Vertiefung). <b>Urteil:</b> z. B. Beitritt als Ziel, aber erst nach Reformen in der Ukraine <b>und</b> in der EU (mehr Mehrheitsentscheidungen), evtl. schrittweise Integration in den Binnenmarkt.</p>`},
+ {t:7,q:'<b>Erläutere</b> die vier Freiheiten des Binnenmarkts an je einem Beispiel und <b>beurteile</b> die EU-Regulierung.',sol:()=>`<ul>${PW.FREI.map(f=>`<li><b>${f[0]}:</b> ${f[1]}</li>`).join('')}</ul><p><b>Regulierung:</b> Einheitliche Regeln (Harmonisierung, gegenseitige Anerkennung) bauen Handelshemmnisse ab und schützen Verbraucher (Roaming, USB-C, DSGVO). Kritik: Bürokratie, Kosten, Lobbyeinfluss auf Normen. <b>Urteil:</b> Ein Binnenmarkt ohne gemeinsame Regeln würde nicht funktionieren; entscheidend ist, dass Regeln verhältnismäßig sind und das Subsidiaritätsprinzip beachten.</p>`},
+ {t:8,q:'<b>Beziehe begründet Stellung</b> zum Lobbyismus in der EU.',sol:()=>`<p><b>Pro:</b> ${PW.LOBBY.filter(x=>x[1]==='dafür').map(x=>x[0]).join(' ')}</p><p><b>Contra:</b> ${PW.LOBBY.filter(x=>x[1]==='dagegen').map(x=>x[0]).join(' ')}</p><p><b>Urteil:</b> Lobbyismus ist Teil pluralistischer Demokratie, braucht aber verpflichtende Transparenz (Register, offene Termine, „legislativer Fußabdruck“) und gestärkte schwache Interessen. Kriterien: Transparenz, Ausgewogenheit, Legitimation.</p>`},
+ {t:1,q:'<b>Erläutere</b> drei Motive der europäischen Einigung und <b>beziehe Stellung</b>, welches heute am wichtigsten ist.',sol:()=>`<ul>${PW.MOT.slice(0,4).map(m=>`<li><b>${m[0]}:</b> ${m[1]}</li>`).join('')}</ul><p><b>Stellungnahme:</b> z. B. Friedenssicherung wieder hoch aktuell (Krieg in der Ukraine) oder Wohlstand/Binnenmarkt für Akzeptanz im Alltag; begründen und Gegenposition entkräften.</p>`}];
+ PW.ORDERS=[
+ {t:2,title:'Ordne die Schritte der Vertiefung.',parts:['Schuman-Erklärung','EGKS-Vertrag','Römische Verträge','Erste Direktwahl des Parlaments','Einheitliche Europäische Akte','Vertrag von Maastricht','Vertrag von Amsterdam','Vertrag von Nizza','Vertrag von Lissabon']},
+ {t:3,title:'Ordne die Erweiterungsrunden.',parts:['Dänemark, Irland, Vereinigtes Königreich','Griechenland','Spanien, Portugal','Österreich, Finnland, Schweden','Osterweiterung mit 10 Staaten','Bulgarien, Rumänien','Kroatien','Brexit']},
+ {t:4,title:'Ordne das ordentliche Gesetzgebungsverfahren.',parts:['Europäischer Rat gibt politische Leitlinien vor','Kommission legt Gesetzesvorschlag vor','Parlament berät in erster Lesung','Rat der EU legt seinen Standpunkt fest','Einigung von Parlament und Rat (Trilog)','Veröffentlichung im Amtsblatt','Umsetzung der Richtlinie in nationales Recht']},
+ {t:1,title:'Ordne die Anfänge der europäischen Einigung.',parts:['Churchills Zürcher Rede','Gründung des Europarats','Schuman-Erklärung','EGKS-Vertrag','Scheitern der Verteidigungsgemeinschaft','Römische Verträge']}];
+ const evOf=t=>EV.filter(e=>e[3]===t);
+ const cardQ=t=>{ const c=pick(PW.CARDS.filter(x=>x[2]===t)); return {t,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],PW.CARDS.map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; };
+ const dateQ=t=>{ const e=pick(evOf(t)); return {t,q:'Wann war das? '+e[2],o:opts4(e[0],EV.map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; };
+ const orgNames=ORG.map(o=>o.name);
+ PW.GEN={
+ 1:[()=>{ const m=pick(PW.MOT); return {t:1,q:'Welches Motiv der Einigung wird beschrieben? '+m[1],o:opts4(m[0],PW.MOT.map(x=>x[0])),a:0,e:m[0]+'.'}; },()=>cardQ(1)],
+ 2:[()=>dateQ(2),()=>cardQ(2),()=>{ const v=pick(PW.VERTR); return {t:2,q:'Was regelte: '+v[0]+'?',o:opts4(v[1],PW.VERTR.map(x=>x[1])),a:0,e:v[0]+': '+v[1]+'.'}; }],
+ 3:[()=>{ const r=pick(PW.ERW.slice(1,8)); return {t:3,q:'Wann trat bei: '+r[1]+'?',o:opts4(r[0],PW.ERW.slice(1,8).map(x=>x[0])),a:0,e:r[0]+': '+r[1]+'.'}; },()=>cardQ(3),()=>dateQ(3)],
+ 4:[()=>{ const s=pick(PW.ORG_SATZ); return {t:4,q:'Welches Organ? '+s[0],o:opts4(s[1],orgNames),a:0,e:s[0]+' → '+s[1]+'.'}; },()=>cardQ(4),
+    ()=>{ const o=pick(ORG); return {t:4,q:'Wo hat dieses Organ seinen Sitz: '+o.name+'?',o:opts4(o.seat,ORG.map(x=>x.seat)),a:0,e:o.name+': '+o.seat+'.'}; },
+    ()=>{ const o=pick(ORG), s=['supranational','intergouvernemental']; return {t:4,q:'Ist dieses Organ eher supranational oder intergouvernemental? '+o.name,o:s,a:s.indexOf(o.typ),e:o.name+' ist '+o.typ+'.'}; }],
+ 5:[()=>{ const x=pick(PW.THEO), s=['Supranationalismus','Intergouvernementalismus']; return {t:5,q:'Welche Theorie passt? '+x[0],o:s,a:s.indexOf(x[1]),e:x[0]+' → '+x[1]+'.'}; },()=>cardQ(5),
+    ()=>{ const r=pick(PW.SCHEMA.concat(PW.LISSA)), y=Math.random()<.5?1:2, s=['Intergouvernementalismus','Supranationalismus']; return {t:5,q:'Welche Theorie? '+r[0]+': '+r[y],o:s,a:y-1,e:r[0]+' – intergouvernemental: '+r[1]+' · supranational: '+r[2]+'.'}; }],
+ 6:[()=>{ const l=pick(PW.LB); return {t:6,q:'Welches Leitbild? '+l[1],o:opts4(l[0],PW.LB.map(x=>x[0])),a:0,e:l[0]+'. Kritik: '+l[3]+'.'}; },
+    ()=>{ const l=pick(PW.LB); return {t:6,q:'Welche Kritik passt zum Leitbild „'+l[0]+'“?',o:opts4(l[3],PW.LB.map(x=>x[3])),a:0,e:l[0]+': '+l[3]+'.'}; },()=>cardQ(6)],
+ 7:[()=>{ const b=pick(PW.FREI_BSP); return {t:7,q:'Welche Freiheit des Binnenmarkts? '+b[0],o:PW.FREI.map(f=>f[0]),a:PW.FREI.map(f=>f[0]).indexOf(b[1]),e:b[1]+'.'}; },()=>cardQ(7)],
+ 8:[()=>{ const x=pick(PW.LOBBY); return {t:8,q:'Spricht das eher für oder gegen Lobbyismus? '+x[0],o:['dafür','dagegen'],a:x[1]==='dafür'?0:1,e:'Ein Argument '+x[1]+'.'}; },()=>cardQ(8)]};
+ PW.MATCH_KINDS={
+  organe:{label:'Organe',topic:4,make:()=>shuffle(ORG).map(o=>({k:o.k,a:o.name,b:`<span style="font-size:.82rem;line-height:1.3">${o.task.split(',')[0]}</span>`,t:4}))},
+  vertraege:{label:'Verträge',topic:2,make:()=>shuffle(PW.VERTR).slice(0,5).map(v=>({k:v[0],a:`<span style="font-size:.82rem">${v[0]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">${v[1]}</span>`,t:2}))},
+  daten:{label:'Daten',topic:2,make:()=>{ const seen=new Set(), out=[]; shuffle(EV).forEach(e=>{ if(out.length<5&&!seen.has(e[0])){ seen.add(e[0]); out.push({k:e[0],a:e[0],b:`<span style="font-size:.82rem;line-height:1.3">${e[2]}</span>`,t:e[3]}); } }); return out; }},
+  leitbilder:{label:'Leitbilder',topic:6,make:()=>shuffle(PW.LB).map(l=>({k:l[0],a:`<span style="font-size:.82rem">${l[0]}</span>`,b:`<span style="font-size:.78rem;line-height:1.3">${l[1]}</span>`,t:6}))},
+  freiheiten:{label:'Vier Freiheiten',topic:7,make:()=>{ const out=[], seen=new Set(); shuffle(PW.FREI_BSP).forEach(b=>{ if(!seen.has(b[1])&&out.length<4){ seen.add(b[1]); out.push({k:b[1],a:`<span style="font-size:.82rem">${b[1]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">${b[0]}</span>`,t:7}); } }); return out; }},
+  begriffe:{label:'Begriffe',topic:5,make:()=>shuffle(PW.CARDS.filter(c=>c[1].length<120)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.82rem;line-height:1.3">${c[1]}</span>`,t:c[2]}))}};
+ const YT='yt:';
+ PW.VIDEOS={
+ 1:[['YouTube','Motive der europäischen Einigung',YT+'Motive europäische Einigung einfach erklärt'],['YouTube','Schuman-Plan und Montanunion',YT+'Schuman Plan Montanunion erklärt']],
+ 2:[['YouTube','Geschichte der EU',YT+'Geschichte der EU einfach erklärt'],['YouTube','Vertrag von Lissabon',YT+'Vertrag von Lissabon einfach erklärt']],
+ 3:[['YouTube','EU-Erweiterung und Kopenhagener Kriterien',YT+'EU Erweiterung Kopenhagener Kriterien erklärt']],
+ 4:[['YouTube','Die Organe der EU',YT+'Organe der EU einfach erklärt'],['YouTube','Wie entsteht ein EU-Gesetz?',YT+'ordentliches Gesetzgebungsverfahren EU erklärt']],
+ 5:[['YouTube','Supranationalismus und Intergouvernementalismus',YT+'Supranationalismus Intergouvernementalismus erklärt'],['YouTube','Neofunktionalismus Spill-over',YT+'Neofunktionalismus spill over Integrationstheorie']],
+ 6:[['YouTube','Leitbilder der EU',YT+'Leitbilder europäische Integration Bundesstaat Staatenbund']],
+ 7:[['YouTube','Binnenmarkt und vier Freiheiten',YT+'EU Binnenmarkt vier Grundfreiheiten erklärt']],
+ 8:[['YouTube','Lobbyismus in der EU',YT+'Lobbyismus EU Brüssel erklärt']]};
+ PW.PLAN=[
+ {when:'Do 26.11.',sub:'heute · 60 Min',topics:[1,2],extra:''},
+ {when:'Fr 27.11.',sub:'60 Min',topics:[3,4],extra:''},
+ {when:'Sa 28.11.',sub:'60 Min',topics:[5,6],extra:''},
+ {when:'So 29.11.',sub:'60 Min',topics:[7,8],extra:''},
+ {when:'Mo 30.11.',sub:'60 Min',topics:[],extra:'<a class="pill" href="#aufgaben">Stellungnahmen schriftlich üben</a>'},
+ {when:'Di 1.12.',sub:'45 Min',topics:[4,5,6],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Mi 2.12.',sub:'60 Min',topics:[],extra:'<a class="pill" href="#klausur">Probeklausur</a><a class="pill" href="#karten">Fehler und Karten</a>'},
+ {when:'Do 3.12.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
+ PW.BOT_SUGGEST=['Was ist der Unterschied zwischen Europäischem Rat und Rat der EU?','Erklär mir Supranationalismus','Wie entsteht ein EU-Gesetz?','Hilf mir bei einer Stellungnahme zum Lobbyismus'];
+ PW.SPICK=[
+  ['Motive',['Frieden (Schuman 9.5.1950, Kohle und Stahl, D–F-Versöhnung)','Wohlstand (Binnenmarkt, 27 Staaten, ~450 Mio., Euro, Regionalförderung)','Werte (Art. 2 EUV, Grundrechtecharta 2009; Polen/Ungarn)','Außen- und Sicherheitspolitik („Zivilmacht“)','Grenzüberschreitende Probleme (Klima, Terror, Migration)','Gute Nachbarschaft („Europa von unten“, Erasmus+) · Dimensionen: politisch, wirtschaftlich, kulturell']],
+  ['Vertiefung',['EGKS 1951/52 (supranational) · Römische Verträge 1957/58 (EWG, Euratom)','Direktwahl EP 1979 · Schengen 1985 · EEA 1986/87 (Binnenmarkt)','Maastricht 1992/93: EU, 3 Säulen, Euro, Unionsbürgerschaft','Amsterdam 1997/99 · Nizza 2001/03 · Verfassung scheitert 2005','Lissabon 2007/09: Charta, Parlament gleichberechtigt, Bürgerinitiative, Art. 50']],
+  ['Erweiterung',['1973 DK, IRL, UK · 1981 GR · 1986 E, P · 1995 A, FIN, S','2004 zehn Staaten (Osterweiterung) · 2007 BG, RO · 2013 HR · 2020 Brexit → 27','Kopenhagener Kriterien 1993: politisch, wirtschaftlich, Acquis + Aufnahmefähigkeit','Kandidaten u. a. Ukraine, Moldau (2022), Westbalkan, Türkei','Erweiterung vs. Vertiefung: mehr Staaten → schwerere Einigung']],
+  ['Organe (nennen!)',['Europäischer Rat: Chefs, Leitlinien, keine Gesetze (Costa)','Rat der EU: Minister, Gesetzgeber, QMV 55 %/65 %, Vorsitz halbjährlich','Kommission: Initiativrecht, Exekutive, Hüterin der Verträge (von der Leyen)','Parlament: 720, direkt gewählt, Gesetzgebung, Haushalt, Kontrolle (Metsola)','EuGH: Luxemburg, Auslegung, Vorrang EU-Recht · ≠ Europarat!']],
+  ['Integrationstheorien',['Schema: Machtzentrum Regierungen/Europ. Rat ↔ Kommission/EP · einstimmig ↔ qualifizierte Mehrheit · Völkerrecht ↔ EU-Recht bricht nationales · Ziel Staatenbund ↔ Bundesstaat','Lissabon: GASP einstimmig, Veto bei Steuern/Verteidigung; ESM schwache Parlamente ↔ Säulen weg, Rechtspersönlichkeit, Binnenmarkt + Justiz supranational, doppelte Mehrheit, EP gleichberechtigt','Supranationalismus: Souveränität nach oben, Spill-over (Haas, Monnet), Kommission/EP/EuGH, Mehrheit','Intergouvernementalismus: Regierungen, nationale Interessen, „Herren der Verträge“, Einstimmigkeit (Hoffmann, Moravcsik)','Praxis: Mischung → Staatenverbund (BVerfG 1993), Mehrebenensystem','Binnenmarkt/Euro supranational · GASP/Steuern intergouvernemental']],
+  ['Leitbilder',['Bundesstaat: Verfassung, EU-Regierung, Mehrheit – Machtverlust Staaten','Staatenbund: einstimmig, souverän – schwerfällig','Differenziert: 2 Geschwindigkeiten, Opting-out, variable Geometrie','Republik der Regionen (Guérot, Menasse), AdR, Subsidiarität Art. 5 EUV','Festung Europa als Gegenbild']],
+  ['Binnenmarkt',['seit 1.1.1993 · Waren, Personen, Dienstleistungen, Kapital','Harmonisierung + gegenseitige Anerkennung (Cassis 1979)','Verbraucherschutz: Roaming, USB-C, DSGVO, Fluggastrechte','Kritik: Bürokratie, Kosten, Lohndruck']],
+  ['Lobbyismus',['ca. 25.000 Lobbyisten in Brüssel, v. a. unternehmensorientiert','Kommission braucht Fachwissen (Fachleute ↔ Fachgebiet)','Transparenzregister · Drehtür-Effekt · Katargate 2022','Urteil: legitim, aber Transparenz und Ausgewogenheit nötig']]];
+})();
+function pwTimeline(root,filter,title){
+  const evs=PW.EV.filter(filter);
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">${title} Tippe auf ein Datum, um das Ereignis aufzudecken.</p><ul class="ge-tl">${evs.map((e,i)=>`<li><button class="chip" type="button" data-i="${i}">${e[0]}</button> <span class="ge-ev" data-i="${i}">${e[2]}</span></li>`).join('')}</ul>`;
+  root.addEventListener('click',e=>{ const b=e.target.closest('[data-i]'); if(b&&b.tagName==='BUTTON'){ const s=root.querySelector(`.ge-ev[data-i="${b.dataset.i}"]`); s.style.filter=s.style.filter?'':'blur(6px)'; } });
+}
+function pwBox(root,html){ const d=document.createElement('div'); d.style.marginTop='14px'; d.innerHTML=html; root.appendChild(d); return d; }
+W.pw_mot=root=>geSteck(root,PW.MOT,'Die sechs Motive der europäischen Einigung.');
+W.pw_zeit2=root=>{ pwTimeline(root,e=>e[3]===2||e[3]===7,'Zeitstrahl der Vertiefung.'); };
+W.pw_erw=root=>{ pwTimeline(root,e=>e[3]===3,'Zeitstrahl der Erweiterung.'); };
+W.pw_org=root=>{ geSort(root,PW.ORG_SATZ,PW.ORG.map(o=>o.name),'Welches Organ ist gemeint?'); };
+W.pw_theo=root=>{ geSort(root,PW.THEO,['Supranationalismus','Intergouvernementalismus'],'Welche Theorie passt?'); };
+W.pw_lb=root=>{ geSteck(root,PW.LB.map(l=>[l[0],l[1]]),'Leitbilder im Überblick.'); };
+W.pw_frei=root=>{ geSort(root,PW.FREI_BSP,PW.FREI.map(f=>f[0]),'Welche Freiheit des Binnenmarkts?'); };
+W.pw_lobby=root=>{ geSort(root,PW.LOBBY,['dafür','dagegen'],'Spricht das für oder gegen Lobbyismus?'); };
 
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
 const PLAN=[
@@ -2746,7 +3175,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.6';
+const APP_VERSION='5.7';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -2941,12 +3370,12 @@ document.addEventListener('click',e=>{
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
  heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌',
- urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',depesche:'📨',spiegel:'🪞',helm:'🪖',
+ urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',depesche:'📨',spiegel:'🪞',helm:'🪖',eu:'🇪🇺',euro:'💶',globus:'🌍',mikro:'🎙️',koffer:'💼',pass:'🛂',bruecke:'🌉',taube:'🕊️',
  buch:'📚',feder:'🪶',maske:'🎭',krug:'🏺',waage:'⚖️',rolle:'📜',luege:'🤥',wein:'🍷',katze:'🐈',fuss:'🦶',lupe:'🔍',schock:'😱'};
 const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
  owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅',
  richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭',
- professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇',kanzler:'🎖️'};
+ professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇',kanzler:'🎖️',diplomat:'🧑‍💼',kommissarin:'👩‍💼',lobbyist:'🕴️',dolmetscher:'🗣️'};
 const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
 const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
@@ -2955,6 +3384,9 @@ const SHOP=[
  ...[['kartoffel',120],['zeitung',150],['brief',180],['eiche',200],['depesche',220],['zug',250],['barrikade',300],['helm',320],['urne',350],['schwerter',450],['spiegel',500],['saeule',600],['flagge',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'geschichte'})),
  ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
  ...[['magd',250],['bauer',300],['theater',450],['detektiv',700],['kaiser',1000],['richter',1500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'deutsch'})),
+ ...[['globus',120],['koffer',150],['mikro',180],['pass',200],['euro',250],['bruecke',300],['taube',400],['eu',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'powi'})),
+ ...[['dolmetscher',250],['lobbyist',400],['diplomat',700],['kommissarin',1000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'powi'})),
+ ...[['Europa-Einsteiger',250],['Vertrags-Kenner',300],['Organe-Profi',350],['Spill-over-Fan',400],['Binnenmarkt-Profi',450],['Subsidiaritäts-Hüter',500],['Trilog-Taktiker',600],['Leitbild-Denker',700],['Kommissionsmitglied',900],['Ratspräsident',1200],['Vater Europas',2000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'powi'})),
  ...[['arbeiter',250],['student',300],['reiter',500],['soldat',700],['professor',1000],['kanzler',1200]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'geschichte'})),
  ...[['Neuling',0],['Kettenzähler',250],['Methan-Minimalist',300],['Zickzack-Zeichner',350],['Elektronegativ',400],['Hydrophob-Held',450],['Isomer-Jäger',500],['Van-der-Waals-Fan',500],['Dipol-Diva',550],['Siedepunkt-Sieger',600],['IUPAC-Profi',700],['Tetraeder-Titan',800],['H-Brücken-Baumeister',900],['Kohlenstoff-Kaiser',1200],['Alkan-König',1500],['Chemie-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:p?'chemie':undefined})),
  ...[['Krug-Kenner',250],['Zitat-Profi',300],['Auftritt-Ass',350],['Stilmittel-Sammler',400],['Blankvers-Boss',450],['Ironie-Insider',500],['Szenen-Analyst',550],['Adam-Entlarver',600],['Perücken-Finder',700],['Kleist-Kenner',800],['Gerichtsrat',900],['Dorfrichter',1200],['Lustspiel-Legende',1500],['Deutsch-Legende',3000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'deutsch'})),
@@ -3467,7 +3899,7 @@ function initBot(){ drawChat();
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
-  if(FACH.id!=='chemie'){ const SP=(FACH.id==='deutsch'?DE:GE).SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<TOPICS.length?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
+  if(FACH.id!=='chemie'){ const SP=({deutsch:DE,geschichte:GE,powi:PW})[FACH.id].SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<TOPICS.length?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
   const T=TOPICS;
   app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
@@ -3675,7 +4107,14 @@ const FACHER={
   examIntro:'15 Fragen aus allen 8 Themen, von 1849 bis 1871 und zur Industrialisierung: je eine Frage pro Thema und sieben zusätzliche, die jedes Mal neu erzeugt werden. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
   examTips:'<li>Daten sicher: <b>1834</b> Zollverein, <b>1835</b> erste Eisenbahn, <b>1850</b> Olmütz, <b>1862</b> Bismarck, <b>1864</b> Dänemark, <b>1866</b> Königgrätz, <b>1867</b> Norddeutscher Bund, <b>13.7.1870</b> Ems, <b>18.1.1871</b> Versailles, <b>16.4.1871</b> Verfassung, <b>1878</b> Sozialistengesetz, <b>1883/84/89</b> Sozialversicherung.</li><li>Fallstricke: „<b>Eisen und Blut</b>“ (nicht „Blut und Eisen“), die Emser Depesche wurde <b>gekürzt, nicht gefälscht</b>, Werner-Fassungen <b>1877, 1882, 1885</b>, Titel „<b>Deutscher Kaiser</b>“.</li><li>Vergleich 1849/1871 nach Kriterien: Legitimation, Oberhaupt, Regierung, Parlament, Grundrechte, Militär.</li><li>Quellen: <b>Autor, Adressat, Datum, Anlass</b> nennen, dann Inhalt, Analyse, Kontext, Urteil – und Quellenkritik (Protokoll, Kürzung, spätere Fassung).</li><li>Beim Urteil <b>gewichten</b>, z. B. „Revolution von oben“: dafür und dagegen, dann begründetes Fazit.</li>',
   ops:'<li><b>Nenne</b>: aufzählen, ohne Begründung</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erkläre / Erläutere</b>: Ursachen und Zusammenhänge mit Beispielen deutlich machen</li><li><b>Ordne ein</b>: in den historischen Zusammenhang stellen</li><li><b>Vergleiche</b>: Gemeinsamkeiten und Unterschiede nach Kriterien</li><li><b>Analysiere</b>: Quelle, Bild oder Karikatur nach Kriterien untersuchen</li><li><b>Beurteile</b>: Sachurteil mit Begründung · <b>Bewerte</b>: Werturteil aus heutiger Sicht · <b>Erörtere</b>: Pro und Contra, dann Urteil</li>',
-  trMatch:t=>({1:'vertraege',2:'zitate71',3:'vertraege',4:pick(['vertraege','daten71']),5:'daten71',6:pick(['personen71','zitate71']),7:'begriffe',8:pick(['personen71','begriffe'])})[t]||null}};
+  trMatch:t=>({1:'vertraege',2:'zitate71',3:'vertraege',4:pick(['vertraege','daten71']),5:'daten71',6:pick(['personen71','zitate71']),7:'begriffe',8:pick(['personen71','begriffe'])})[t]||null},
+ powi:{id:'powi',name:'Powi GK',emoji:'🇪🇺',sub:'EU-Integration (Q1) · Klausur Do 3.12.',eyebrow:'Politik und Wirtschaft GK · Freie Waldorfschule',title:'Die Europäische Union',exam:'2026-12-03T10:00:00+01:00',examLabel:'Do 03.12.26, 10:00',
+  planIntro:'So schaffst du alle 8 Themen bis Donnerstag, 3.12. Klausuraufbau: 10–15 % „nennen“ (Organe), 35–40 % „erläutern“, 50 % „beziehe begründet Stellung“ mit Wahl zwischen Aufgabe A und B. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir Organe, Geschichte, Integrationstheorien, Leitbilder, Binnenmarkt und Lobbyismus der EU, hilft bei Stellungnahmen und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Was macht der Rat der EU?',matchLink:'Zuordnen-Spiel: Organe, Verträge, Daten, Leitbilder, vier Freiheiten, Begriffe',spickWhen:'Donnerstag früh',
+  examIntro:'15 Fragen aus allen 8 Themen: je eine Frage pro Thema und sieben zusätzliche, die jedes Mal neu erzeugt werden. Die Stellungnahmen übst du bei den Aufgaben. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
+  examTips:'<li><b>Nennen</b> (10–15 %): Europäischer Rat, Rat der EU, Kommission, Parlament, EuGH – kurz und vollständig, ohne Begründung.</li><li><b>Erläutern</b> (35–40 %): Sachverhalt erklären, Zusammenhänge zeigen, mit Beispielen (z. B. Spill-over: Binnenmarkt → Euro).</li><li><b>Beziehe begründet Stellung</b> (50 %): These → Argumente pro und contra mit Beispielen → gewichtetes eigenes Urteil mit Kriterien (Effizienz, Legitimation, Souveränität, Solidarität).</li><li>Bei Aufgabe A/B die wählen, zu der du mehr Beispiele kennst.</li><li>Fallen: Europäischer Rat ≠ Rat der EU ≠ Europarat; EuGH (Luxemburg) ≠ Menschenrechtsgerichtshof (Straßburg).</li>',
+  ops:'<li><b>Nenne</b>: ohne Erklärung aufzählen</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erläutere</b>: erklären und mit Beispielen veranschaulichen</li><li><b>Vergleiche</b>: Gemeinsamkeiten und Unterschiede nach Kriterien</li><li><b>Beurteile</b>: Sachurteil mit Kriterien</li><li><b>Beziehe begründet Stellung</b> / <b>Nimm Stellung</b>: eigenes, begründetes Urteil nach Abwägung von Pro und Contra</li><li><b>Erörtere</b>: Pro und Contra abwägen, dann Urteil</li>',
+  trMatch:t=>({1:'begriffe',2:pick(['vertraege','daten']),3:'daten',4:'organe',5:'begriffe',6:'leitbilder',7:'freiheiten',8:'begriffe'})[t]||null}};
 let FACH=FACHER[S.fach]||FACHER.chemie;
 // Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
 const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
@@ -3687,7 +4126,7 @@ function replaceArr(a,b){ a.splice(0,a.length,...b); }
 function replaceObj(o,b){ Object.keys(o).forEach(k=>delete o[k]); Object.assign(o,b); }
 function applyFachData(id){
   if(!CHEM_SNAP) CHEM_SNAP={TOPICS:TOPICS.slice(),QUESTIONS:QUESTIONS.slice(),TF:TF.slice(),CARDS:CARDS.slice(),TASKS:TASKS.slice(),ORDERS:ORDERS.slice(),GEN:Object.assign({},GEN),MATCH_KINDS:Object.assign({},MATCH_KINDS),VIDEOS:Object.assign({},VIDEOS),PLAN:PLAN.slice(),BOT_SUGGEST:BOT_SUGGEST.slice()};
-  const D=id==='deutsch'?DE:id==='geschichte'?GE:CHEM_SNAP;
+  const D=id==='deutsch'?DE:id==='geschichte'?GE:id==='powi'?PW:CHEM_SNAP;
   ['TOPICS','QUESTIONS','TF','CARDS','TASKS','ORDERS','PLAN','BOT_SUGGEST'].forEach(k=>replaceArr({TOPICS,QUESTIONS,TF,CARDS,TASKS,ORDERS,PLAN,BOT_SUGGEST}[k],D[k]));
   replaceObj(GEN,D.GEN); replaceObj(MATCH_KINDS,D.MATCH_KINDS); replaceObj(VIDEOS,D.VIDEOS);
   FACH=FACHER[id]; EXAM.setTime(new Date(FACH.exam).getTime());
