@@ -251,6 +251,8 @@ select{font:inherit; padding:8px 10px; border-radius:9px; border:1px solid var(-
 .ge-tl li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .fach-card{display:flex;gap:14px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border:2px solid var(--line)}
 .fach-card[aria-pressed="true"]{border-color:var(--accent)}
+.fach-card.fach-done{opacity:.72;border-style:dashed}
+.fach-card.fach-done:hover{opacity:1}
 .fach-emo{font-size:2.4rem;line-height:1}
 .ban-bar{position:fixed; left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); bottom:calc(76px + env(safe-area-inset-bottom,0px)); max-width:560px; margin:0 auto; z-index:65; background:#5a1d1d; color:#fff; border:2px solid #e5534b; border-radius:12px; padding:9px 12px; font-size:.9rem; font-weight:700; text-align:center}
 .adm-items{display:flex; flex-wrap:wrap; gap:6px}
@@ -3223,7 +3225,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.9';
+const APP_VERSION='5.10';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -4203,7 +4205,7 @@ const FACHER={
 const FACH_GRACE=2*864e5;
 const fachActive=f=>!!f&&Date.now()<new Date(f.exam).getTime()+FACH_GRACE;
 const fachList=()=>{ const a=Object.values(FACHER).filter(fachActive); return a.length?a:Object.values(FACHER); };
-if(S.fachChosen&&!fachActive(FACHER[S.fach])&&Object.values(FACHER).some(fachActive)) S.fachChosen=false;
+if(S.fachChosen&&FACHER[S.fach]&&!fachActive(FACHER[S.fach])&&(S.fachPickedAt||0)<new Date(FACHER[S.fach].exam).getTime()+FACH_GRACE&&Object.values(FACHER).some(fachActive)) S.fachChosen=false;
 let FACH=FACHER[S.fach]||FACHER.chemie;
 // Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
 const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
@@ -4230,14 +4232,16 @@ function switchFach(id,stay){
     const keep={}; FACH_KEYS.forEach(k=>{ if(S[k]!==undefined) keep[k]=S[k]; }); S.fachData[cur]=JSON.parse(JSON.stringify(keep));
     const nxt=S.fachData[id]||{}; FACH_KEYS.forEach(k=>{ delete S[k]; }); Object.assign(S,JSON.parse(JSON.stringify(FACH_DEF)),JSON.parse(JSON.stringify(nxt)));
   }
-  S.fach=id; S.fachChosen=true; save();
+  S.fach=id; S.fachChosen=true; S.fachPickedAt=Date.now(); save();
   applyFachData(id); botLoad(); try{ bSend(helloMsg()); }catch(e){}
   deck=null; CUR_DECK='std'; exam=null; tr={topic:0,n:0,r:0,streak:0,best:0,stats:{}};
   if(!stay){ location.hash='#start'; route(); } else route();
 }
 function viewPick(){
   app.innerHTML=`<header class="hero"><span class="eyebrow">Freie Waldorfschule · Lern-App</span><h1>Welches Fach lernst du?</h1><p class="muted" style="margin:.3em 0 0">Du kannst jederzeit oben auf der Startseite wechseln. Dein Fortschritt wird pro Fach gespeichert, Münzen, Shop und Freunde gelten für alle.</p></header>
-  ${fachList().sort((a,b)=>new Date(a.exam)-new Date(b.exam)).map(f=>`<button class="card fach-card" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${f.emoji}</span><span><b style="font-size:1.2rem">${f.name}</b><br><span class="muted">${f.sub}</span></span></button>`).join('')}`;
+  ${(()=>{ const all=Object.values(FACHER), act=all.filter(fachActive).sort((a,b)=>new Date(a.exam)-new Date(b.exam)), old=all.filter(f=>!fachActive(f)).sort((a,b)=>new Date(b.exam)-new Date(a.exam));
+    const card=(f,done)=>`<button class="card fach-card${done?' fach-done':''}" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${done?'✅':f.emoji}</span><span style="min-width:0"><b style="font-size:1.2rem">${f.name}</b>${done?' <span class="pill" style="font-size:.75rem;padding:1px 8px">abgehakt</span>':''}<br><span class="muted">${done?f.title+' · Klausur am '+f.examLabel.replace(/,.*$/,'')+' geschrieben · jederzeit wiederholen':f.sub}</span></span></button>`;
+    return (act.length?act.map(f=>card(f,false)).join(''):'<p class="muted">Gerade steht keine Klausur an.</p>')+(old.length?`<div class="sec-label" style="margin-top:18px">✅ Abgehakte Klausuren · zum Wiederholen</div>${old.map(f=>card(f,true)).join('')}`:''); })()}`;
 };
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-fach]'); if(b){ e.preventDefault(); switchFach(b.dataset.fach); } });
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-wf]'); if(!b) return; e.preventDefault();
