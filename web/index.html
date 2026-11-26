@@ -3175,7 +3175,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.7';
+const APP_VERSION='5.8';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -4115,6 +4115,11 @@ const FACHER={
   examTips:'<li><b>Nennen</b> (10–15 %): Europäischer Rat, Rat der EU, Kommission, Parlament, EuGH – kurz und vollständig, ohne Begründung.</li><li><b>Erläutern</b> (35–40 %): Sachverhalt erklären, Zusammenhänge zeigen, mit Beispielen (z. B. Spill-over: Binnenmarkt → Euro).</li><li><b>Beziehe begründet Stellung</b> (50 %): These → Argumente pro und contra mit Beispielen → gewichtetes eigenes Urteil mit Kriterien (Effizienz, Legitimation, Souveränität, Solidarität).</li><li>Bei Aufgabe A/B die wählen, zu der du mehr Beispiele kennst.</li><li>Fallen: Europäischer Rat ≠ Rat der EU ≠ Europarat; EuGH (Luxemburg) ≠ Menschenrechtsgerichtshof (Straßburg).</li>',
   ops:'<li><b>Nenne</b>: ohne Erklärung aufzählen</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erläutere</b>: erklären und mit Beispielen veranschaulichen</li><li><b>Vergleiche</b>: Gemeinsamkeiten und Unterschiede nach Kriterien</li><li><b>Beurteile</b>: Sachurteil mit Kriterien</li><li><b>Beziehe begründet Stellung</b> / <b>Nimm Stellung</b>: eigenes, begründetes Urteil nach Abwägung von Pro und Contra</li><li><b>Erörtere</b>: Pro und Contra abwägen, dann Urteil</li>',
   trMatch:t=>({1:'begriffe',2:pick(['vertraege','daten']),3:'daten',4:'organe',5:'begriffe',6:'leitbilder',7:'freiheiten',8:'begriffe'})[t]||null}};
+// Fächer verschwinden 2 Tage nach ihrer Klausur aus der Auswahl (Inhalte und Fortschritt bleiben im Code und im Spielstand)
+const FACH_GRACE=2*864e5;
+const fachActive=f=>!!f&&Date.now()<new Date(f.exam).getTime()+FACH_GRACE;
+const fachList=()=>{ const a=Object.values(FACHER).filter(fachActive); return a.length?a:Object.values(FACHER); };
+if(S.fachChosen&&!fachActive(FACHER[S.fach])&&Object.values(FACHER).some(fachActive)) S.fachChosen=false;
 let FACH=FACHER[S.fach]||FACHER.chemie;
 // Fortschritt, der zu einem Fach gehört (Münzen, Shop, Freunde, Name gelten für alle Fächer)
 const FACH_KEYS=['done','cards','tasks','exams','wrong','hunt','trs','decks','deckKnown','deckMode','stdHidden','bSeen','bSeenG'];
@@ -4148,7 +4153,7 @@ function switchFach(id,stay){
 }
 function viewPick(){
   app.innerHTML=`<header class="hero"><span class="eyebrow">Freie Waldorfschule · Lern-App</span><h1>Welches Fach lernst du?</h1><p class="muted" style="margin:.3em 0 0">Du kannst jederzeit oben auf der Startseite wechseln. Dein Fortschritt wird pro Fach gespeichert, Münzen, Shop und Freunde gelten für alle.</p></header>
-  ${Object.values(FACHER).map(f=>`<button class="card fach-card" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${f.emoji}</span><span><b style="font-size:1.2rem">${f.name}</b><br><span class="muted">${f.sub}</span></span></button>`).join('')}`;
+  ${fachList().sort((a,b)=>new Date(a.exam)-new Date(b.exam)).map(f=>`<button class="card fach-card" type="button" data-fach="${f.id}" aria-pressed="${(S.fach||'')===f.id}"><span class="fach-emo">${f.emoji}</span><span><b style="font-size:1.2rem">${f.name}</b><br><span class="muted">${f.sub}</span></span></button>`).join('')}`;
 };
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-fach]'); if(b){ e.preventDefault(); switchFach(b.dataset.fach); } });
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-wf]'); if(!b) return; e.preventDefault();
