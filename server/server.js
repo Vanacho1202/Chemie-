@@ -54,6 +54,7 @@ function presence() { if (presT) return; presT = setTimeout(() => { presT = null
 // ---------- Cloud-Spielstand (Postgres) ----------
 let pool = null;
 const BANS = new Map();   // Spieler-ID -> { until (ms), reason }
+const DELETED = new Set(); // vom Admin gelöschte Spieler-IDs: dürfen nicht wieder hochladen
 const banOf = pid => { const b = BANS.get(pid); if (b && b.until > Date.now()) return b; if (b) BANS.delete(pid); return null; };
 const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newSaveCode = () => Array.from(crypto.randomBytes(8), b => CODE_ABC[b % CODE_ABC.length]).join('').replace(/^(.{4})/, '$1-');
@@ -79,6 +80,8 @@ async function initDb() {
     await pool.query(`create table if not exists bans (pid text primary key, until timestamptz not null, reason text, created_at timestamptz not null default now())`);
     const b = await pool.query('select pid, until, reason from bans where until > now()');
     b.rows.forEach(r => BANS.set(r.pid, { until: new Date(r.until).getTime(), reason: r.reason || '' }));
+    await pool.query('create table if not exists deleted_pids (pid text primary key, name text, code text, deleted_at timestamptz not null default now())');
+    (await pool.query('select pid from deleted_pids')).rows.forEach(r => DELETED.add(r.pid));
     console.log('Cloud-Spielstand: Datenbank bereit');
   } catch (e) { console.log('Cloud-Spielstand: Datenbank-Fehler', e.message); pool = null; return; }
   // Umzug: Spielstände aus der alten Datenbank übernehmen (neuere gewinnen)
@@ -88,6 +91,7 @@ async function initDb() {
       const { rows } = await old.query('select pid, secret, code, name, data, updated_at from saves');
       let n = 0;
       for (const r of rows) {
+        if (DELETED.has(r.pid)) continue;
         const res = await pool.query(`insert into saves (pid, secret, code, name, data, updated_at) values ($1,$2,$3,$4,$5,$6)
           on conflict (pid) do update set secret=excluded.secret, code=excluded.code, name=excluded.name, data=excluded.data, updated_at=excluded.updated_at
           where saves.updated_at < excluded.updated_at`, [r.pid, r.secret, r.code, r.name, JSON.stringify(r.data), r.updated_at]);
@@ -161,6 +165,25 @@ async function adminRoute(path, m) {
     await pool.query('delete from bans where pid = $1', [target]); BANS.delete(target);
     return [200, { ok: true }];
   }
+  if (path === '/admin/delete') {
+    if (ADMIN_PIDS.includes(target) || target === m.pid) return [400, { error: 'Admin-Accounts kann man nicht löschen.' }];
+    const r = await pool.query('delete from saves where pid = $1 returning name, code', [target]);
+    const info = r.rows[0] || {};
+    await pool.query('delete from gifts where pid = $1', [target]);
+    await pool.query('delete from bans where pid = $1', [target]); BANS.delete(target);
+    await pool.query('insert into deleted_pids (pid, name, code) values ($1,$2,$3) on conflict (pid) do nothing', [target, info.name || null, info.code || null]);
+    DELETED.add(target);
+    // bei allen, die ihn als Freund haben, entfernen (kommt als Geschenk mit "unfriend" an)
+    const fr = await pool.query("select pid from saves where data->'friends' ? $1", [target]);
+    for (const x of fr.rows) {
+      await pool.query('insert into gifts (pid, coins, note, extra) values ($1, 0, $2, $3)', [x.pid, 'Account gelöscht', { unfriend: [target] }]);
+      const o = online.get(x.pid); if (o) send(o, { type: 'gift' });
+    }
+    const ws = online.get(target);
+    if (ws) { send(ws, { type: 'deleted' }); setTimeout(() => { try { ws.close(); } catch {} }, 300); online.delete(target); }
+    console.log('Admin-Löschung', target.slice(0, 8), info.code || '-', 'Freunde bereinigt:', fr.rows.length);
+    return [200, { ok: true, removedFriends: fr.rows.length }];
+  }
   if (path === '/admin/kick') {
     const ws = online.get(target); if (!ws) return [404, { error: 'Nicht online.' }];
     send(ws, { type: 'error_soft', msg: 'Du wurdest vom Admin getrennt.' }); setTimeout(() => { try { ws.close(); } catch {} }, 300);
@@ -182,6 +205,7 @@ async function cloudRoute(path, m) {
     if (!HEX.test(m.pid || '')) return [400, { error: 'bad' }];
     return [200, { ok: !(await nameTaken(String(m.name || '').slice(0, 16), m.pid)) }];
   }
+  if ((path === '/cloud/save' || path === '/cloud/get') && DELETED.has(String(m.pid || ''))) return [410, { error: 'Dieser Account wurde gelöscht.', deleted: true }];
   if (path === '/cloud/save') {
     if (!HEX.test(m.pid || '') || !HEX.test(m.secret || '') || typeof m.data !== 'object') return [400, { error: 'bad' }];
     const data = JSON.stringify(m.data); if (data.length > 200000) return [413, { error: 'zu groß' }];
@@ -801,6 +825,7 @@ wss.on('connection', ws => {
       case 'hello':
         ws.named = !!clean(m.name, 16).trim(); ws.name = clean(m.name, 16) || 'Spieler'; ws.avatar = clean(m.avatar, 20) || 'scientist'; ws.title = clean(m.title, 30) || 'Neuling';
         ws.color = clean(m.color, 12) || 'std'; ws.canReady = m.ready === true; if (FACH_IDS.includes(m.fach)) ws.fach = m.fach;
+        if (DELETED.has(String(m.id || ''))) { send(ws, { type: 'deleted' }); setTimeout(() => { try { ws.close(); } catch {} }, 200); break; }
         if (/^[a-f0-9]{16,32}$/.test(m.id || '') && banOf(m.id)) {
           const b = banOf(m.id); send(ws, { type: 'banned', until: new Date(b.until).toISOString(), reason: b.reason });
           setTimeout(() => { try { ws.close(); } catch {} }, 200); break;
