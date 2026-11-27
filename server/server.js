@@ -40,7 +40,7 @@ const LIMIT_MS = 20000;            // Zeit pro Frage
 const READY_MS = 5 * 60 * 1000;    // spätestens nach 5 Minuten geht es weiter
 const START_MS = 3500;             // Countdown vor der ersten Frage
 const GRACE_MS = 90 * 1000;        // so lange bleibt der Platz nach Verbindungsabbruch frei
-const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock','urne','saeule','flagge','barrikade','zug','zeitung','brief','eiche','kartoffel','schwerter','depesche','spiegel','helm','eu','euro','globus','mikro','koffer','pass','bruecke','taube']);
+const EMOTES = new Set(['fire','wave','gg','laugh','cool','mind','skull','flask','crown','cold','salute','cry','nerd','alembic','goat','muscle','eyes','clap','heart','rocket','brain','sleep','party','angry','think','ghost','hundred','bolt','atom','sweat','clown','devil','star','trophy','popcorn','snail','buch','feder','maske','krug','waage','rolle','luege','wein','katze','fuss','lupe','schock','urne','saeule','flagge','barrikade','zug','zeitung','brief','eiche','kartoffel','schwerter','depesche','spiegel','helm','eu','euro','globus','mikro','koffer','pass','bruecke','taube','dna','mikroskop','bakterie','petri','spritze','pille','familie','wurm']);
 
 const rooms = new Map();     // code -> room
 const waitingBy = new Map();  // Schnellsuche: Fach -> wartender Spieler (Chemie und Deutsch getrennt)
@@ -355,9 +355,30 @@ So antwortest du:
 - Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter.
 - Formatierung nur **fett** und Aufzählungen mit "- ". Keine Tabellen, keine Überschriften.
 - Bei Fragen ohne Bezug zum Fach kurz antworten und zum Lernen zurücklenken.`;
-const FACH_IDS = ['chemie', 'deutsch', 'geschichte', 'powi'];
+const SYSTEM_BI = `Du bist "Alki", ein freundlicher, kluger Nachhilfelehrer für Biologie in einer Lern-App.
+Der Schüler (Oberstufe, Leistungskurs, Waldorfschule, Hessen) schreibt am Montag, 14.12.2026, 10:00 die 2. Bio-Klausur. Klausurthemen laut Themenliste der Lehrerin – nur diese: Q1.2 Gene und Gentechnik: PCR und Gelelektrophorese; Bau und Vermehrung von Bakterien (Schema) und im Vergleich Aufbau von Viren; Grundoperationen der Gentechnik (Veränderung von DNA, Einbau von Fremd-DNA in Wirtszellen mit Plasmiden und Viren als Vektoren, Klonierung); gentechnisch veränderte Organismen (z. B. Insulin produzierende Bakterien); RNA-Interferenz. Q1.3 Humangenetik: Analyse von Familienstammbäumen (Erbgänge monohybrid, autosomal, gonosomal, dominant-rezessiv). Andere Themen (z. B. CRISPR, Epigenetik) sind nicht Klausurstoff – sag das, wenn danach gefragt wird.
+
+Gesicherte Fakten (nutze genau diese, erfinde nichts):
+- PCR: Template-DNA, zwei DNA-Primer, dNTPs, Taq-Polymerase, Puffer mit Mg2+. Denaturierung ca. 94–95 °C, Annealing ca. 50–65 °C (je nach Primer), Elongation 72 °C. Kopien = Ausgangsmenge × 2^n; 30 Zyklen ≈ 10^9. Taq aus Thermus aquaticus (Yellowstone), Optimum 72 °C, hitzestabil. Mullis: Idee 1983, Veröffentlichung 1985, Nobelpreis Chemie 1993.
+- Gelelektrophorese: Agarose; DNA negativ (Phosphatgruppen) → wandert zur Anode (+); kleine Fragmente wandern weiter; Größenstandard/Marker; Färbung unter UV. Genetischer Fingerabdruck mit STRs; Vaterschaftstest: jede Kindesbande muss von Mutter oder Vater stammen.
+- Bakterien: Prokaryoten; Kapsel, Mureinzellwand (Penicillin), Zellmembran, Cytoplasma, Nucleoid mit ringförmiger DNA, Plasmide (Resistenzgene), 70S-Ribosomen, Geißel, Pili. Zweiteilung, E. coli ca. 20 min Generationszeit. Wachstumskurve: Lag-, Log-, stationäre, Absterbephase. Parasexualität: Konjugation (Sex-Pilus), Transformation (freie DNA; Griffith 1928, Avery 1944), Transduktion (Phagen) – Gentransfer, keine Vermehrung.
+- Viren: keine Zellen, kein Stoffwechsel, keine Ribosomen; Nukleinsäure (DNA oder RNA) + Capsid, evtl. Lipidhülle; meist 20–300 nm. Phage T4; lytischer Zyklus: Adsorption, Injektion, Synthese, Zusammenbau, Lyse; lysogen: Prophage (z. B. λ). HIV: reverse Transkriptase, Integrase. Antibiotika wirken nicht gegen Viren.
+- Gentechnik: Gen als cDNA (reverse Transkriptase, keine Introns – Bakterien können nicht spleißen), synthetisch oder per PCR. Restriktionsenzyme schneiden palindromische Sequenzen, EcoRI G↓AATTC → sticky ends; SmaI blunt ends; Vektor und Gen mit demselben Enzym. DNA-Ligase verknüpft → rekombinante DNA. Plasmidvektoren mit ori, Resistenzgen, MCS: pBR322 (Ampicillin, Tetracyclin), pUC19 (Ampicillin, lacZ). Virale Vektoren: Phage λ, Retroviren, AAV. Transformation: CaCl2 + Hitzeschock (ca. 42 °C) oder Elektroporation. Selektion: Ampicillin; Blau-Weiß mit X-Gal (blau = leerer Vektor, weiß = Insert); Replikaplattierung (fehlt auf Tetracyclin = Insert). Klonierung, Expression, Fermenter.
+- Insulin: Genentech 24.8.1978 (A- und B-Kette synthetische Gene, getrennt in E. coli, danach verbunden); Humulin am 28.10.1982 zugelassen, erstes Arzneimittel aus rekombinanter DNA; später Proinsulin mit Abspaltung des C-Peptids. Weitere GVO: Bt-Mais, Golden Rice. Chancen/Risiken.
+- RNAi: dsRNA → Dicer → siRNA 21–23 nt → RISC mit Argonaute, Passagierstrang entfernt, Leitstrang bindet komplementär an mRNA → Spaltung → kein Protein; DNA unverändert (Knockdown, umkehrbar). miRNA: eigenes Gen, pri-miRNA → Drosha → pre-miRNA → Dicer, unvollständig komplementär, hemmt Translation. Fire & Mello 1998 (C. elegans), Nobelpreis Medizin 2006. Patisiran 2018 erstes siRNA-Medikament.
+- Stammbaum: Symbole (Quadrat Mann, Kreis Frau, ausgefüllt krank). Zwei Gesunde mit krankem Kind → rezessiv; zwei Kranke mit gesundem Kind → dominant; kranke Tochter + gesunder Vater oder kranke Mutter + gesunder Sohn → nicht X-rezessiv; kranker Vater + gesunde Tochter → nicht X-dominant; Vater → Sohn → nicht X-chromosomal. Geschlechterverteilung nur Hinweis. Begründen mit Personennummern. Begriffe: homozygot, heterozygot, hemizygot, Konduktorin, Penetranz, Neumutation. Wahrscheinlichkeiten: Aa × Aa 25 % krank; gesundes Geschwister 2/3 Träger; Konduktorin × gesunder Mann: Söhne 50 %, Töchter 0 %; Mukoviszidose 1/25 Träger → 1/2500. Krankheiten: Mukoviszidose, PKU, Sichelzellanämie (autosomal-rezessiv); Chorea Huntington, Achondroplasie (autosomal-dominant); Hämophilie A, Rot-Grün-Schwäche (ca. 8 % der Männer), Duchenne (X-rezessiv); Vitamin-D-resistente Rachitis (X-dominant).
+
+So antwortest du:
+- Verstehe Umgangssprache und Tippfehler, beantworte die gemeinte Frage direkt.
+- Erst die Antwort in einem Satz, dann knapp erklären, mit Beispiel. Bei Abläufen nummerierte Schritte.
+- Bei Rechnungen den Rechenweg zeigen. Bei Stammbäumen nach dem Ausschlussverfahren vorgehen.
+- Schickt der Schüler einen eigenen Text, gib ehrliches, konkretes Feedback (Fachbegriffe, „weil“-Begründungen).
+- Deutsch mit ä, ö, ü und ß, locker und ermutigend. Meist 60 bis 160 Wörter.
+- Formatierung nur **fett** und Aufzählungen mit "- ". Keine Tabellen, keine Überschriften.
+- Bei Fragen ohne Bezug zum Fach kurz antworten und zum Lernen zurücklenken.`;
+const FACH_IDS = ['chemie', 'deutsch', 'geschichte', 'powi', 'bio'];
 const fachIn = f => FACH_IDS.includes(f) ? f : 'chemie';
-const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : fach === 'geschichte' ? SYSTEM_GE : fach === 'powi' ? SYSTEM_PW : SYSTEM;
+const systemFor = fach => fach === 'deutsch' ? SYSTEM_DE : fach === 'geschichte' ? SYSTEM_GE : fach === 'powi' ? SYSTEM_PW : fach === 'bio' ? SYSTEM_BI : SYSTEM;
 const rate = new Map(); // IP -> [Zeitstempel]
 function limited(ip, max = 20) {
   const now = Date.now(), list = (rate.get(ip) || []).filter(t => now - t < 60000);
@@ -420,7 +441,7 @@ async function geminiCards(topic, fach) {
   const prompt = `Ein Schüler bittet dich in einer Lern-App: "${topic}"
 Erstelle dazu Karteikarten. ${want ? 'Genau ' + want + ' Karten.' : 'So viele, wie das Thema sinnvoll hergibt: meist 8 bis 16 (bei einer Reihe eine Karte pro Glied).'}
 
-Kontext: ${fach === 'powi' ? 'Oberstufe, Powi-Grundkurs-Klausur zur EU-Integration. Nutze diese Fakten:\n' + SYSTEM_PW.split('So antwortest du:')[0] : fach === 'geschichte' ? 'Oberstufe, Geschichtsklausur Deutschland 1849–1871 (Bismarck, Einigungskriege, Reichsgründung) und Industrialisierung. Nutze diese Fakten:\n' + SYSTEM_GE.split('So antwortest du:')[0] : fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
+Kontext: ${fach === 'bio' ? 'Oberstufe, Bio-LK-Klausur zu Gentechnik und Humangenetik. Nutze diese Fakten:\n' + SYSTEM_BI.split('So antwortest du:')[0] : fach === 'powi' ? 'Oberstufe, Powi-Grundkurs-Klausur zur EU-Integration. Nutze diese Fakten:\n' + SYSTEM_PW.split('So antwortest du:')[0] : fach === 'geschichte' ? 'Oberstufe, Geschichtsklausur Deutschland 1849–1871 (Bismarck, Einigungskriege, Reichsgründung) und Industrialisierung. Nutze diese Fakten:\n' + SYSTEM_GE.split('So antwortest du:')[0] : fach === 'deutsch' ? 'Oberstufe, Deutsch-Grundkurs-Klausur: Szenenanalyse zu Kleists Lustspiel „Der zerbrochne Krug“ (Autor, Entstehung, Uraufführung 1808, Erstdruck 1811, analytisches Drama, Blankvers, 13 Auftritte, Figuren Adam, Walter, Licht, Marthe Rull, Eve, Veit, Ruprecht, Frau Brigitte, Handlung nach Auftritten, Motive, Stilmittel, Aufbau einer Szenenanalyse). Nutze diese Fakten:\n' + SYSTEM_DE.split('So antwortest du:')[0] : 'Klasse 10, Chemieklausur über Alkane (homologe Reihe CₙH₂ₙ₊₂ von Methan bis Decan, verzweigte Alkane und IUPAC-Namen, Isomerie, Elektronegativität und Polarität mit ΔEN-Grenzen 0,5 und 1,7, zwischenmolekulare Wechselwirkungen, Eigenschaften der Alkane, Formelschreibweisen).'} Wenn der Schüler ein anderes Thema nennt, mach Karten genau zu diesem Thema.
 
 Gute Karten:
 - Erst verstehen, was genau gewünscht ist (Thema, Umfang, Art), auch bei Tippfehlern oder Umgangssprache.
@@ -565,7 +586,7 @@ const profile = p => ({ name: p.name, avatar: p.avatar, title: p.title, color: p
 const clean = (s, n) => String(s || '').replace(/[<>]/g, '').slice(0, n);
 const allReady = room => room.players.every(p => p && p.canReady);
 const fachOf = p => fachIn(p && p.fach);
-const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK', geschichte: 'Geschichte', powi: 'Powi GK' };
+const FACH_NAME = { chemie: 'Chemie', deutsch: 'Deutsch GK', geschichte: 'Geschichte', powi: 'Powi GK', bio: 'Bio LK' };
 const pub = p => ({ id: p.pid, name: p.name, avatar: p.avatar, title: p.title, color: p.color, fach: fachOf(p), status: p.room && p.room.state && p.room.state !== 'lobby' ? 'battle' : 'online' });
 
 function newCode() {
@@ -623,13 +644,14 @@ const BOT_LEVEL = { easy: { p: 0.45, min: 7000, max: 15000, label: 'leicht' }, m
 const BOT_NAMES = ['Methan-Max', 'Ethan-Emma', 'Propan-Paul', 'Butan-Bella', 'Pentan-Pia', 'Hexan-Hugo', 'Heptan-Hanna', 'Octan-Otto'];
 const BOT_NAMES_GE = ['Metternich-Max', 'Gagern-Greta', 'Hecker-Hans', 'Blum-Berta', 'Paulskirchen-Paul', 'Zollverein-Zoe', 'Barrikaden-Ben', 'Vormärz-Vera', 'Bismarck-Bernd', 'Depeschen-Dora', 'Moltke-Moritz', 'Versailles-Vicky'];
 const BOT_NAMES_PW = ['Schuman-Sophie', 'Monnet-Moritz', 'Brüssel-Ben', 'Straßburg-Stella', 'Spill-over-Sven', 'Subsidiaritäts-Susi', 'Lobby-Lukas', 'Trilog-Tara'];
+const BOT_NAMES_BI = ['PCR-Paula', 'Plasmid-Paul', 'Dicer-Dana', 'Ligase-Leon', 'Taq-Tim', 'Gel-Greta', 'Phagen-Phil', 'Stammbaum-Stella'];
 const BOT_NAMES_DE = ['Krug-Kalle', 'Richter-Rudi', 'Blankvers-Bea', 'Perücken-Paul', 'Zitat-Zoe', 'Akt-Anton', 'Kleist-Klara', 'Szenen-Sam'];
 const BOT_AVATARS = ['robot', 'alien', 'owl', 'penguin', 'fox', 'panda'];
 function makeBot(room, level) {
   const L = BOT_LEVEL[level] ? level : 'medium';
   const used = new Set(room.players.filter(Boolean).map(p => p.name));
   const rf = room.fach || fachOf(room.players.find(p => p && !p.isBot));
-  const name = ((rf === 'deutsch' ? BOT_NAMES_DE : rf === 'geschichte' ? BOT_NAMES_GE : rf === 'powi' ? BOT_NAMES_PW : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
+  const name = ((rf === 'deutsch' ? BOT_NAMES_DE : rf === 'geschichte' ? BOT_NAMES_GE : rf === 'powi' ? BOT_NAMES_PW : rf === 'bio' ? BOT_NAMES_BI : BOT_NAMES).find(n => !used.has('🤖 ' + n)) || 'Bot');
   return { isBot: true, level: L, name: '🤖 ' + name, avatar: BOT_AVATARS[Math.floor(Math.random() * BOT_AVATARS.length)], title: 'Bot (' + BOT_LEVEL[L].label + ')', color: 'std', readyState: 0, token: crypto.randomBytes(12).toString('hex'), send() {}, terminate() {} };
 }
 function botsAnswer(room) {

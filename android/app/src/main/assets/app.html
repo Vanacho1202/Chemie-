@@ -3084,6 +3084,505 @@ W.pw_theo=root=>{ geSort(root,PW.THEO,['Supranationalismus','Intergouvernemental
 W.pw_lb=root=>{ geSteck(root,PW.LB.map(l=>[l[0],l[1]]),'Leitbilder im Überblick.'); };
 W.pw_frei=root=>{ geSort(root,PW.FREI_BSP,PW.FREI.map(f=>f[0]),'Welche Freiheit des Binnenmarkts?'); };
 W.pw_lobby=root=>{ geSort(root,PW.LOBBY,['dafür','dagegen'],'Spricht das für oder gegen Lobbyismus?'); };
+/* ================= Fach Bio LK: Q1.2 Gene und Gentechnik, Q1.3 Humangenetik (nur Themen der Themenliste) ================= */
+const BI={};
+BI.EV=[
+ ['1928',1928,'Griffith: Transformation bei Pneumokokken',2],
+ ['1944',1944,'Avery: DNA ist das „transformierende Prinzip“',2],
+ ['1976',1976,'Taq-Polymerase aus Thermus aquaticus gereinigt',1],
+ ['1977',1977,'Plasmidvektor pBR322 entwickelt',4],
+ ['24.8.1978',1978.6,'Genentech: erstes gentechnisch hergestelltes Humaninsulin (A- und B-Kette in E. coli)',5],
+ ['28.10.1982',1982.8,'Humulin zugelassen: erstes Arzneimittel aus rekombinanter DNA',5],
+ ['1983',1983,'Kary Mullis hat die Idee zur PCR (veröffentlicht 1985)',1],
+ ['1993',1993,'Nobelpreis Chemie für Mullis (PCR)',1],
+ ['1998',1998,'Fire und Mello entdecken die RNA-Interferenz bei C. elegans',6],
+ ['2006',2006,'Nobelpreis Medizin für Fire und Mello (RNAi)',6],
+ ['10.8.2018',2018.6,'Patisiran: erstes zugelassenes siRNA-Medikament',6]];
+BI.PCR=[
+ ['Denaturierung','ca. 94–95 °C','Wasserstoffbrücken lösen sich, der Doppelstrang trennt sich in zwei Einzelstränge.'],
+ ['Annealing (Primer-Anlagerung)','ca. 50–65 °C','Die beiden Primer lagern sich komplementär an die Einzelstränge an (Temperatur hängt von den Primern ab).'],
+ ['Elongation (Verlängerung)','72 °C','Die Taq-Polymerase verlängert die Primer am 3’-Ende in 5’→3’-Richtung mit dNTPs.']];
+BI.BAK=[
+ ['Kapsel / Schleimhülle','Schutz vor Austrocknung und Immunabwehr (nicht bei allen Bakterien)'],
+ ['Zellwand aus Murein','Formstabilität, Schutz vor dem Platzen; Angriffspunkt von Penicillin'],
+ ['Zellmembran','Stoffaustausch; bei Bakterien auch Ort der Atmungskette'],
+ ['Cytoplasma','Stoffwechsel und Proteinbiosynthese'],
+ ['Nucleoid (Bakterienchromosom)','ringförmige, doppelsträngige DNA frei im Cytoplasma, kein Zellkern'],
+ ['Plasmide','kleine ringförmige DNA, vermehren sich selbstständig, tragen oft Resistenzgene'],
+ ['70S-Ribosomen','Proteinbiosynthese (Eukaryoten haben 80S-Ribosomen)'],
+ ['Geißel (Flagellum)','Fortbewegung'],
+ ['Pili / Fimbrien','Anheftung; Sex-Pilus bei der Konjugation']];
+BI.VGL=[
+ ['Organisation','Prokaryotische Zelle, Lebewesen','keine Zelle, kein Lebewesen im engeren Sinn'],
+ ['Größe','meist ca. 0,5–5 µm (Lichtmikroskop)','meist ca. 20–300 nm (Elektronenmikroskop)'],
+ ['Erbmaterial','DNA: Ringchromosom und oft Plasmide','entweder DNA oder RNA'],
+ ['Stoffwechsel','eigener Stoffwechsel, 70S-Ribosomen','kein Stoffwechsel, keine Ribosomen'],
+ ['Vermehrung','selbstständig durch Zweiteilung','nur in einer Wirtszelle'],
+ ['Hülle','Zellmembran, Mureinzellwand, evtl. Kapsel','Capsid aus Proteinen, evtl. Lipidhülle'],
+ ['Medikamente','Antibiotika wirken','Antibiotika wirkungslos; Virustatika, Impfung']];
+BI.BV=[
+ ['hat eine Zellwand aus Murein','Bakterien'],['vermehrt sich durch Zweiteilung','Bakterien'],['hat 70S-Ribosomen','Bakterien'],['kann Plasmide enthalten','Bakterien'],['wird durch Antibiotika bekämpft','Bakterien'],
+ ['besteht aus Nukleinsäure und Capsid','Viren'],['hat entweder DNA oder RNA','Viren'],['kann sich nur in einer Wirtszelle vermehren','Viren'],['ist nur im Elektronenmikroskop sichtbar','Viren'],['hat keinen eigenen Stoffwechsel','Viren'],
+ ['enthält Erbinformation','beide'],['kann Krankheiten verursachen','beide']];
+BI.ENZ=[
+ ['Restriktionsenzym','schneidet DNA an einer bestimmten, meist palindromischen Erkennungssequenz'],
+ ['DNA-Ligase','verknüpft DNA-Stücke (Zucker-Phosphat-Rückgrat) zu rekombinanter DNA'],
+ ['Reverse Transkriptase','schreibt mRNA in DNA um (cDNA ohne Introns)'],
+ ['Taq-Polymerase','hitzestabile DNA-Polymerase für die PCR'],
+ ['Dicer','zerschneidet doppelsträngige RNA in siRNAs'],
+ ['Argonaute (im RISC)','schneidet die zur siRNA passende mRNA'],
+ ['β-Galactosidase','spaltet X-Gal zu einem blauen Farbstoff (Blau-Weiß-Selektion)']];
+BI.SEL=[
+ ['pUC19: Die Kolonie wächst auf Ampicillin-Agar mit X-Gal und ist weiß.','mit Insert (rekombinant)'],
+ ['pUC19: Die Kolonie wächst auf Ampicillin-Agar mit X-Gal und ist blau.','leerer Vektor ohne Insert'],
+ ['Auf dem Ampicillin-Agar wächst an dieser Stelle keine Kolonie.','kein Plasmid aufgenommen'],
+ ['pBR322: Die Kolonie wächst auf Ampicillin, aber nicht auf Tetracyclin.','mit Insert (rekombinant)'],
+ ['pBR322: Die Kolonie wächst auf Ampicillin und auf Tetracyclin.','leerer Vektor ohne Insert']];
+BI.SM=[
+ ['entsteht aus von außen eingebrachter doppelsträngiger RNA (z. B. Virus, Experiment)','siRNA'],['bindet vollständig komplementär an die mRNA','siRNA'],['führt meist zum Abbau einer bestimmten mRNA','siRNA'],
+ ['wird von einem eigenen Gen der Zelle abgelesen','miRNA'],['entsteht über pri-miRNA (Drosha) und pre-miRNA','miRNA'],['bindet oft unvollständig, hemmt v. a. die Translation','miRNA'],['eine Sorte kann viele verschiedene mRNAs regulieren','miRNA'],
+ ['wird von Dicer geschnitten','beide'],['wirkt im RISC mit Argonaute','beide'],['ca. 20–25 Nukleotide lang','beide']];
+BI.ERB=['autosomal-dominant','autosomal-rezessiv','X-chromosomal-dominant','X-chromosomal-rezessiv'];
+BI.KRANK=[
+ ['Mukoviszidose (Cystische Fibrose)','autosomal-rezessiv','CFTR-Gen (Chromosom 7), Chloridkanal; ca. 1 : 2500 Neugeborene, jeder 25. ist Anlageträger'],
+ ['Phenylketonurie (PKU)','autosomal-rezessiv','Phenylalaninhydroxylase defekt; Phenylalanin wird nicht zu Tyrosin umgebaut; Diät'],
+ ['Sichelzellanämie','autosomal-rezessiv','Punktmutation im β-Globin-Gen; Heterozygote sind besser vor Malaria geschützt'],
+ ['Chorea Huntington','autosomal-dominant','HTT-Gen (Chromosom 4), verlängerte CAG-Wiederholung; Ausbruch meist mit 30–50 Jahren'],
+ ['Achondroplasie (Kleinwuchs)','autosomal-dominant','FGFR3-Gen; ca. 80 % entstehen durch Neumutation'],
+ ['Hämophilie A (Bluterkrankheit)','X-chromosomal-rezessiv','Gerinnungsfaktor VIII fehlt; fast nur Männer betroffen'],
+ ['Rot-Grün-Sehschwäche','X-chromosomal-rezessiv','ca. 8 % der Männer, ca. 0,5 % der Frauen'],
+ ['Muskeldystrophie Duchenne','X-chromosomal-rezessiv','Dystrophin-Gen; ca. ein Drittel durch Neumutation'],
+ ['Vitamin-D-resistente Rachitis','X-chromosomal-dominant','Phosphatverlust über die Niere; kranker Vater → alle Töchter krank']];
+BI.REGEL=[
+ ['Zwei gesunde Eltern haben ein krankes Kind.','jeder dominante Erbgang (autosomal und X-chromosomal)'],
+ ['Zwei kranke Eltern haben ein gesundes Kind.','jeder rezessive Erbgang (autosomal und X-chromosomal)'],
+ ['Eine kranke Tochter hat einen gesunden Vater.','X-chromosomal-rezessiv'],
+ ['Eine kranke Mutter hat einen gesunden Sohn.','X-chromosomal-rezessiv'],
+ ['Ein kranker Vater hat eine gesunde Tochter.','X-chromosomal-dominant'],
+ ['Ein kranker Vater vererbt die Krankheit an seinen Sohn.','jeder X-chromosomale Erbgang']];
+BI.WS=[
+ ['Beide Eltern sind gesunde Anlageträger (Aa × Aa) einer autosomal-rezessiven Krankheit. Wie wahrscheinlich ist ein krankes Kind?','25 %','aa entsteht in 1 von 4 Feldern des Punnett-Quadrats.'],
+ ['Aa × Aa: Wie wahrscheinlich ist ein heterozygotes Kind?','50 %','AA : Aa : aa = 1 : 2 : 1.'],
+ ['Ein Elternteil ist an einer autosomal-dominanten Krankheit erkrankt (Aa), der andere ist gesund (aa). Wie wahrscheinlich ist ein krankes Kind?','50 %','Aa × aa → 1/2 Aa, 1/2 aa.'],
+ ['Beide Eltern sind an einer autosomal-rezessiven Krankheit erkrankt (aa × aa). Wie wahrscheinlich ist ein krankes Kind?','100 %','Beide können nur a weitergeben.'],
+ ['Gesunde Eltern (Aa × Aa) haben schon ein krankes Kind. Wie wahrscheinlich ist es, dass das nächste Kind krank ist?','25 %','Jedes Kind ist ein neues, unabhängiges Ereignis.'],
+ ['Gesunde Eltern haben ein Kind mit einer autosomal-rezessiven Krankheit. Wie wahrscheinlich ist ein gesundes Geschwisterkind Anlageträger?','2/3','Von AA, Aa, Aa bleiben drei gesunde Möglichkeiten, zwei davon sind Aa.'],
+ ['Eine Konduktorin (XᴬXᵃ) und ein gesunder Mann (XᴬY) bekommen einen Sohn. Wie wahrscheinlich ist er krank (X-rezessiv)?','50 %','Der Sohn bekommt sein X von der Mutter: Xᴬ oder Xᵃ.'],
+ ['Konduktorin (XᴬXᵃ) × gesunder Mann (XᴬY): Wie wahrscheinlich ist eine Tochter krank?','0 %','Die Tochter bekommt vom Vater immer Xᴬ.'],
+ ['Konduktorin × gesunder Mann: Wie wahrscheinlich ist ein Kind (Geschlecht noch unbekannt) krank?','25 %','1/2 Junge × 1/2 krank = 1/4.'],
+ ['Ein kranker Mann (XᵃY) und eine homozygot gesunde Frau (XᴬXᴬ) bekommen eine Tochter. Wie wahrscheinlich ist sie Konduktorin?','100 %','Sie bekommt vom Vater sicher Xᵃ.'],
+ ['Kranker Mann (XᵃY) × homozygot gesunde Frau: Wie wahrscheinlich ist ein Sohn krank?','0 %','Der Sohn bekommt vom Vater das Y.'],
+ ['X-chromosomal-dominant: Ein kranker Vater und eine gesunde Mutter bekommen eine Tochter. Wie wahrscheinlich ist sie krank?','100 %','Sie bekommt das X des Vaters.'],
+ ['Mukoviszidose: Ein bekannter Anlageträger bekommt ein Kind mit einem Partner mit unbekanntem Status (Trägerhäufigkeit 1/25). Risiko für ein krankes Kind?','1/100','1 × 1/25 × 1/4 = 1/100.'],
+ ['Mukoviszidose: Zwei gesunde Partner ohne Krankheitsfälle in der Familie (Trägerhäufigkeit je 1/25). Risiko für ein krankes Kind?','1/2500','1/25 × 1/25 × 1/4 = 1/2500.']];
+/* Stammbäume zum Üben: x = Spalte, g = Generation (0 = I); a = krank */
+BI.STAMM=[
+ {name:'Familie A',ans:'autosomal-rezessiv',sicher:true,
+  p:[['I-1','m',0,1.5,0],['I-2','f',0,2.5,0],['II-1','f',1,0.5,0],['II-2','m',1,1.5,1],['II-3','f',1,2.5,0],['II-4','m',1,3.5,0],['III-1','m',2,2.5,0],['III-2','f',2,3.5,1]],
+  c:[['I-1','I-2',['II-1','II-2','II-3']],['II-3','II-4',['III-1','III-2']]],
+  why:['I-1 und I-2 sind gesund, ihr Sohn II-2 ist krank → rezessiv (dominant ausgeschlossen).','III-2 ist eine kranke Tochter des gesunden Vaters II-4 → X-rezessiv ausgeschlossen.','Bleibt: autosomal-rezessiv. Genotypen: II-2 und III-2 aa, I-1, I-2, II-3, II-4 jeweils Aa.']},
+ {name:'Familie B',ans:'autosomal-dominant',sicher:true,
+  p:[['I-1','m',0,1.5,1],['I-2','f',0,2.5,0],['II-1','m',1,0.5,1],['II-2','f',1,1.5,0],['II-3','f',1,2.5,1],['II-4','m',1,3.5,1],['III-1','f',2,2.5,1],['III-2','m',2,3.5,0]],
+  c:[['I-1','I-2',['II-1','II-2','II-3']],['II-3','II-4',['III-1','III-2']]],
+  why:['II-3 und II-4 sind krank, ihr Sohn III-2 ist gesund → dominant (rezessiv ausgeschlossen).','Der kranke Vater I-1 hat einen kranken Sohn II-1 → Vater-Sohn-Vererbung schließt X-chromosomal aus.','Bleibt: autosomal-dominant. II-3 und II-4 müssen Aa sein, III-2 ist aa.']},
+ {name:'Familie C',ans:'X-chromosomal-rezessiv',sicher:false,
+  p:[['I-1','m',0,1.5,0],['I-2','f',0,2.5,0],['II-1','m',1,0.5,1],['II-2','m',1,1.5,0],['II-3','f',1,2.5,0],['II-4','m',1,3.5,0],['III-1','m',2,2.5,1],['III-2','f',2,3.5,0],['III-3','m',2,4.5,0]],
+  c:[['I-1','I-2',['II-1','II-2','II-3']],['II-3','II-4',['III-1','III-2','III-3']]],
+  why:['I-1 und I-2 sind gesund, ihr Sohn II-1 ist krank → rezessiv.','Nur Männer sind krank, die Krankheit läuft über die gesunde Tochter II-3 zu ihrem Sohn III-1 → typisch X-rezessiv: I-2 und II-3 sind Konduktorinnen (XᴬXᵃ).','Autosomal-rezessiv ist aber NICHT sicher ausgeschlossen (II-3 und II-4 könnten beide Aa sein) – also: X-rezessiv am wahrscheinlichsten.']},
+ {name:'Familie D',ans:'X-chromosomal-dominant',sicher:false,
+  p:[['I-1','m',0,1.5,1],['I-2','f',0,2.5,0],['II-1','m',1,0.5,0],['II-2','f',1,1.5,1],['II-3','f',1,2.5,1],['II-4','m',1,3.5,0],['III-1','f',2,2.5,1],['III-2','m',2,3.5,0],['III-3','m',2,4.5,1]],
+  c:[['I-1','I-2',['II-1','II-2','II-3']],['II-3','II-4',['III-1','III-2','III-3']]],
+  why:['Der kranke Vater I-1 hat nur kranke Töchter (II-2, II-3) und einen gesunden Sohn (II-1) → typisch X-dominant.','Die kranke Mutter II-3 hat einen gesunden Sohn III-2 → X-rezessiv ausgeschlossen.','Autosomal-dominant ist nicht sicher ausgeschlossen, aber das Muster „Vater → alle Töchter“ spricht für X-dominant.']},
+ {name:'Familie E',ans:'autosomal-rezessiv',sicher:true,
+  p:[['I-1','m',0,1,0],['I-2','f',0,2,0],['II-1','m',1,0,0],['II-2','f',1,1,1],['II-3','m',1,2,0],['III-1','m',2,1,0],['III-2','f',2,2,0]],
+  c:[['I-1','I-2',['II-1','II-2']],['II-2','II-3',['III-1','III-2']]],
+  why:['I-1 und I-2 sind gesund, ihre Tochter II-2 ist krank → rezessiv.','Kranke Tochter II-2 hat einen gesunden Vater I-1 → X-rezessiv ausgeschlossen (außerdem: kranke Mutter II-2 hat gesunden Sohn III-1).','Bleibt: autosomal-rezessiv. III-1 und III-2 sind sicher Aa (Anlageträger).']}];
+(function buildBI(){
+ const opts4=(right,pool)=>{ const o=[right]; shuffle(pool.filter(x=>x!==right)).forEach(x=>{ if(o.length<4&&!o.includes(x)) o.push(x); }); return o; };
+ BI.TOPICS=[
+ {id:1,title:'PCR und Gelelektrophorese',short:'DNA vervielfältigen und nach Größe trennen',
+  goals:['Ablauf der PCR mit Temperaturen erklären','Prinzip der Gelelektrophorese erklären','Ein Gelbild (z. B. Vaterschaftstest) auswerten'],
+  html:`<h3>PCR – Polymerase-Kettenreaktion</h3><p>Die PCR vervielfältigt einen bestimmten DNA-Abschnitt im Reagenzglas („molekularer Kopierer“). Idee: <b>Kary Mullis 1983</b> (veröffentlicht 1985), Nobelpreis Chemie 1993.</p>
+  <p><b>Ansatz:</b> DNA-Vorlage (Template), <b>zwei Primer</b> (kurze einzelsträngige DNA-Stücke, die den Zielabschnitt links und rechts begrenzen), <b>dNTPs</b> (dATP, dCTP, dGTP, dTTP), hitzestabile <b>Taq-Polymerase</b>, Puffer mit Mg²⁺.</p>
+  <div class="tbl"><table><tr><th>Schritt</th><th>Temperatur</th><th>Was passiert?</th></tr>${BI.PCR.map(s=>`<tr><th>${s[0]}</th><td>${s[1]}</td><td>${s[2]}</td></tr>`).join('')}</table></div>
+  <p>Ein Zyklus dauert wenige Minuten; meist 25–35 Zyklen. Theoretisch verdoppelt sich die DNA in jedem Zyklus: <b>Kopien = Ausgangsmenge × 2ⁿ</b> (n = Zahl der Zyklen). Aus 1 Molekül werden nach 30 Zyklen rund 1 Milliarde (2³⁰ ≈ 1,07 × 10⁹). Später flacht die Kurve ab (Plateau), weil Primer und dNTPs knapp werden.</p>
+  <p><b>Taq-Polymerase:</b> aus dem Bakterium <i>Thermus aquaticus</i> aus heißen Quellen (Yellowstone). Arbeitsoptimum 72 °C, übersteht 95 °C – deshalb muss sie nicht nach jedem Zyklus neu zugegeben werden.</p>
+  <h3>Gelelektrophorese</h3><ul><li>DNA-Fragmente werden in einem <b>Agarosegel</b> im elektrischen Feld nach ihrer <b>Länge</b> getrennt.</li><li>DNA ist wegen der Phosphatgruppen <b>negativ geladen</b> → wandert zur <b>Anode (+)</b>. Die Proben kommen auf der Seite des Minuspols in die Taschen.</li><li><b>Kleine Fragmente wandern schneller und weiter</b>, große bleiben eher oben hängen.</li><li>Ein <b>Größenstandard (Marker, „Leiter“)</b> mit bekannten Längen läuft daneben und dient zum Ablesen.</li><li>Sichtbar wird die DNA durch einen Farbstoff, der unter UV-Licht leuchtet.</li></ul>
+  <h3>Anwendung: genetischer Fingerabdruck</h3><p>Man vervielfältigt mit der PCR <b>STRs</b> (kurze, hintereinander wiederholte Sequenzen in nicht-codierender DNA). Wie oft sie wiederholt werden, ist von Mensch zu Mensch verschieden → unterschiedlich lange Fragmente → individuelles Bandenmuster. <b>Vaterschaftstest:</b> Jede Bande des Kindes muss von der Mutter oder vom Vater stammen. Bleibt eine Kindesbande übrig, die weder Mutter noch der mögliche Vater hat, ist er als Vater ausgeschlossen.</p>
+  <div class="merk"><span class="merk-label">Gelbild auswerten</span>1. Spuren benennen, Marker nutzen · 2. Banden ablesen (bp) · 3. Banden der Mutter beim Kind „abhaken“ · 4. Restliche Banden beim Vater suchen · 5. Begründet schlussfolgern („… weil die Bande bei ca. 300 bp …“).</div>`,
+  widget:'bi_pcr'},
+ {id:2,title:'Bau und Vermehrung von Bakterien',short:'Schema, Zweiteilung, Wachstumskurve, Parasexualität',
+  goals:['Ein Bakterium beschriften und die Strukturen erklären','Zweiteilung und Wachstumskurve beschreiben','Konjugation, Transformation und Transduktion unterscheiden'],
+  html:`<h3>Bau (Schema)</h3><p>Bakterien sind <b>Prokaryoten</b>: kein Zellkern, keine membranumhüllten Organellen. Größe meist ca. 0,5–5 µm (<i>E. coli</i> ca. 1–2 µm lang).</p>
+  <div class="tbl"><table><tr><th>Struktur</th><th>Funktion</th></tr>${BI.BAK.map(b=>`<tr><th>${b[0]}</th><td>${b[1]}</td></tr>`).join('')}</table></div>
+  <h3>Vermehrung: Zweiteilung</h3><p>Das Ringchromosom wird repliziert, die Kopien wandern auseinander, die Zelle schnürt sich ein und bildet eine Querwand → zwei <b>genetisch identische</b> Tochterzellen (ungeschlechtlich). Die <b>Generationszeit</b> von <i>E. coli</i> beträgt unter Idealbedingungen ca. 20 Minuten.</p>
+  <h3>Wachstumskurve (geschlossenes Gefäß)</h3><ol><li><b>Lag-Phase:</b> Anpassung, Enzyme werden gebildet, kaum Teilung.</li><li><b>Log-Phase (exponentiell):</b> maximale, konstante Teilungsrate: N = N₀ × 2ⁿ.</li><li><b>Stationäre Phase:</b> Teilungsrate = Absterberate (Nährstoffe knapp, Giftstoffe reichern sich an).</li><li><b>Absterbephase:</b> mehr Zellen sterben, als neue entstehen.</li></ol>
+  <h3>Parasexualität (Gentransfer, keine Vermehrung!)</h3><ul><li><b>Konjugation:</b> Übertragung von DNA (meist eines Plasmids) über eine Plasmabrücke / einen Sex-Pilus.</li><li><b>Transformation:</b> Aufnahme freier DNA aus der Umgebung (Griffith 1928, Avery 1944: DNA ist das „transformierende Prinzip“). Wird in der Gentechnik künstlich genutzt.</li><li><b>Transduktion:</b> Bakteriophagen übertragen versehentlich Bakterien-DNA.</li></ul>
+  <div class="merk"><span class="merk-label">Wichtig für die Gentechnik</span><b>Plasmide</b> vermehren sich unabhängig vom Chromosom und tragen Resistenzgene – deshalb sind sie ideale Vektoren.</div>`,
+  widget:'bi_bak'},
+ {id:3,title:'Viren im Vergleich zu Bakterien',short:'Bau, Phagen, lytisch/lysogen, HIV',
+  goals:['Den Bau von Viren beschreiben','Lytischen und lysogenen Zyklus erklären','Bakterien und Viren kriteriengeleitet vergleichen'],
+  html:`<h3>Bau von Viren</h3><ul><li><b>Keine Zellen</b>, kein eigener Stoffwechsel, keine Ribosomen → vermehren sich nur in einer <b>Wirtszelle</b>.</li><li>Aufbau: <b>Nukleinsäure</b> (entweder DNA oder RNA) + <b>Capsid</b> aus Proteinen (Capsomeren); manche zusätzlich mit einer <b>Lipidhülle</b> aus der Wirtsmembran (z. B. HIV).</li><li>Größe meist ca. 20–300 nm → nur im Elektronenmikroskop sichtbar.</li></ul>
+  <h3>Bakteriophage T4</h3><p>Kopf mit doppelsträngiger DNA, Schwanz mit kontrahierbarer Schwanzscheide, Basalplatte und Schwanzfasern, mit denen er <i>E. coli</i> erkennt.</p>
+  <h3>Lytischer Zyklus</h3><ol><li>Adsorption (Anheften mit den Schwanzfasern)</li><li>Injektion der DNA</li><li>Wirts-DNA wird abgebaut, die Zelle bildet Phagen-DNA und Phagenproteine</li><li>Zusammenbau neuer Phagen</li><li>Lyse: Die Zelle platzt, viele neue Phagen werden frei</li></ol>
+  <h3>Lysogener Zyklus</h3><p>Bei temperenten Phagen (z. B. Phage λ) wird die Phagen-DNA ins Bakterienchromosom eingebaut (<b>Prophage</b>) und bei jeder Teilung mitkopiert. Durch Stress (z. B. UV-Licht) kann der Phage in den lytischen Zyklus wechseln.</p>
+  <h3>Retroviren (HIV)</h3><p>RNA-Virus mit Hülle. Es dockt an T-Helferzellen an, die <b>reverse Transkriptase</b> schreibt die RNA in DNA um, die <b>Integrase</b> baut sie ins Wirtsgenom ein; die Zelle bildet neue Viren, die durch Knospung frei werden.</p>
+  <h3>Vergleich Bakterien – Viren</h3><div class="tbl"><table><tr><th>Kriterium</th><th>Bakterien</th><th>Viren</th></tr>${BI.VGL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>
+  <div class="merk"><span class="merk-label">Warum wirken Antibiotika nicht gegen Viren?</span>Antibiotika greifen bakterientypische Strukturen an (Mureinzellwand, 70S-Ribosomen, bakterielle Enzyme). Viren haben diese Strukturen nicht.</div>`,
+  widget:'bi_vir'},
+ {id:4,title:'Grundoperationen der Gentechnik',short:'Schneiden, kleben, Vektor, Transformation, Selektion, Klonierung',
+  goals:['Die Schritte zum Einbau von Fremd-DNA in Wirtszellen erläutern','Plasmide und Viren als Vektoren erklären','Selektionsverfahren auswerten'],
+  html:`<h3>1. Gen gewinnen</h3><ul><li>Aus der DNA mit Restriktionsenzymen herausschneiden <b>oder</b></li><li><b>cDNA:</b> reife mRNA isolieren (z. B. Insulin-mRNA) und mit <b>reverser Transkriptase</b> in DNA umschreiben. Grund: Gene von Eukaryoten enthalten <b>Introns</b>, Bakterien können sie nicht herausspleißen – cDNA ist intronfrei.</li><li>Oder das Gen chemisch synthetisieren bzw. mit der PCR vervielfältigen.</li></ul>
+  <h3>2. Schneiden: Restriktionsenzyme</h3><p>Bakterielle Enzyme (eigentlich Abwehr gegen Phagen), die DNA an bestimmten, meist <b>palindromischen</b> Erkennungssequenzen schneiden. Beispiel <b>EcoRI</b>: 5’-G↓AATTC-3’ – versetzter Schnitt → <b>klebrige Enden (sticky ends)</b> mit Überhang AATT. Andere Enzyme (z. B. SmaI) schneiden glatt (<b>blunt ends</b>). Vektor und Spender-DNA werden mit <b>demselben Enzym</b> geschnitten, damit die Enden zusammenpassen.</p>
+  <h3>3. Kleben: DNA-Ligase</h3><p>Verknüpft das Zucker-Phosphat-Rückgrat von Vektor und Gen → <b>rekombinante DNA</b>.</p>
+  <h3>4. Vektoren</h3><ul><li><b>Plasmide</b> mit <i>ori</i> (Replikationsursprung), <b>Resistenzgenen</b> als Marker und einer <b>MCS</b> (Multiple Cloning Site, viele Schnittstellen). Beispiele: <b>pBR322</b> (Ampicillin- und Tetracyclin-Resistenz), <b>pUC19</b> (Ampicillin-Resistenz + lacZ-Gen mit MCS).</li><li><b>Viren als Vektoren:</b> Bakteriophagen (z. B. λ) für Bakterien; für menschliche Zellen z. B. Retro- oder Adeno-assoziierte Viren – sie schleusen die DNA ein, weil das ihr natürlicher Weg ist.</li></ul>
+  <h3>5. Transformation</h3><p>Bakterien werden „kompetent“ gemacht: <b>CaCl₂ + kurzer Hitzeschock</b> (ca. 42 °C) oder <b>Elektroporation</b> (Stromstoß öffnet Poren). Nur wenige Zellen nehmen ein Plasmid auf.</p>
+  <h3>6. Selektion</h3><ul><li><b>Antibiotika:</b> Auf Ampicillin-Agar wachsen nur Bakterien mit Plasmid.</li><li><b>Blau-Weiß-Selektion (pUC19):</b> Agar mit X-Gal. Intaktes lacZ → β-Galactosidase spaltet X-Gal → <b>blau = leerer Vektor</b>. Gen in der MCS zerstört lacZ → <b>weiß = rekombinant</b>.</li><li><b>Replikaplattierung (pBR322):</b> Gen im Tetracyclin-Resistenzgen → Kolonien wachsen auf Ampicillin, aber nicht auf Tetracyclin. Mit einem Samtstempel überträgt man die Kolonien auf Tetracyclin-Agar; die dort <b>fehlenden</b> tragen das Gen.</li></ul>
+  <h3>7. Klonierung und Expression</h3><p>Die ausgewählten Bakterien werden vermehrt (<b>Klon</b> = genetisch identische Nachkommen). Mit einem bakteriellen Promotor wird das Gen abgelesen, das Protein im Fermenter gewonnen und gereinigt.</p>
+  <div class="merk"><span class="merk-label">Kurzform</span>Gen gewinnen → mit demselben Restriktionsenzym schneiden → mit Ligase einbauen → Transformation → Selektion → Klonierung und Expression.</div>`,
+  widget:'bi_gt'},
+ {id:5,title:'Gentechnisch veränderte Organismen: Insulin',short:'Insulin produzierende Bakterien',
+  goals:['Die Herstellung von Humaninsulin mit Bakterien erläutern','Begründen, warum man cDNA braucht','Weitere GVO-Beispiele mit Chancen und Risiken nennen'],
+  html:`<p>Ein <b>gentechnisch veränderter Organismus (GVO)</b> enthält Erbgut, das gezielt mit gentechnischen Methoden verändert wurde.</p>
+  <h3>Warum Insulin aus Bakterien?</h3><p>Diabetiker brauchen Insulin. Früher wurde es aus Bauchspeicheldrüsen von Rindern und Schweinen gewonnen – aufwendig und nicht identisch mit menschlichem Insulin. Bakterien können menschliches Insulin billig und in großen Mengen herstellen.</p>
+  <h3>Geschichte</h3><ul><li><b>24.8.1978:</b> Genentech stellt erstmals Humaninsulin gentechnisch her: Die Gene für die <b>A-Kette und die B-Kette</b> wurden chemisch synthetisiert, getrennt in <i>E. coli</i> eingebaut, die Ketten gereinigt und anschließend über Disulfidbrücken verbunden.</li><li><b>28.10.1982:</b> Zulassung von Humulin (Eli Lilly) – das erste Arzneimittel aus rekombinanter DNA.</li><li>Später: Herstellung über <b>Proinsulin</b> (ein Gen, eine Kette), aus dem das C-Peptid enzymatisch abgespalten wird.</li></ul>
+  <h3>Ablauf (Lehrbuch-Schema)</h3><ol><li>Insulin-mRNA aus β-Zellen der Bauchspeicheldrüse isolieren → mit reverser Transkriptase <b>cDNA</b> herstellen (keine Introns).</li><li>Plasmid und cDNA mit <b>demselben Restriktionsenzym</b> schneiden (sticky ends).</li><li>Mit <b>Ligase</b> verknüpfen → rekombinantes Plasmid.</li><li><b>Transformation</b> von <i>E. coli</i> (CaCl₂ + Hitzeschock).</li><li><b>Selektion</b>: Ampicillin-Agar + Blau-Weiß-Selektion (weiße Kolonien).</li><li>Vermehrung im <b>Fermenter</b>, Insulin wird gebildet, gereinigt und ggf. nachbearbeitet.</li></ol>
+  <h3>Warum nicht einfach das menschliche Gen?</h3><ul><li>Das Gen enthält <b>Introns</b> – Bakterien können nicht spleißen.</li><li>Bakterien haben keinen Golgi-Apparat und können Proinsulin nicht selbst zu Insulin umbauen (C-Peptid abspalten) – das geschieht danach im Labor.</li></ul>
+  <h3>Weitere Beispiele für GVO</h3><ul><li>Bakterien, die Wachstumshormon oder Gerinnungsfaktoren herstellen</li><li><b>Bt-Mais</b>: bildet ein Gift aus <i>Bacillus thuringiensis</i> gegen den Maiszünsler</li><li><b>Golden Rice</b>: bildet β-Carotin gegen Vitamin-A-Mangel</li></ul>
+  <h3>Chancen und Risiken</h3><ul><li><b>Chancen:</b> Medikamente in großer Menge und gleichbleibender Qualität, keine Tiere nötig, menschenidentisches Protein; höhere Erträge, weniger Spritzmittel.</li><li><b>Risiken:</b> Verbreitung von Antibiotikaresistenzgenen, Auskreuzung und Resistenzen bei GV-Pflanzen, Wirkung auf andere Organismen, ethische Bedenken.</li></ul>`,
+  widget:'bi_ins'},
+ {id:6,title:'RNA-Interferenz',short:'dsRNA, Dicer, siRNA, RISC, Gen-Knockdown',
+  goals:['Den Mechanismus der RNAi Schritt für Schritt erklären','siRNA und miRNA unterscheiden','Anwendungen und Knockdown vs. Knockout erklären'],
+  html:`<p><b>RNA-Interferenz (RNAi)</b> schaltet Gene aus, <b>ohne die DNA zu verändern</b>: Die mRNA wird abgebaut, bevor ein Protein entsteht (posttranskriptionelles Gen-Silencing).</p>
+  <h3>Mechanismus (siRNA)</h3><ol><li><b>Doppelsträngige RNA (dsRNA)</b> gelangt ins Cytoplasma (z. B. von Viren oder im Experiment eingebracht).</li><li>Das Enzym <b>Dicer</b> zerschneidet sie in kurze <b>siRNAs</b> (small interfering RNAs) von ca. <b>21–23 Nukleotiden</b>.</li><li>Die siRNA wird in den <b>RISC</b> (RNA-induced silencing complex) geladen. Das Protein <b>Argonaute</b> entfernt einen Strang (Passagierstrang); der <b>Leitstrang</b> bleibt.</li><li>Der Leitstrang bindet <b>vollständig komplementär</b> an die passende mRNA.</li><li>Argonaute <b>schneidet die mRNA</b> → sie wird abgebaut → <b>kein Protein</b>. Der RISC kann danach weitere mRNAs zerschneiden – deshalb reichen kleine Mengen.</li></ol>
+  <h3>miRNA – die zelleigene Variante</h3><p>Die Zelle bildet aus eigenen Genen <b>microRNAs</b>: pri-miRNA → (Drosha) → pre-miRNA (Haarnadel) → Export ins Cytoplasma → <b>Dicer</b> → miRNA → RISC. miRNAs binden meist <b>unvollständig</b> und hemmen vor allem die <b>Translation</b>; eine miRNA kann viele verschiedene mRNAs regulieren.</p>
+  <h3>Entdeckung</h3><p><b>Andrew Fire und Craig Mello</b> (1998) spritzten dsRNA in den Fadenwurm <i>C. elegans</i>: Das passende Gen wurde gezielt abgeschaltet, viel stärker als mit einsträngiger RNA. Nobelpreis Medizin <b>2006</b>. Natürliche Funktion: Abwehr von Viren und springenden Genen, Regulation der Genexpression.</p>
+  <h3>Anwendungen</h3><ul><li><b>Forschung:</b> Gen gezielt ausschalten und schauen, was passiert (Funktionsanalyse).</li><li><b>Medizin:</b> <b>Patisiran</b> (2018) – erstes zugelassenes siRNA-Medikament gegen eine erbliche Amyloidose; die siRNA wird in Lipid-Nanopartikeln zur Leber gebracht.</li><li><b>Landwirtschaft:</b> dsRNA gegen lebenswichtige Gene von Schadinsekten.</li></ul>
+  <div class="tbl"><table><tr><th></th><th>Knockdown (RNAi)</th><th>Knockout</th></tr><tr><th>Ebene</th><td>mRNA</td><td>DNA (Gen selbst verändert)</td></tr><tr><th>Wirkung</th><td>Expression stark verringert, oft nicht 100 %</td><td>Gen dauerhaft funktionslos</td></tr><tr><th>Dauer</th><td>vorübergehend, umkehrbar</td><td>dauerhaft, wird vererbt</td></tr></table></div>`,
+  widget:'bi_rnai'},
+ {id:7,title:'Stammbaumanalyse: Erbgänge erkennen',short:'autosomal, gonosomal, dominant, rezessiv',
+  goals:['Stammbaumsymbole lesen','Die vier Erbgänge mit ihren typischen Merkmalen beschreiben','Mit Ausschlusskriterien den Erbgang begründen'],
+  html:`<h3>Symbole</h3><ul><li>□ Quadrat = Mann, ○ Kreis = Frau; ausgefüllt = krank (merkmalstragend)</li><li>Waagerechte Linie zwischen zwei Personen = Paar (Doppellinie = Verwandtenehe); senkrechte Linie zu den Kindern</li><li>Halb gefüllt oder Punkt = heterozygoter Anlageträger (bei X: Konduktorin)</li><li>Römische Zahlen = Generation, arabische Zahlen = Person (z. B. II-3)</li></ul>
+  <h3>Fachbegriffe</h3><ul><li><b>monohybrid:</b> ein Merkmal, ein Gen mit zwei Allelen</li><li><b>homozygot</b> (reinerbig: AA, aa) · <b>heterozygot</b> (mischerbig: Aa)</li><li><b>dominant:</b> setzt sich bei Aa durch · <b>rezessiv:</b> zeigt sich nur bei aa</li><li><b>autosomal:</b> Gen auf einem Autosom (Chromosom 1–22) · <b>gonosomal:</b> auf einem Geschlechtschromosom (meist X)</li><li><b>Konduktorin:</b> gesunde Überträgerin eines X-rezessiven Allels (XᴬXᵃ)</li><li><b>hemizygot:</b> Männer haben nur ein X → ein rezessives Allel zeigt sich sofort</li><li><b>Neumutation:</b> Krankheit tritt erstmals beim Kind auf · <b>unvollständige Penetranz:</b> nicht jeder Träger erkrankt</li></ul>
+  <h3>Die vier Erbgänge</h3><div class="tbl"><table><tr><th>Erbgang</th><th>Typisch</th><th>Ausgeschlossen, wenn …</th></tr>
+  <tr><th>autosomal-dominant</th><td>in jeder Generation; jeder Kranke hat einen kranken Elternteil; Männer und Frauen gleich oft; Vater → Sohn möglich</td><td>zwei gesunde Eltern ein krankes Kind haben</td></tr>
+  <tr><th>autosomal-rezessiv</th><td>überspringt Generationen; gesunde Eltern (Aa × Aa) mit krankem Kind; beide Geschlechter gleich oft; häufiger bei Verwandtenehen</td><td>zwei kranke Eltern ein gesundes Kind haben</td></tr>
+  <tr><th>X-chromosomal-rezessiv</th><td>v. a. Männer krank; Weitergabe über gesunde Konduktorinnen; kranker Vater → alle Töchter Konduktorinnen</td><td>eine kranke Tochter einen gesunden Vater hat · eine kranke Mutter einen gesunden Sohn hat · Vater → Sohn</td></tr>
+  <tr><th>X-chromosomal-dominant</th><td>kranker Vater → <b>alle</b> Töchter krank, alle Söhne gesund; mehr Frauen betroffen</td><td>ein kranker Vater eine gesunde Tochter hat · Vater → Sohn</td></tr></table></div>
+  <h3>Vorgehen „Analysieren Sie den Stammbaum“</h3><ol><li><b>Dominant oder rezessiv?</b> Zwei Gesunde mit krankem Kind → rezessiv. Zwei Kranke mit gesundem Kind → dominant.</li><li><b>Autosomal oder X?</b> Schlüsselstellen suchen: Vater → Sohn, kranke Tochter mit gesundem Vater, kranker Vater mit gesunder Tochter.</li><li><b>Jeden Erbgang einzeln</b> prüfen und mit <b>Personennummern</b> begründen.</li><li>Ergebnis: sicherer oder wahrscheinlichster Erbgang – sagen, was nicht ausgeschlossen werden kann.</li><li>Genotypen angeben (unsicher: „A_“ = AA oder Aa).</li></ol>
+  <div class="merk"><span class="merk-label">Achtung</span>„Es sind mehr Männer krank“ ist nur ein <b>Hinweis</b>, kein Beweis. Beweise sind die Ausschluss-Konstellationen.</div>`,
+  widget:'bi_stamm'},
+ {id:8,title:'Genotypen und Wahrscheinlichkeiten',short:'Punnett-Quadrat, Erbkrankheiten des Menschen',
+  goals:['Genotypen im Stammbaum bestimmen','Wahrscheinlichkeiten für Nachkommen berechnen','Wichtige Erbkrankheiten ihrem Erbgang zuordnen'],
+  html:`<h3>Mendel kurz</h3><ul><li><b>Uniformitätsregel:</b> Kreuzt man zwei reinerbige Eltern, sind alle Nachkommen gleich.</li><li><b>Spaltungsregel:</b> Kreuzt man Mischerbige (Aa × Aa), spalten die Nachkommen 3 : 1 (dominant-rezessiv) auf, genotypisch 1 AA : 2 Aa : 1 aa.</li></ul>
+  <h3>Rechnen mit dem Punnett-Quadrat</h3><div class="tbl"><table><tr><th>Kreuzung</th><th>Ergebnis</th></tr>
+  <tr><th>Aa × Aa (autosomal-rezessiv)</th><td>25 % krank (aa), 50 % Anlageträger, 25 % AA</td></tr>
+  <tr><th>Aa × aa (autosomal-dominant, ein Elternteil krank)</th><td>50 % krank</td></tr>
+  <tr><th>XᴬXᵃ × XᴬY (Konduktorin × gesunder Mann)</th><td>Söhne 50 % krank, Töchter 0 % krank (50 % Konduktorin); alle Kinder: 25 % krank</td></tr>
+  <tr><th>XᴬXᴬ × XᵃY (gesunde Frau × kranker Mann, X-rezessiv)</th><td>alle Töchter Konduktorinnen, alle Söhne gesund</td></tr>
+  <tr><th>X-dominant: kranker Vater × gesunde Mutter</th><td>alle Töchter krank, alle Söhne gesund</td></tr></table></div>
+  <h3>Typische Fallen</h3><ul><li><b>2/3-Regel:</b> Ein <b>gesundes</b> Geschwisterkind eines autosomal-rezessiv kranken Kindes ist mit 2/3 Anlageträger (nicht 1/2), weil aa schon ausgeschlossen ist.</li><li>Jedes Kind ist ein <b>neues Ereignis</b>: Nach einem kranken Kind hat das nächste wieder 25 %.</li><li>Unabhängige Ereignisse werden <b>multipliziert</b>: Mukoviszidose bei zwei unbekannten Partnern: 1/25 × 1/25 × 1/4 = 1/2500.</li><li>Männer sind für X-Gene <b>hemizygot</b>, nicht homozygot.</li></ul>
+  <h3>Erbkrankheiten</h3><div class="tbl"><table><tr><th>Krankheit</th><th>Erbgang</th><th>Info</th></tr>${BI.KRANK.map(k=>`<tr><th>${k[0]}</th><td>${k[1]}</td><td>${k[2]}</td></tr>`).join('')}</table></div>`,
+  widget:'bi_ws'}];
+ BI.QUESTIONS=[
+ {t:1,q:'In welcher Reihenfolge laufen die Schritte eines PCR-Zyklus ab?',o:['Denaturierung → Annealing → Elongation','Annealing → Denaturierung → Elongation','Elongation → Annealing → Denaturierung','Denaturierung → Elongation → Annealing'],a:0,e:'95 °C → ca. 55 °C → 72 °C.'},
+ {t:1,q:'Warum verwendet man bei der PCR die Taq-Polymerase?',o:['Sie ist hitzestabil und übersteht die Denaturierung bei 95 °C','Sie arbeitet nur bei Raumtemperatur','Sie schneidet DNA','Sie braucht keine Primer'],a:0,e:'Aus Thermus aquaticus, Optimum 72 °C.'},
+ {t:1,q:'Wozu dienen die Primer in der PCR?',o:['Sie markieren Anfang und Ende des Zielabschnitts und sind Startpunkt der Polymerase','Sie trennen die Doppelstränge','Sie färben die DNA an','Sie verknüpfen DNA-Stücke'],a:0,e:'Kurze einzelsträngige DNA-Stücke.'},
+ {t:1,q:'Wie viele DNA-Moleküle entstehen theoretisch aus einem Molekül nach 10 Zyklen?',o:['1024','20','100','512'],a:0,e:'2¹⁰ = 1024.'},
+ {t:1,q:'Wohin wandert DNA in der Gelelektrophorese?',o:['zur Anode (+), weil sie negativ geladen ist','zur Kathode (−), weil sie positiv geladen ist','gar nicht','zu beiden Polen'],a:0,e:'Grund: die Phosphatgruppen.'},
+ {t:1,q:'Welche Fragmente wandern im Gel am weitesten?',o:['die kleinsten','die größten','die mit den meisten Basen G und C','alle gleich weit'],a:0,e:'Kleine Fragmente kommen leichter durch das Gelnetz.'},
+ {t:1,q:'Wann ist ein Mann beim Vaterschaftstest ausgeschlossen?',o:['Wenn das Kind eine Bande hat, die weder die Mutter noch er hat','Wenn er mehr Banden hat als das Kind','Wenn er eine Bande mit der Mutter teilt','Wenn seine Banden größer sind'],a:0,e:'Jede Kindesbande muss von Mutter oder Vater stammen.'},
+ {t:2,q:'Woraus besteht die Zellwand von Bakterien?',o:['Murein (Peptidoglycan)','Cellulose','Chitin','Phospholipiden'],a:0,e:'Angriffspunkt von Penicillin.'},
+ {t:2,q:'Was sind Plasmide?',o:['kleine ringförmige DNA-Moleküle außerhalb des Bakterienchromosoms','Ribosomen der Bakterien','Proteinhüllen von Viren','Teile der Zellwand'],a:0,e:'Tragen oft Resistenzgene, vermehren sich selbstständig.'},
+ {t:2,q:'Welche Ribosomen haben Bakterien?',o:['70S','80S','60S','keine'],a:0,e:'Eukaryoten: 80S.'},
+ {t:2,q:'Wie vermehren sich Bakterien?',o:['durch Zweiteilung','durch Mitose mit Zellkern','nur in Wirtszellen','durch Konjugation'],a:0,e:'Konjugation ist Gentransfer, keine Vermehrung.'},
+ {t:2,q:'Was passiert in der Log-Phase der Wachstumskurve?',o:['Die Zellzahl wächst exponentiell mit maximaler Teilungsrate','Die Bakterien passen sich an','Teilungs- und Absterberate sind gleich','Die meisten Zellen sterben'],a:0,e:'N = N₀ × 2ⁿ.'},
+ {t:2,q:'Was ist Transformation bei Bakterien?',o:['Aufnahme freier DNA aus der Umgebung','Übertragung von DNA über einen Sex-Pilus','DNA-Übertragung durch Phagen','Zweiteilung'],a:0,e:'Griffith 1928, Avery 1944.'},
+ {t:2,q:'Wie lange ist die Generationszeit von E. coli unter Idealbedingungen?',o:['ca. 20 Minuten','ca. 20 Sekunden','ca. 20 Stunden','ca. 2 Tage'],a:0,e:'Im Darm deutlich länger.'},
+ {t:3,q:'Woraus besteht ein Virus mindestens?',o:['Nukleinsäure und Proteinhülle (Capsid)','Zellwand und Zellmembran','Zellkern und Ribosomen','nur aus Proteinen'],a:0,e:'Manche haben zusätzlich eine Lipidhülle.'},
+ {t:3,q:'Warum wirken Antibiotika nicht gegen Viren?',o:['Viren haben keine Zellwand, keine Ribosomen und keinen eigenen Stoffwechsel','Viren sind zu groß','Viren sind immer resistent','Antibiotika wirken nur gegen Pilze'],a:0,e:'Antibiotika greifen bakterientypische Strukturen an.'},
+ {t:3,q:'Was passiert im lysogenen Zyklus?',o:['Die Phagen-DNA wird ins Bakterienchromosom eingebaut und mitvermehrt','Die Zelle platzt sofort','Der Phage zerstört die Wirts-DNA','Das Bakterium wird zum Virus'],a:0,e:'Prophage; Wechsel in den lytischen Zyklus möglich.'},
+ {t:3,q:'Was ist der letzte Schritt des lytischen Zyklus?',o:['Lyse: Die Zelle platzt und setzt neue Phagen frei','Adsorption','Injektion der DNA','Einbau ins Chromosom'],a:0,e:'Adsorption → Injektion → Synthese → Zusammenbau → Lyse.'},
+ {t:3,q:'Welches Enzym schreibt bei HIV RNA in DNA um?',o:['Reverse Transkriptase','DNA-Ligase','RNA-Polymerase','Restriktionsenzym'],a:0,e:'Danach baut die Integrase die DNA ins Wirtsgenom ein.'},
+ {t:3,q:'Womit kann man Viren sehen?',o:['nur mit dem Elektronenmikroskop','mit bloßem Auge','mit der Lupe','mit dem Lichtmikroskop'],a:0,e:'Meist ca. 20–300 nm groß.'},
+ {t:4,q:'Was machen Restriktionsenzyme?',o:['Sie schneiden DNA an bestimmten Erkennungssequenzen','Sie verknüpfen DNA-Stücke','Sie schreiben RNA in DNA um','Sie vervielfältigen DNA'],a:0,e:'Beispiel EcoRI: G↓AATTC.'},
+ {t:4,q:'Was macht die DNA-Ligase?',o:['Sie verknüpft DNA-Stücke zu rekombinanter DNA','Sie schneidet DNA','Sie trennt Doppelstränge','Sie baut Proteine'],a:0,e:'Verbindet das Zucker-Phosphat-Rückgrat.'},
+ {t:4,q:'Warum schneidet man Vektor und Gen mit demselben Restriktionsenzym?',o:['damit die klebrigen Enden zusammenpassen','damit die DNA schneller wandert','damit keine Ligase nötig ist','damit das Gen kürzer wird'],a:0,e:'Komplementäre Überhänge (sticky ends).'},
+ {t:4,q:'Warum verwendet man für Bakterien cDNA statt des menschlichen Gens?',o:['Menschliche Gene haben Introns, Bakterien können nicht spleißen','cDNA ist länger','Bakterien lesen nur RNA','cDNA ist doppelt so stabil'],a:0,e:'cDNA entsteht aus reifer mRNA mit reverser Transkriptase.'},
+ {t:4,q:'Was bedeutet eine weiße Kolonie bei der Blau-Weiß-Selektion?',o:['Das Plasmid enthält das eingebaute Gen','Das Plasmid ist leer','Das Bakterium hat kein Plasmid','Das Bakterium ist tot'],a:0,e:'Das Gen hat lacZ zerstört, X-Gal wird nicht gespalten.'},
+ {t:4,q:'Wofür braucht ein Plasmidvektor ein Antibiotikaresistenzgen?',o:['zur Selektion: nur Bakterien mit Plasmid überleben','damit das Gen abgelesen wird','zum Schneiden','damit die Zelle sich teilt'],a:0,e:'Auf Ampicillin-Agar wachsen nur Plasmidträger.'},
+ {t:4,q:'Wie macht man Bakterien für die Aufnahme von Plasmiden bereit?',o:['CaCl₂ und Hitzeschock oder Elektroporation','mit Ligase','mit X-Gal','durch Einfrieren auf −80 °C'],a:0,e:'Die Bakterien werden „kompetent“.'},
+ {t:4,q:'Was ist die MCS eines Plasmids?',o:['ein Abschnitt mit vielen Schnittstellen für Restriktionsenzyme','der Replikationsursprung','ein Resistenzgen','der Promotor'],a:0,e:'Multiple Cloning Site.'},
+ {t:5,q:'Welcher Organismus wird klassisch zur Insulinherstellung genutzt?',o:['das Bakterium E. coli','das Virus HIV','der Fadenwurm C. elegans','Thermus aquaticus'],a:0,e:'Heute auch Hefen.'},
+ {t:5,q:'Wann wurde das erste gentechnische Humaninsulin zugelassen?',o:['1982','1978','1993','2006'],a:0,e:'Humulin; 1978 wurde es erstmals hergestellt.'},
+ {t:5,q:'Wie entstand das erste gentechnische Insulin 1978?',o:['A- und B-Kette wurden getrennt in E. coli gebildet und danach verbunden','aus Schweine-Bauchspeicheldrüsen','mit der PCR','durch RNA-Interferenz'],a:0,e:'Die Gene wurden chemisch synthetisiert.'},
+ {t:5,q:'Was ist ein GVO?',o:['ein Organismus, dessen Erbgut gentechnisch verändert wurde','ein Virus ohne Hülle','ein natürlich mutiertes Bakterium','ein Organismus ohne DNA'],a:0,e:'Gentechnisch veränderter Organismus.'},
+ {t:5,q:'Welches Risiko wird bei Insulin-Bakterien oft genannt?',o:['Verbreitung von Antibiotikaresistenzgenen','Bakterien werden zu Viren','Insulin wird giftig','Menschen werden genetisch verändert'],a:0,e:'Durch die Resistenzgene der Vektoren.'},
+ {t:5,q:'Was ist Bt-Mais?',o:['Mais, der ein Gift gegen den Maiszünsler bildet','Mais mit Vitamin A','Mais ohne DNA','Mais, der Insulin bildet'],a:0,e:'Gen aus Bacillus thuringiensis.'},
+ {t:6,q:'Welches Enzym zerschneidet dsRNA in siRNAs?',o:['Dicer','Ligase','Taq-Polymerase','Reverse Transkriptase'],a:0,e:'Ergebnis: ca. 21–23 Nukleotide lange siRNAs.'},
+ {t:6,q:'Was passiert bei der RNA-Interferenz mit der Ziel-mRNA?',o:['Sie wird zerschnitten und abgebaut, es entsteht kein Protein','Sie wird verdoppelt','Sie wird in DNA eingebaut','Sie wird schneller übersetzt'],a:0,e:'Durch Argonaute im RISC.'},
+ {t:6,q:'Verändert RNA-Interferenz die DNA?',o:['Nein, sie wirkt auf mRNA-Ebene','Ja, das Gen wird herausgeschnitten','Ja, es entstehen Mutationen','Nur bei Bakterien'],a:0,e:'Knockdown, nicht Knockout.'},
+ {t:6,q:'Wer entdeckte die RNA-Interferenz?',o:['Andrew Fire und Craig Mello','Kary Mullis','Watson und Crick','Charpentier und Doudna'],a:0,e:'1998 bei C. elegans, Nobelpreis 2006.'},
+ {t:6,q:'Was unterscheidet miRNA von siRNA?',o:['miRNA stammt aus zelleigenen Genen und hemmt v. a. die Translation','miRNA ist länger als 1000 Nukleotide','miRNA wirkt nur im Zellkern','Es gibt keinen Unterschied'],a:0,e:'siRNA: meist von außen, vollständig komplementär, mRNA-Abbau.'},
+ {t:6,q:'Was ist RISC?',o:['ein Proteinkomplex, der mit dem Leitstrang die mRNA erkennt und schneidet','ein Restriktionsenzym','ein Plasmid','eine Phase der Wachstumskurve'],a:0,e:'RNA-induced silencing complex mit Argonaute.'},
+ {t:7,q:'Zwei gesunde Eltern haben ein krankes Kind. Was folgt daraus?',o:['Das Merkmal ist rezessiv','Das Merkmal ist dominant','Das Merkmal ist X-dominant','Es ist eine Neumutation, immer'],a:0,e:'Beide Eltern müssen Anlageträger sein.'},
+ {t:7,q:'Eine kranke Tochter hat einen gesunden Vater. Welcher Erbgang ist ausgeschlossen?',o:['X-chromosomal-rezessiv','autosomal-rezessiv','autosomal-dominant','keiner'],a:0,e:'Bei X-rezessiv müsste der Vater Xᵃ haben und damit krank sein.'},
+ {t:7,q:'Ein kranker Vater vererbt die Krankheit an seinen Sohn. Was ist ausgeschlossen?',o:['jeder X-chromosomale Erbgang','jeder autosomale Erbgang','nur autosomal-rezessiv','nichts'],a:0,e:'Der Sohn bekommt vom Vater das Y, nicht das X.'},
+ {t:7,q:'Was ist typisch für X-chromosomal-rezessive Erbgänge?',o:['Vor allem Männer sind krank, die Weitergabe läuft über Konduktorinnen','Nur Frauen sind krank','Jede Generation ist betroffen','Vater gibt es immer an den Sohn weiter'],a:0,e:'Männer sind hemizygot.'},
+ {t:7,q:'Was ist typisch für X-chromosomal-dominante Erbgänge?',o:['Ein kranker Vater hat nur kranke Töchter und gesunde Söhne','Nur Männer sind krank','Zwei Kranke haben nur kranke Kinder','Er überspringt immer Generationen'],a:0,e:'Die Töchter bekommen das X des Vaters.'},
+ {t:7,q:'Was bedeutet „heterozygot“?',o:['mischerbig, zwei verschiedene Allele (Aa)','reinerbig (AA oder aa)','nur ein Allel vorhanden','krank'],a:0,e:'Bei Männern für X-Gene: hemizygot.'},
+ {t:7,q:'Was ist eine Konduktorin?',o:['eine gesunde Überträgerin eines X-rezessiven Allels','eine kranke Frau','ein homozygot gesunder Mann','eine Frau ohne X-Chromosom'],a:0,e:'Genotyp XᴬXᵃ.'},
+ {t:8,q:'Aa × Aa: Wie wahrscheinlich ist ein krankes Kind bei autosomal-rezessivem Erbgang?',o:['25 %','50 %','75 %','0 %'],a:0,e:'1 von 4 Feldern ist aa.'},
+ {t:8,q:'Wie wahrscheinlich ist das gesunde Geschwisterkind eines autosomal-rezessiv kranken Kindes Anlageträger?',o:['2/3','1/2','1/4','100 %'],a:0,e:'aa ist schon ausgeschlossen.'},
+ {t:8,q:'Konduktorin × gesunder Mann: Wie wahrscheinlich ist ein Sohn krank?',o:['50 %','25 %','100 %','0 %'],a:0,e:'Er bekommt Xᴬ oder Xᵃ von der Mutter.'},
+ {t:8,q:'Welchen Erbgang hat Mukoviszidose?',o:['autosomal-rezessiv','autosomal-dominant','X-chromosomal-rezessiv','X-chromosomal-dominant'],a:0,e:'CFTR-Gen, ca. 1 : 2500.'},
+ {t:8,q:'Welchen Erbgang hat Chorea Huntington?',o:['autosomal-dominant','autosomal-rezessiv','X-chromosomal-rezessiv','Y-chromosomal'],a:0,e:'Ausbruch meist mit 30–50 Jahren.'},
+ {t:8,q:'Welchen Erbgang hat die Bluterkrankheit (Hämophilie A)?',o:['X-chromosomal-rezessiv','autosomal-dominant','autosomal-rezessiv','X-chromosomal-dominant'],a:0,e:'Faktor VIII fehlt.'},
+ {t:8,q:'Gesunde Eltern (Aa × Aa) haben schon ein krankes Kind. Wie hoch ist das Risiko beim nächsten Kind?',o:['wieder 25 %','0 %','100 %','50 %'],a:0,e:'Jedes Kind ist ein neues Ereignis.'}];
+ BI.TF=[
+ [1,'Bei der Denaturierung trennen sich die DNA-Stränge bei ca. 95 °C.',1,'Wasserstoffbrücken lösen sich.'],
+ [1,'Die Taq-Polymerase arbeitet am besten bei 95 °C.',0,'Sie übersteht 95 °C, ihr Optimum liegt bei 72 °C.'],
+ [1,'Primer in der PCR bestehen aus RNA.',0,'Es sind synthetische DNA-Stücke.'],
+ [1,'In der Gelelektrophorese wandern große Fragmente schneller.',0,'Kleine wandern schneller.'],
+ [1,'DNA ist negativ geladen und wandert zum Pluspol.',1,'Wegen der Phosphatgruppen.'],
+ [2,'Bakterien haben einen Zellkern.',0,'Die DNA liegt frei als Nucleoid im Cytoplasma.'],
+ [2,'Konjugation ist eine Form der Vermehrung.',0,'Es ist Gentransfer (Parasexualität).'],
+ [2,'Plasmide können Antibiotikaresistenzgene tragen.',1,'Deshalb sind sie gute Vektoren.'],
+ [2,'In der stationären Phase halten sich Teilung und Absterben die Waage.',1,'Nährstoffmangel, Giftstoffe.'],
+ [3,'Viren haben einen eigenen Stoffwechsel.',0,'Sie brauchen eine Wirtszelle.'],
+ [3,'Ein Virus enthält entweder DNA oder RNA.',1,'Nie beides.'],
+ [3,'Antibiotika helfen gegen eine Grippe.',0,'Grippe wird von Viren verursacht.'],
+ [3,'Ein Prophage ist Phagen-DNA, die im Bakterienchromosom eingebaut ist.',1,'Lysogener Zyklus.'],
+ [4,'Die Ligase schneidet DNA.',0,'Sie verknüpft; Restriktionsenzyme schneiden.'],
+ [4,'EcoRI erzeugt klebrige Enden.',1,'Versetzter Schnitt G↓AATTC.'],
+ [4,'Bei der Blau-Weiß-Selektion zeigen blaue Kolonien ein rekombinantes Plasmid.',0,'Weiß = mit Insert, blau = leerer Vektor.'],
+ [4,'cDNA enthält keine Introns.',1,'Sie entsteht aus reifer mRNA.'],
+ [4,'Auch Viren können als Vektoren dienen.',1,'Z. B. Phage λ oder Retroviren.'],
+ [5,'Bakterien können Introns herausspleißen.',0,'Deshalb braucht man cDNA oder ein synthetisches Gen.'],
+ [5,'Humulin war das erste Arzneimittel aus rekombinanter DNA.',1,'Zugelassen 1982.'],
+ [5,'Gentechnisches Insulin ist mit menschlichem Insulin identisch.',1,'Anders als Rinder- oder Schweineinsulin.'],
+ [6,'Bei RNAi wird das Gen in der DNA zerstört.',0,'Nur die mRNA wird abgebaut.'],
+ [6,'siRNAs sind etwa 21–23 Nukleotide lang.',1,'Von Dicer geschnitten.'],
+ [6,'Der RISC kann mehrere mRNA-Moleküle nacheinander abbauen.',1,'Deshalb reichen kleine Mengen dsRNA.'],
+ [6,'RNAi wurde beim Menschen entdeckt.',0,'Bei C. elegans (Fire und Mello 1998).'],
+ [7,'Wenn mehr Männer betroffen sind, ist der Erbgang sicher X-rezessiv.',0,'Nur ein Hinweis; entscheidend sind Ausschlusskriterien.'],
+ [7,'Zwei kranke Eltern mit gesundem Kind schließen einen rezessiven Erbgang aus.',1,'aa × aa ergibt nur aa.'],
+ [7,'Bei X-rezessiv kann ein kranker Vater die Krankheit an seinen Sohn weitergeben.',0,'Der Sohn bekommt vom Vater das Y.'],
+ [7,'Autosomal-rezessive Krankheiten treten bei Verwandtenehen gehäuft auf.',1,'Gleiche seltene Allele treffen häufiger zusammen.'],
+ [8,'Nach einem kranken Kind sind die nächsten Kinder sicher gesund.',0,'Jedes Kind hat wieder das gleiche Risiko.'],
+ [8,'Männer sind für X-chromosomale Gene hemizygot.',1,'Sie haben nur ein X.'],
+ [8,'Mukoviszidose wird X-chromosomal vererbt.',0,'Autosomal-rezessiv.'],
+ [8,'Konduktorin × gesunder Mann: Töchter können nicht krank sein (X-rezessiv).',1,'Sie bekommen vom Vater Xᴬ.']];
+ BI.CARDS=[
+ ['PCR','Polymerase-Kettenreaktion: Vervielfältigung eines DNA-Abschnitts in Zyklen aus Denaturierung, Annealing, Elongation.',1],
+ ['Primer','Kurze einzelsträngige DNA-Stücke, die den Zielabschnitt begrenzen und Startpunkt der Polymerase sind.',1],
+ ['Taq-Polymerase','Hitzestabile DNA-Polymerase aus Thermus aquaticus, Optimum 72 °C.',1],
+ ['dNTPs','Die vier Bausteine dATP, dCTP, dGTP, dTTP für die neuen DNA-Stränge.',1],
+ ['Gelelektrophorese','Trennung von DNA-Fragmenten nach Länge im elektrischen Feld; DNA wandert zur Anode.',1],
+ ['Größenstandard (Marker)','DNA-Fragmente bekannter Länge, die zum Ablesen neben den Proben laufen.',1],
+ ['STR','Short Tandem Repeats: kurze Wiederholungen in nicht-codierender DNA, Grundlage des genetischen Fingerabdrucks.',1],
+ ['Prokaryot','Zelle ohne Zellkern und ohne membranumhüllte Organellen, z. B. Bakterium.',2],
+ ['Nucleoid','Bereich des ringförmigen Bakterienchromosoms im Cytoplasma.',2],
+ ['Plasmid','Kleine ringförmige DNA außerhalb des Chromosoms; trägt oft Resistenzgene; Vektor in der Gentechnik.',2],
+ ['Murein','Stoff der Bakterienzellwand (Peptidoglycan); Angriffspunkt von Penicillin.',2],
+ ['Zweiteilung','Ungeschlechtliche Vermehrung von Bakterien in zwei identische Tochterzellen.',2],
+ ['Generationszeit','Zeit für eine Verdopplung der Zellzahl; E. coli ca. 20 min unter Idealbedingungen.',2],
+ ['Konjugation','Gentransfer über einen Sex-Pilus zwischen zwei Bakterien.',2],
+ ['Transduktion','Übertragung von Bakterien-DNA durch einen Phagen.',2],
+ ['Capsid','Proteinhülle eines Virus aus Capsomeren.',3],
+ ['Bakteriophage','Virus, das Bakterien befällt, z. B. T4 oder λ.',3],
+ ['Lytischer Zyklus','Adsorption, Injektion, Synthese, Zusammenbau, Lyse der Wirtszelle.',3],
+ ['Lysogener Zyklus','Phagen-DNA wird als Prophage ins Bakterienchromosom eingebaut und mitvermehrt.',3],
+ ['Retrovirus','RNA-Virus, das mit reverser Transkriptase DNA bildet und ins Wirtsgenom einbaut (z. B. HIV).',3],
+ ['Restriktionsenzym','Schneidet DNA an einer bestimmten, meist palindromischen Erkennungssequenz.',4],
+ ['Sticky ends','Klebrige, einzelsträngige Überhänge nach versetztem Schnitt (z. B. EcoRI).',4],
+ ['DNA-Ligase','Verknüpft DNA-Stücke zu rekombinanter DNA.',4],
+ ['Vektor','Genfähre, die Fremd-DNA in die Wirtszelle bringt: Plasmid oder Virus.',4],
+ ['cDNA','Komplementäre DNA aus mRNA, mit reverser Transkriptase hergestellt; ohne Introns.',4],
+ ['Transformation (Labor)','Einschleusen von Plasmiden in Bakterien mit CaCl₂ und Hitzeschock oder Elektroporation.',4],
+ ['Blau-Weiß-Selektion','pUC19 + X-Gal: blau = leerer Vektor, weiß = Plasmid mit Insert.',4],
+ ['Replikaplattierung','Stempeltechnik: Kolonien auf zweite Platte (z. B. Tetracyclin) übertragen, um Rekombinante zu finden.',4],
+ ['Klonierung','Vermehrung eines rekombinanten Bakteriums zu genetisch identischen Nachkommen (Klon).',4],
+ ['GVO','Gentechnisch veränderter Organismus.',5],
+ ['Humaninsulin (gentechnisch)','1978 Genentech, 1982 als Humulin zugelassen; A- und B-Kette bzw. Proinsulin in E. coli.',5],
+ ['Fermenter','Großer Behälter, in dem GV-Bakterien unter optimalen Bedingungen das Produkt herstellen.',5],
+ ['Proinsulin','Vorstufe des Insulins; das C-Peptid wird abgespalten.',5],
+ ['RNA-Interferenz','Gen-Stilllegung durch Abbau der mRNA mithilfe kurzer doppelsträngiger RNA.',6],
+ ['Dicer','Enzym, das dsRNA in siRNAs (21–23 nt) zerschneidet.',6],
+ ['siRNA','Small interfering RNA: kurze dsRNA, deren Leitstrang die Ziel-mRNA erkennt.',6],
+ ['RISC','RNA-induced silencing complex mit Argonaute; schneidet die passende mRNA.',6],
+ ['miRNA','Zelleigene microRNA aus eigenen Genen; hemmt v. a. die Translation vieler mRNAs.',6],
+ ['Knockdown','Starke, umkehrbare Verringerung der Genexpression auf mRNA-Ebene (RNAi).',6],
+ ['autosomal-dominant','In jeder Generation, Vater → Sohn möglich; ausgeschlossen bei zwei gesunden Eltern mit krankem Kind.',7],
+ ['autosomal-rezessiv','Überspringt Generationen; ausgeschlossen bei zwei kranken Eltern mit gesundem Kind.',7],
+ ['X-chromosomal-rezessiv','Vor allem Männer; ausgeschlossen bei kranker Tochter mit gesundem Vater.',7],
+ ['X-chromosomal-dominant','Kranker Vater → alle Töchter krank; ausgeschlossen bei kranker Vater mit gesunder Tochter.',7],
+ ['Konduktorin','Gesunde Überträgerin eines X-rezessiven Allels (XᴬXᵃ).',7],
+ ['Hemizygot','Nur ein Allel vorhanden – Männer bei X-chromosomalen Genen.',7],
+ ['Penetranz','Anteil der Träger eines Genotyps, die das Merkmal tatsächlich zeigen.',7],
+ ['Punnett-Quadrat','Kreuzungsschema zur Berechnung der Nachkommen-Genotypen.',8],
+ ['2/3-Regel','Gesundes Geschwister eines autosomal-rezessiv kranken Kindes ist zu 2/3 Anlageträger.',8],
+ ['Mukoviszidose','Autosomal-rezessiv, CFTR-Gen; ca. 1 : 2500, jeder 25. Anlageträger.',8],
+ ['Hämophilie A','X-chromosomal-rezessiv, Gerinnungsfaktor VIII fehlt.',8]];
+ BI.TASKS=[
+ {t:1,afb:'Auswerten',q:'<b>Werten Sie</b> das Gelbild eines Vaterschaftstests <b>aus</b> und begründen Sie, welcher Mann der Vater sein kann.',ctxLabel:'Material',ctx:'Nach PCR eines STR-Abschnitts zeigt das Gel folgende Banden (in bp): <b>Marker</b> 100 · 200 · 300 · 400 · 500 | <b>Mutter</b> 180 und 350 | <b>Kind</b> 180 und 260 | <b>Mann 1</b> 220 und 420 | <b>Mann 2</b> 260 und 310.',umfang:'ca. eine halbe Seite',
+  steps:['Beschreibe kurz das Material: welche Spuren, Marker, Laufrichtung.','Ordne die Banden des Kindes zu: Welche kommt von der Mutter? (180 bp)','Die andere Bande (260 bp) muss vom Vater stammen – suche sie bei Mann 1 und Mann 2.','Schlussfolgerung mit Begründung formulieren.','Grenzen nennen: Ein einziger STR reicht nicht für einen sicheren Beweis.'],
+  sol:()=>`<p>Das Kind hat die Banden 180 bp und 260 bp. Die 180-bp-Bande stammt von der Mutter. Die 260-bp-Bande muss deshalb vom Vater kommen. <b>Mann 1</b> (220, 420) hat sie nicht → <b>ausgeschlossen</b>. <b>Mann 2</b> (260, 310) hat sie → er <b>kann</b> der Vater sein. Einschränkung: Mit nur einem STR-Ort ist das kein Beweis – in der Praxis untersucht man viele STR-Orte; seltene Mutationen sind möglich.</p>`},
+ {t:1,afb:'Erklären',q:'<b>Erklären Sie</b> den Ablauf eines PCR-Zyklus und <b>berechnen Sie</b>, wie viele DNA-Moleküle aus einem Molekül nach 25 Zyklen theoretisch entstehen.',ctx:'In einem Kriminallabor liegt nur eine winzige Blutspur vor. Für die Analyse braucht man aber viel mehr DNA.',umfang:'ca. eine halbe Seite + Rechnung',
+  steps:['Nenne den Ansatz: Template-DNA, zwei Primer, dNTPs, Taq-Polymerase, Puffer.','Erkläre die drei Schritte mit Temperatur und Vorgang (Denaturierung, Annealing, Elongation).','Begründe, warum die Taq-Polymerase nötig ist.','Rechne: Kopien = 2ⁿ, n = 25.'],
+  sol:()=>`<ul>${BI.PCR.map(s=>`<li><b>${s[0]}</b> (${s[1]}): ${s[2]}</li>`).join('')}</ul><p>Die Taq-Polymerase ist hitzestabil und übersteht die 95 °C, deshalb muss sie nicht in jedem Zyklus neu zugegeben werden. <b>Rechnung:</b> 2²⁵ = 33.554.432 ≈ 3,4 × 10⁷ Moleküle (theoretisch, praktisch flacht die Kurve ab).</p>`},
+ {t:2,afb:'Beschreiben + Zeichnen',q:'<b>Zeichnen Sie</b> ein beschriftetes Schema einer Bakterienzelle und <b>beschreiben Sie</b> ihre Vermehrung.',ctx:'Bakterien wie E. coli sind die wichtigsten „Arbeitstiere“ der Gentechnik. Um zu verstehen, warum, muss man ihren Bau kennen.',umfang:'Skizze + ca. eine halbe Seite',
+  steps:['Zeichne eine längliche Zelle mit Kapsel, Zellwand, Zellmembran, Cytoplasma.','Ergänze Nucleoid (Ringchromosom), Plasmide, Ribosomen, Geißel, Pili – alles beschriften.','Beschreibe die Zweiteilung in Schritten.','Erwähne die Generationszeit und die Phasen der Wachstumskurve.'],
+  sol:()=>`<p><b>Beschriftung:</b> ${BI.BAK.map(b=>b[0]).join(', ')}.</p><p><b>Vermehrung:</b> Zweiteilung – Replikation des Ringchromosoms, Trennung, Einschnürung und Querwand → zwei identische Tochterzellen; Generationszeit E. coli ca. 20 min. Wachstumskurve: Lag-, Log-, stationäre und Absterbephase.</p>`},
+ {t:3,afb:'Vergleichen + Begründen',q:'<b>Vergleichen Sie</b> Bakterien und Viren und <b>begründen Sie</b>, warum ein Arzt bei einer Grippe keine Antibiotika verschreibt.',ctx:'Ein Patient mit Grippe fordert beim Hausarzt Antibiotika, „damit es schneller weggeht“. Der Arzt lehnt ab.',umfang:'ca. eine Seite, gern als Tabelle',
+  steps:['Wähle Kriterien: Organisation, Größe, Erbmaterial, Stoffwechsel, Vermehrung, Hülle.','Stelle Bakterien und Viren zu jedem Kriterium gegenüber (Gemeinsamkeiten und Unterschiede).','Erkläre, wo Antibiotika angreifen (Zellwand, 70S-Ribosomen, Enzyme).','Schlussfolgere: Viren haben diese Angriffspunkte nicht.'],
+  sol:()=>`<div class="tbl"><table><tr><th>Kriterium</th><th>Bakterien</th><th>Viren</th></tr>${BI.VGL.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div><p><b>Begründung:</b> Grippe wird von Viren verursacht. Antibiotika wirken gegen Mureinzellwand, 70S-Ribosomen oder bakterielle Enzyme – das alles haben Viren nicht. Antibiotika würden nicht helfen, aber Resistenzen fördern.</p>`},
+ {t:4,afb:'Erläutern',q:'<b>Erläutern Sie</b>, wie man ein fremdes Gen mithilfe eines Plasmids in Bakterien einbaut und die richtigen Bakterien auswählt.',ctx:'Ein Labor will ein menschliches Gen in E. coli einbauen. Zur Verfügung stehen das Plasmid pUC19 (Ampicillin-Resistenz, lacZ-Gen mit Schnittstellen), das Restriktionsenzym EcoRI, DNA-Ligase und Agarplatten mit Ampicillin und X-Gal.',umfang:'ca. eine Seite',
+  steps:['Gen gewinnen (cDNA wegen der Introns).','Plasmid und Gen mit EcoRI schneiden → sticky ends.','Mit Ligase verknüpfen → rekombinantes Plasmid.','Transformation (CaCl₂, Hitzeschock).','Selektion erklären: Ampicillin (Plasmid ja/nein) und Blau-Weiß (Insert ja/nein) – mit „weil“.'],
+  sol:()=>`<ol><li>Gen als cDNA (reverse Transkriptase) gewinnen, weil Bakterien Introns nicht entfernen können.</li><li>Gen und pUC19 mit <b>EcoRI</b> schneiden → passende klebrige Enden.</li><li><b>Ligase</b> verknüpft → rekombinantes Plasmid (das Gen sitzt im lacZ-Gen).</li><li><b>Transformation</b> von E. coli mit CaCl₂ + Hitzeschock.</li><li>Ausplattieren auf Ampicillin + X-Gal: Nur Bakterien mit Plasmid wachsen (Resistenz). <b>Blau</b>: lacZ intakt → leerer Vektor. <b>Weiß</b>: lacZ durch das Gen zerstört → rekombinant → diese Kolonien weiterzüchten (Klonierung).</li></ol>`},
+ {t:5,afb:'Erläutern',q:'<b>Erläutern Sie</b> die Herstellung von Humaninsulin mithilfe von Bakterien.',ctx:'Weltweit brauchen Millionen Menschen mit Diabetes täglich Insulin. Früher wurde es aus Bauchspeicheldrüsen von Schlachttieren gewonnen; seit 1982 gibt es gentechnisch hergestelltes Humaninsulin.',umfang:'ca. eine Seite',
+  steps:['Problem nennen: Das menschliche Gen hat Introns.','cDNA aus Insulin-mRNA herstellen (reverse Transkriptase).','Schneiden, Ligieren, Transformation, Selektion – jeweils mit Begründung.','Vermehrung im Fermenter, Expression, Reinigung.','Ergänze: Bakterien können Proinsulin nicht selbst umbauen (C-Peptid) – das geschieht im Labor.'],
+  sol:()=>`<p>(1) Insulin-mRNA aus β-Zellen isolieren → mit reverser Transkriptase cDNA herstellen, <b>weil</b> Bakterien die Introns des menschlichen Gens nicht herausspleißen können (historisch 1978: A- und B-Kette als synthetische Gene). (2) Plasmid und cDNA mit demselben Restriktionsenzym schneiden → sticky ends. (3) Ligase verknüpft → rekombinantes Plasmid. (4) Transformation von E. coli. (5) Selektion: Ampicillin-Agar + Blau-Weiß (weiße Kolonien). (6) Vermehrung im Fermenter, Insulin wird gebildet, gereinigt und nachbearbeitet (Ketten verbinden bzw. C-Peptid abspalten). Vorteile: menschenidentisch, große Mengen, keine Tiere nötig.</p>`},
+ {t:6,afb:'Erklären',q:'<b>Erklären Sie</b> die Wirkung der RNA-Interferenz auf die Genexpression.',ctx:'Forscher spritzen doppelsträngige RNA, die zum Gen für ein Muskelprotein passt, in den Fadenwurm C. elegans. Danach bewegen sich die Würmer kaum noch – obwohl ihre DNA unverändert ist.',umfang:'ca. eine halbe bis eine Seite',
+  steps:['Starte bei der eingebrachten dsRNA.','Dicer → siRNA (21–23 nt).','RISC mit Argonaute, Passagierstrang wird entfernt, Leitstrang bleibt.','Leitstrang bindet komplementär an die Muskelprotein-mRNA → Spaltung → kein Protein.','Verbinde mit der Beobachtung: Protein fehlt → Bewegungsstörung; DNA bleibt unverändert (Knockdown).'],
+  sol:()=>`<p>Die dsRNA wird im Cytoplasma von <b>Dicer</b> in siRNAs (21–23 nt) zerschnitten. Eine siRNA wird in den <b>RISC</b> geladen; <b>Argonaute</b> entfernt den Passagierstrang. Der Leitstrang bindet vollständig komplementär an die mRNA des Muskelproteins, Argonaute schneidet sie, sie wird abgebaut. Es wird kein Muskelprotein gebildet → die Würmer können sich kaum bewegen. Die DNA bleibt unverändert, es ist ein <b>Knockdown</b> auf mRNA-Ebene.</p>`},
+ {t:7,afb:'Analysieren',q:'<b>Analysieren Sie</b> den Stammbaum von Familie A hinsichtlich des Erbgangs und <b>begründen Sie</b> Ihre Entscheidung.',ctxLabel:'Material',ctx:'Den Stammbaum von Familie A findest du im Thema „Stammbaumanalyse“ im Stammbaum-Trainer. Kurzfassung: I-1 und I-2 gesund; ihre Kinder II-1 (♀, gesund), II-2 (♂, krank), II-3 (♀, gesund). II-3 hat mit II-4 (♂, gesund) die Kinder III-1 (♂, gesund) und III-2 (♀, krank).',umfang:'ca. eine halbe Seite',
+  steps:['Dominant oder rezessiv? Suche zwei gesunde Eltern mit krankem Kind.','Autosomal oder X? Prüfe: kranke Tochter mit gesundem Vater?','Begründe jeden Ausschluss mit Personennummern.','Formuliere das Ergebnis und gib die Genotypen an.'],
+  sol:()=>`<ul>${BI.STAMM[0].why.map(w=>`<li>${w}</li>`).join('')}</ul>`},
+ {t:8,afb:'Bestimmen + Berechnen',q:'<b>Bestimmen Sie</b> die Genotypen und <b>berechnen Sie</b> das Risiko für ein krankes Kind.',ctx:'Lena ist gesund, ihr Bruder hat Mukoviszidose (autosomal-rezessiv), ihre Eltern sind gesund. Lena möchte mit ihrem gesunden Partner Tom ein Kind; in Toms Familie gab es keine Mukoviszidose. In der Bevölkerung ist jeder 25. Anlageträger.',umfang:'ca. eine halbe Seite mit Rechenweg',
+  steps:['Genotypen der Eltern von Lena bestimmen (beide Aa).','Wahrscheinlichkeit, dass Lena Aa ist: 2/3-Regel!','Wahrscheinlichkeit, dass Tom Aa ist: 1/25.','Wahrscheinlichkeit für aa, wenn beide Aa sind: 1/4.','Alles multiplizieren und als Bruch angeben.'],
+  sol:()=>`<p>Eltern: Aa × Aa (gesund, aber Kind krank). Lena ist gesund → Lena Aa mit <b>2/3</b>. Tom Aa mit <b>1/25</b>. Kind aa bei Aa × Aa: <b>1/4</b>. Risiko = 2/3 × 1/25 × 1/4 = <b>2/300 = 1/150</b> (ca. 0,67 %).</p>`},
+ {t:8,afb:'Erklären',q:'<b>Erklären Sie</b> mit einem Kreuzungsschema, warum die Bluterkrankheit fast nur bei Männern auftritt.',ctx:'In europäischen Königshäusern des 19. Jahrhunderts erkrankten viele Prinzen an der Bluterkrankheit (Hämophilie), Prinzessinnen dagegen kaum.',umfang:'ca. eine halbe Seite mit Punnett-Quadrat',
+  steps:['Erbgang nennen: X-chromosomal-rezessiv.','Symbole festlegen: Xᴴ gesund, Xʰ krank.','Kreuzung Konduktorin (XᴴXʰ) × gesunder Mann (XᴴY) aufstellen.','Ergebnis für Söhne und Töchter ablesen.','Erklären: hemizygot vs. zweites X bei Frauen.'],
+  sol:()=>`<p>XᴴXʰ × XᴴY → Töchter: XᴴXᴴ, XᴴXʰ (gesund, 50 % Konduktorin); Söhne: XᴴY gesund, XʰY krank (50 %). Männer haben nur ein X (<b>hemizygot</b>) – ein krankes Allel zeigt sich sofort. Frauen erkranken nur bei XʰXʰ (kranker Vater <b>und</b> Konduktorin als Mutter) – das ist selten.</p>`}];
+ BI.ORDERS=[
+ {t:1,title:'Ordne einen PCR-Zyklus.',parts:['Ansatz mit DNA, Primern, dNTPs und Taq-Polymerase','Denaturierung bei ca. 95 °C','Abkühlen: Primer lagern sich an (Annealing)','Elongation bei 72 °C','Die DNA-Menge hat sich verdoppelt, der nächste Zyklus beginnt']},
+ {t:4,title:'Ordne die Grundoperationen der Gentechnik.',parts:['Gen als cDNA gewinnen','Plasmid und Gen mit demselben Restriktionsenzym schneiden','Mit DNA-Ligase verknüpfen','Transformation der Bakterien','Selektion auf Ampicillin und X-Gal','Weiße Kolonien vermehren (Klonierung)','Expression und Gewinnung des Proteins']},
+ {t:3,title:'Ordne den lytischen Zyklus.',parts:['Adsorption an die Bakterienzelle','Injektion der Phagen-DNA','Abbau der Wirts-DNA, Synthese von Phagenbausteinen','Zusammenbau neuer Phagen','Lyse der Zelle']},
+ {t:6,title:'Ordne die RNA-Interferenz.',parts:['Doppelsträngige RNA gelangt in die Zelle','Dicer schneidet sie in siRNAs','siRNA wird in den RISC geladen','Passagierstrang wird entfernt','Leitstrang bindet an die passende mRNA','Argonaute schneidet die mRNA','Kein Protein wird gebildet']},
+ {t:7,title:'Ordne das Vorgehen bei der Stammbaumanalyse.',parts:['Dominant oder rezessiv prüfen','Autosomal oder X-chromosomal prüfen','Jeden Erbgang mit Personennummern begründen','Ergebnis formulieren','Genotypen angeben','Wahrscheinlichkeiten berechnen']}];
+ const evOf=t=>BI.EV.filter(e=>e[3]===t);
+ const cardQ=t=>{ const c=pick(BI.CARDS.filter(x=>x[2]===t)); return {t,q:'Was bedeutet „'+c[0]+'“?',o:opts4(c[1],BI.CARDS.map(x=>x[1])),a:0,e:c[0]+': '+c[1]}; };
+ const pow=n=>Math.pow(2,n).toLocaleString('de-DE');
+ BI.GEN={
+ 1:[()=>{ const n=pick([3,5,6,7,8,10,12]); const o=[pow(n),(2*n).toLocaleString('de-DE'),(n*n).toLocaleString('de-DE'),pow(n-1)]; return {t:1,q:'Aus 1 DNA-Molekül: Wie viele Moleküle entstehen theoretisch nach '+n+' PCR-Zyklen?',o,a:0,e:'2^'+n+' = '+pow(n)+'.'}; },
+    ()=>{ const s=pick(BI.PCR); return {t:1,q:'Welche Temperatur gehört zum PCR-Schritt „'+s[0]+'“?',o:opts4(s[1],BI.PCR.map(x=>x[1]).concat(['ca. 37 °C','ca. 4 °C'])),a:0,e:s[0]+': '+s[1]+' – '+s[2]}; },cardQ.bind(null,1)],
+ 2:[()=>{ const b=pick(BI.BAK); return {t:2,q:'Welche Funktion hat diese Struktur der Bakterienzelle: '+b[0]+'?',o:opts4(b[1],BI.BAK.map(x=>x[1])),a:0,e:b[0]+': '+b[1]+'.'}; },cardQ.bind(null,2)],
+ 3:[()=>{ const x=pick(BI.BV), o=['Bakterien','Viren','beide']; return {t:3,q:'Bakterien, Viren oder beide? '+x[0],o,a:o.indexOf(x[1]),e:x[0]+' → '+x[1]+'.'}; },cardQ.bind(null,3)],
+ 4:[()=>{ const x=pick(BI.SEL), o=['mit Insert (rekombinant)','leerer Vektor ohne Insert','kein Plasmid aufgenommen']; return {t:4,q:'Selektion: '+x[0]+' Was bedeutet das?',o,a:o.indexOf(x[1]),e:x[1]+'.'}; },
+    ()=>{ const x=pick(BI.ENZ); return {t:4,q:'Welches Enzym? '+x[1],o:opts4(x[0],BI.ENZ.map(y=>y[0])),a:0,e:x[0]+': '+x[1]+'.'}; },cardQ.bind(null,4)],
+ 5:[cardQ.bind(null,5),()=>{ const e=pick(evOf(5)); return {t:5,q:'Wann war das? '+e[2],o:opts4(e[0],BI.EV.map(x=>x[0])),a:0,e:e[0]+': '+e[2]+'.'}; }],
+ 6:[()=>{ const x=pick(BI.SM), o=['siRNA','miRNA','beide']; return {t:6,q:'siRNA, miRNA oder beide? '+x[0],o,a:o.indexOf(x[1]),e:x[0]+' → '+x[1]+'.'}; },cardQ.bind(null,6)],
+ 7:[()=>{ const r=pick(BI.REGEL); return {t:7,q:'Stammbaum: '+r[0]+' Welcher Erbgang ist damit ausgeschlossen?',o:opts4(r[1],BI.REGEL.map(x=>x[1])),a:0,e:r[0]+' → ausgeschlossen: '+r[1]+'.'}; },
+    ()=>{ const k=pick(BI.CARDS.filter(c=>c[2]===7&&BI.ERB.includes(c[0]))); return {t:7,q:'Welcher Erbgang wird beschrieben? '+k[1].replace(k[0],'…'),o:BI.ERB.slice(),a:BI.ERB.indexOf(k[0]),e:k[0]+': '+k[1]}; },cardQ.bind(null,7)],
+ 8:[()=>{ const w=pick(BI.WS); return {t:8,q:w[0],o:opts4(w[1],['0 %','25 %','50 %','75 %','100 %','2/3','1/100','1/2500']),a:0,e:w[2]}; },
+    ()=>{ const k=pick(BI.KRANK); return {t:8,q:'Welchen Erbgang hat '+k[0]+'?',o:BI.ERB.slice(),a:BI.ERB.indexOf(k[1]),e:k[0]+': '+k[1]+' – '+k[2]+'.'}; },cardQ.bind(null,8)]};
+ BI.MATCH_KINDS={
+  begriffe:{label:'Begriffe',topic:4,make:()=>shuffle(BI.CARDS.filter(c=>c[1].length<115)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.82rem;line-height:1.3">${c[1]}</span>`,t:c[2]}))},
+  enzyme:{label:'Enzyme',topic:4,make:()=>shuffle(BI.ENZ).slice(0,5).map(x=>({k:x[0],a:x[0],b:`<span style="font-size:.82rem;line-height:1.3">${x[1]}</span>`,t:4}))},
+  bakterium:{label:'Bakterienzelle',topic:2,make:()=>shuffle(BI.BAK).slice(0,5).map(x=>({k:x[0],a:`<span style="font-size:.85rem">${x[0]}</span>`,b:`<span style="font-size:.8rem;line-height:1.3">${x[1]}</span>`,t:2}))},
+  krankheiten:{label:'Erbkrankheiten',topic:8,make:()=>{ const out=[],seen=new Set(); shuffle(BI.KRANK).forEach(k=>{ if(out.length<4&&!seen.has(k[1])){ seen.add(k[1]); out.push({k:k[0],a:`<span style="font-size:.85rem">${k[0]}</span>`,b:`<span style="font-size:.82rem">${k[1]}</span>`,t:8}); } }); return out; }},
+  erbgaenge:{label:'Erbgänge',topic:7,make:()=>shuffle(BI.CARDS.filter(c=>c[2]===7)).slice(0,5).map(c=>({k:c[0],a:c[0],b:`<span style="font-size:.8rem;line-height:1.3">${c[1]}</span>`,t:7}))}};
+ const YT='yt:';
+ BI.VIDEOS={
+ 1:[['YouTube','PCR einfach erklärt',YT+'PCR Polymerase Kettenreaktion einfach erklärt'],['YouTube','Gelelektrophorese und genetischer Fingerabdruck',YT+'Gelelektrophorese genetischer Fingerabdruck erklärt']],
+ 2:[['YouTube','Bau einer Bakterienzelle',YT+'Bau Bakterienzelle Prokaryoten erklärt'],['YouTube','Konjugation, Transformation, Transduktion',YT+'Konjugation Transformation Transduktion Bakterien']],
+ 3:[['YouTube','Bakteriophagen: lytisch und lysogen',YT+'Bakteriophage lytischer lysogener Zyklus erklärt'],['YouTube','Viren vs. Bakterien',YT+'Unterschied Viren Bakterien erklärt']],
+ 4:[['YouTube','Grundoperationen der Gentechnik',YT+'Gentechnik Grundoperationen Plasmid Restriktionsenzym Ligase'],['YouTube','Blau-Weiß-Selektion',YT+'Blau Weiß Selektion pUC19 erklärt']],
+ 5:[['YouTube','Insulinherstellung mit Bakterien',YT+'gentechnische Herstellung Insulin Bakterien erklärt']],
+ 6:[['YouTube','RNA-Interferenz',YT+'RNA Interferenz siRNA Dicer RISC erklärt']],
+ 7:[['YouTube','Stammbaumanalyse',YT+'Stammbaumanalyse Erbgänge erkennen Biologie']],
+ 8:[['YouTube','Wahrscheinlichkeiten im Stammbaum',YT+'Stammbaum Wahrscheinlichkeit berechnen Biologie']]};
+ BI.PLAN=[
+ {when:'Sa 28.11.',sub:'30 Min',topics:[1],extra:''},
+ {when:'So 29.11.',sub:'45 Min',topics:[2,3],extra:''},
+ {when:'Fr 4.12.',sub:'45 Min',topics:[4],extra:''},
+ {when:'Sa 5.12.',sub:'60 Min',topics:[5,6],extra:''},
+ {when:'Di 8.12.',sub:'60 Min',topics:[7],extra:''},
+ {when:'Mi 9.12.',sub:'45 Min',topics:[8],extra:''},
+ {when:'Do 10.12.',sub:'60 Min',topics:[],extra:'<a class="pill" href="#aufgaben">Aufgaben schriftlich (Insulin, Stammbaum)</a>'},
+ {when:'Fr 11.12.',sub:'45 Min',topics:[],extra:'<a class="pill" href="#training">Training: Schwächen</a><a class="pill" href="#karten">Karteikarten</a>'},
+ {when:'Sa 12.12.',sub:'60 Min',topics:[],extra:'<a class="pill" href="#klausur">Probeklausur</a>'},
+ {when:'So 13.12.',sub:'45 Min',topics:[7,8],extra:'<a class="pill" href="#karten">Fehler und Karten</a>'},
+ {when:'Mo 14.12.',sub:'morgens · 15 Min',topics:[],extra:'<a class="pill" href="#spick">Spickzettel lesen</a>'}];
+ BI.BOT_SUGGEST=['Erklär mir die PCR Schritt für Schritt','Wie funktioniert die Blau-Weiß-Selektion?','Was macht Dicer bei der RNA-Interferenz?','Wie erkenne ich X-rezessiv im Stammbaum?'];
+ BI.SPICK=[
+  ['PCR und Gel',['Ansatz: DNA, 2 Primer, dNTPs, Taq, Puffer','Denaturierung ~95 °C → Annealing ~50–65 °C → Elongation 72 °C · Kopien = 2ⁿ','Taq aus Thermus aquaticus, hitzestabil · Mullis 1983, Nobel 1993','Gel: DNA negativ → Anode (+); kleine Fragmente wandern weiter; Marker','Vaterschaft: Mutterbanden abhaken, Rest muss vom Vater sein (STRs)']],
+  ['Bakterien',['Kapsel, Murein-Zellwand, Membran, Cytoplasma, Nucleoid (Ring-DNA), Plasmide, 70S-Ribosomen, Geißel, Pili','Zweiteilung → identische Zellen · E. coli ~20 min','Wachstum: Lag → Log → stationär → Absterben','Konjugation (Pilus), Transformation (freie DNA), Transduktion (Phage) = Gentransfer']],
+  ['Viren',['Nukleinsäure (DNA oder RNA) + Capsid, ggf. Hülle · kein Stoffwechsel','Lytisch: Adsorption → Injektion → Synthese → Zusammenbau → Lyse','Lysogen: Prophage im Chromosom · HIV: reverse Transkriptase, Integrase','Antibiotika wirken nicht (keine Zellwand, keine Ribosomen)']],
+  ['Gentechnik',['Gen: cDNA (reverse Transkriptase, keine Introns)','Restriktionsenzym (EcoRI G↓AATTC, sticky ends) → Ligase → rekombinantes Plasmid','Vektoren: Plasmid (ori, Resistenz, MCS: pBR322, pUC19) oder Virus','Transformation: CaCl₂ + Hitzeschock / Elektroporation','Selektion: Ampicillin · Blau-Weiß (weiß = Insert) · Replikaplattierung (fehlt auf Tet = Insert) → Klonierung']],
+  ['Insulin / GVO',['1978 Genentech (A- und B-Kette in E. coli) · 1982 Humulin = erstes rekombinantes Medikament','cDNA → schneiden → ligieren → Transformation → Selektion → Fermenter → Reinigung','Bakterien: keine Introns entfernen, kein Proinsulin umbauen','Weitere GVO: Bt-Mais, Golden Rice · Risiken: Resistenzgene, Auskreuzung']],
+  ['RNA-Interferenz',['dsRNA → Dicer → siRNA (21–23 nt) → RISC/Argonaute → Leitstrang bindet mRNA → Spaltung → kein Protein','DNA bleibt unverändert = Knockdown (umkehrbar)','miRNA: zelleigen, Drosha → Dicer, unvollständig, hemmt Translation','Fire & Mello 1998 (C. elegans), Nobel 2006 · Patisiran 2018']],
+  ['Stammbaum',['2 Gesunde → krankes Kind ⇒ rezessiv · 2 Kranke → gesundes Kind ⇒ dominant','Kranke Tochter + gesunder Vater ⇒ nicht X-rezessiv · kranke Mutter + gesunder Sohn ⇒ nicht X-rezessiv','Kranker Vater + gesunde Tochter ⇒ nicht X-dominant · Vater → Sohn ⇒ nicht X','Immer mit Personennummern begründen; „mehr Männer“ ist nur ein Hinweis']],
+  ['Wahrscheinlichkeiten',['Aa × Aa → 25 % krank, 50 % Träger · gesundes Geschwister: 2/3 Träger','Aa × aa (dominant) → 50 % · Konduktorin × gesunder Mann → Söhne 50 %, Töchter 0 %','Multiplizieren: Muko 1/25 × 1/25 × 1/4 = 1/2500','AR: Mukoviszidose, PKU, Sichelzell · AD: Huntington, Achondroplasie · XR: Hämophilie, Rot-Grün, Duchenne · XD: Vit.-D-res. Rachitis']]];
+})();
+/* ---------- Widgets Bio ---------- */
+function biTable(root,head,rows,intro){
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">${intro} Tippe auf eine Zelle, um sie zu verdecken.</p><div class="tbl"><table><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr><th>${r[0]}</th>${r.slice(1).map(c=>`<td class="de-hide" style="cursor:pointer">${c}</td>`).join('')}</tr>`).join('')}</table></div><button class="btn small" type="button" data-bi-all>Alles verdecken / aufdecken</button>`;
+  root.addEventListener('click',e=>{ const td=e.target.closest('.de-hide'); if(td) td.style.filter=td.style.filter?'':'blur(6px)'; if(e.target.closest('[data-bi-all]')){ const all=[...root.querySelectorAll('.de-hide')], hide=all.some(x=>!x.style.filter); all.forEach(x=>x.style.filter=hide?'blur(6px)':''); } });
+}
+function biBox(root){ const d=document.createElement('div'); d.style.marginTop='16px'; root.appendChild(d); return d; }
+/* Gel-Trainer: zufälliger Vaterschaftstest */
+function biGel(root){
+  const draw=()=>{
+    const L=shuffle([120,150,180,210,240,270,300,330,360,390,420,450,480]).slice(0,6);
+    const mut=[L[0],L[1]], vat=[L[2],L[3]], other=[L[4],L[5]], kid=[pick(mut),pick(vat)];
+    const men=shuffle([['echt',vat],['falsch',other]]);
+    const lanes=[['Marker',[100,200,300,400,500]],['Mutter',mut],['Kind',kid],['Mann 1',men[0][1]],['Mann 2',men[1][1]]];
+    const y=bp=>Math.round(12+(1-(Math.log(bp)-Math.log(90))/(Math.log(560)-Math.log(90)))*200);
+    root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Vaterschaftstest (ein STR-Ort). Oben sind die Taschen (−), unten der Pluspol (+). Wer kann der Vater sein?</p>
+    <div style="display:flex;gap:10px;background:#1b2330;border-radius:10px;padding:10px 10px 6px;overflow-x:auto">${lanes.map(([n,b])=>`<div style="flex:1;min-width:52px;text-align:center"><div style="position:relative;height:225px;background:#232e3e;border-radius:4px">${b.map(v=>`<div style="position:absolute;left:8%;right:8%;top:${y(v)}px;height:5px;border-radius:2px;background:${n==='Marker'?'#7fa6d6':'#9ef0b0'};box-shadow:0 0 6px ${n==='Marker'?'#7fa6d6':'#9ef0b0'}"></div>${n==='Marker'?`<span style="position:absolute;left:0;top:${y(v)-14}px;font-size:9px;color:#bcd">${v}</span>`:''}`).join('')}</div><div style="font-size:.78rem;color:#dde;margin-top:4px">${n}</div></div>`).join('')}</div>
+    <div class="opts" style="margin-top:10px"><button class="opt" type="button" data-g="0">Mann 1</button><button class="opt" type="button" data-g="1">Mann 2</button></div><div class="bi-g-out"></div>`;
+    root.querySelector('.opts').onclick=e=>{ const b=e.target.closest('[data-g]'); if(!b) return; const right=men[+b.dataset.g][0]==='echt';
+      root.querySelectorAll('[data-g]').forEach(x=>{ x.disabled=true; if(men[+x.dataset.g][0]==='echt') x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      const mk=kid.find(v=>mut.includes(v)), vk=kid.find(v=>v!==mk)||kid[1];
+      root.querySelector('.bi-g-out').innerHTML=`<div class="expl">${right?'✅ Richtig!':'❌ Leider nicht.'} Die Bande bei ${mk} bp hat das Kind von der Mutter. Die Bande bei ${vk} bp muss vom Vater stammen – nur Mann ${men[0][0]==='echt'?1:2} hat sie.</div><button class="btn small" type="button" style="margin-top:8px">Neues Gel</button>`;
+      root.querySelector('.bi-g-out button').onclick=draw; };
+  };
+  draw();
+}
+/* PCR-Rechner */
+function biPcr(root){
+  root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">PCR-Rechner: Wie viele Kopien entstehen aus einem Molekül?</p><div class="row" style="align-items:center;gap:10px;flex-wrap:nowrap"><input type="range" min="1" max="40" value="10" id="bi-n" style="flex:1"><b id="bi-nv" style="min-width:90px;text-align:right">10 Zyklen</b></div><p style="font-size:1.1rem;margin:.4em 0 0">2<sup id="bi-ne">10</sup> = <b id="bi-r">1.024</b> Kopien</p>`;
+  const f=()=>{ const n=+root.querySelector('#bi-n').value; root.querySelector('#bi-nv').textContent=n+' Zyklen'; root.querySelector('#bi-ne').textContent=n; const v=Math.pow(2,n); root.querySelector('#bi-r').textContent=v<1e7?v.toLocaleString('de-DE'):(v/Math.pow(10,Math.floor(Math.log10(v)))).toFixed(2).replace('.',',')+' × 10^'+Math.floor(Math.log10(v)); };
+  root.querySelector('#bi-n').oninput=f; f();
+}
+/* Stammbaum zeichnen (SVG) */
+function biPedSvg(s){
+  const X=58, G=92, R=13, off=30; const pos={}; s.p.forEach(p=>{ pos[p[0]]={x:off+p[3]*X,y:28+p[2]*G,s:p[1],a:p[4]}; });
+  const maxX=Math.max(...s.p.map(p=>p[3])), w=off*2+maxX*X, h=28+Math.max(...s.p.map(p=>p[2]))*G+40;
+  let out='';
+  s.c.forEach(([a,b,kids])=>{ const A=pos[a],B=pos[b]; const mx=(A.x+B.x)/2, y=A.y;
+    out+=`<line x1="${A.x+R}" y1="${y}" x2="${B.x-R}" y2="${y}" stroke="currentColor" stroke-width="1.6"/>`;
+    const ky=pos[kids[0]].y, bar=ky-R-18; out+=`<line x1="${mx}" y1="${y}" x2="${mx}" y2="${bar}" stroke="currentColor" stroke-width="1.6"/>`;
+    const xs=kids.map(k=>pos[k].x); out+=`<line x1="${Math.min(...xs,mx)}" y1="${bar}" x2="${Math.max(...xs,mx)}" y2="${bar}" stroke="currentColor" stroke-width="1.6"/>`;
+    kids.forEach(k=>{ out+=`<line x1="${pos[k].x}" y1="${bar}" x2="${pos[k].x}" y2="${pos[k].y-R}" stroke="currentColor" stroke-width="1.6"/>`; }); });
+  Object.entries(pos).forEach(([id,p])=>{ const fill=p.a?'currentColor':'var(--paper,#fff)';
+    out+=p.s==='m'?`<rect x="${p.x-R}" y="${p.y-R}" width="${2*R}" height="${2*R}" fill="${fill}" stroke="currentColor" stroke-width="1.8"/>`:`<circle cx="${p.x}" cy="${p.y}" r="${R}" fill="${fill}" stroke="currentColor" stroke-width="1.8"/>`;
+    out+=`<text x="${p.x}" y="${p.y+R+14}" font-size="11" text-anchor="middle" fill="currentColor">${id}</text>`; });
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;max-width:${w*1.25}px;color:var(--ink,#222)" role="img" aria-label="Stammbaum ${s.name}">${out}</svg>`;
+}
+function biStamm(root){
+  let i=0;
+  const draw=()=>{ const s=BI.STAMM[i];
+    root.innerHTML=`<p class="muted" style="margin-top:0;font-size:.9rem">Stammbaum-Trainer (${i+1}/${BI.STAMM.length}): □ Mann, ○ Frau, ausgefüllt = krank. Welcher Erbgang liegt ${s.sicher?'vor':'am wahrscheinlichsten vor'}?</p>
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center"><b>${s.name}</b><br>${biPedSvg(s)}</div>
+    <div class="opts" style="margin-top:10px">${BI.ERB.map(e=>`<button class="opt" type="button" data-e="${e}">${e}</button>`).join('')}</div><div class="bi-s-out"></div>`;
+    root.querySelector('.opts').onclick=e=>{ const b=e.target.closest('[data-e]'); if(!b) return;
+      root.querySelectorAll('[data-e]').forEach(x=>{ x.disabled=true; if(x.dataset.e===s.ans) x.classList.add('right'); else if(x===b) x.classList.add('wrong'); });
+      root.querySelector('.bi-s-out').innerHTML=`<div class="expl">${b.dataset.e===s.ans?'✅ Richtig!':'❌ Nicht ganz.'}<ul style="margin:.4em 0 0">${s.why.map(w=>`<li>${w}</li>`).join('')}</ul></div><button class="btn small" type="button" style="margin-top:8px">Nächster Stammbaum</button>`;
+      root.querySelector('.bi-s-out button').onclick=()=>{ i=(i+1)%BI.STAMM.length; draw(); }; };
+  };
+  draw();
+}
+W.bi_pcr=root=>{ biPcr(root); biGel(biBox(root)); };
+W.bi_bak=root=>{ geSteck(root,BI.BAK,'Bau einer Bakterienzelle.'); };
+W.bi_vir=root=>{ biTable(root,['Kriterium','Bakterien','Viren'],BI.VGL,'Vergleich Bakterien – Viren.'); const b=biBox(root); b.innerHTML='<p class="muted" style="font-size:.9rem">Bakterien, Viren oder beide?</p><div></div>'; geSort(b.lastElementChild,BI.BV,['Bakterien','Viren','beide'],'Bakterien, Viren oder beide?'); };
+W.bi_gt=root=>{ root.appendChild(renderOrder(BI.ORDERS[1],()=>{})); const b=biBox(root); b.innerHTML='<p class="muted" style="font-size:.9rem">Selektion: Was bedeutet die Kolonie?</p><div></div>'; geSort(b.lastElementChild,BI.SEL,['mit Insert (rekombinant)','leerer Vektor ohne Insert','kein Plasmid aufgenommen'],'Was bedeutet das?'); };
+W.bi_ins=root=>{ geSteck(root,[['Problem','Das menschliche Gen hat Introns, Bakterien können nicht spleißen'],['Gen','cDNA aus Insulin-mRNA (reverse Transkriptase) bzw. synthetische Gene'],['Schneiden','Plasmid und Gen mit demselben Restriktionsenzym'],['Kleben','DNA-Ligase → rekombinantes Plasmid'],['Einschleusen','Transformation von E. coli (CaCl₂, Hitzeschock)'],['Auswählen','Ampicillin-Agar + Blau-Weiß-Selektion (weiß)'],['Produzieren','Fermenter, Insulin gewinnen und reinigen'],['Meilensteine','1978 Genentech, 1982 Humulin zugelassen']],'Insulin aus Bakterien – Schritt für Schritt.'); };
+W.bi_rnai=root=>{ root.appendChild(renderOrder(BI.ORDERS[3],()=>{})); const b=biBox(root); b.innerHTML='<p class="muted" style="font-size:.9rem">siRNA, miRNA oder beide?</p><div></div>'; geSort(b.lastElementChild,BI.SM,['siRNA','miRNA','beide'],'siRNA, miRNA oder beide?'); };
+W.bi_stamm=root=>{ biStamm(root); };
+W.bi_ws=root=>{ geSort(root,BI.WS.map(w=>[w[0],w[1]]),['0 %','25 %','50 %','100 %','2/3','1/100','1/2500'],'Wie hoch ist die Wahrscheinlichkeit?'); };
 
 const EXAM=new Date('2026-11-10T11:30:00+01:00');
 const PLAN=[
@@ -3225,7 +3724,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.11';
+const APP_VERSION='5.12';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -3431,12 +3930,12 @@ document.addEventListener('click',e=>{
 /* ---------- Münzen, Shop, Profil ---------- */
 const EMOTE={fire:'🔥',wave:'👋',gg:'🤝',laugh:'😂',cool:'😎',mind:'🤯',skull:'💀',flask:'🧪',crown:'👑',cold:'🥶',salute:'🫡',cry:'😭',nerd:'🤓',alembic:'⚗️',goat:'🐐',muscle:'💪',eyes:'👀',clap:'👏',
  heart:'❤️',rocket:'🚀',brain:'🧠',sleep:'😴',party:'🥳',angry:'😤',think:'🤔',ghost:'👻',hundred:'💯',bolt:'⚡',atom:'⚛️',sweat:'😅',clown:'🤡',devil:'😈',star:'⭐',trophy:'🏆',popcorn:'🍿',snail:'🐌',
- urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',depesche:'📨',spiegel:'🪞',helm:'🪖',eu:'🇪🇺',euro:'💶',globus:'🌍',mikro:'🎙️',koffer:'💼',pass:'🛂',bruecke:'🌉',taube:'🕊️',
+ urne:'🗳️',saeule:'🏛️',flagge:'🇩🇪',barrikade:'🧱',zug:'🚂',zeitung:'📰',brief:'✉️',eiche:'🌳',kartoffel:'🥔',schwerter:'⚔️',depesche:'📨',spiegel:'🪞',helm:'🪖',eu:'🇪🇺',euro:'💶',globus:'🌍',mikro:'🎙️',koffer:'💼',pass:'🛂',bruecke:'🌉',taube:'🕊️',dna:'🧬',mikroskop:'🔬',bakterie:'🦠',petri:'🧫',spritze:'💉',pille:'💊',familie:'👪',wurm:'🪱',
  buch:'📚',feder:'🪶',maske:'🎭',krug:'🏺',waage:'⚖️',rolle:'📜',luege:'🤥',wein:'🍷',katze:'🐈',fuss:'🦶',lupe:'🔍',schock:'😱'};
 const AVATAR={scientist:'🧑‍🔬',fox:'🦊',frog:'🐸',octopus:'🐙',trex:'🦖',robot:'🤖',alien:'👽',panda:'🐼',cat:'🐱',unicorn:'🦄',
  owl:'🦉',shark:'🦈',dragon:'🐉',penguin:'🐧',bee:'🐝',lion:'🦁',ninja:'🥷',wizard:'🧙',zombie:'🧟',wolf:'🐺',butterfly:'🦋',eagle:'🦅',
  richter:'🧑‍⚖️',kaiser:'🤴',detektiv:'🕵️',bauer:'🧑‍🌾',magd:'👩‍🌾',theater:'🎭',
- professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇',kanzler:'🎖️',diplomat:'🧑‍💼',kommissarin:'👩‍💼',lobbyist:'🕴️',dolmetscher:'🗣️'};
+ professor:'👨‍🏫',student:'🧑‍🎓',soldat:'💂',arbeiter:'🧑‍🏭',reiter:'🏇',kanzler:'🎖️',diplomat:'🧑‍💼',kommissarin:'👩‍💼',lobbyist:'🕴️',dolmetscher:'🗣️',genetikerin:'👩‍🔬',virus:'🦠',doktor:'🧑‍⚕️',fadenwurm:'🪱'};
 const NCOLOR={std:['Standard','var(--ink)'],orange:['Orange','#e0701f'],blau:['Blau','#2f7de1'],gruen:['Grün','#2e9b57'],lila:['Lila','#8b5cf6'],pink:['Pink','#e0479e'],tuerkis:['Türkis','#0f9fa8'],rot:['Rot','#d63a3a'],gold:['Gold','gold'],regenbogen:['Regenbogen','rainbow']};
 const nameStyle=k=>{ const c=(NCOLOR[k]||NCOLOR.std)[1]; return c==='rainbow'?'class="rainbow"':c==='gold'?'class="goldtxt"':`style="color:${c}"`; };
 const SHOP=[
@@ -3445,6 +3944,9 @@ const SHOP=[
  ...[['kartoffel',120],['zeitung',150],['brief',180],['eiche',200],['depesche',220],['zug',250],['barrikade',300],['helm',320],['urne',350],['schwerter',450],['spiegel',500],['saeule',600],['flagge',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'geschichte'})),
  ...[['scientist',0],['frog',250],['cat',250],['penguin',300],['bee',300],['fox',400],['panda',400],['owl',450],['octopus',500],['butterfly',500],['wolf',600],['shark',650],['robot',700],['lion',750],['zombie',800],['alien',850],['ninja',900],['eagle',950],['trex',1000],['wizard',1200],['dragon',1500],['unicorn',2000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id]})),
  ...[['magd',250],['bauer',300],['theater',450],['detektiv',700],['kaiser',1000],['richter',1500]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'deutsch'})),
+ ...[['petri',120],['pille',150],['spritze',180],['wurm',200],['bakterie',250],['familie',300],['mikroskop',400],['dna',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'bio'})),
+ ...[['fadenwurm',250],['virus',400],['doktor',700],['genetikerin',1000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'bio'})),
+ ...[['Primer-Profi',250],['Gel-Leser',300],['Plasmid-Bastler',350],['Ligase-Kleber',400],['Dicer-Schnipsler',450],['Stammbaum-Detektiv',500],['Konduktoren-Kenner',600],['Taq-Thermostat',700],['Klon-Meister',900],['Gentechnik-Genie',1200],['Nobelpreisträger',2000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'bio'})),
  ...[['globus',120],['koffer',150],['mikro',180],['pass',200],['euro',250],['bruecke',300],['taube',400],['eu',800]].map(([id,p])=>({id:'e_'+id,kind:'emote',key:id,price:p,label:EMOTE[id],fach:'powi'})),
  ...[['dolmetscher',250],['lobbyist',400],['diplomat',700],['kommissarin',1000]].map(([id,p])=>({id:'a_'+id,kind:'avatar',key:id,price:p,label:AVATAR[id],fach:'powi'})),
  ...[['Europa-Einsteiger',250],['Vertrags-Kenner',300],['Organe-Profi',350],['Spill-over-Fan',400],['Binnenmarkt-Profi',450],['Subsidiaritäts-Hüter',500],['Trilog-Taktiker',600],['Leitbild-Denker',700],['Kommissionsmitglied',900],['Ratspräsident',1200],['Vater Europas',2000]].map(([t,p])=>({id:'t_'+t,kind:'title',key:t,price:p,label:t,fach:'powi'})),
@@ -3961,7 +4463,7 @@ function initBot(){ drawChat();
 
 function wrongQs(){ const w=S.wrong||{}; return QUESTIONS.filter(q=>w[q.q]); }
 function viewSpick(){
-  if(FACH.id!=='chemie'){ const SP=({deutsch:DE,geschichte:GE,powi:PW})[FACH.id].SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<TOPICS.length?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
+  if(FACH.id!=='chemie'){ const SP=({deutsch:DE,geschichte:GE,powi:PW,bio:BI})[FACH.id].SPICK; app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">${FACH.spickWhen}</span></div><header><h1>Spickzettel</h1><p class="muted" style="margin:.3em 0 0">Alles Wichtige auf einen Blick. Vorher einmal durchlesen.</p></header>`+SP.map(([h,items],i)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${i+1} · ${h}</h2><a href="#thema-${i+1}" class="muted mono" style="font-size:.8rem">${i<TOPICS.length?'Thema →':''}</a></div><ul style="margin-bottom:0">${items.map(x=>`<li>${x}</li>`).join('')}</ul></section>`).join(''); return; }
   const B=(t,items)=>`<section class="card"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.1rem">${t.id} · ${t.title}</h2><a href="#thema-${t.id}" class="muted mono" style="font-size:.8rem">Thema →</a></div><ul style="margin-bottom:0">${items.map(i=>`<li>${i}</li>`).join('')}</ul></section>`;
   const T=TOPICS;
   app.innerHTML=`<div class="topbar"><a class="back" href="#start" style="text-decoration:none">← Plan</a><span class="eyebrow">Dienstag früh</span></div>
@@ -4200,7 +4702,14 @@ const FACHER={
   examIntro:'15 Fragen aus allen 8 Themen: je eine Frage pro Thema und sieben zusätzliche, die jedes Mal neu erzeugt werden. Die Stellungnahmen übst du bei den Aufgaben. Am Ende siehst du, welche Themen du noch wiederholen solltest.',
   examTips:'<li><b>Nennen</b> (10–15 %): Europäischer Rat, Rat der EU, Kommission, Parlament, EuGH – kurz und vollständig, ohne Begründung.</li><li><b>Erläutern</b> (35–40 %): Sachverhalt erklären, Zusammenhänge zeigen, mit Beispielen (z. B. Spill-over: Binnenmarkt → Euro).</li><li><b>Beziehe begründet Stellung</b> (50 %): These → Argumente pro und contra mit Beispielen → gewichtetes eigenes Urteil mit Kriterien (Effizienz, Legitimation, Souveränität, Solidarität).</li><li>Bei Aufgabe A/B die wählen, zu der du mehr Beispiele kennst.</li><li>Fallen: Europäischer Rat ≠ Rat der EU ≠ Europarat; EuGH (Luxemburg) ≠ Menschenrechtsgerichtshof (Straßburg).</li>',
   ops:'<li><b>Nenne</b>: ohne Erklärung aufzählen</li><li><b>Beschreibe / Stelle dar</b>: Sachverhalt geordnet wiedergeben</li><li><b>Erläutere</b>: erklären und mit Beispielen veranschaulichen</li><li><b>Vergleiche</b>: Gemeinsamkeiten und Unterschiede nach Kriterien</li><li><b>Beurteile</b>: Sachurteil mit Kriterien</li><li><b>Beziehe begründet Stellung</b> / <b>Nimm Stellung</b>: eigenes, begründetes Urteil nach Abwägung von Pro und Contra</li><li><b>Erörtere</b>: Pro und Contra abwägen, dann Urteil</li>',
-  trMatch:t=>({1:'begriffe',2:pick(['vertraege','daten']),3:'daten',4:'organe',5:'begriffe',6:'leitbilder',7:'freiheiten',8:'begriffe'})[t]||null}};
+  trMatch:t=>({1:'begriffe',2:pick(['vertraege','daten']),3:'daten',4:'organe',5:'begriffe',6:'leitbilder',7:'freiheiten',8:'begriffe'})[t]||null},
+ bio:{id:'bio',name:'Bio LK',emoji:'🧬',sub:'Gentechnik und Humangenetik · Klausur Mo 14.12.',eyebrow:'Biologie LK · Freie Waldorfschule',title:'Gene, Gentechnik und Stammbäume',exam:'2026-12-14T10:00:00+01:00',examLabel:'Mo 14.12.26, 10:00',
+  planIntro:'So schaffst du alle 8 Themen der Themenliste bis Montag, 14.12. Bis zu den Klausuren in Powi und Geschichte nur kurze Einheiten, danach mehr. Ein Thema gilt als gelernt, wenn du im Check am Ende mindestens 4 von 5 richtig hast.',
+  botDesc:'Erklärt dir PCR, Gelelektrophorese, Bakterien und Viren, Gentechnik, Insulin, RNA-Interferenz und Stammbaumanalyse und erstellt dir Karteikarten',botPh:'Frag einfach, z. B. Wie funktioniert die PCR?',matchLink:'Zuordnen-Spiel: Begriffe, Enzyme, Bakterienzelle, Erbgänge, Erbkrankheiten',spickWhen:'Montag früh',
+  examIntro:'15 Fragen aus allen 8 Themen: je eine Frage pro Thema und sieben zusätzliche, die jedes Mal neu erzeugt werden. Gelbilder, Stammbäume und Rechnungen übst du zusätzlich in den Themen und bei den Aufgaben.',
+  examTips:'<li><b>Erläutern</b> heißt: jeden Schritt mit Fachbegriff <b>und</b> „weil …“ – sonst ist es nur Beschreiben (z. B. Insulin: cDNA, <b>weil</b> Bakterien keine Introns entfernen können).</li><li><b>Stammbaum:</b> erst dominant/rezessiv, dann autosomal/X – jeden Ausschluss mit Personennummern belegen.</li><li><b>Wahrscheinlichkeiten:</b> Rechenweg zeigen, an die 2/3-Regel denken, unabhängige Ereignisse multiplizieren.</li><li><b>Gelbild:</b> Marker nutzen, Mutterbanden beim Kind abhaken, dann begründet schlussfolgern.</li><li>Fallen: DNA wandert zur <b>Anode (+)</b>; kleine Fragmente laufen weiter; weiß = Insert; RNAi verändert die DNA nicht.</li>',
+  ops:'<li><b>Nennen</b>: ohne Erläuterung aufzählen</li><li><b>Beschreiben</b>: strukturiert und fachsprachlich wiedergeben</li><li><b>Skizzieren / Zeichnen</b>: Schema mit Beschriftung</li><li><b>Erläutern</b>: veranschaulichen und mit zusätzlichen Informationen verständlich machen</li><li><b>Auswerten</b>: Daten (z. B. Gelbild) in Zusammenhang stellen und Schlüsse ziehen</li><li><b>Bestimmen / Berechnen</b>: Lösungsweg zeigen, Ergebnis angeben (z. B. Genotypen)</li><li><b>Erklären</b>: auf Ursachen und Zusammenhänge zurückführen</li><li><b>Analysieren</b>: Material untersuchen, Beziehungen darstellen (z. B. Stammbaum)</li><li><b>Begründen</b>: auf Regeln und Kausalität zurückführen</li><li><b>Beurteilen / Bewerten</b>: begründete Einschätzung (Bewerten: mit Werten und eigener Position)</li>',
+  trMatch:t=>({1:'begriffe',2:'bakterium',3:'begriffe',4:pick(['enzyme','begriffe']),5:'begriffe',6:'enzyme',7:'erbgaenge',8:'krankheiten'})[t]||null}};
 // Fächer verschwinden 2 Tage nach ihrer Klausur aus der Auswahl (Inhalte und Fortschritt bleiben im Code und im Spielstand)
 const FACH_GRACE=2*864e5;
 const fachActive=f=>!!f&&Date.now()<new Date(f.exam).getTime()+FACH_GRACE;
@@ -4217,7 +4726,7 @@ function replaceArr(a,b){ a.splice(0,a.length,...b); }
 function replaceObj(o,b){ Object.keys(o).forEach(k=>delete o[k]); Object.assign(o,b); }
 function applyFachData(id){
   if(!CHEM_SNAP) CHEM_SNAP={TOPICS:TOPICS.slice(),QUESTIONS:QUESTIONS.slice(),TF:TF.slice(),CARDS:CARDS.slice(),TASKS:TASKS.slice(),ORDERS:ORDERS.slice(),GEN:Object.assign({},GEN),MATCH_KINDS:Object.assign({},MATCH_KINDS),VIDEOS:Object.assign({},VIDEOS),PLAN:PLAN.slice(),BOT_SUGGEST:BOT_SUGGEST.slice()};
-  const D=id==='deutsch'?DE:id==='geschichte'?GE:id==='powi'?PW:CHEM_SNAP;
+  const D=id==='deutsch'?DE:id==='geschichte'?GE:id==='powi'?PW:id==='bio'?BI:CHEM_SNAP;
   ['TOPICS','QUESTIONS','TF','CARDS','TASKS','ORDERS','PLAN','BOT_SUGGEST'].forEach(k=>replaceArr({TOPICS,QUESTIONS,TF,CARDS,TASKS,ORDERS,PLAN,BOT_SUGGEST}[k],D[k]));
   replaceObj(GEN,D.GEN); replaceObj(MATCH_KINDS,D.MATCH_KINDS); replaceObj(VIDEOS,D.VIDEOS);
   FACH=FACHER[id]; EXAM.setTime(new Date(FACH.exam).getTime());
