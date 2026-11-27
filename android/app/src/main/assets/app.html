@@ -3225,7 +3225,7 @@ function viewMatch(){
   round();
 }
 /* ---------- Update-Hinweis ---------- */
-const APP_VERSION='5.10';
+const APP_VERSION='5.11';
 function versionUrl(){
   if(location.protocol==='file:') return 'https://raw.githubusercontent.com/Vanacho1202/Chemie-/main/web/version.json?t='+Date.now();
   if(/onrender\.com$/.test(location.hostname)) return './version.json?t='+Date.now();
@@ -4254,6 +4254,7 @@ function route(){
   leaveBattleIfAway(); clearInterval(B.timer);
   const h=(location.hash||'#start').slice(1);
   let nav='start';
+  if(!String(S.name||'').trim()){ viewNameGate(); document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',false)); window.scrollTo(0,0); return; }
   if(!S.fachChosen||h==='fach'){ viewPick(); document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',false)); window.scrollTo(0,0); return; }
   if(h.startsWith('thema-')){ viewTopic(+h.split('-')[1]); nav='start'; }
   else if(h==='klausur'){ viewExam(); nav='klausur'; }
@@ -4272,12 +4273,40 @@ function route(){
 window.addEventListener('hashchange',route);
 app.addEventListener('click',battleClick);
 app.addEventListener('input',e=>{ if(e.target.id==='b-name'){ const v=e.target.value.trim().slice(0,16); clearTimeout(B.nameT); nameMsg(''); B.nameT=setTimeout(()=>claimName(v),600); } });
+/* Ohne Namen geht nichts: beim ersten Start Namen eingeben (oder vorhandenen Spielstand per Code holen) */
+function viewNameGate(){
+  app.innerHTML=`<header class="hero"><span class="eyebrow">Willkommen in der Lern-App</span><h1>Wie heißt du?</h1><p class="muted" style="margin:.3em 0 0">Dein Name wird in Battles, bei Freunden und in der Bestenliste angezeigt. Jeder Name gibt es nur einmal.</p></header>
+  <section class="card"><label class="eyebrow" for="gate-name">Dein Name</label>
+   <div class="row" style="flex-wrap:nowrap;margin-top:6px"><input id="gate-name" class="inp" maxlength="16" placeholder="z. B. Gabriel" autocomplete="nickname" style="flex:1;min-width:0;margin:0"><button class="btn primary" type="button" id="gate-go">Los geht's</button></div>
+   <p id="gate-msg" class="name-msg" style="margin:6px 0 0"></p></section>
+  <section class="card"><div class="sec-label">Schon einen Spielstand?</div><p class="muted" style="font-size:.9rem;margin:.2em 0 .6em">Gib deinen Spielstand-Code ein, dann bekommst du deinen alten Namen, Münzen und Fortschritt zurück.</p>
+   <div class="row" style="flex-wrap:nowrap"><input id="gate-code" class="inp" maxlength="9" placeholder="z. B. ABCD-2345" autocomplete="off" style="flex:1;min-width:0;margin:0;text-transform:uppercase"><button class="btn" type="button" id="gate-load">Laden</button></div></section>`;
+  const inp=$('#gate-name'); setTimeout(()=>{ try{ inp.focus(); }catch(e){} },100);
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') $('#gate-go').click(); });
+}
+function gateMsg(t,ok){ const m=$('#gate-msg'); if(m){ m.textContent=t; m.className='name-msg'+(t?(ok?' ok':' bad'):''); } }
+document.addEventListener('click',e=>{
+  if(e.target.id==='gate-go'){ const v=($('#gate-name').value||'').trim().replace(/\s+/g,' ').slice(0,16);
+    if(v.length<2){ gateMsg('Bitte mindestens 2 Zeichen eingeben.'); return; }
+    if(/^(spieler|ohne name|test)$/i.test(v)){ gateMsg('Bitte nimm deinen echten Namen oder einen Spitznamen.'); return; }
+    const b=e.target; b.disabled=true; gateMsg('Prüfe Namen …',true);
+    const ok=()=>{ S.name=v; S.nameOk=v; save(); try{ bSend(helloMsg()); }catch(x){} toast('Hi '+v.replace(/[<&]/g,'')+'! 👋'); route(); };
+    if(!cloudOk()){ ok(); return; }
+    cloudPost('name',{pid:S.pid,name:v}).then(({status,j})=>{ b.disabled=false;
+      if(status===200&&j.ok) ok(); else if(status===200) gateMsg('Der Name „'+v.replace(/[<&]/g,'')+'“ ist schon vergeben. Nimm z. B. noch einen Buchstaben vom Nachnamen dazu.'); else ok(); }).catch(()=>{ b.disabled=false; ok(); });
+  }
+  if(e.target.id==='gate-load'){ const code=($('#gate-code').value||'').trim(); if(code.replace(/[^A-Za-z0-9]/g,'').length!==8){ toast('Der Code hat 8 Zeichen, z. B. ABCD-2345'); return; }
+    cloudPost('load',{code}).then(({status,j})=>{
+      if(status!==200){ toast(j.error||'Laden fehlgeschlagen'); return; }
+      S=Object.assign({},j.data,{pid:j.pid,cloud:{secret:j.secret,code:j.code,at:Date.now()}}); initProfile(); try{ applyFachData(FACHER[S.fach]?S.fach:'chemie'); botLoad(); }catch(x){} save(true);
+      toast('Spielstand geladen! 🎉'); try{ if(B.ws) B.ws.close(); }catch(x){} setTimeout(bSilentConnect,500); route(); }).catch(()=>toast('Keine Verbindung. Versuch es nochmal.')); }
+});
 /* Namen sind einmalig: der Server prüft, ob jemand anderes den Namen schon hat */
 function nameMsg(t,ok){ const m=$('#b-name-msg'); if(m){ m.textContent=t; m.className='name-msg'+(t?(ok?' ok':' bad'):''); } }
 function claimName(v){
   if(v===S.name){ nameMsg(''); return; }
   const set=()=>{ S.name=v; S.nameOk=v; save(); bSend(helloMsg()); };
-  if(!v){ set(); return; }
+  if(!v){ nameMsg('Ein Name ist Pflicht'); return; }
   if(!cloudOk()){ set(); return; }
   cloudPost('name',{pid:S.pid,name:v}).then(({status,j})=>{
     const inp=$('#b-name'); if(inp&&inp.value.trim().slice(0,16)!==v) return;   // inzwischen weitergetippt
